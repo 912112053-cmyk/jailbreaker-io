@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Permanent+Marker&family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js" integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <style>
 :root{--bg:#04060f;--panel:#0b142e;--panel2:#101d3d;--line:#22345f;--cyan:#22d3ee;--ice:#b9f3ff;--teal:#2dd4bf;--text:#eefaff;--muted:#9db4d6;--danger:#fb7185;--gold:#fbbf24}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans JP",system-ui,sans-serif;overflow-x:hidden}
@@ -191,7 +194,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ホスト権限方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY</span><ul><li>2026/11/12 19:41</li><li>2026/11/12 17:22</li><li>2026/11/12 17:10</li><li>2026/11/12 08:12</li><li>2026/11/12 07:59</li><li>2026/11/11 23:10</li><li>2026/11/11 07:08</li><li>2026/11/11 02:31</li><li>2026/11/10 22:23</li></ul></span></span>
+    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ホスト権限方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY</span><ul><li>2026/11/12 23:44</li><li>2026/11/12 19:41</li><li>2026/11/12 17:22</li><li>2026/11/12 17:10</li><li>2026/11/12 08:12</li><li>2026/11/12 07:59</li><li>2026/11/11 23:10</li><li>2026/11/11 07:08</li><li>2026/11/11 02:31</li><li>2026/11/10 22:23</li></ul></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal +60HP shown on screen</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -667,34 +670,23 @@ function guestFrame(dtms){
  guestSendT+=dtms;
  if(guestSendT>=33){guestSendT=0;if(net.conn&&net.conn.open){try{net.conn.send({t:"i",l:!!keys.left||stick.dx<-0.28,r:!!keys.right||stick.dx>0.28,d:!!keys.down||stick.dy>0.55,j:!!keys.jump})}catch(e){}}}
 }
-/* ================= ACCOUNTS + FRIENDS (PeerJS username directory) =================
-   Accounts are username + password. This page is static and has no
-   server, so the account registry lives on THIS device (localStorage):
-   a username can be registered once per device, and logging in requires
-   the exact password chosen at registration. Passwords are never stored
-   in plain text — only a salted SHA-256 digest is kept. A successful
-   login also signs you in on later visits from this device, until you
-   log out. Note the honest limit of a serverless page: the registry
-   cannot stop someone on a DIFFERENT device from picking the same
-   display name, and a forgotten password cannot be recovered.
+/* ================= ACCOUNTS + FRIENDS (Firebase cloud accounts) =================
+   Accounts are username + password, kept in the cloud (Firebase Auth):
+   sign in from ANY device with the same username and password and your
+   account — including your friend list (Firestore) — is right there.
+   The username is never used as an email address directly: a synthetic
+   address is derived from it with the same deterministic encoding used
+   for PeerJS ids ("jb-<id>@example.com"), and the password only ever
+   goes to Firebase Auth — it is never written into Firestore or kept in
+   this page's data.
 
-   A second, independent PeerJS peer acts as the social channel: your
-   username maps to a peer id, so anyone who knows the name can reach you
-   while this page is open — the free PeerJS broker is the only "server".
-   Friend requests, accepts and room invites all travel over that
-   channel. Usernames may contain almost any
-   characters (Japanese included): a name that is already PeerJS-safe
-   (lowercase a-z, 0-9, _ and -) is used as the peer id as-is — exactly
-   like before, so existing names keep working — and every other name is
-   carried as base64url-encoded UTF-8 behind an "e" marker, because the
-   broker only accepts a narrow charset in ids. Your username and friend
-   list are saved on this device (localStorage), so they survive closing
-   the page; on the next visit the page reconnects under the saved name
-   automatically, as long as you stay logged in. Inviting a friend to a
-   hosted room sends them the room
-   code over this channel, so they can join with one tap — no code
-   sharing needed. */
-var social={name:"",peer:null,friends:[],conns:Object.create(null),online:Object.create(null),pendingOut:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null};
+   Friend requests live in Firestore, so they can be sent to someone who
+   is offline right now; the request is waiting for them the next time
+   they sign in. Online presence and room invites still travel over a
+   second, independent PeerJS peer (your username maps to a peer id),
+   exactly as before: inviting a friend to a hosted room sends them the
+   room code over that channel, so they can join with one tap. */
+var social={name:"",uid:"",peer:null,friends:[],friendUids:[],friendNames:{},pendingIn:[],conns:Object.create(null),online:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null,unsubs:[],reqSeen:{}};
 function isLegacyName(n){return /^[a-z0-9_-]{3,24}$/.test(n||"")}
 function utf8ToB64Url(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function b64UrlToUtf8(s){try{var b64=String(s).replace(/-/g,"+").replace(/_/g,"/");while(b64.length%4)b64+="=";return decodeURIComponent(escape(atob(b64)))}catch(e){return null}}
@@ -712,34 +704,27 @@ function validDisplayName(n){if(typeof n!=="string"||!n||n!==n.trim())return fal
    connections are accepted only when the id decodes to a name this page
    itself could have produced */
 function escHtml(s){return String(s).replace(/[&<>"']/g,function(ch){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]})}
-var SOCIAL_STORE_KEY="jailbreaker.social.v1";
-function saveSocial(){try{localStorage.setItem(SOCIAL_STORE_KEY,JSON.stringify({name:social.name,friends:social.friends,loggedIn:!!social.loggedIn}))}catch(e){}}
-function loadSocial(){
- try{var raw=localStorage.getItem(SOCIAL_STORE_KEY);if(!raw)return;var d=JSON.parse(raw);if(!d)return;
-  if(typeof d.name==="string"&&validDisplayName(d.name))social.name=d.name;
-  if(Array.isArray(d.friends))d.friends.forEach(function(f){if(typeof f==="string"&&validDisplayName(f)&&f!==social.name&&social.friends.indexOf(f)<0&&social.friends.length<100)social.friends.push(f)});
-  if(d.loggedIn===true)social.loggedIn=true;
- }catch(e){}
-}
-/* ---- account registry (this device only; passwords kept as salted
-   SHA-256 digests, never plain text) ---- */
-var ACCOUNT_STORE_KEY="jailbreaker.accounts.v1";
-function loadAccounts(){try{var d=JSON.parse(localStorage.getItem(ACCOUNT_STORE_KEY)||"{}");return d&&typeof d==="object"?d:{}}catch(e){return{}}}
-function saveAccounts(a){try{localStorage.setItem(ACCOUNT_STORE_KEY,JSON.stringify(a))}catch(e){}}
-function accountExists(n){return Object.prototype.hasOwnProperty.call(loadAccounts(),n)}
-function accountDigest(salt,pw){
- var s=salt+" "+pw,out="";
- for(var r=0;r<3;r++){var h1=0x811c9dc5,h2=5381;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h1=Math.imul(h1^c,16777619)>>>0;h2=(Math.imul(h2,33)^c)>>>0}out+=h1.toString(16).padStart(8,"0")+h2.toString(16).padStart(8,"0");s=out+s}
- return out;
-}
-function createAccountRecord(n,pw){
- var salt="";var chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
- for(var i=0;i<16;i++)salt+=chars.charAt(Math.floor(Math.random()*chars.length));
- var a=loadAccounts();a[n]={salt:salt,hash:accountDigest(salt,pw)};saveAccounts(a);
-}
-function checkAccountPassword(n,pw){
- var a=loadAccounts();var rec=a[n];if(!rec||typeof rec.salt!=="string"||typeof rec.hash!=="string")return false;
- return accountDigest(rec.salt,pw)===rec.hash;
+/* ---- Firebase setup ---- */
+var FB_OK=false,fbAuth=null,fbDb=null,pendingRegName="";
+try{
+ if(typeof firebase!=="undefined"){
+  firebase.initializeApp({apiKey:"AIzaSyBbtn08diCTsLiagvepGgUAkl8IH34p3-0",authDomain:"jailbreaker-io.firebaseapp.com",projectId:"jailbreaker-io",storageBucket:"jailbreaker-io.firebasestorage.app",messagingSenderId:"935080896944",appId:"1:935080896944:web:0ac87f060f1eb361878e75"});
+  fbAuth=firebase.auth();fbDb=firebase.firestore();FB_OK=true;
+ }
+}catch(e){FB_OK=false;fbAuth=null;fbDb=null}
+function nameKey(n){return String(n||"").normalize("NFC").toLowerCase()}
+function userDocId(n){var k=nameKey(n);return k.indexOf("/")>=0?encodeURIComponent(k):k}
+function authEmailFor(n){return "jb-"+(isLegacyName(n)?n:"e"+utf8ToB64Url(n))+"@example.com"}
+function fbErrMsg(e){
+ var c=e&&e.code?String(e.code):"";
+ if(c==="auth/wrong-password"||c==="auth/invalid-credential")return "パスワードが違います。もう一度入力してください。";
+ if(c==="auth/user-not-found")return "そのユーザーネームは登録されていません。下の「アカウント作成」から登録してください。";
+ if(c==="auth/email-already-in-use")return "そのユーザーネームは既に使われています。ログイン欄からログインしてください。";
+ if(c==="auth/weak-password")return "パスワードは6文字以上で入力してください。";
+ if(c==="auth/network-request-failed")return "通信エラーが発生しました。ネットワーク接続を確認して、もう一度お試しください。";
+ if(c==="auth/too-many-requests")return "ログイン試行が続いたため、一時的に制限されています。しばらく待ってからお試しください。";
+ if(c==="auth/invalid-email")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
+ return "エラーが発生しました。通信環境を確認して、もう一度お試しください。";
 }
 var toastTimer=null;
 function hideSocialToast(){var t=$("socialToast");if(t)t.classList.remove("on");if(toastTimer){clearTimeout(toastTimer);toastTimer=null}}
@@ -755,7 +740,7 @@ function showSocialToast(html,actions){
 }
 function socialSend(name,msg){var c=social.conns[name];if(c&&c.open){try{c.send(msg);return true}catch(e){}}return false}
 function wireSocialConn(c,name){
- c.on("open",function(){social.online[name]=true;if(social.pendingOut[name]){var m=social.pendingOut[name];delete social.pendingOut[name];try{c.send(m)}catch(e){}friendsSay(name+" さんにフレンド申請を送りました。相手が承認するとフレンドになります。")}else friendsSay("")});
+ c.on("open",function(){social.online[name]=true;friendsSay("")});
  c.on("data",function(m){onSocialData(name,m)});
  c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];friendsSay("")});
  c.on("error",function(){social.online[name]=false});
@@ -769,21 +754,9 @@ function friendConnect(name){
  social.conns[name]=c;wireSocialConn(c,name);
  return c;
 }
-function addFriend(name){
- if(!name||name===social.name)return;
- if(social.friends.indexOf(name)<0){social.friends.push(name);saveSocial()}
- friendConnect(name);friendsSay("");
-}
 function onSocialData(from,m){
  if(!m||!m.t||!social.name)return;
- if(m.t==="freq"){
-   if(social.friends.indexOf(from)>=0){socialSend(from,{t:"facc",from:social.name});return}
-   showSocialToast("<b>"+escHtml(from)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){addFriend(from);socialSend(from,{t:"facc",from:social.name});friendsSay(from+" さんとフレンドになりました")}},{label:"断る",fn:function(){}}]);
- }else if(m.t==="facc"){
-   var wasFriend=social.friends.indexOf(from)>=0;
-   addFriend(from);
-   if(!wasFriend)showSocialToast("<b>"+escHtml(from)+"</b> さんとフレンドになりました",[]);
- }else if(m.t==="invite"&&m.code){
+ if(m.t==="invite"&&m.code){
    showSocialToast("<b>"+escHtml(from)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
  }
 }
@@ -792,12 +765,12 @@ function teardownSocialPeer(){
  if(social.retryTimer){clearTimeout(social.retryTimer);social.retryTimer=null}
  social.retryN=0;
  if(social.peer){try{social.peer.destroy()}catch(e){}social.peer=null}
- social.conns=Object.create(null);social.online=Object.create(null);social.pendingOut=Object.create(null);
+ social.conns=Object.create(null);social.online=Object.create(null);
 }
 function connectSocialPeer(n){
  if(typeof Peer==="undefined")return false;
  if(social.peer){try{social.peer.destroy()}catch(e){}social.peer=null}
- social.conns=Object.create(null);social.online=Object.create(null);social.pendingOut=Object.create(null);
+ social.conns=Object.create(null);social.online=Object.create(null);
  var gen=++social.peerGen;
  var p=null;
  try{p=new Peer(friendPeerId(n))}catch(e){social.peer=null;return false}
@@ -814,11 +787,10 @@ function connectSocialPeer(n){
    if(err.type==="unavailable-id"){
      /* The broker still holds this id from a moment ago — most often our
         OWN previous peer (same tab reloaded, a name re-set, a duplicate
-        connect racing itself), whose release takes a few seconds. That
-        used to be reported instantly as "username already taken", which
-        was the bug. Retry quietly for a while; only if the id is STILL
-        held after ~20s is it genuinely someone else online right now,
-        and even then the account and name are kept. */
+        connect racing itself), whose release takes a few seconds. Retry
+        quietly for a while; only if the id is STILL held after ~20s is
+        it genuinely someone else online right now, and even then the
+        account and name are kept. */
      social.retryN++;
      if(social.retryN<=6){
        friendsSay("接続を再試行しています…（"+social.retryN+"/6）");
@@ -839,53 +811,154 @@ function connectSocialPeer(n){
  });
  return true;
 }
-function startSocialSession(n,msg){
- teardownSocialPeer();
- social.name=n;social.loggedIn=true;
- saveSocial();
- openFriends(msg||"接続しています…");
- if(typeof Peer==="undefined"){openFriends("オンライン基盤（PeerJS）の読み込みに失敗しました。通信環境を確認して、ページを開き直してください。");return}
- if(!connectSocialPeer(n))openFriends("接続に失敗しました。もう一度お試しください。");
+/* ---- Firestore listeners (friends + requests) ---- */
+function stopFbListeners(){social.unsubs.forEach(function(u){try{u()}catch(e){}});social.unsubs=[];social.reqSeen={};social.pendingIn=[]}
+function refreshFriendNames(){
+ var uids=social.friendUids.slice();
+ if(!uids.length){if(social.friends.length){social.friends=[];social.friendNames={};if($("friendsSheet"))openFriends(social.lastMsg)}return}
+ var names={},done=0;
+ uids.forEach(function(u){
+   fbDb.collection("users").doc(u).get().then(function(s){
+     if(s.exists){var d=s.data();if(d&&typeof d.name==="string")names[u]=d.name}
+   }).catch(function(){}).then(function(){
+     done++;
+     if(done<uids.length)return;
+     var newFriends=uids.map(function(x){return names[x]}).filter(function(x){return !!x});
+     var changed=newFriends.join("\u0001")!==social.friends.join("\u0001");
+     social.friendNames=names;social.friends=newFriends;
+     social.friends.forEach(function(fn){friendConnect(fn)});
+     if(changed&&$("friendsSheet"))openFriends(social.lastMsg);
+   });
+ });
+}
+function approveRequest(reqId,fromUid){
+ if(!FB_OK||!social.uid||!reqId)return;
+ fbDb.collection("users").doc(social.uid).update({friends:firebase.firestore.FieldValue.arrayUnion(fromUid)}).catch(function(){});
+ fbDb.collection("requests").doc(reqId).update({status:"accepted"}).then(function(){friendsSay("フレンド申請を承認しました")}).catch(function(){friendsSay("承認に失敗しました。通信環境を確認してください。")});
+}
+function rejectRequest(reqId){
+ if(!FB_OK||!reqId)return;
+ fbDb.collection("requests").doc(reqId).delete().then(function(){friendsSay("フレンド申請を断りました")}).catch(function(){});
+}
+function startFbListeners(){
+ if(!FB_OK||!social.uid)return;
+ var uid=social.uid;
+ social.unsubs.push(fbDb.collection("users").doc(uid).onSnapshot(function(snap){
+   var d=snap.exists?snap.data():null;
+   social.friendUids=(d&&Array.isArray(d.friends))?d.friends.filter(function(x){return typeof x==="string"}).slice(0,100):[];
+   refreshFriendNames();
+ },function(){}));
+ social.unsubs.push(fbDb.collection("requests").where("to","==",uid).where("status","==","pending").onSnapshot(function(qs){
+   var list=[];
+   qs.forEach(function(doc){
+     var r=doc.data()||{};
+     list.push({id:doc.id,from:r.from||"",fromName:typeof r.fromName==="string"?r.fromName:""});
+     if(!social.reqSeen[doc.id]){
+       social.reqSeen[doc.id]=1;
+       (function(reqId,fromUid,fromName){
+         showSocialToast("<b>"+escHtml(fromName)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(reqId,fromUid)}},{label:"断る",fn:function(){rejectRequest(reqId)}}]);
+       })(doc.id,r.from||"",typeof r.fromName==="string"?r.fromName:"");
+     }
+   });
+   var changed=list.map(function(x){return x.id}).join(",")!==social.pendingIn.map(function(x){return x.id}).join(",");
+   social.pendingIn=list;
+   if(changed&&$("friendsSheet"))openFriends(social.lastMsg);
+ },function(){}));
+ social.unsubs.push(fbDb.collection("requests").where("from","==",uid).onSnapshot(function(qs){
+   qs.forEach(function(doc){
+     var r=doc.data()||{};
+     if(r.status==="accepted"&&typeof r.to==="string"){
+       fbDb.collection("users").doc(uid).update({friends:firebase.firestore.FieldValue.arrayUnion(r.to)}).catch(function(){});
+       doc.ref.delete().catch(function(){});
+       showSocialToast("フレンド申請が承認され、フレンドになりました",[]);
+     }
+   });
+ },function(){}));
+}
+/* ---- session handling ---- */
+function startFbSession(uid,displayName){
+ teardownSocialPeer();stopFbListeners();
+ social.uid=uid;social.name=displayName;social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];
+ startFbListeners();
+ if(typeof Peer==="undefined"){
+   openFriends("ログインしました。ただしオンライン基盤（PeerJS）の読み込みに失敗したため、オンライン状態の表示と対戦の招待は使えません。フレンド申請・承認はそのまま使えます。");
+   return;
+ }
+ connectSocialPeer(displayName);
+ openFriends("ログインしました。ユーザーネーム「"+displayName+"」で接続しています…");
+}
+function loadUserProfile(uid){
+ fbDb.collection("users").doc(uid).get().then(function(s){
+   if(social.uid===uid&&social.loggedIn)return;
+   if(s.exists){var d=s.data();if(d&&typeof d.name==="string"&&validDisplayName(d.name)){startFbSession(uid,d.name);return}}
+   if(pendingRegName){
+     var n=pendingRegName;pendingRegName="";
+     fbDb.collection("usernames").doc(userDocId(n)).set({uid:uid}).catch(function(){});
+     fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n)}).catch(function(){startFbSession(uid,n)});
+     return;
+   }
+   if($("friendsSheet"))openFriends("アカウント情報の読み込みに失敗しました。ページを開き直してください。");
+ }).catch(function(){});
+}
+function onFbAuth(user){
+ if(user){loadUserProfile(user.uid);return}
+ if(social.loggedIn){
+   teardownSocialPeer();stopFbListeners();
+   social.loggedIn=false;social.name="";social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];
+   if($("friendsSheet"))openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
+ }
 }
 function registerAccount(){
+ if(!FB_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
  var nInp=$("regNameInput"),pInp=$("regPassInput"),p2Inp=$("regPass2Input");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"",pw2=p2Inp?p2Inp.value:"";
  if(!validDisplayName(n)){openFriends("ユーザーネームは1〜20文字で入力してください。日本語・英数字・記号など、ほとんどの文字が使えます。");return}
- if(pw.length<4||pw.length>64){openFriends("パスワードは4〜64文字で入力してください。");return}
+ if(pw.length<6){openFriends("パスワードは6文字以上で入力してください。");return}
+ if(pw.length>64){openFriends("パスワードは64文字以内で入力してください。");return}
  if(pw!==pw2){openFriends("パスワードが確認用と一致しません。もう一度入力してください。");return}
- if(accountExists(n)){openFriends("そのユーザーネームは、この端末では既にアカウント登録されています。ログイン欄からログインしてください（別の端末では同じ名前でも登録できます）。");return}
- createAccountRecord(n,pw);
- startSocialSession(n,"アカウントを作成しました。ユーザーネーム「"+n+"」で接続しています…");
+ openFriends("アカウントを作成しています…");
+ fbDb.collection("usernames").doc(userDocId(n)).get().then(function(s){
+   if(s.exists){openFriends("そのユーザーネームは既に使われています。ログイン欄からログインしてください。");return}
+   pendingRegName=n;
+   fbAuth.createUserWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){pendingRegName="";openFriends(fbErrMsg(e))});
+ }).catch(function(e){openFriends(fbErrMsg(e))});
 }
 function loginAccount(){
+ if(!FB_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
  var nInp=$("loginNameInput"),pInp=$("loginPassInput");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"";
  if(!validDisplayName(n)){openFriends("ユーザーネームを入力してください（1〜20文字）。");return}
- if(!accountExists(n)){openFriends("そのユーザーネームのアカウントは、この端末に登録されていません。下の「アカウント作成」から登録してください。");return}
- if(!checkAccountPassword(n,pw)){openFriends("パスワードが違います。もう一度入力してください。");return}
- startSocialSession(n,"ログインしました。ユーザーネーム「"+n+"」で接続しています…");
+ if(!pw){openFriends("パスワードを入力してください。");return}
+ openFriends("ログインしています…");
+ fbAuth.signInWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){openFriends(fbErrMsg(e))});
 }
 function logoutAccount(){
- teardownSocialPeer();
- social.loggedIn=false;
- saveSocial();
+ teardownSocialPeer();stopFbListeners();
+ social.loggedIn=false;social.name="";social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];
+ if(FB_OK&&fbAuth)fbAuth.signOut().catch(function(){});
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
 }
 function sendFriendRequest(){
  var inp=$("friendSearchInput");var n=cleanName(inp?inp.value:"");
+ if(!FB_OK){openFriends("フレンド申請にはオンライン環境が必要です。ネットワーク接続を確認してください。");return}
  if(!social.name||!social.loggedIn){openFriends("先にログインしてください。");return}
  if(!validDisplayName(n)){openFriends("検索するユーザーネームを入力してください（1〜20文字）。");return}
- if(n===social.name){openFriends("それは自分のユーザーネームです。");return}
+ if(nameKey(n)===nameKey(social.name)){openFriends("それは自分のユーザーネームです。");return}
  if(social.friends.indexOf(n)>=0){openFriends(n+" さんとは既にフレンドです。");return}
- social.pendingOut[n]={t:"freq",from:social.name};
- var c=friendConnect(n);
- if(c&&c.open){delete social.pendingOut[n];socialSend(n,{t:"freq",from:social.name});openFriends(n+" さんにフレンド申請を送りました。相手が承認するとフレンドになります。");return}
  openFriends(n+" さんを探しています…");
- setTimeout(function(){
-   if(social.pendingOut[n]&&!social.online[n]){delete social.pendingOut[n];if(social.conns[n]&&!social.conns[n].open)delete social.conns[n];friendsSay("「"+n+"」さんは見つかりませんでした。相手がこのページを開いてログインしている時だけ、検索して申請できます。")}
- },4500);
+ fbDb.collection("usernames").doc(userDocId(n)).get().then(function(s){
+   if(!s.exists){friendsSay("「"+n+"」さんは見つかりませんでした。ユーザーネームを正確に入力してください（大文字・小文字も区別されます）。");return}
+   var toUid=(s.data()||{}).uid;
+   if(typeof toUid!=="string"||!toUid||toUid===social.uid){friendsSay("「"+n+"」さんは見つかりませんでした。");return}
+   fbDb.collection("requests").where("from","==",social.uid).where("to","==",toUid).where("status","==","pending").get().then(function(qs){
+     if(!qs.empty){friendsSay(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
+     fbDb.collection("requests").add({from:social.uid,to:toUid,fromName:social.name,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+       friendsSay(n+" さんにフレンド申請を送りました。相手がオフラインでも、次にログインした時に届きます。");
+     }).catch(function(){friendsSay("申請の送信に失敗しました。通信環境を確認してください。")});
+   }).catch(function(){friendsSay("通信エラーが発生しました。ネットワーク接続を確認してください。")});
+ }).catch(function(){friendsSay("通信エラーが発生しました。ネットワーク接続を確認してください。")});
 }
 function inviteFriend(name){
  if(net.role!=="host"||!net.code){openFriends("招待は、ONLINE VS でルームを作って待機している時に送れます。まずルームを作成してください。");return}
@@ -896,26 +969,35 @@ function inviteFriend(name){
 var FRIEND_INPUT_STYLE="background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:150px;font-size:15px";
 function friendsHTML(msg){
  var rows="";
- if(!social.loggedIn||!social.name){
+ if(!FB_OK){
+   rows='<p>アカウント・フレンド機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。</p>'
+   +'<p style="color:var(--muted)">VS CPU・TRAINING・ローカル対戦は、ネットにつながっていなくても今まで通り遊べます。</p>';
+ }else if(!social.loggedIn||!social.name){
    rows='<p>フレンド機能を使うには、アカウントでログインしてください。初めての人は下の「アカウント作成」から、ユーザーネームとパスワードを登録してください。</p>'
    +'<h3 style="margin:12px 0 2px;color:#fff;font-size:15px">ログイン</h3>'
    +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="current-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="loginBtn" style="min-width:96px">ログイン</button></span></div>'
    +'<h3 style="margin:16px 0 2px;color:#fff;font-size:15px">アカウント作成</h3>'
    +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span><br><span class="bnote">日本語・英数字・記号など、ほとんどの文字が使えます（1〜20文字）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
-   +'<div class="bindRow"><div><span class="bname">パスワード</span><br><span class="bnote">4〜64文字。ログインのたびに必要になります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
+   +'<div class="bindRow"><div><span class="bname">パスワード</span><br><span class="bnote">6〜64文字。ログインのたびに必要になります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード（確認）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPass2Input" type="password" maxlength="64" placeholder="もう一度入力" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="registerBtn" style="min-width:96px">作成してログイン</button></span></div>'
-   +'<p style="color:var(--muted)">アカウントはこの端末の中にだけ保存されます（サーバーはありません）。パスワードは暗号化して保存され、平文では残りません。ログインはこの端末で保持されるので、次回開いた時も自動でオンラインになります。パスワードを忘れると復旧できないので、忘れないものにしてください。</p>';
+   +'<p style="color:var(--muted)">アカウントはクラウドに保存されるので、どの端末からでも同じユーザーネームとパスワードでログインでき、フレンド一覧もそのまま引き継がれます。一度ログインすれば、次回開いた時は自動でログインします（ログアウトするまで）。フレンド申請は相手がオフラインの時でも送っておけます。パスワードを忘れると復旧できないので、忘れないものにしてください。</p>';
  }else{
    rows='<p>あなたのユーザーネーム：<b style="color:#7dd3fc;font-size:16px">'+escHtml(social.name)+'</b>（ログイン中）　<button class="bindKey" id="logoutBtn" style="min-width:96px">ログアウト</button></p>'
-   +'<div class="bindRow"><div><span class="bname">フレンドを検索して追加</span><br><span class="bnote">相手のユーザーネームを入力して申請を送ります（相手がオンラインの時だけ届きます）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="friendSearchInput" maxlength="20" placeholder="相手の名前" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="friendSearchBtn" style="min-width:80px">申請する</button></span></div>'
-   +'<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">フレンド一覧</h3>';
+   +'<div class="bindRow"><div><span class="bname">フレンドを検索して追加</span><br><span class="bnote">相手のユーザーネームを入力して申請を送ります。相手がオフラインでも送っておけて、相手は次にログインした時に承認できます</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="friendSearchInput" maxlength="20" placeholder="相手の名前" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="friendSearchBtn" style="min-width:80px">申請する</button></span></div>';
+   if(social.pendingIn.length){
+     rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">届いているフレンド申請</h3>';
+     social.pendingIn.forEach(function(r){
+       rows+='<div class="bindRow"><div><span class="bname">'+escHtml(r.fromName)+'</span><br><span class="bnote">フレンド申請が届いています</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-approve="'+escHtml(r.id)+'" data-from="'+escHtml(r.from)+'" style="min-width:88px">承認する</button><button class="bindKey" data-reject="'+escHtml(r.id)+'" style="min-width:72px">断る</button></span></div>';
+     });
+   }
+   rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">フレンド一覧</h3>';
    if(!social.friends.length)rows+='<p style="color:var(--muted)">まだフレンドがいません。上の検索から申請してみましょう。</p>';
    social.friends.forEach(function(fn){
      var on=!!social.online[fn];
      rows+='<div class="bindRow"><div><span class="bname">'+escHtml(fn)+'</span><br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"● オンライン":"○ オフライン")+'</span></div><button class="bindKey" data-invite="'+escHtml(fn)+'" style="min-width:104px">ルームに招待</button></div>';
    });
-   rows+='<p style="color:var(--muted)">招待は、ONLINE VS でルームを作って待機している時に送れます。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。ログイン状態とフレンド一覧はこの端末に保存されるので、ページを閉じても消えません（ログアウトするまで、次回開いた時は自動でオンラインになります）。別のアカウントに切り替える時は、ログアウトしてからログインし直してください。</p>';
+   rows+='<p style="color:var(--muted)">フレンド一覧はクラウドに保存されるので、どの端末でログインしても同じ一覧が表示されます。招待は、ONLINE VS でルームを作って待機している時に送れます（相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。</p>';
  }
  return '<div id="friendsSheet"><h2>FRIENDS — フレンド</h2>'+rows+'<p id="bindMsg">'+escHtml(msg||"")+'</p></div>';
 }
@@ -926,22 +1008,25 @@ function wireFriendsBtns(){
  var sb=$("friendSearchBtn");if(sb)sb.onclick=sendFriendRequest;
  var inv=document.querySelectorAll("[data-invite]");
  for(var i=0;i<inv.length;i++)(function(b){b.onclick=function(){inviteFriend(b.getAttribute("data-invite"))}})(inv[i]);
+ var ap=document.querySelectorAll("[data-approve]");
+ for(var j=0;j<ap.length;j++)(function(b){b.onclick=function(){approveRequest(b.getAttribute("data-approve"),b.getAttribute("data-from"))}})(ap[j]);
+ var rj=document.querySelectorAll("[data-reject]");
+ for(var k=0;k<rj.length;k++)(function(b){b.onclick=function(){rejectRequest(b.getAttribute("data-reject"))}})(rj[k]);
  var lp=$("loginPassInput");if(lp)lp.onkeydown=function(e){if(e.key==="Enter")loginAccount()};
  var rp=$("regPass2Input");if(rp)rp.onkeydown=function(e){if(e.key==="Enter")registerAccount()};
 }
 function openFriends(msg){if(msg!==undefined)social.lastMsg=msg;if(social.loggedIn&&social.name&&!social.peer)connectSocialPeer(social.name);openSheet(friendsHTML(social.lastMsg));wireFriendsBtns();if(social.loggedIn&&social.name)social.friends.forEach(function(fn){friendConnect(fn)})}
 function friendsSay(msg){if(msg)social.lastMsg=msg;if($("friendsSheet"))openFriends(social.lastMsg)}
 $("friendsBtn").onclick=function(){beep(600,.07);openFriends()};
-/* restore the saved session: a name saved by older versions stays the
-   display name, but going online now requires an account login — typing
-   the password once (login, or create) is what enables the auto-login
-   on later visits */
-loadSocial();
-if(social.name&&social.loggedIn&&accountExists(social.name)){
- connectSocialPeer(social.name);
-}else{
- social.loggedIn=false;
-}
+/* The old on-device account store (localStorage) is retired: accounts
+   and friends now live in the cloud. Drop the stale keys so nothing on
+   this device keeps using them. */
+try{localStorage.removeItem("jailbreaker.social.v1");localStorage.removeItem("jailbreaker.accounts.v1")}catch(e){}
+/* Firebase Auth keeps the session on this device: once signed in, later
+   visits sign in automatically until you log out — and because the
+   account itself lives in the cloud, the same login works everywhere. */
+if(FB_OK&&fbAuth)fbAuth.onAuthStateChanged(onFbAuth);
+
 /* ---- keyboard input ----
    WASD (and the arrow keys) are FIXED movement keys: they can never be
    remapped, and no other action can be assigned to them. The action keys
