@@ -162,10 +162,36 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
 #socialToast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(3,14,26,.97);border:1.5px solid var(--cyan);border-radius:14px;color:#fff;padding:12px 16px;z-index:90;display:none;max-width:92vw;box-shadow:0 12px 34px rgba(0,0,0,.65);font-weight:800;font-size:14px}
 #socialToast.on{display:block}
 #socialToast .stBtns{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
-/* update history on the title screen: dates only, no notes */
-.updHist{margin-top:9px;font-size:11px;line-height:1.55;color:var(--muted)}
+/* ===== update log system: title-screen preview + full history sheet =====
+   Data lives in UPDATE_LOG (script below). Add one entry at the top of
+   UPDATE_LOG and both the title preview and the history sheet update. */
+.updHist{margin-top:9px;font-size:11px;line-height:1.55;color:var(--muted);pointer-events:auto;max-width:46vw}
 .updHist .updTitle{font-weight:900;color:#cbd5e1;letter-spacing:.1em;font-size:10.5px}
-.updHist ul{list-style:none;margin:1px 0 0;padding:0;max-height:88px;overflow:hidden}
+.updRow{display:flex;gap:7px;align-items:center;background:none;border:0;color:inherit;text-align:left;padding:2px 0;width:100%;min-height:0;font-size:11px;line-height:1.45}
+.updRow .d{color:#7dd3fc;font-weight:900;white-space:nowrap;font-family:"DotGothic16","Noto Sans JP",sans-serif;font-size:11.5px}
+.updRow .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#dbeafe;font-weight:700}
+.updRow:hover .t,.updRow:focus-visible .t{color:var(--ice);text-decoration:underline}
+.newBadge{background:#4ade80;color:#04222e;border-radius:999px;padding:0 7px;font-size:9.5px;font-weight:900;letter-spacing:.08em;white-space:nowrap;line-height:1.7}
+.updMore{background:none;border:0;color:var(--cyan);font-weight:900;font-size:11px;padding:3px 0;min-height:0;letter-spacing:.04em}
+.updMore:hover{color:var(--ice);text-decoration:underline}
+@media(max-width:760px){.updHist{max-width:60vw}}
+/* full history sheet */
+.updSearch{width:100%;background:#0f1c38;border:1.5px solid var(--line);border-radius:10px;color:#fff;font-family:inherit;font-weight:700;font-size:14px;padding:9px 13px;margin:10px 0 8px;outline:none}
+.updSearch:focus{border-color:var(--cyan)}
+.updChips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:4px}
+.updChip{background:#1e293b;border:1.5px solid #475569;color:#fff;border-radius:999px;padding:5px 14px;font-weight:900;font-size:12.5px;min-height:32px}
+.updChip.sel{border-color:#4ade80;background:rgba(74,222,128,.22);color:#bbf7d0}
+.updChip:hover{border-color:var(--cyan)}
+.updCount{color:var(--muted);font-size:12px;font-weight:800;margin:6px 0 0}
+.updItem{border-top:1px solid var(--line);padding:14px 0 6px}
+.updItemHead{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.updDate{font-family:"DotGothic16","Noto Sans JP",sans-serif;font-size:17px;color:#7dd3fc;letter-spacing:.04em}
+.updTimes{color:var(--muted);font-size:11px;font-weight:700}
+.updTag{border-radius:999px;padding:1px 10px;font-size:11px;font-weight:900;line-height:1.8;white-space:nowrap}
+.updItemTitle{color:#fff;font-weight:900;font-size:16.5px;line-height:1.45;margin-top:5px}
+.updItem ul{margin:6px 0 8px;padding-left:19px}
+.updItem li{color:#cbd5e1;font-weight:700;line-height:1.65;font-size:13.5px;margin:2px 0}
+.updEmpty{color:var(--muted);font-weight:700;font-size:14px;padding:18px 0 8px;text-align:center}
 </style>
 </head>
 <body>
@@ -175,7 +201,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="skyline" aria-hidden="true"><div class="bldg" style="height:55%"></div><div class="bldg" style="height:78%"></div><div class="bldg" style="height:42%"></div><div class="bldg" style="height:88%"></div><div class="bldg" style="height:60%"></div><div class="bldg" style="height:96%"></div><div class="bldg" style="height:48%"></div><div class="bldg" style="height:72%"></div></div>
   <div class="topbar">
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="lbBtn">Leaderboards</button><span class="pill" style="border-color:#67e8f9">◉ VS CPU / TRAINING</span></div>
-    <div style="display:flex;gap:8px"><button class="pill" id="howBtn">遊び方</button><button class="pill" id="movesBtnTop">Kairoの技</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="updBtn">アップデート履歴</button><button class="pill" id="howBtn">遊び方</button><button class="pill" id="movesBtnTop">Kairoの技</button></div>
   </div>
   <div class="logoWrap">
     <div class="super">SUPER</div>
@@ -194,7 +220,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ホスト権限方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY</span><ul><li>2026/11/12 23:44</li><li>2026/11/12 19:41</li><li>2026/11/12 17:22</li><li>2026/11/12 17:10</li><li>2026/11/12 08:12</li><li>2026/11/12 07:59</li><li>2026/11/11 23:10</li><li>2026/11/11 07:08</li><li>2026/11/11 02:31</li><li>2026/11/10 22:23</li></ul></span></span>
+    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ホスト権限方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal +60HP shown on screen</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -264,6 +290,108 @@ var $=function(id){return document.getElementById(id)};
 /* ---------- modal contents ---------- */
 function openSheet(html){$("sheet").innerHTML=html+'<button class="gbtn primary" style="margin-top:14px" onclick="document.getElementById(\'modal\').classList.remove(\'on\')">閉じる</button>';$("modal").classList.add("on")}
 $("modal").addEventListener("click",function(e){if(e.target===this){this.classList.remove("on");capturingFor=null}});
+/* ================= アップデート履歴システム =================
+   更新を記録するときは、UPDATE_LOG の先頭に1件追加するだけ。
+   タイトル画面左下のプレビュー（最新3件）と、詳細画面（全履歴・
+   カテゴリ絞り込み・キーワード検索）の両方へ自動で反映される。
+   1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
+               title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
+var UPDATE_LOG=[
+ {date:"2026/11/13",times:["00:15"],tag:"修正・調整",title:"入力できない文字とアカウント作成エラーを修正",
+  items:["入力欄（ユーザーネーム・パスワード・ルームコード・検索など）で、ゲームの操作キーと重なっている文字（W／A／S／D／J／K／U／L、矢印キー、スペースなど）が打てなかった不具合を修正。文字を入力している間は、キー入力がゲーム側に渡らないようにした",
+         "アカウント作成がエラーになって失敗する不具合を修正。作成の前に行っていた名前チェックが権限エラーで止まっていたため、手順の順番を見直した",
+         "すでに使われているユーザーネームで登録しようとした場合は、そのことが分かるメッセージを表示するようにした",
+         "エラーが起きた時に原因（エラーコード）が分かるよう、エラーメッセージを詳しくした"]},
+ {date:"2026/11/13",times:["00:01"],tag:"新機能",title:"アップデート履歴システムを追加",
+  items:["タイトル画面左下の更新履歴に、日付だけでなく更新内容の見出しも表示するように変更（これまでは日時のみ）",
+         "上部の「アップデート履歴」ボタン／「すべての履歴を見る」から、日付と内容がセットになった全履歴を新しい順に読める詳細画面を追加",
+         "詳細画面ではカテゴリ（新機能／大型更新／修正・調整／公開）での絞り込みと、キーワード検索ができる",
+         "今後の更新は履歴データの先頭に1件追加するだけで、タイトル画面と詳細画面の両方へ自動反映される仕組みにした"]},
+ {date:"2026/11/12",times:["23:44","19:41","17:22","17:10","08:12","07:59"],tag:"大型更新",title:"フレンド＆アカウントのクラウド化とバランス調整",
+  items:["アカウントとフレンドを端末保存から Firebase クラウド保存へ移行：ユーザーネーム＋パスワード（6文字以上）で登録・ログインでき、次回からは自動ログイン。フレンド申請は相手がオフラインでも送れる",
+         "フレンド機能を追加：ユーザーネーム検索 → 申請・承認、オンライン表示、ルーム招待へのワンタップ参加",
+         "バランス調整：KAIRO のウルト範囲を縮小（135×105）。AXE のウルトは最後の吹き飛ばしをなくし、押している間の持続ダメージを強化（0.25秒ごとに13）。ウルトゲージは全員が約1.5倍溜まりにくく（KOJIRO／WARDEN はさらに1.2倍）、全攻撃に小さな硬直（+0.07秒）を追加。WARDEN の ↓+J はノックバック・硬直なしのダメージのみに",
+         "全キャラのドット絵を、シルエット・当たり判定・モーションはそのままに一段細かく描き込み（KAIRO の頬の毛束と目のハイライト、WARDEN のパネルの継ぎ目とアンテナ、KOJIRO の鍔・柄巻き・草履、AXE の筋肉の陰影と髭の毛流れなど）",
+         "タイトル画面左下に更新履歴（日時）を表示"]},
+ {date:"2026/11/11",times:["23:10","07:08","02:31"],tag:"修正・調整",title:"オンライン対戦とウルトまわりの修正",
+  items:["オンライン対戦で全員のウルトが正常に溜まらない不具合を修正",
+         "KAIRO のウルトの範囲（射程と当たり範囲）を狭くした",
+         "KOJIRO の移動速度を少しアップ。ウルトは最大3個までストックでき、1個たまれば発動できる（発動ごとに1個消費）仕様に変更",
+         "エフェクトが四角く見える問題を、テクスチャに円形フェードを焼き込んで四角い縁が見えないように修正"]},
+ {date:"2026/11/10",times:["22:23"],tag:"公開",title:"jailbreaker.io を公開（初版）",
+  items:["HP制＋キルで +100 ポイントのスコアレース形式の対戦格闘を実装。プレイアブルは氷の狐 KAIRO と看守ロボ WARDEN",
+         "J連打チェーン＋方向・同時押しで技が変化する派生技システム、氷弾などの飛び道具、ダッシュ（クールタイム2.4秒）",
+         "カメラがファイターを追う広い横画面ステージとミニマップ",
+         "ウルトは当てると即再チャージされて連続で撃てる（最大5回、切れたらリセット）",
+         "キー配置の変更に対応（WASD は固定・重複は禁止）。PeerJS のルームコード方式でオンライン対戦、VS CPU／TRAINING はオフラインで遊べる"]}
+];
+var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
+function updTagStyle(tag){
+ if(tag==="新機能")return "background:rgba(34,211,238,.18);color:#a5f3fc;border:1px solid rgba(34,211,238,.55)";
+ if(tag==="大型更新")return "background:rgba(251,191,36,.16);color:#fde68a;border:1px solid rgba(251,191,36,.55)";
+ if(tag==="修正・調整")return "background:rgba(251,113,133,.15);color:#fda4af;border:1px solid rgba(251,113,133,.5)";
+ return "background:rgba(45,212,191,.15);color:#99f6e4;border:1px solid rgba(45,212,191,.5)";
+}
+/* title screen: latest 3 entries (date + headline), tap to open the sheet */
+function renderUpdPreview(){
+ var box=$("updPreview");if(!box)return;
+ var h="";
+ for(var i=0;i<UPDATE_LOG.length&&i<3;i++){
+  var u=UPDATE_LOG[i];
+  h+='<button class="updRow" data-upd-open="1"><span class="d">'+u.date+'</span>'+(i===0?'<span class="newBadge">NEW</span>':"")+'<span class="t">'+u.title+'</span></button>';
+ }
+ box.innerHTML=h;
+ var rows=box.querySelectorAll("[data-upd-open]");
+ for(var j=0;j<rows.length;j++){rows[j].onclick=function(){openUpdateLog()}}
+}
+var updFilter="すべて",updQuery="";
+function updListHTML(){
+ var q=updQuery.replace(/\s+/g,"").toLowerCase(),shown=0,h="";
+ for(var i=0;i<UPDATE_LOG.length;i++){
+  var u=UPDATE_LOG[i];
+  if(updFilter!=="すべて"&&u.tag!==updFilter)continue;
+  if(q){
+   var hay=(u.date+u.tag+u.title+u.items.join("")).replace(/\s+/g,"").toLowerCase();
+   if(hay.indexOf(q)<0)continue;
+  }
+  shown++;
+  h+='<div class="updItem"><div class="updItemHead"><span class="updDate">'+u.date+'</span>'
+    +(u.times&&u.times.length?'<span class="updTimes">'+u.times.join(" / ")+' 更新</span>':"")
+    +'<span class="updTag" style="'+updTagStyle(u.tag)+'">'+u.tag+'</span>'
+    +(i===0?'<span class="newBadge">最新</span>':"")
+    +'</div><div class="updItemTitle">'+u.title+'</div><ul>';
+  for(var k=0;k<u.items.length;k++){h+="<li>"+u.items[k]+"</li>"}
+  h+="</ul></div>";
+ }
+ if(!shown)h='<div class="updEmpty">条件に合うアップデートがありません。<br>キーワードやカテゴリを変えてみてください。</div>';
+ return {html:h,shown:shown};
+}
+function renderUpdList(){
+ var box=$("updList");if(!box)return;
+ var r=updListHTML();
+ box.innerHTML=r.html;
+ var c=$("updCount");if(c)c.textContent="全 "+UPDATE_LOG.length+" 件中 "+r.shown+" 件を表示中（新しい順）";
+ var chips=document.querySelectorAll(".updChip");
+ for(var i=0;i<chips.length;i++){chips[i].classList.toggle("sel",chips[i].getAttribute("data-tag")===updFilter)}
+}
+function openUpdateLog(){
+ updFilter="すべて";updQuery="";
+ var chips="";
+ for(var i=0;i<UPD_TAGS.length;i++){chips+='<button class="updChip" data-tag="'+UPD_TAGS[i]+'">'+UPD_TAGS[i]+'</button>'}
+ openSheet('<h2>アップデート履歴</h2><p>更新した日付と、その内容を新しい順に記録しています。タイトル画面左下には最新の3件が表示されます。</p>'
+  +'<input class="updSearch" id="updSearch" type="search" placeholder="キーワードで検索（例：フレンド、ウルト、KOJIRO）" autocomplete="off">'
+  +'<div class="updChips">'+chips+'</div><p class="updCount" id="updCount"></p><div id="updList"></div>');
+ var chipsEls=document.querySelectorAll(".updChip");
+ for(var j=0;j<chipsEls.length;j++){
+  chipsEls[j].onclick=function(){updFilter=this.getAttribute("data-tag");renderUpdList()};
+ }
+ var s=$("updSearch");
+ if(s){s.addEventListener("input",function(){updQuery=this.value;renderUpdList()})}
+ renderUpdList();
+}
+$("updBtn").onclick=function(){openUpdateLog()};
+$("updMoreBtn").onclick=function(){openUpdateLog()};
+renderUpdPreview();
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
 +'<div class="moveRow"><div><b>J — アイスクロー（チェーン式＋状況で別物に変化）</b> <span style="color:var(--cyan);font-weight:900">J→J→J の最大3連撃／方向で役割が変わる</span><p>地上Jは最大3連撃のチェーン：1段目は踏み込みなしの通常の横払い、2段目は返し斬りで、どちらにも突進は付かない。猶予（0.9秒）以内に押し続けると3段目が出て、3段目だけが短い突進付きの回転フィニッシュになる（突進は短距離、出したあとはクールタイム長め）。1→2→3段の間隔は少し長めに調整してある。間が空くと1段目に戻る。<br>①横払い → ②返し斬り → ③突進フィニッシュ（短距離・長めの硬直）。<br>方向との組み合わせは「判定違い」ではなく仕組みから別物：<b>前+J＝ブリンク斬り</b>（氷の軌跡を残して約105先へ瞬間移動し、斬撃。相手をすり抜けて背後に回れるが、硬直は長め）／ <b>後ろ+J＝バックステップ斬り</b>（前に薙ぎながら後ろへ跳んで距離を作る間合い調整技）／ <b>↑+J＝ライジングアッパー</b>（当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる）／ <b>↓+J＝アイススライド</b>（滑った地面が凍り、数秒残る<b>氷の床</b>に相手が乗ると凍って鈍る）／ <b>空中J＝ホバースピン</b>（空中に滞留しながら回転し、<b>最大3ヒット</b>。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない）／ <b>空中↓+J＝急降下斬り</b>（斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る）。</p></div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。爪の一撃→回転テイルの2ヒットで大きく吹っ飛ばす。Jチェーンはリセットされる。</p></div></div>'
@@ -724,7 +852,9 @@ function fbErrMsg(e){
  if(c==="auth/network-request-failed")return "通信エラーが発生しました。ネットワーク接続を確認して、もう一度お試しください。";
  if(c==="auth/too-many-requests")return "ログイン試行が続いたため、一時的に制限されています。しばらく待ってからお試しください。";
  if(c==="auth/invalid-email")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
- return "エラーが発生しました。通信環境を確認して、もう一度お試しください。";
+ if(c==="auth/operation-not-allowed")return "アカウント機能が一時的に使えなくなっています。しばらく待ってからお試しください。";
+ if(c==="permission-denied"||c==="firestore/permission-denied")return "データベースへのアクセスが拒否されました。時間をおいてもう一度お試しください。";
+ return "エラーが発生しました"+(c?"（"+c+"）":"")+"。通信環境を確認して、もう一度お試しください。";
 }
 var toastTimer=null;
 function hideSocialToast(){var t=$("socialToast");if(t)t.classList.remove("on");if(toastTimer){clearTimeout(toastTimer);toastTimer=null}}
@@ -887,18 +1017,45 @@ function startFbSession(uid,displayName){
  connectSocialPeer(displayName);
  openFriends("ログインしました。ユーザーネーム「"+displayName+"」で接続しています…");
 }
-function loadUserProfile(uid){
+function claimPendingName(uid,n){
+ /* Runs SIGNED IN (the only state in which Firestore reads are allowed):
+    claim the username for this account, then create the profile doc.
+    If a DIFFERENT account already owns the name key (possible when two
+    spellings map to the same key, e.g. "Taro" vs "taro"), roll the fresh
+    sign-up back instead of stealing or sharing the name. */
+ var unRef=fbDb.collection("usernames").doc(userDocId(n));
+ function writeProfile(){
+   unRef.set({uid:uid}).catch(function(){});
+   fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n)}).catch(function(){startFbSession(uid,n)});
+ }
+ unRef.get().then(function(us){
+   var owner=us.exists?(us.data()||{}).uid:null;
+   if(us.exists&&owner!==uid){
+     var cu=null;try{cu=fbAuth.currentUser}catch(e){}
+     if(cu&&cu.uid===uid){try{cu.delete().catch(function(){})}catch(e){}}
+     try{fbAuth.signOut()}catch(e){}
+     openFriends("そのユーザーネームは既に使われています。別の名前で登録するか、ログイン欄からログインしてください。");
+     return;
+   }
+   writeProfile();
+ }).catch(function(){writeProfile()});
+}
+function loadUserProfile(uid,retried){
  fbDb.collection("users").doc(uid).get().then(function(s){
    if(social.uid===uid&&social.loggedIn)return;
    if(s.exists){var d=s.data();if(d&&typeof d.name==="string"&&validDisplayName(d.name)){startFbSession(uid,d.name);return}}
    if(pendingRegName){
      var n=pendingRegName;pendingRegName="";
-     fbDb.collection("usernames").doc(userDocId(n)).set({uid:uid}).catch(function(){});
-     fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n)}).catch(function(){startFbSession(uid,n)});
+     claimPendingName(uid,n);
      return;
    }
    if($("friendsSheet"))openFriends("アカウント情報の読み込みに失敗しました。ページを開き直してください。");
- }).catch(function(){});
+ }).catch(function(){
+   /* A failed profile read during registration must not dead-end the
+      sign-up silently: retry once, then surface a real message. */
+   if(pendingRegName&&!retried){setTimeout(function(){if(fbAuth&&fbAuth.currentUser&&fbAuth.currentUser.uid===uid)loadUserProfile(uid,true)},1500);return}
+   if($("friendsSheet"))openFriends("アカウント情報の読み込みに失敗しました。通信環境を確認して、ページを開き直してください。");
+ });
 }
 function onFbAuth(user){
  if(user){loadUserProfile(user.uid);return}
@@ -918,11 +1075,15 @@ function registerAccount(){
  if(pw.length>64){openFriends("パスワードは64文字以内で入力してください。");return}
  if(pw!==pw2){openFriends("パスワードが確認用と一致しません。もう一度入力してください。");return}
  openFriends("アカウントを作成しています…");
- fbDb.collection("usernames").doc(userDocId(n)).get().then(function(s){
-   if(s.exists){openFriends("そのユーザーネームは既に使われています。ログイン欄からログインしてください。");return}
-   pendingRegName=n;
-   fbAuth.createUserWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){pendingRegName="";openFriends(fbErrMsg(e))});
- }).catch(function(e){openFriends(fbErrMsg(e))});
+ /* Create the Auth account FIRST, then claim the username while signed
+    in. The old order read the usernames collection while signed out,
+    which the Firestore rules deny (permission-denied) — so EVERY
+    registration aborted with a generic error before it even reached
+    Firebase Auth. A taken name now surfaces as auth/email-already-in-use
+    (same synthetic address), and claimPendingName() covers spellings
+    that share a name key. */
+ pendingRegName=n;
+ fbAuth.createUserWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){pendingRegName="";openFriends(fbErrMsg(e))});
 }
 function loginAccount(){
  if(!FB_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
@@ -1094,9 +1255,22 @@ function openSettings(msg){
  var r=$("bindReset");
  if(r)r.onclick=function(){bindings={j:DEFAULT_BINDINGS.j,k:DEFAULT_BINDINGS.k,l:DEFAULT_BINDINGS.l,ult:DEFAULT_BINDINGS.ult,dash:DEFAULT_BINDINGS.dash};capturingFor=null;rebuildKeyMap();refreshKeyDisplays();openSettings("キー配置をデフォルトに戻しました")};
 }
+/* Text fields own the keyboard while they are focused. The game handlers
+   below used to run for EVERY keydown on the page: any key that is also a
+   game key (W/A/S/D, the arrow keys, J/K/U/L, Space, Shift…) was
+   preventDefault()ed even while the user was typing in the username /
+   password / room-code / search inputs, so those characters simply never
+   reached the field — the "some letters can't be typed" bug. Every global
+   key handler now bails out when the event target is a text field. */
+function typingInField(e){
+ var t=e&&e.target;if(!t||t===document||t===window)return false;
+ var tag=t.tagName;
+ return tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT"||!!t.isContentEditable;
+}
 /* key-capture for rebinding runs in the capture phase, before the game
    handler, and swallows the key so it never triggers a game action */
 window.addEventListener("keydown",function(e){
+ if(typingInField(e))return;
  if(!capturingFor)return;
  if(!$("modal").classList.contains("on")){capturingFor=null;return}
  e.preventDefault();e.stopPropagation();
@@ -1114,6 +1288,7 @@ window.addEventListener("keydown",function(e){
 rebuildKeyMap();refreshKeyDisplays();
 var lastTap={left:0,right:0};
 window.addEventListener("keydown",function(e){
+ if(typingInField(e))return;
  if(e.code==="Escape"||e.code==="KeyP"){togglePause();return}
  var k=keyMap[e.code];if(!k)return;
  $("gameScreen").classList.add("kbMode"); /* any real key press switches the bottom bar to the keyboard HUD */
@@ -1127,7 +1302,7 @@ window.addEventListener("keydown",function(e){
    }
  }
 });
-window.addEventListener("keyup",function(e){var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0)P1.vy=-JUMP_CUT}});
+window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0)P1.vy=-JUMP_CUT}});
 window.addEventListener("blur",function(){keys={}});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
