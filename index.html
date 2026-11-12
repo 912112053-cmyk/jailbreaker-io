@@ -323,6 +323,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["01:29"],tag:"修正・調整",title:"KOJIROのウルト強化（溜まり・与ダメージ ×1.75）",
+  items:["KOJIROのウルト（斬空）の溜まりを×1.75に強化：攻撃を当てた時に増えるウルトゲージの量が、これまでの1.75倍になった（ストックの仕様＝最大3本・1本で発動可は変更なし）",
+         "KOJIROのウルト（斬空）の与ダメージも×1.75に強化：斬撃波のダメージが42→74になった（42×1.75＝73.5を四捨五入）。ノックバック・速度・判定は変更なし",
+         "対象はKOJIROのウルトのみ。通常技のダメージ、他キャラ（KAIRO／WARDEN／AXE）のウルト溜まり・ダメージは変更なし"]},
  {date:"2026/11/13",times:["01:20"],tag:"修正・調整",title:"フレンド申請が届かない問題を修正／オンラインのラグ軽減",
   items:["フレンド申請が相手に届かなかった問題を修正。申請の受け取り方法を見直し、ログイン中はつねに受信できる状態にしたので、オフラインの間に送られた申請も次回ログインした時に必ず表示される。届いている申請はまとめて知らせるようにし（複数件でも見落とさない）、メニューの FRIENDS ボタンにも未処理の申請件数が出るようにした",
          "ユーザーネームの照合方法を登録・ログイン・検索すべてで統一（文字の正規化を同じにした）。あわせて、名前から相手を引くための登録が保存できていなかったアカウントは、ログイン時に自動で保存し直すようにしたので、これまで検索で見つからなかった人も次回ログイン以降は見つかるようになる",
@@ -2359,8 +2363,9 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up){
 /* ult meter gain per hit (user tuning): overall gain is divided by 1.5 —
    ults were charging too fast — and KOJIRO / WARDEN pay a further 1/1.2
    on top of that. Kairo keeps his older personal 1/1.6 rate and Kojiro
-   his 1.45 base rate underneath those divisors. */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:1))/1.5;if(att.char==="kojiro"||att.char==="warden")m/=1.2;return dmg*1.9*m}
+   his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
+   his ult meter gain is multiplied by a further 1.75 on top of all that. */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:1))/1.5;if(att.char==="kojiro"||att.char==="warden")m/=1.2;if(att.char==="kojiro")m*=1.75;return dmg*1.9*m}
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
  if(def.dead||def.invuln>0)return false;
  /* GUARD (all characters): while guarding on the ground, a FRONTAL hit
@@ -3267,7 +3272,7 @@ function loop(ts){
    /* projectiles */
    projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind!=="wave"&&pr.kind!=="slash")pr.vy+=128*STEP;pr.life-=STEP;if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard")&&Math.random()<0.16)spawnFxBurst(charFxImg(pr.owner?pr.owner.char:"kairo"),pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="throwaxe"?38:30))&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="throwaxe"?0.6:0.56))){foe=qf;break}}
      if(foe){
-       if(pr.kind==="slash"){applyHit(pr.owner,foe,42,780,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)}
+       if(pr.kind==="slash"){applyHit(pr.owner,foe,74,780,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult slash wave damage buffed x1.75 (user tuning): 42 -> 74 (42*1.75=73.5, rounded) */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
