@@ -324,6 +324,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["03:04"],tag:"修正・調整",title:"SARAを上方修正（吹っ飛び耐性／フレイムブレス／ジャベリン／火炎放射）",
+  items:["SARAのふっとばされやすさを0.89倍に上方修正：ノックバックの受け倍率が 1.00 → 0.89 になり、これまでより吹っ飛びにくくなった",
+         "空中↑+J＝フレイムブレスを上方修正：約1.0秒の溜め中は空中で静止するようにし、その後は従来どおり0.85秒間・0.16秒間隔で8ダメージの左右に広がるコーン＋燃焼は1.0秒→2.0秒に延長。放射中の落下速度は40→20に抑えられ、ゆっくり落ちながら吹けるようになった",
+         "U＝ファイアジャヴェリンを上方修正：クールタイム 7秒 → 4.2秒。投射速度520・放物線はそのままに、直撃ダメージ 10 → 24（ノックバック300はそのまま）＋燃焼 1.6秒 → 2.0秒。地面・台に着弾した後の設置型の火種は残留 約5秒 → 約6秒、燃焼範囲は半径48 → 64に拡大（範囲内の相手は燃焼1.1秒で燃え続ける）",
+         "L（必殺）＝火炎放射を上方修正：ゲージMAXでゲージを0に消費する仕様はそのままに、放射時間が 約1.45秒 → 約1.86秒に延長。0.16秒間隔・前方6〜215の範囲・1ヒット9ダメージはそのままなので、総ヒット数が増えて総ダメージが伸びた",
+         "対象はSARAのみ。他キャラ・SARAの他の技は変更なし"]},
  {date:"2026/11/13",times:["02:05"],tag:"大型更新",title:"オンライン対戦をP2Pロールバック方式に刷新（ラグ対策）",
   items:["オンライン対戦の同期方式を、ホストが計算して結果を配る方式から、本家と同じ考え方の「ロールバック方式」に作り替えた。全員の端末が同じ試合を60fpsで同時に計算し、やり取りするのはフレームごとの入力だけ。自分のキャラは固定2フレームの遅延ですぐ動く",
          "相手の入力が遅れて届いた場合は、先に予測で進めておいて、本物が届いた時点でそのフレームまで巻き戻して計算し直す（ロールバック）。遅れを「待つ」のではなく「巻き戻して吸収する」ので、ホスト有利もなくなった",
@@ -507,14 +513,14 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +'<div class="moveRow"><div><b>U — 豪腕ラリアット（突進体当たり）</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.9秒・飛び道具なし</span><p>旧・投げ斧は廃止。代わりに巨体ごと肩から突っ込む短距離ラリアット。斧ではなく腕と肩で殴るのでリーチは短いが、密着すれば<b>37ダメージ</b>＋強烈な吹っ飛ばし（強化済み：旧23ダメージ）。踏み込み距離は短く、外すと硬直が長い。遠くへは何も飛ばない、間合いを詰めるための近接技。</p></div></div>'
 +'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へゆっくり突進</b>する。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>押されている間ずっとダメージを受け続ける</b>。突進が終わっても<b>吹き飛ばしはなく</b>、相手はその場で解放される——その分、押されている間の持続ダメージは大きくなっている。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p></div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。巨体ゆえ他のキャラよりダッシュ自体も少し遅い。</p></div></div>';
-var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×1.60</b>と速い。</p>'
-+'<div class="moveRow"><div><b>J — ラッシュ（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J→J で次段へ・全4段</span><p>地上Jは最大4連撃のチェーン。各段とも<b>0.2秒スタン</b>付き。<br>①<b>爪ひっかき</b>：小ダメージの素早い一爪。→ ②<b>火の粉ブレス</b>：火の粉を吹いて<b>小ダメージ2ヒット</b>。→ ③<b>アッパー</b>：相手を空へ浮かせる小ダメージ。浮かせた相手は空中Jで追撃できる。→ ④<b>尻尾フィニッシュ</b>：振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。間が空くと1段目に戻る。<br>方向との組み合わせ：<b>ダッシュ中J＝ホーンチャージ</b>（ツノで突進。中ダメージ＋吹っ飛ばし）／ <b>↓+J＝ハンドフレア</b>（両手を左右に広げて炎を出し続ける継続攻撃。発生は遅めで、技中は自分の移動速度が大きく下がり、技後の硬直も長め）／ <b>↑+J＝ライジングフレア【暫定】</b>（指定が「考え中」だった枠の仮実装。斬り上げアッパーで、当てると<b>2段ジャンプが回復</b>する）／ <b>空中J＝スピンフレイム</b>（炎を纏った拳で左右に回転しながら攻撃。<b>全5ヒットの小ダメージ</b>、各ヒット0.2秒スタン）／ <b>空中↑+J＝フレイムブレス</b>（上方向の円錐形・広範囲に炎を吹く。<b>発生が約1秒と激遅</b>だが大ダメージ＋継続ダメージ。溜め中は空中でほぼ静止する）／ <b>空中↓+J＝落下フレイムフィスト</b>（炎を纏った拳で真下へ落下攻撃。中ダメージ＋着地時に衝撃波）。</p></div></div>'
+var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×1.60</b>と速い。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。</p>'
++'<div class="moveRow"><div><b>J — ラッシュ（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J→J で次段へ・全4段</span><p>地上Jは最大4連撃のチェーン。各段とも<b>0.2秒スタン</b>付き。<br>①<b>爪ひっかき</b>：小ダメージの素早い一爪。→ ②<b>火の粉ブレス</b>：火の粉を吹いて<b>小ダメージ2ヒット</b>。→ ③<b>アッパー</b>：相手を空へ浮かせる小ダメージ。浮かせた相手は空中Jで追撃できる。→ ④<b>尻尾フィニッシュ</b>：振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。間が空くと1段目に戻る。<br>方向との組み合わせ：<b>ダッシュ中J＝ホーンチャージ</b>（ツノで突進。中ダメージ＋吹っ飛ばし）／ <b>↓+J＝ハンドフレア</b>（両手を左右に広げて炎を出し続ける継続攻撃。発生は遅めで、技中は自分の移動速度が大きく下がり、技後の硬直も長め）／ <b>↑+J＝ライジングフレア【暫定】</b>（指定が「考え中」だった枠の仮実装。斬り上げアッパーで、当てると<b>2段ジャンプが回復</b>する）／ <b>空中J＝スピンフレイム</b>（炎を纏った拳で左右に回転しながら攻撃。<b>全5ヒットの小ダメージ</b>、各ヒット0.2秒スタン）／ <b>空中↑+J＝フレイムブレス</b>（上方向の円錐形・広範囲に炎を吹く。<b>約1.0秒の溜め中は空中で静止</b>し、その後<b>0.85秒間・0.16秒間隔で8ダメージ</b>の左右に広がるコーン＋<b>燃焼2.0秒</b>。放射中の落下速度は<b>20</b>に抑えられる）／ <b>空中↓+J＝落下フレイムフィスト</b>（炎を纏った拳で真下へ落下攻撃。中ダメージ＋着地時に衝撃波）。</p></div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — フレイムテイル・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>爪の一撃→回転尻尾の2ヒットで吹っ飛ばす。Jチェーンはリセットされる。</p></div></div>'
 +'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・発生遅め・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。出は遅いが一撃は重い。空中でも同じ拳が出る。</p></div></div>'
 +'<div class="moveRow"><div><b>↓+K — モードカオス</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト</span><p>発動時に<b>自分のHPを1/3削る</b>代わりに、以降の<b>すべての攻撃の与ダメージが+30%</b>になる。効果は倒されるまで続く（HPは残り1未満にはならない）。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p></div></div>'
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム約2.5秒</span><p>翼をはためかせて<b>その場で真上へ即座に飛び上がる</b>。復帰・回避・空中コンボの起点に。飛翔のあとも2段ジャンプが残る。</p></div></div>'
-+'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・クールタイム7秒</span><p>炎の玉を放物線で投げる。相手に直接当たればダメージ＋炎上付与。地面に落ちるとその場に<b>設置型の火種</b>として約5秒残り、触れた相手を燃やして<b>継続ダメージ</b>を与える。（スマホでは K/L 枠の L 側タップ）</p></div></div>'
-+'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>正面の広範囲に炎を放射し続ける（約1.5秒）。当たっている間ずっと<b>継続大ダメージ</b>を与え、相手は燃え続ける。<b>吹っ飛ばしは一切なし</b>——逃げ場のない場所で押し込み続けるための必殺。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p></div></div>'
++'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・クールタイム4.2秒</span><p>炎の玉を<b>投射速度520・放物線</b>で投げる。直撃は<b>24ダメージ・ノックバック300＋燃焼2.0秒</b>。地面・台に着弾するとその場に<b>設置型の火種</b>として約6秒残り、<b>半径64以内</b>の相手を<b>燃焼1.1秒</b>で燃やし続ける。（スマホでは K/L 枠の L 側タップ）</p></div></div>'
++'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、正面の広範囲に炎を放射し続ける（<b>約1.86秒・0.16秒間隔</b>）。<b>前方6〜215</b>の範囲に当たっている間ずっと<b>1ヒット9ダメージ</b>を与え、相手は燃え続ける。<b>吹っ飛ばしは一切なし</b>——逃げ場のない場所で押し込み続けるための必殺。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p></div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。ダッシュ速度は1080と速い。</p></div></div>';
 function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":"KAIRO")))}
 var playerChar="kairo";
@@ -600,7 +606,7 @@ function charStats(c){
  if(c==="axe")return{hp:360,spd:0.72,kb:0.72,dash:800};
  if(c==="warden")return{hp:MAXHP,spd:0.9,kb:0.86,dash:920};
  if(c==="kojiro")return{hp:MAXHP,spd:1.16,kb:1.02,dash:1080};
- if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:1,dash:1080}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 1080, HP 270 (user spec) */
+ if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:1080}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 1080, HP 270 (user spec) */
  return{hp:MAXHP,spd:1,kb:1,dash:DASH_SPEED};
 }
 function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":"#a5f3fc")))}
@@ -1319,15 +1325,15 @@ function rbTail(){
    else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)}
    else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
    else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
-   else if(pr.kind==="javelin"){applyHit(pr.owner,foe,10,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,1.6);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)}
+   else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.0);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)}
    else{applyHit(pr.owner,foe,13,245,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85}
    return false}
-  for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:5,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}}
+  for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:6,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}}
   return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
  particles=particles.filter(function(p){p.x+=p.vx*SIM_STEP;p.y+=p.vy*SIM_STEP;p.vy+=(p.amb?-4:300)*SIM_STEP;p.vx*=0.97;return(p.life-=SIM_STEP)>0});
  fxBursts=fxBursts.filter(function(b){return(b.life-=SIM_STEP)>0});
  icePatches=icePatches.filter(function(p){return(p.t-=SIM_STEP)>0});
- fireOrbs=fireOrbs.filter(function(ob){ob.t-=SIM_STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<48&&Math.abs((of.y+of.h)-ob.y)<28){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+ fireOrbs=fireOrbs.filter(function(ob){ob.t-=SIM_STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
  floaters=floaters.filter(function(fl){fl.y-=34*SIM_STEP;return(fl.life-=SIM_STEP)>0});
  shake*=Math.pow(0.001,SIM_STEP);if(shake<0.25)shake=0;
 }
@@ -2547,7 +2553,7 @@ function startSaraAttack(f,type,foe){
     Her kit is built around the 4-stage J rush, flame DoT (burn), a
     self-buff paid for in HP (モードカオス: -1/3 HP, all damage +30%,
     applied centrally in applyHit while f.chaos is on), a placed fire
-    orb (ファイアジャヴェリン, CD 7s) and a no-knockback flame jet as
+    orb (ファイアジャヴェリン, CD 4.2s) and a no-knockback flame jet as
     her L (火炎放射). 地上上+J was left "考え中" in the spec, so it is a
     provisional rising upper for now (ライジングフレア). */
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
@@ -2567,10 +2573,11 @@ function startSaraAttack(f,type,foe){
      meleeHit(f,foe,70,62,15,480,f.face,0.85);
      spawnParticles(f.x+f.face*10,f.y+f.h*0.6,9,"#fb923c",180);beep(300,.09,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
-     /* 空中上J: フレイムブレス — upward cone breath. Startup is VERY
-        slow (~1s of hovering wind-up, per spec) before 0.85s of wide
-        upward flame ticks: big damage + burn (handled in stepFighter
-        via flameMode 2) */
+     /* 空中上J: フレイムブレス — upward cone breath (buffed spec).
+        ~1.0s of charge while she is fully stationary in the air, then
+        0.85s of wide upward flame ticks every 0.16s: 8 damage per tick
+        + burn 2.0s, and her fall speed is held at 20 while breathing
+        (handled in stepFighter via flameMode 2) */
      if(f.flameT>0||f.flameDelay>0)return;
      f.state="supflame";f.stateT=1.95;f.attackCd=2.05;f.comboWin=0;
      f.flameDelay=1.0;f.flameT=0.85;f.flameMode=2;f.flameTick=0;
@@ -2671,20 +2678,22 @@ function startSaraAttack(f,type,foe){
      spawnParticles(f.x-f.face*8,f.y+f.h*0.45,7,"#fb923c",130);beep(170,.16,"sawtooth",.055);
    }
  }else if(type==="l"){
-   /* U: ファイアジャヴェリン — throws a fire orb in an arc (CD 7s,
-      specCd). A direct hit damages + ignites; on landing it becomes a
-      placed fire orb (fireOrbs) that keeps burning anyone who touches
-      it for ~5s. Conversion happens in the projectile step. */
+   /* U: ファイアジャヴェリン — throws a fire orb at speed 520 in an
+      arc (CD 4.2s, specCd). A direct hit deals 24 damage, KB 300 and
+      burn 2.0s; on landing on ground/a platform it becomes a placed
+      fire orb (fireOrbs) that stays ~6s and keeps foes within radius
+      64 burning (burn 1.1s). Conversion happens in the projectile step. */
    if(f.specCd>0){beep(200,.07);return}
-   f.specCd=7;f.state="sjavelin";f.stateT=0.3;f.attackCd=0.44;f.comboWin=0;
+   f.specCd=4.2;f.state="sjavelin";f.stateT=0.3;f.attackCd=0.44;f.comboWin=0;
    projectiles.push({x:f.x+f.face*38,y:f.y+f.h*0.4,vx:f.face*520,vy:-190,owner:f,life:2.6,kind:"javelin"});
    spawnParticles(f.x+f.face*26,f.y+f.h*0.4,8,"#fb923c",160);beep(840,.09,"sine",.05);
  }else if(type==="ult"){
-   /* L: 火炎放射 — her ult slot: at full meter she breathes a wide
-      flame jet forward for ~1.45s (stepFighter, flameMode 1). Heavy
-      continuous damage + burn, but NO knockback at all (noKb ticks) */
-   if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.5;f.attackCd=1.6;f.comboWin=0;
-   f.flameDelay=0;f.flameT=1.45;f.flameMode=1;f.flameTick=0;
+   /* L: 火炎放射 — her ult slot: consumes the full meter to 0 and
+      breathes a wide flame jet forward for ~1.86s (stepFighter,
+      flameMode 1): ticks every 0.16s for 9 damage over forward range
+      6-215. Heavy continuous damage + burn, but NO knockback (noKb) */
+   if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.91;f.attackCd=2.01;f.comboWin=0;
+   f.flameDelay=0;f.flameT=1.86;f.flameMode=1;f.flameTick=0;
    floaters.push({x:f.x,y:f.y-30,txt:"火炎放射！",life:1.0,col:"#fdba74"});
    spawnParticles(f.x+f.face*20,f.y+f.h*0.4,20,"#fb923c",230);
    beep(110,.4,"sawtooth",.08);setTimeout(function(){beep(240,.3,"sawtooth",.06)},80);
@@ -3038,13 +3047,13 @@ function stepFighter(f,dt,input,foe){
  if(f.char==="sara"&&(f.flameT>0||f.flameDelay>0)){
    if(f.flameDelay>0){
      f.flameDelay-=dt;
-     if(f.vy>20)f.vy=20; /* she hangs in the air while the breath charges */
+     f.vy=0; /* charge: she is fully stationary in the air (gravity is also held for flameDelay in the gravity step) */
      if(Math.random()<0.55)spawnParticles(f.x+(Math.random()-0.5)*22,f.y+f.h*0.3,1,"#ff8f5c",70);
      if(f.flameDelay<=0)beep(300,.22,"sawtooth",.06);
    }else if(f.flameT>0){
      f.flameT-=dt;f.flameTick-=dt;
      if(f.flameMode===1)f.vx-=f.vx*Math.min(1,dt*9); /* rooted while breathing the ult jet */
-     if(f.flameMode===2&&f.vy>40)f.vy=40;
+     if(f.flameMode===2&&f.vy>20)f.vy=20;
      if(Math.random()<0.8){
        if(f.flameMode===1)spawnParticles(f.x+f.face*(44+Math.random()*120),f.y+f.h*0.42+(Math.random()-0.5)*44,2,"#fb923c",120);
        else spawnParticles(f.x+(Math.random()-0.5)*70,f.y-30-Math.random()*90,2,"#fb923c",110);
@@ -3053,7 +3062,7 @@ function stepFighter(f,dt,input,foe){
        for(var fli=0;fli<fighters.length;fli++){var flt=fighters[fli];if(flt===f||flt.dead||flt.invuln>0)continue;
          var fdx=(flt.x-f.x)*f.face,fdy=(flt.y+flt.h/2)-(f.y+f.h*0.45);
          if(f.flameMode===1){if(fdx>6&&fdx<215&&Math.abs(fdy)<80){applyHit(f,flt,9,0,f.face,0,true,flt.x,flt.y+flt.h*0.45,true);flt.burnT=Math.max(flt.burnT||0,1.0);flt.burnBy=f}}
-         else{var udx=Math.abs(flt.x-f.x),udy=f.y-flt.y;if(udx<105&&udy>4&&udy<215){applyHit(f,flt,8,0,f.face,0,false,flt.x,flt.y+flt.h*0.5,true);flt.burnT=Math.max(flt.burnT||0,1.0);flt.burnBy=f}}
+         else{var udx=Math.abs(flt.x-f.x),udy=f.y-flt.y;if(udx<105&&udy>4&&udy<215){applyHit(f,flt,8,0,f.face,0,false,flt.x,flt.y+flt.h*0.5,true);flt.burnT=Math.max(flt.burnT||0,2.0);flt.burnBy=f}}
        }
      }
      if(f.flameT<=0){f.flameT=0;f.flameMode=0}
@@ -3210,8 +3219,10 @@ function stepFighter(f,dt,input,foe){
  /* gravity (heavier while falling, like the original's snappy arcs) */
  var g=(f.vy>0?GRAV_FALL:GRAV);
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
+ else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
  else f.vy+=g*dt;
  var cap=f.fastfall?FASTFALL:MAXFALL;if(f.vy>cap)f.vy=cap;
+ if(f.char==="sara"&&f.flameMode===2&&f.flameT>0&&f.vy>20)f.vy=20; /* SARA flame breath: fall speed held at 20 while breathing */
  var prevFeet=f.y+f.h;
  f.x+=f.vx*dt;f.y+=f.vy*dt;
  f.onGround=false;f.groundPlat=null;
@@ -3790,7 +3801,7 @@ function draw(){
  drawBG();
  icePatches.forEach(function(p){ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.4)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,34*pu,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
+ fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,64*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
  projectiles.forEach(function(pr){
    ctx.save();ctx.translate(pr.x,pr.y);
    if(pr.kind==="bolt"){ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,8,0,6.29);ctx.fill();ctx.fillStyle="#fdf4ff";ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill()}
@@ -3948,16 +3959,16 @@ function loop(ts){
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
-       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,10,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,1.6);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin: direct hit damages and ignites */
+       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.0);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin: direct hit damages and ignites */
        else{applyHit(pr.owner,foe,13,245,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85}
        return false}
-     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:5,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
+     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:6,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
-   /* SARA placed fire orbs: burn for ~5s; standing in one keeps a foe ignited */
-   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<48&&Math.abs((of.y+of.h)-ob.y)<28){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+   /* SARA placed fire orbs: burn for ~6s; foes within radius 64 keep burning (burn 1.1s) */
+   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
