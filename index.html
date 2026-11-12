@@ -239,7 +239,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ホスト権限方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ロールバック方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal +51HP shown on screen</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -324,6 +324,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["02:05"],tag:"大型更新",title:"オンライン対戦をP2Pロールバック方式に刷新（ラグ対策）",
+  items:["オンライン対戦の同期方式を、ホストが計算して結果を配る方式から、本家と同じ考え方の「ロールバック方式」に作り替えた。全員の端末が同じ試合を60fpsで同時に計算し、やり取りするのはフレームごとの入力だけ。自分のキャラは固定2フレームの遅延ですぐ動く",
+         "相手の入力が遅れて届いた場合は、先に予測で進めておいて、本物が届いた時点でそのフレームまで巻き戻して計算し直す（ロールバック）。遅れを「待つ」のではなく「巻き戻して吸収する」ので、ホスト有利もなくなった",
+         "全端末で同じ計算をするため、エフェクトも全員の画面にそのまま出るようになった（これまでのようなエフェクト同期漏れが起きない）。乱数は試合開始時に配られるシードで全端末共通化",
+         "定期的に状態チェックサムを交換して全端末の一致を確認し、ズレた場合や巻き戻し限界（24フレーム）を超えた場合は、ホストの状態を取り込んで自動で立て直す（リシンク）。ホストは部屋の管理・シード配布・リシンク専任で、対戦の計算そのものは全員対等",
+         "試合中に誰かが抜けた場合、そのキャラはそのままCPUが引き継いで対戦続行。ロビー・ルーム作成／参加・キャラ選択・フレンド招待・再戦の流れと、バランス数値、ローカル対戦・VS CPU・トレーニングは変更なし"]},
  {date:"2026/11/13",times:["01:45"],tag:"修正・調整",title:"AXEのU（豪腕ラリアット）を強化",
   items:["AXEのU＝豪腕ラリアットのダメージを 23 → 37 に強化",
          "あわせて吹っ飛ばしも強化：ノックバック 640 → 840。当たれば相手をはっきり吹き飛ばす",
@@ -521,7 +527,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openSheet(currentMovesHTML())};
 $("charBtn").onclick=function(){openSheet(currentMovesHTML())};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホスト側が対戦を進行し、ゲスト側に状態が同期される方式（ホスト権限）です。通信はP2P（PeerJSの無料シグナリング経由）で、アカウント登録やAPIキーは不要。ネットワーク環境によっては接続できない場合があり、ホストが閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。全員の端末が同じ試合を60fpsで計算し、フレームごとの入力だけを送り合う「ロールバック方式」です。自分のキャラはほぼ遅延なく動き、相手の入力が遅れた場合は巻き戻して計算し直すことで吸収します。ホストは部屋の管理役で、対戦そのものは全員対等です。通信はP2P（PeerJSの無料シグナリング経由）で、アカウント登録やAPIキーは不要。ネットワーク環境によっては接続できない場合があり、ホストが閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -579,7 +585,7 @@ var BUFFER_S=0.12,COYOTE_S=0.09;
 var MAXHP=250,REGEN_DELAY=4.5,REGEN_RATE=12.75; /* out-of-combat regen: 15 -> 12.75 HP/s (healing -15%, user tuning). The delay before regen starts (4.5s) is unchanged */
 /* --- input: held state + press buffer (so taps are never dropped) --- */
 var keys={},buf={};
-function press(a){buf[a]=performance.now();if(net.role==="guest"&&running&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:a})}catch(e){}}}
+function press(a){if(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"&&running){rbPressQ.push(a);return}buf[a]=performance.now();if(net.role==="guest"&&running&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:a})}catch(e){}}}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[];
@@ -587,7 +593,7 @@ var shake=0,hitstop=0,time=0,wins=0;
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="";
 var cam={x:0,y:0};
 var audioCtx=null;
-function beep(f,d,type,v){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
+function beep(f,d,type,v){if(typeof rb!=="undefined"&&rb&&rb.resim)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
 /* per-character base stats. AXE is the heavyweight: far more HP and
    knockback resistance, but his run/air speed and dash are much slower */
 function charStats(c){
@@ -621,34 +627,25 @@ function startMatch(m){
  P1=Fighter(playerChar,true,SPAWNS_ALL[0].x,SPAWNS_ALL[0].y);fighters.push(P1);
  if(mode==="online"){
    /* fighters come from the lobby roster (net.match, canonical order:
-      host first, then guests in connection order, up to 8). The host
-      simulates everyone; a guest builds its own fighter first (local P1)
-      and renders the rest from snapshots matched by netIdx. */
+      host first, then guests in connection order, up to 8) and are
+      built in that SAME order on every peer: rollback netcode steps
+      one shared simulation, so the fighters array itself must be
+      identical everywhere. The local player is fighters[net.myIdx]
+      (P1), wherever that sits in the order. */
    var mp=(net.match&&net.match.length>=2)?net.match:null;
    if(!mp){
      if(net.role==="guest"){mp=[{id:"host",char:forceP2Char||"warden"},{id:net.myId||"guest",char:playerChar}];net.myIdx=1}
      else{mp=[{id:"host",char:playerChar},{id:"guest",char:forceP2Char||guestChar||"warden"}];net.myIdx=0}
    }
    fighters=[];
-   if(net.role==="host"){
-     for(var hi=0;hi<mp.length;hi++){
-       var hp=mp[hi],hf=Fighter(hp.char,hi===0,SPAWNS_ALL[hi%SPAWNS_ALL.length].x,SPAWNS_ALL[hi%SPAWNS_ALL.length].y);
-       hf.netIdx=hi;hf.face=hf.x<1300?1:-1;
-       if(hi>0){hf.remote=true;hf.netGuest=net.guests[hp.id]||null}
-       fighters.push(hf);
-     }
-     P1=fighters[0];
-   }else{
-     var order=[net.myIdx];
-     for(var oi=0;oi<mp.length;oi++){if(oi!==net.myIdx)order.push(oi)}
-     for(var oj=0;oj<order.length;oj++){
-       var ci=order[oj],gp=mp[ci],gf=Fighter(gp.char,ci===net.myIdx,SPAWNS_ALL[ci%SPAWNS_ALL.length].x,SPAWNS_ALL[ci%SPAWNS_ALL.length].y);
-       gf.netIdx=ci;gf.face=gf.x<1300?1:-1;
-       fighters.push(gf);
-     }
-     P1=fighters[0];
+   for(var ci=0;ci<mp.length;ci++){
+     var gp=mp[ci],gf=Fighter(gp.char,ci===net.myIdx,SPAWNS_ALL[ci%SPAWNS_ALL.length].x,SPAWNS_ALL[ci%SPAWNS_ALL.length].y);
+     gf.netIdx=ci;gf.face=gf.x<1300?1:-1;gf.guardDir=gf.face;
+     if(ci!==net.myIdx)gf.remote=true;
+     fighters.push(gf);
    }
-   P2=fighters[1]||P1;forceP2Char=null;
+   P1=fighters[net.myIdx]||fighters[0];
+   P2=fighters[(net.myIdx+1)%fighters.length]||P1;forceP2Char=null;
  }else{
    var mixCycle=["warden","kojiro","kairo","axe","sara"];
    var nCpu=Math.max(1,Math.min(7,cpuCount));
@@ -660,11 +657,12 @@ function startMatch(m){
    }
    P2=fighters[1];
  }
- projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];fxBursts=[];fxQueue=[];fxSeenSnap=null;latestSnap=null;timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";running=true;
+ projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";running=true;
  buf={};$("endBtns").classList.remove("on");hideBanner();
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;clampCam();
  window.scrollTo(0,0);
+ if(mode==="online")rbReset(net.seed||1);else rb.active=false;
 }
 function clampCam(){
  var mx=WORLD_W-viewW+260,my=WORLD_H-viewH+320;
@@ -803,19 +801,32 @@ $("endCharBtn").onclick=function(){
 $("resetBtn").onclick=function(){if(!P1)return;if(mode==="online"){if(net.role==="host")hostStartOnline();return}startMatch(mode)};
 function togglePause(){if(!running||matchOver||mode==="online")return;paused=!paused;showCenter(paused?"PAUSE":"",paused?99999:0)}
 $("pauseBtn").onclick=togglePause;
-function showCenter(t,hold){var c=$("centerMsg");if(mode==="online"&&net.role==="host")hostBroadcast({t:"center",txt:t,hold:hold||0});if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
+function showCenter(t,hold){if(typeof rb!=="undefined"&&rb&&rb.resim)return;var c=$("centerMsg");if(mode==="online"&&net.role==="host"&&!(typeof rb!=="undefined"&&rb&&rb.active))hostBroadcast({t:"center",txt:t,hold:hold||0});if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
 var bannerTO=null;
-function showBanner(big,pts,sub,ms){$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(mode==="online"&&net.role==="host")hostBroadcast({t:"banner",big:big,pts:pts||"",sub:sub||""});if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
+function showBanner(big,pts,sub,ms){if(typeof rb!=="undefined"&&rb&&rb.resim)return;$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(mode==="online"&&net.role==="host"&&!(typeof rb!=="undefined"&&rb&&rb.active))hostBroadcast({t:"banner",big:big,pts:pts||"",sub:sub||""});if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
 function hideBanner(){$("banner").style.display="none"}
-/* ================= ONLINE VS (PeerJS P2P, host-authoritative) =================
+/* ================= ONLINE VS (PeerJS P2P, rollback netcode) =================
    VS CPU / TRAINING stay fully offline. ONLINE VS uses the free PeerJS
-   cloud broker for signalling and a direct WebRTC channel for play — no
-   account or API key needed. The HOST runs the real simulation and streams
-   snapshots (~25/s); the GUEST sends held keys + press events and renders
-   interpolated snapshots (locally, its own fighter is always "P1").
-   Honest limits: no rollback netcode (the guest view trails by roughly the
-   round-trip time), some network pairs cannot connect through NAT, and if
-   the host closes the page the match ends. */
+   cloud broker for signalling and direct WebRTC channels for play — no
+   account or API key needed, and NO game server: every peer runs the
+   full fixed-60fps simulation locally and the peers exchange nothing
+   but per-frame INPUTS (the host is a relay + room manager, not a
+   simulation authority). Local input is stamped INPUT_DELAY frames
+   ahead so every peer applies it on the same frame; a remote input
+   that has not arrived yet is predicted from the previous frame's held
+   keys, and when the real input lands the simulation rewinds to that
+   frame and re-simulates (rollback, up to RB_MAX_BACK frames). The sim
+   is deterministic: the host deals a random seed in the start message
+   and every random call inside the simulation draws from that seeded
+   stream, so identical inputs reproduce identical matches everywhere.
+   Peers periodically exchange a lightweight state checksum at fully
+   confirmed frames; on a mismatch (or a rollback that would reach
+   past the saved-state ring) the host's state at its latest confirmed
+   frame is broadcast and everyone re-syncs from it (resync). Effects
+   need no sync at all: every peer simulates the whole fight, so every
+   effect spawns locally on every screen. Honest limits: some network
+   pairs cannot connect through NAT, and if the host (the relay)
+   closes the page the match ends. */
 /* LOBBY: connecting never starts a match any more. Room create / join
    (room code or friend invite) lands everyone in the lobby first: the
    host owns the roster (display names: the cloud username when signed
@@ -823,53 +834,39 @@ function hideBanner(){$("banner").style.display="none"}
    join / leave / character pick, and only the host's 試合開始 button
    starts the match for everyone at once. Rooms hold up to 8 players
    total (host included); a full room answers 満員です and a room whose
-   match already started answers 試合中です. The match itself stays
-   host-authoritative, generalised from 1 guest to up to 7: the host
-   simulates every fighter, each guest renders snapshots matched to
-   fighters by their canonical roster index (netIdx). */
-var net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};
-var guestChar=null,hostChar=null,forceP2Char=null,latestSnap=null,snapSendT=0,lastFoSent=0;
-/* guest interpolation buffer: the last few snapshots with their
-   arrival times. Remote fighters are rendered ~100ms in the past,
-   lerped between the two snapshots bracketing that moment (see
-   guestFrame), so a 25/s snapshot stream still moves smoothly. */
-var snapBuf=[];
-/* ---- FX event sync (host -> guests) ----
-   Effects are spawned ONLY inside the host's simulation (particles,
-   sparks, rings, texture bursts, floating texts, ice patches, screen
-   shake), so a guest that only mirrors fighter snapshots never sees
-   them. Every spawn on the host is therefore ALSO recorded as a compact
-   event in fxQueue; sendSnap attaches the pending events to the next
-   snapshot (~25/s) and the guest replays them through the very same
-   spawn functions. The replay happens in onHostMsg, once per snapshot
-   at the moment it ARRIVES — the reliable, ordered PeerJS channel
-   delivers every snapshot exactly once, so no FX batch can be
-   skipped. (Replaying from the render loop instead keyed off "the
-   newest snapshot object seen this frame", and any snapshot that was
-   superseded between two frames — routine in a busy fight or on a
-   janking phone — silently took its whole FX batch with it. That,
-   not the recording side, is why guests kept missing effects.) The
-   host's own rendering is untouched. */
-var fxQueue=[],fxSeenSnap=null;
-function fxRec(ev){if(mode==="online"&&net.role==="host"){fxQueue.push(ev);if(fxQueue.length>400)fxQueue.splice(0,fxQueue.length-400)}}
+   match already started answers 試合中です. Fighters are always built
+   in canonical roster order (netIdx) on every peer — a rollback match
+   is only reproducible if everyone simulates the same array. */
+var net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false,seed:0};
+var guestChar=null,hostChar=null,forceP2Char=null;
+/* FX events are NOT synced any more: with rollback netcode every peer
+   runs the full simulation, so every effect spawns locally on every
+   screen by itself. fxRec stays behind as a no-op so the spawn
+   helpers' call sites do not need to change. */
+function fxRec(ev){}
 function fxImgKey(img){for(var k in FXIMG){if(FXIMG[k]===img)return k}return null}
-function replayFx(fx){
- if(!fx)return;
- for(var i=0;i<fx.length;i++){var e=fx[i];if(!e)continue;
-  if(e.k==="p")spawnParticles(e.x,e.y,e.n,e.c,e.s);
-  else if(e.k==="s")spawnSparks(e.x,e.y,e.d,e.c,e.n);
-  else if(e.k==="r")spawnRing(e.x,e.y,e.c,e.m);
-  else if(e.k==="b"){var im=FXIMG[e.i];if(im)spawnFxBurst(im,e.x,e.y,e.z,e.l,e.r,e.f,e.a)}
-  else if(e.k==="f")floaters.push({x:e.x,y:e.y,txt:e.t,life:e.l,col:e.c});
-  else if(e.k==="i")icePatches.push({x:e.x,y:e.y,w:e.w,t:3.5,owner:null});
- }
-}
 function hostBroadcast(m){for(var id in net.conns){var c=net.conns[id];if(c&&c.open){try{c.send(m)}catch(e){}}}}
-var rkeys={left:false,right:false,down:false,jump:false},rbuf={},rPrevJump=false,rDashDir=0;
+/* ---- rollback engine state (rbReset / rbStepNext live further down,
+   next to the simulation step they drive) ----
+   inputs[p]  : {map: frame->bits, cont: highest contiguous real frame}
+   used[p]    : frame->bits the latest sim pass actually consumed
+   lastRecv[p]: highest frame received from p (pacing / stall rule)
+   cpuFrom[p] : frame from which p's fighter is CPU-driven, or null
+   states     : frame->saved sim state at the START of that frame
+   ck         : state-frame->checksum of the world at that frame */
+var rb={active:false,resim:false,frame:0,acc:0,seed:0,inputs:[],used:[],lastRecv:[],cpuFrom:[],states:{},ck:{},confirmed:-1,lastCkSent:-1,ckBook:{},needResync:false,lastRsq:0,lastRsT:0,lastRsF:-1,endShown:false,stats:{rollbacks:0,resyncs:0,maxBack:0}};
+var rbPressQ=[];
+/* seeded RNG for everything inside the online simulation (mulberry32):
+   the host deals the seed in the start message, every peer draws the
+   same stream, and the stream state is part of the saved sim state, so
+   a rollback replays the AI's decisions bit-for-bit */
+var simSeedState=1;
+function simRand(){simSeedState=(simSeedState+0x6D2B79F5)|0;var t=simSeedState;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}
+function rnd(){return (mode==="online"&&rb&&rb.active)?simRand():Math.random()}
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦（P2P接続・ホストが対戦を進行する方式）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録やAPIキーは不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦（P2P接続・ロールバック方式：全員の端末が同じ試合を計算し、入力だけを送り合うので、遅延が少なくホスト有利もありません）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録やAPIキーは不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
  +'<p style="color:var(--muted)">※ ネットワーク環境によっては接続できない場合があります。ホストがページを閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
@@ -886,7 +883,7 @@ function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
-function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};guestChar=null;hostChar=null;latestSnap=null;snapBuf=[];rkeys={left:false,right:false,down:false,jump:false};rbuf={};rPrevJump=false;var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
+function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false,seed:0};guestChar=null;hostChar=null;rb.active=false;rb.resim=false;rbPressQ=[];var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
 function createRoom(){
  cleanupNet();net.role="host";net.code=genRoomCode();
  net.selfName=(social.loggedIn&&social.name)?social.name:"ゲスト1";
@@ -924,8 +921,22 @@ function onGuestGone(rec){
  if(net.role!=="host")return;
  rebuildRoster();broadcastRoster();
  /* in the lobby the list simply loses the leaver; mid-match their
-    fighter stays in the snapshot order and is handed to the CPU */
+    fighter stays in the canonical order and is handed to the CPU:
+    the takeover is scheduled for a frame a little in the future and
+    broadcast, so every peer switches that slot to the deterministic
+    AI on exactly the same frame and the simulations stay in sync */
  if(!net.started)renderLobby();
+ else if(rb.active&&rec.rbIdx!=null&&rec.rbIdx>0&&rb.cpuFrom[rec.rbIdx]==null){
+   /* the takeover frame must stay REACHABLE: once the leaver's inputs
+      stop, every peer's pacing cap is (their last received frame +
+      RB_MAX_AHEAD), so the switch is scheduled a few frames inside
+      that bound — still in the future for the host, and any peer who
+      somehow already passed it applies it via rollback */
+   var cf=rb.lastRecv[rec.rbIdx]+RB_MAX_AHEAD-2;
+   rb.cpuFrom[rec.rbIdx]=cf;
+   hostBroadcast({t:"cpu",s:net.seed,idx:rec.rbIdx,f:cf});
+   if(cf<rb.frame)rbRollback(cf);
+ }
 }
 /* a display name arriving from a guest: same shape the account system
    itself allows (1-20 characters, counted as characters — a 20-character
@@ -958,8 +969,18 @@ function onGuestMsg(rec,m){
    if(nm3)rec.name=nm3;
    if(["kairo","warden","kojiro","axe","sara"].indexOf(m.char)>=0){rec.char=m.char;rec.ready=true;rebuildRoster();broadcastRoster();renderLobby()}
  }
- else if(m.t==="i"){rec.keys.left=!!m.l;rec.keys.right=!!m.r;rec.keys.down=!!m.d;rec.keys.jump=!!m.j}
- else if(m.t==="p"){if(m.a==="dash"){rec.buf.dash=performance.now();rec.dashDir=m.dir||0}else if(typeof m.a==="string")rec.buf[m.a]=performance.now()}
+ else if(m.t==="in"){
+   /* one frame of guest input (plus a small redundancy window of the
+      previous frames): store it in the rollback log and relay it to
+      every other guest — the host is a relay here, not an authority */
+   if(rec.rbIdx==null||m.s!==net.seed)return;
+   var items=[[rec.rbIdx,m.f|0,m.b|0]];
+   if(m.w)for(var wi=0;wi<m.w.length;wi++){var wp=m.w[wi];if(wp&&rbStoreInput(rec.rbIdx,wp[0]|0,wp[1]|0))items.push([rec.rbIdx,wp[0]|0,wp[1]|0])}
+   rbStoreInput(rec.rbIdx,m.f|0,m.b|0);
+   hostBroadcast({t:"ins",s:net.seed,items:items});
+ }
+ else if(m.t==="ck"){if(m.s===net.seed)rbHostCk(m.f|0,rec.rbIdx,m.h|0)}
+ else if(m.t==="rsq"){rbDoResync(true)}
  else if(m.t==="rematch"){if(matchOver)beginRematch()}
  else if(m.t==="bye"){try{rec.conn.close()}catch(e){}}
 }
@@ -1008,19 +1029,15 @@ function onHostMsg(m){
  if(m.t==="dissolved"){guestRoomDissolved();return}
  if(m.t==="rematch"){net.started=false;$("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();showCenter("",0);openCharSelect("online-guest");return}
  if(m.t==="start"){
-   net.match=m.players||[];net.started=true;net.myIdx=0;
+   net.match=m.players||[];net.started=true;net.myIdx=0;net.seed=m.seed|0;
    for(var i=0;i<net.match.length;i++){if(net.match[i].id===net.myId)net.myIdx=i}
    hostChar=(net.match[0]&&net.match[0].char)||null;
    forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
    $("lobbyScreen").classList.remove("on");showCenter("",0);startMatch("online");return;
  }
- if(m.t==="s"){latestSnap=m;snapBuf.push({at:performance.now(),m:m});if(snapBuf.length>8)snapBuf.splice(0,snapBuf.length-8);
-   /* FX + shake + fire orbs are consumed HERE, at receive time, once
-      per snapshot: every snapshot the host sent is processed exactly
-      once, in order, no matter what the render loop is doing */
-   replayFx(m.fx);if(m.shk)shake=Math.max(shake,m.shk);
-   if(m.fo)fireOrbs=m.fo.map(function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
-   return}
+ if(m.t==="ins"){if(m.s!==net.seed)return;if(m.items)for(var ii=0;ii<m.items.length;ii++){var it=m.items[ii];if(it)rbStoreInput(it[0]|0,it[1]|0,it[2]|0)}return}
+ if(m.t==="rs"){if(m.s===net.seed)rbApplyResync(m);return}
+ if(m.t==="cpu"){if(m.s!==net.seed)return;if(rb.active&&m.idx>0){rb.cpuFrom[m.idx|0]=m.f|0;if((m.f|0)<rb.frame)rbRollback(m.f|0)}return}
  if(m.t==="banner"){showBanner(m.big,m.pts,m.sub);return}
  if(m.t==="center"){showCenter(m.txt,m.hold||0);return}
 }
@@ -1099,7 +1116,10 @@ function hostStartFromLobby(){
  if(net.match.length<2)return;
  net.started=true;
  guestChar=(net.match[1]&&net.match[1].char)||null;forceP2Char=guestChar;
- hostBroadcast({t:"start",players:net.match});
+ /* the host deals the match seed: every peer seeds its simulation
+    RNG with it, so the same inputs replay to the same match */
+ net.seed=(Math.random()*2147483646+1)|0;
+ hostBroadcast({t:"start",players:net.match,seed:net.seed});
  $("lobbyScreen").classList.remove("on");
  startMatch("online");
 }
@@ -1111,167 +1131,435 @@ function beginRematch(){
  $("endBtns").classList.remove("on");
  openCharSelect("online-host");
 }
-/* Snapshot payload diet (lag pass): fields sitting at their default
-   value are OMITTED instead of sent — the guest's applySnap already
-   defaults every one of them — timers are quantised to 1/20s steps,
-   the combo damage is rounded, and hpGhost only rides along while it
-   actually differs from hp (the guest decays its own ghost bar at the
-   host's rate in between). Same information, far fewer bytes per
-   fighter per tick, which matters most in 8-player rooms. */
-function snapFighter(f){
- var o={x:Math.round(f.x),y:Math.round(f.y),vx:Math.round(f.vx),vy:Math.round(f.vy),face:f.face,hp:Math.round(f.hp),sc:f.score,st:f.state,mt:Math.round(f.meter),am:f.ammo,dead:f.dead?1:0,fr:f.frozen>0?1:0,fl:f.flash>0?1:0,iv:f.invuln>0?1:0,hs:f.hitstun>0?1:0,og:f.onGround?1:0,ds:f.dashT>0?1:0,gd:f.guarding?1:0,gb:f.grabT>0?1:0};
- if(f.hpGhost>o.hp+1)o.hg=Math.round(f.hpGhost);
- var sT=Math.round(f.stateT*20)/20;if(sT)o.sT=sT;
- var lt=Math.round((f.landT||0)*20)/20;if(lt)o.lt=lt;
- if(f.guarding)o.gg=f.guardDir||f.face;
- var uc=Math.round((f.ultChargeT||0)*20)/20;if(uc)o.uc=uc;
- var dc=Math.round(f.dashCd*10)/10;if(dc)o.dc=dc;
- var sp=Math.round((f.specCd||0)*10)/10;if(sp)o.sp=sp;
- var rl=Math.round((f.reloadT||0)*10)/10;if(rl)o.rl=rl;
- if(f.comboHits)o.cb=f.comboHits;
- if(f.comboDmg)o.cg=Math.round(f.comboDmg);
- if(f.ultChain)o.ch=f.ultChain;
- if(f.chaos)o.cx=1; /* SARA: chaos mode on — guests draw the flame aura */
- if(f.burnT>0)o.bn=1; /* burning — guests draw the flame licks */
- return o;
-}
-function sendSnap(){
- if(!P1||!P2)return;
- /* floaters and ice patches are pushed inline at their call sites rather
-    than through a spawn helper, so any the host created since the last
-    snapshot are picked up here (flagged _s once queued) and ride along
-    as FX events, in spawn order relative to the helper-recorded ones
-    closely enough for one snapshot tick */
- for(var fi=0;fi<floaters.length;fi++){var fl=floaters[fi];if(!fl._s){fl._s=1;fxRec({k:"f",x:Math.round(fl.x),y:Math.round(fl.y),t:fl.txt,c:fl.col,l:Math.round(fl.life*100)/100})}}
- for(var ii=0;ii<icePatches.length;ii++){var ip=icePatches[ii];if(!ip._s){ip._s=1;fxRec({k:"i",x:Math.round(ip.x),y:Math.round(ip.y),w:ip.w})}}
- var fx=fxQueue;fxQueue=[];
- /* fx / shk keys are attached only when they carry something */
- var sm={t:"s",fs:fighters.map(snapFighter),pr:projectiles.map(function(p){return{x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),k:p.kind}}),tm:Math.round(timer*10)/10,over:matchOver?1:0};
- if(fx.length)sm.fx=fx;
- /* SARA's placed fire orbs are live simulation state, not one-shot
-    events, so they ride as their own list (usually empty): guests
-    mirror the set and shed the flame particles locally. Sent while
-    any exist, plus one final empty list so guests clear the set. */
- if(fireOrbs.length||lastFoSent){sm.fo=fireOrbs.map(function(o){return{x:Math.round(o.x),y:Math.round(o.y),t:Math.round(o.t*10)/10}});lastFoSent=fireOrbs.length}
- var shkNow=Math.round(shake*10)/10;if(shkNow>0)sm.shk=shkNow;
- hostBroadcast(sm);
-}
 function hostStartOnline(){
- /* in-match restart (reset button): same roster, same characters */
+ /* in-match restart (reset button): same roster, same characters,
+    fresh seed so the new match re-seeds every peer's RNG */
  if(!net.match||net.match.length<2)return;
  net.started=true;
- hostBroadcast({t:"start",players:net.match});
+ net.seed=(Math.random()*2147483646+1)|0;
+ hostBroadcast({t:"start",players:net.match,seed:net.seed});
  startMatch("online");
 }
-/* guest inputs are assembled on the HOST: rkeys/rbuf mirror the local
-   keys/buf pair, so the remote fighter gets the same buffered presses, the
-   same J+K simultaneity window and the same variable jump cut as local */
-function rconsumeWithin(rec,a,ms){var t=rec.buf[a];if(t&&performance.now()-t<=ms){delete rec.buf[a];return true}if(t)delete rec.buf[a];return false}
-function gatherRemoteInput(f){
- var inp={left:false,right:false,down:false,jump:false};
- var rec=f?f.netGuest:null;if(!rec)return inp;
- var rk=rec.keys;
- inp.left=!!rk.left;inp.right=!!rk.right;inp.down=!!rk.down;
- f.hDown=!!rk.down;f.hUp=!!rk.jump;
- f.hFwd=(f.face===1&&!!rk.right)||(f.face===-1&&!!rk.left);
- f.hBack=(f.face===1&&!!rk.left)||(f.face===-1&&!!rk.right);
- if(rec.prevJump&&!rk.jump&&!f.onGround&&f.vy<-JUMP_CUT&&f.hitstun<=0)f.vy=-JUMP_CUT;
- rec.prevJump=!!rk.jump;
- if(rec.buf.jump){if(performance.now()-rec.buf.jump<=BUFFER_S*1000)inp.jump=true;delete rec.buf.jump}
- if(rec.buf.dash){var dashFresh=performance.now()-rec.buf.dash<=350;var dd=rec.dashDir;delete rec.buf.dash;if(dashFresh)tryDash(f,dd||(inp.right?1:(inp.left?-1:f.face)))}
- if(f.attackCd<=0&&f.hitstun<=0){
-   var nowP=performance.now(),tj=rec.buf.j,tk=rec.buf.k;
-   if(tj&&tk&&Math.abs(tj-tk)<=90&&nowP-Math.max(tj,tk)<=350){delete rec.buf.j;delete rec.buf.k;startAttack(f,"jk")}
-   else if(tj&&nowP-tj>=55){if(rconsumeWithin(rec,"j",350))startAttack(f,"j")}
-   else if(tk&&nowP-tk>=55){if(rconsumeWithin(rec,"k",350))startAttack(f,"k")}
-   else if(!tj&&!tk){if(rconsumeWithin(rec,"l",350))startAttack(f,"l");else if(rconsumeWithin(rec,"ult",350))startAttack(f,"ult")}
+/* ================= ROLLBACK ENGINE =================
+   Every peer steps the SAME deterministic simulation at a fixed
+   60fps. Only inputs travel the network, packed into one integer per
+   player per frame:
+     1 left | 2 right | 4 down | 8 jump-held | 16 jump-press |
+     32 J | 64 K | 128 L | 256 ULT | 512 dash-left | 1024 dash-right |
+     2048 dash (direction resolved at apply time)
+   A peer stamps its own input RB_DELAY frames ahead, so by the time
+   frame F is stepped, F's local input is already fixed on every
+   peer. A remote input that has not arrived is predicted (previous
+   frame's held keys, no presses); when the real one lands and differs
+   from what was used, the state saved at that frame is restored and
+   the gap re-simulated. Saved states form a ring of RB_KEEP frames;
+   the checksum / resync machinery below covers anything deeper. */
+var SIM_STEP=1/60,RB_DELAY=2,RB_MAX_AHEAD=12,RB_KEEP=30;
+/* every scalar a Fighter carries that the simulation reads or writes
+   (peer-local dressing — isPlayer / remote / netIdx / trail — is
+   deliberately NOT in the list: it is fixed at build time and must
+   never travel in a resync state) */
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+function rbSaveState(){
+ var st={tm:time,ti:timer,cd:countdown,mo:matchOver,sh:shake,hs:hitstop,rng:simSeedState,fs:[],pr:[],fo:[],ip:[]};
+ for(var i=0;i<fighters.length;i++){var f=fighters[i],o={};
+  for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
+  o.la=f.lastAttacker?fighters.indexOf(f.lastAttacker):-1;
+  o.gb=f.grabBy?fighters.indexOf(f.grabBy):-1;
+  o.bb=f.burnBy?fighters.indexOf(f.burnBy):-1;
+  o.pb=f.pushBy?fighters.indexOf(f.pushBy):-1;
+  o.gp=f.groundPlat?platforms.indexOf(f.groundPlat):-1;
+  o.dp=f.dropPlat?platforms.indexOf(f.dropPlat):-1;
+  st.fs.push(o);
+ }
+ for(var j=0;j<projectiles.length;j++){var p=projectiles[j];st.pr.push({x:p.x,y:p.y,px:p.px,py:p.py,vx:p.vx,vy:p.vy,life:p.life,kind:p.kind,oi:p.owner?fighters.indexOf(p.owner):-1})}
+ for(var m=0;m<fireOrbs.length;m++){var ob=fireOrbs[m];st.fo.push({x:ob.x,y:ob.y,t:ob.t,oi:ob.owner?fighters.indexOf(ob.owner):-1})}
+ for(var n=0;n<icePatches.length;n++){var ip=icePatches[n];st.ip.push({x:ip.x,y:ip.y,w:ip.w,t:ip.t,oi:ip.owner?fighters.indexOf(ip.owner):-1})}
+ return st;
+}
+function rbRestoreState(st){
+ time=st.tm;timer=st.ti;countdown=st.cd;matchOver=st.mo;shake=st.sh;hitstop=st.hs;simSeedState=st.rng;
+ for(var i=0;i<fighters.length;i++){var f=fighters[i],o=st.fs[i];if(!o)continue;
+  for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
+  f.lastAttacker=o.la>=0?fighters[o.la]:null;
+  f.grabBy=o.gb>=0?fighters[o.gb]:null;
+  f.burnBy=o.bb>=0?fighters[o.bb]:null;
+  f.pushBy=o.pb>=0?fighters[o.pb]:null;
+  f.groundPlat=o.gp>=0?platforms[o.gp]:null;
+  f.dropPlat=o.dp>=0?platforms[o.dp]:null;
+ }
+ projectiles=st.pr.map(function(p){return{x:p.x,y:p.y,px:p.px,py:p.py,vx:p.vx,vy:p.vy,life:p.life,kind:p.kind,owner:p.oi>=0?fighters[p.oi]:null}});
+ fireOrbs=st.fo.map(function(o){return{x:o.x,y:o.y,t:o.t,owner:o.oi>=0?fighters[o.oi]:null}});
+ icePatches=st.ip.map(function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,owner:o.oi>=0?fighters[o.oi]:null}});
+}
+function rbChecksum(){
+ var h=2166136261>>>0;
+ function mix(n){h^=(n|0);h=Math.imul(h,16777619)>>>0}
+ for(var i=0;i<fighters.length;i++){var f=fighters[i];
+  mix(Math.round(f.x*8));mix(Math.round(f.y*8));mix(Math.round(f.vx*4));mix(Math.round(f.vy*4));
+  mix(Math.round(f.hp*16));mix(f.score|0);mix(Math.round(f.meter*8));mix(f.face);
+  mix(f.dead?1:0);mix(Math.round(f.stateT*60));
+  var s=f.state||"";for(var j=0;j<s.length;j++)mix(s.charCodeAt(j));
+ }
+ mix(projectiles.length);mix(fireOrbs.length);mix(Math.round(timer*60));mix(simSeedState|0);
+ return h|0;
+}
+/* ---- local input capture: held keys / stick + the press queue ---- */
+function rbSampleLocal(){
+ var bits=0;
+ if(keys.left||stick.dx<-0.28)bits|=1;
+ if(keys.right||stick.dx>0.28)bits|=2;
+ if(keys.down||stick.dy>0.55)bits|=4;
+ if(keys.jump)bits|=8;
+ for(var i=0;i<rbPressQ.length;i++){var a=rbPressQ[i];
+  if(a==="jump")bits|=16;else if(a==="j")bits|=32;else if(a==="k")bits|=64;else if(a==="l")bits|=128;else if(a==="ult")bits|=256;
+  else if(a==="dashL")bits|=512;else if(a==="dashR")bits|=1024;else if(a==="dash")bits|=2048;
+ }
+ rbPressQ.length=0;
+ return bits;
+}
+function rbCaptureAndSend(f){
+ var st=rb.inputs[net.myIdx];if(!st||st.map[f]!==undefined)return;
+ var bits=rbSampleLocal();
+ st.map[f]=bits;
+ while(st.map[st.cont+1]!==undefined)st.cont++;
+ if(f>rb.lastRecv[net.myIdx])rb.lastRecv[net.myIdx]=f;
+ if(net.role==="host"){hostBroadcast({t:"ins",s:net.seed,items:[[net.myIdx,f,bits]]})}
+ else if(net.conn&&net.conn.open){
+  var w=[],m1=st.map[f-1],m2=st.map[f-2];
+  if(m1!==undefined)w.push([f-1,m1]);if(m2!==undefined)w.push([f-2,m2]);
+  try{net.conn.send({t:"in",s:net.seed,f:f,b:bits,w:w})}catch(e){}
+ }
+ rbUpdateConfirmed();
+}
+/* ---- input log: store a real input, roll back if it rewrites history ---- */
+function rbStoreInput(idx,f,bits){
+ if(!rb.active||idx<0||idx>=fighters.length||f<0)return false;
+ var st=rb.inputs[idx];if(!st||st.map[f]!==undefined)return false;
+ st.map[f]=bits;
+ if(f>rb.lastRecv[idx])rb.lastRecv[idx]=f;
+ while(st.map[st.cont+1]!==undefined)st.cont++;
+ if(f<rb.frame){
+  var u=rb.used[idx]?rb.used[idx][f]:undefined;
+  if(u!==undefined&&u!==bits)rbRollback(f);
+ }
+ rbUpdateConfirmed();
+ return true;
+}
+function rbInputFor(p,F){
+ var st=rb.inputs[p];
+ if(st&&st.map[F]!==undefined)return{bits:st.map[F],real:true};
+ if(F<=0)return{bits:0,real:false};
+ var prev=rb.used[p]?(rb.used[p][F-1]||0):0;
+ return{bits:prev&15,real:false};
+}
+function rbIsAI(p,F){return rb.cpuFrom[p]!=null&&F>=rb.cpuFrom[p]}
+/* presses that landed on a frozen frame (countdown / hitstop) are
+   parked per fighter and fire on the first live frame, mirroring the
+   local input buffer's behaviour */
+function rbRecordInputs(F){
+ for(var fi=0;fi<fighters.length;fi++){
+  if(rbIsAI(fi,F))continue;
+  var raw=rbInputFor(fi,F);rb.used[fi][F]=raw.bits;
+  var b=raw.bits,f=fighters[fi];
+  if(b&16)f.rbPjump=F;
+  if(b&32)f.rbPj=F;if(b&64)f.rbPk=F;if(b&128)f.rbPl=F;if(b&256)f.rbPu=F;
+  if(b&(512|1024|2048)){f.rbPd=F;f.rbPdDir=(b&512)?-1:((b&1024)?1:0)}
+ }
+}
+function rbPendBits(f,F){
+ var b=0;
+ if(f.rbPjump>-100&&F-f.rbPjump<=21)b|=16;
+ if(f.rbPj>-100&&F-f.rbPj<=21)b|=32;
+ if(f.rbPk>-100&&F-f.rbPk<=21)b|=64;
+ if(f.rbPl>-100&&F-f.rbPl<=21)b|=128;
+ if(f.rbPu>-100&&F-f.rbPu<=21)b|=256;
+ if(f.rbPd>-100&&F-f.rbPd<=21)b|=(f.rbPdDir<0?512:(f.rbPdDir>0?1024:2048));
+ f.rbPj=f.rbPk=f.rbPl=f.rbPu=f.rbPd=f.rbPjump=-999;
+ return b;
+}
+/* the deterministic twin of gatherPlayerInput + gatherRemoteInput:
+   same buffer windows, expressed in frames (350ms -> 21f, the J+K
+   simultaneity window 90ms -> 5f, the lone-press grace 55ms -> 3f),
+   the same jump cut and the same guard-eats-presses rule, driven
+   purely by the frame's input bits so every peer agrees */
+function rbApplyInput(f,bits,F){
+ f.hDown=!!(bits&4);f.hUp=!!(bits&8);
+ f.hFwd=(f.face===1&&!!(bits&2))||(f.face===-1&&!!(bits&1));
+ f.hBack=(f.face===1&&!!(bits&1))||(f.face===-1&&!!(bits&2));
+ var inp={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:false};
+ if(f.rbPrevJ&&!(bits&8)&&!f.onGround&&f.vy<-JUMP_CUT&&f.hitstun<=0)f.vy=-JUMP_CUT;
+ f.rbPrevJ=!!(bits&8);
+ if(bits&16)inp.jump=true;
+ if(bits&(512|1024|2048)){var dd=(bits&512)?-1:((bits&1024)?1:(inp.right?1:(inp.left?-1:f.face)));tryDash(f,dd)}
+ var guardHeld=f.onGround&&(bits&4)&&((bits&1)||(bits&2));
+ if(guardHeld){f.rbBj=-999;f.rbBk=-999;f.rbBl=-999;f.rbBu=-999}
+ else{
+  if(bits&32)f.rbBj=F;if(bits&64)f.rbBk=F;if(bits&128)f.rbBl=F;if(bits&256)f.rbBu=F;
+  if(f.attackCd<=0&&f.hitstun<=0){
+   var tj=f.rbBj,tk=f.rbBk;
+   if(tj>-100&&tk>-100&&Math.abs(tj-tk)<=5&&F-Math.max(tj,tk)<=21){f.rbBj=-999;f.rbBk=-999;startAttack(f,"jk")}
+   else if(tj>-100&&F-tj>=3){if(F-tj<=21)startAttack(f,"j");f.rbBj=-999}
+   else if(tk>-100&&F-tk>=3){if(F-tk<=21)startAttack(f,"k");f.rbBk=-999}
+   else if(tj<=-100&&tk<=-100){
+    if(f.rbBl>-100){if(F-f.rbBl<=21)startAttack(f,"l");f.rbBl=-999}
+    else if(f.rbBu>-100){if(F-f.rbBu<=21)startAttack(f,"ult");f.rbBu=-999}
+   }
+  }
  }
  return inp;
 }
-/* guest rendering: fighters mirror the host snapshot (local P1 is always
-   the guest's own fighter); positions ease toward the snapshot, teleports
-   and respawns snap straight onto it */
-function applySnap(f,t,other,direct){
- /* no locally invented hit burst here any more: the host's real hit /
-    attack particles now arrive as FX events on the same snapshot, so
-    the guest sees exactly what the host spawned, nothing extra.
-    "direct" (interpolated remote fighters) places the position
-    exactly; otherwise the position eases toward the snapshot, and
-    teleports / respawns always snap straight onto it. Omitted
-    snapshot fields mean their default value (see snapFighter). */
- var dx=t.x-f.x,dy=t.y-f.y;
- if(direct||Math.abs(dx)>260||Math.abs(dy)>260){f.x=t.x;f.y=t.y}else{f.x+=dx*0.45;f.y+=dy*0.45}
- f.vx=t.vx;f.vy=t.vy;f.face=t.face;f.hp=t.hp;f.hpGhost=(t.hg!=null)?t.hg:t.hp;f.score=t.sc;f.state=t.st;f.meter=t.mt;f.ammo=t.am;f.dead=!!t.dead;
- /* pose / dressing state the draw pass reads: without stateT the
-    swing-texture pass (which requires stateT>0) never ran on guests at
-    all, and dash trails, the guard sphere, landing squash and AXE's
-    ult-charge ring were likewise missing */
- f.stateT=t.sT||0;f.landT=t.lt||0;f.dashT=t.ds?0.12:0;f.guarding=!!t.gd;f.guardDir=t.gg||t.face;f.ultChargeT=t.uc||0;
- f.dashCd=t.dc||0;f.specCd=t.sp||0;f.reloadT=t.rl||0;f.comboHits=t.cb||0;f.comboDmg=t.cg||0;
- f.frozen=t.fr?0.15:0;f.flash=t.fl?0.1:0;f.invuln=t.iv?0.12:0;f.hitstun=t.hs?0.15:0;f.onGround=!!t.og;f.ultChain=t.ch||0;
- f.grabT=t.gb?0.3:0;f.grabBy=t.gb?other:null;
- f.chaos=!!t.cx;f.burnT=t.bn?0.4:0; /* SARA dressing state (visual only on guests) */
- if(f.onGround&&Math.abs(f.vx)>=30)f.runPhase+=Math.abs(f.vx)*0.000832;
+/* the non-fighter half of a step, copied behaviour-for-behaviour from
+   the local loop: projectiles (with hit detection), particles, FX
+   bursts, ice patches, fire orbs, floaters, shake decay */
+function rbTail(){
+ projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*SIM_STEP;pr.y+=pr.vy*SIM_STEP;if(pr.kind==="javelin")pr.vy+=980*SIM_STEP;else if(pr.kind!=="wave"&&pr.kind!=="slash")pr.vy+=128*SIM_STEP;pr.life-=SIM_STEP;if(pr.kind==="javelin"&&Math.random()<0.5)particles.push({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard")&&Math.random()<0.16)spawnFxBurst(charFxImg(pr.owner?pr.owner.char:"kairo"),pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="throwaxe"?38:30))&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="throwaxe"?0.6:0.56))){foe=qf;break}}
+  if(foe){
+   if(pr.kind==="slash"){applyHit(pr.owner,foe,74,780,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)}
+   else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)}
+   else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
+   else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
+   else if(pr.kind==="javelin"){applyHit(pr.owner,foe,10,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,1.6);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)}
+   else{applyHit(pr.owner,foe,13,245,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85}
+   return false}
+  for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:5,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}}
+  return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
+ particles=particles.filter(function(p){p.x+=p.vx*SIM_STEP;p.y+=p.vy*SIM_STEP;p.vy+=(p.amb?-4:300)*SIM_STEP;p.vx*=0.97;return(p.life-=SIM_STEP)>0});
+ fxBursts=fxBursts.filter(function(b){return(b.life-=SIM_STEP)>0});
+ icePatches=icePatches.filter(function(p){return(p.t-=SIM_STEP)>0});
+ fireOrbs=fireOrbs.filter(function(ob){ob.t-=SIM_STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<48&&Math.abs((of.y+of.h)-ob.y)<28){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+ floaters=floaters.filter(function(fl){fl.y-=34*SIM_STEP;return(fl.life-=SIM_STEP)>0});
+ shake*=Math.pow(0.001,SIM_STEP);if(shake<0.25)shake=0;
 }
-var guestSendT=0;
-function guestFrame(dtms){
- var dt=Math.min(0.05,dtms/1000);time+=dt;
- if(latestSnap){
-   /* FX events, screen shake and fire orbs are NOT consumed here any
-      more: onHostMsg replays them the moment each snapshot arrives
-      (exactly once per snapshot, in order), so a snapshot superseded
-      between two frames can no longer take its effects down with it */
-   if(latestSnap.fs){
-     /* INTERPOLATION (lag pass): remote fighters are drawn ~100ms in
-        the past, positioned by lerping between the two snapshots
-        that bracket that moment — packet jitter and the 25/s send
-        rate stop showing up as stutter. The guest's OWN fighter is
-        deliberately NOT interpolated: it keeps following the newest
-        snapshot with the old easing, so local responsiveness is
-        exactly what it was. Everything except position (HP, state,
-        pose timers…) still comes from the newer bracketing snapshot. */
-     var rtNow=performance.now()-100,saB=null,sbB=null;
-     for(var sbi=0;sbi<snapBuf.length;sbi++){if(snapBuf[sbi].at<=rtNow)saB=snapBuf[sbi];if(snapBuf[sbi].at>rtNow){sbB=snapBuf[sbi];break}}
-     if(!sbB&&snapBuf.length)sbB=snapBuf[snapBuf.length-1];
-     if(!saB)saB=sbB;
-     var sAlpha=(saB&&sbB&&sbB.at>saB.at)?Math.min(1,Math.max(0,(rtNow-saB.at)/(sbB.at-saB.at))):1;
-     for(var gi=0;gi<fighters.length;gi++){
-       var gf=fighters[gi],gt=latestSnap.fs[gf.netIdx];if(!gt)continue;
-       var gOther=gf===P1?(P2||gf):P1;
-       if(gf===P1||!saB||!sbB||saB===sbB){applySnap(gf,gt,gOther);continue}
-       var taS=saB.m.fs?saB.m.fs[gf.netIdx]:null,tbS=sbB.m.fs?sbB.m.fs[gf.netIdx]:null;
-       if(!taS||!tbS){applySnap(gf,gt,gOther);continue}
-       var ttS={};for(var tkS in tbS)ttS[tkS]=tbS[tkS];
-       ttS.x=taS.x+(tbS.x-taS.x)*sAlpha;ttS.y=taS.y+(tbS.y-taS.y)*sAlpha;
-       applySnap(gf,ttS,gOther,true);
-     }
+function rbCountCenter(){
+ var ctxt=countdown>0.28?String(Math.min(3,Math.ceil(countdown/0.5))):"FIGHT!";
+ if(ctxt!==lastCountTxt){lastCountTxt=ctxt;showCenter(ctxt,ctxt==="FIGHT!"?550:1500)}
+}
+function rbStepFighters(F){
+ for(var fi=0;fi<fighters.length;fi++){
+  var f=fighters[fi],foe=nearestOpponent(f),inp;
+  if(rbIsAI(fi,F)){
+   inp=aiControl(f,foe);
+   f.hDown=!!inp.down;f.hUp=!!inp.jump;
+   f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
+   f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
+   stepFighter(f,SIM_STEP,inp,foe);
+  }else{
+   var raw=rbInputFor(fi,F);rb.used[fi][F]=raw.bits;
+   var bits=raw.bits|rbPendBits(f,F);
+   if(fi===net.myIdx){
+    /* the attack tables read the LOCAL player's held keys live; feed
+       them this frame's bits for the duration of the step so the
+       local fighter is exactly as deterministic as every other */
+    var saveKeys=keys,saveDx=stick.dx,saveDy=stick.dy;
+    keys={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:!!(bits&8)};
+    stick.dx=(bits&2)?0.5:((bits&1)?-0.5:0);stick.dy=(bits&4)?0.8:0;
+    inp=rbApplyInput(f,bits,F);
+    stepFighter(f,SIM_STEP,inp,foe);
+    keys=saveKeys;stick.dx=saveDx;stick.dy=saveDy;
+   }else{
+    inp=rbApplyInput(f,bits,F);
+    stepFighter(f,SIM_STEP,inp,foe);
    }
-   projectiles=latestSnap.pr.map(function(p){return{x:p.x,y:p.y,vx:p.vx,vy:0,kind:p.k,owner:null,life:1}});
-   /* KOJIRO's slash wave sheds trail particles inline in the host's
-      projectile step (not via spawnParticles), so they never enter the
-      FX queue — shed the same trail locally from the mirrored wave */
-   for(var pi=0;pi<projectiles.length;pi++){var pr=projectiles[pi];if(pr.kind==="slash"){for(var pj=0;pj<2;pj++)particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3})}}
-   /* same for SARA's javelins: the host sheds their ember trail inline
-      in its projectile step too, so mirror it from the synced javelin */
-   for(var ji=0;ji<projectiles.length;ji++){var jp=projectiles[ji];if(jp.kind==="javelin"&&Math.random()<0.5)particles.push({x:jp.x,y:jp.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3})}
-   timer=latestSnap.tm;
-   if(latestSnap.over&&!matchOver){matchOver=true;$("endBtns").classList.add("on")}
+  }
  }
- particles=particles.filter(function(p){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.amb?-4:300)*dt;p.vx*=0.97;return(p.life-=dt)>0});
- fxBursts=fxBursts.filter(function(b){return(b.life-=dt)>0});
- icePatches=icePatches.filter(function(p){return(p.t-=dt)>0});
- /* mirrored SARA fire orbs: burn down locally between snapshots and
-    shed the same rising flames the host sheds in its simulation */
- fireOrbs=fireOrbs.filter(function(o){if(Math.random()<0.3)particles.push({x:o.x+(Math.random()-0.5)*22,y:o.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});return(o.t-=dt)>0});
- /* dash after-images: the host grows f.trail inside its step; here the
-    snapshot's dash flag drives the same trail so guests see them too */
- for(var ti=0;ti<fighters.length;ti++){var tf=fighters[ti];if(tf.dashT>0&&!tf.dead)tf.trail.push({x:tf.x,y:tf.y,life:0.2,face:tf.face,isPlayer:tf.isPlayer});tf.trail=tf.trail.filter(function(tr){tr.life-=dt;return tr.life>0})}
- floaters=floaters.filter(function(fl){fl.y-=34*dt;return(fl.life-=dt)>0});
- shake*=Math.pow(0.001,dt);if(shake<0.25)shake=0;
- var tx=P1.x+P1.vx*0.32-viewW/2,ty=P1.y-viewH*0.54;
- var k=1-Math.pow(0.0001,dt);cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
- guestSendT+=dtms;
- if(guestSendT>=33){guestSendT=0;if(net.conn&&net.conn.open){try{net.conn.send({t:"i",l:!!keys.left||stick.dx<-0.28,r:!!keys.right||stick.dx>0.28,d:!!keys.down||stick.dy>0.55,j:!!keys.jump})}catch(e){}}}
+}
+/* one deterministic step, mirroring the local loop's step body:
+   hitstop freezes the world (inputs still recorded), the countdown
+   freezes the fighters, then fighters + tail */
+function rbSimStep(F){
+ if(hitstop>0){hitstop-=SIM_STEP;rbRecordInputs(F);return}
+ time+=SIM_STEP;
+ for(var pvi=0;pvi<fighters.length;pvi++){var pf=fighters[pvi];pf.px=pf.x;pf.py=pf.y}
+ for(var pvp=0;pvp<projectiles.length;pvp++){var pp=projectiles[pvp];pp.px=pp.x;pp.py=pp.y}
+ if(countdown>0){countdown-=SIM_STEP;if(!rb.resim)rbCountCenter();rbRecordInputs(F)}
+ else if(!matchOver){
+  timer-=SIM_STEP;if(timer<=0){timer=0;matchOver=true}
+  if(!matchOver)rbStepFighters(F);else rbRecordInputs(F);
+ }
+ rbTail();
+}
+function rbStepNext(){
+ var F=rb.frame;
+ rbCaptureAndSend(F+RB_DELAY);
+ rb.states[F]=rbSaveState();
+ rbSimStep(F);
+ rb.frame=F+1;
+ rb.ck[rb.frame]=rbChecksum();
+ var cut=rb.frame-RB_KEEP;
+ for(var k in rb.states){if(+k<cut)delete rb.states[k]}
+ for(var p=0;p<rb.inputs.length;p++){
+  var mp=rb.inputs[p].map;for(var fk in mp){if(+fk<cut-8)delete mp[fk]}
+  var um=rb.used[p];for(var uk in um){if(+uk<cut-8)delete um[uk]}
+ }
+ rbUpdateConfirmed();
+ rbMaybeSendCk();
+}
+/* rewind to the start of frame fromF and re-simulate to the present
+   with the corrected input log. Visual-only arrays are swapped out
+   for the duration: a re-simulated frame must not re-spawn its
+   effects, sounds or banners (rb.resim also mutes beep / showCenter /
+   showBanner at their sources). */
+function rbRollback(fromF){
+ if(!rb.active||fromF>=rb.frame)return;
+ if(rb.states[fromF]===undefined){
+  var Fo=null;for(var k in rb.states){var kk=+k;if(Fo===null||kk<Fo)Fo=kk}
+  if(Fo===null||Fo>=rb.frame){rbOverflow();return}
+  fromF=Fo;
+ }
+ rb.stats.rollbacks++;var back=rb.frame-fromF;if(back>rb.stats.maxBack)rb.stats.maxBack=back;
+ var vp=particles,vf=floaters,vr=rings,vb=fxBursts;
+ rb.resim=true;
+ rbRestoreState(rb.states[fromF]);
+ particles=[];floaters=[];rings=[];fxBursts=[];
+ for(var F=fromF;F<rb.frame;F++){rb.states[F]=rbSaveState();rbSimStep(F)}
+ for(var ck in rb.ck){if(+ck>fromF)delete rb.ck[ck]}
+ rb.ck[rb.frame]=rbChecksum();
+ if(rb.lastCkSent>fromF)rb.lastCkSent=fromF;
+ particles=vp;floaters=vf;rings=vr;fxBursts=vb;
+ rb.resim=false;
+ rbUpdateConfirmed();
+}
+function rbOverflow(){
+ if(net.role==="host"){rbDoResync(true);return}
+ if(rb.needResync)return;
+ rb.needResync=true;
+ var now=performance.now();
+ if(now-rb.lastRsq>800){rb.lastRsq=now;if(net.conn&&net.conn.open){try{net.conn.send({t:"rsq"})}catch(e){}}}
+}
+function rbUpdateConfirmed(){
+ var c=Infinity;
+ for(var p=0;p<fighters.length;p++){
+  var t=(rb.cpuFrom[p]!=null&&rb.frame>rb.cpuFrom[p])?rb.frame:(rb.inputs[p]?rb.inputs[p].cont+1:0);
+  if(t<c)c=t;
+ }
+ if(c===Infinity)c=rb.frame;
+ if(c>rb.confirmed)rb.confirmed=c;
+}
+/* checksums ride at fully-confirmed state frames, every 60 of them:
+   a frame only counts once every input below it is real, so two
+   peers comparing it are comparing identical histories */
+function rbMaybeSendCk(){
+ var cf=rb.confirmed-(rb.confirmed%60);
+ if(cf>=60&&cf>rb.lastCkSent&&rb.ck[cf]!==undefined){
+  rb.lastCkSent=cf;
+  if(net.role==="host")rbHostCk(cf,net.myIdx,rb.ck[cf]);
+  else if(net.conn&&net.conn.open){try{net.conn.send({t:"ck",s:net.seed,f:cf,h:rb.ck[cf]})}catch(e){}}
+ }
+}
+function rbHostCk(f,idx,h){
+ if(net.role!=="host"||!rb.active||idx==null||idx<0)return;
+ var book=rb.ckBook[f]||(rb.ckBook[f]={});
+ if(book[idx]===undefined)book[idx]=h;
+ var ref=null,mismatch=false;
+ for(var k in book){if(ref===null)ref=book[k];else if(book[k]!==ref)mismatch=true}
+ if(rb.ck[f]!==undefined&&book[idx]!==rb.ck[f])mismatch=true;
+ for(var fk in rb.ckBook){if(+fk<f-180)delete rb.ckBook[fk]}
+ if(mismatch)rbDoResync(false);
+}
+/* resync: the host broadcasts its state at its latest confirmed
+   frame; everyone adopts it and re-simulates forward from the input
+   log (which is complete past a confirmed frame by definition) */
+function rbDoResync(force){
+ if(net.role!=="host"||!rb.active)return;
+ var now=performance.now();
+ if(!force&&now-rb.lastRsT<2500)return;
+ var Fs=rb.confirmed;
+ if(Fs<0||rb.states[Fs]===undefined){
+  Fs=rb.frame;for(var k in rb.states){var kk=+k;if(kk<Fs)Fs=kk}
+  if(rb.states[Fs]===undefined)return;
+ }
+ rb.lastRsT=now;rb.stats.resyncs++;
+ hostBroadcast({t:"rs",s:net.seed,f:Fs,st:rb.states[Fs]});
+}
+function rbApplyResync(m){
+ if(net.role!=="guest"||!rb.active||!m||!m.st)return;
+ if((m.f|0)<=rb.lastRsF)return;
+ rb.lastRsF=m.f|0;rb.stats.resyncs++;
+ rb.needResync=false;
+ if(m.f>=rb.frame){
+  rbRestoreState(m.st);rb.frame=m.f;rb.states[m.f]=m.st;
+  rb.ck[rb.frame]=rbChecksum();
+ }else{
+  rb.states[m.f]=m.st;
+  rbRollback(m.f);
+ }
+ rbUpdateConfirmed();
+}
+function rbReset(seed){
+ rb.active=true;rb.resim=false;rb.frame=0;rb.acc=0;rb.seed=seed|0;
+ simSeedState=(seed|0)||1;
+ rb.inputs=[];rb.used=[];rb.lastRecv=[];rb.cpuFrom=[];rb.states={};rb.ck={};rb.ckBook={};
+ rb.confirmed=-1;rb.lastCkSent=-1;rb.needResync=false;rb.lastRsq=0;rb.lastRsT=0;rb.lastRsF=-1;rb.endShown=false;
+ rb.stats={rollbacks:0,resyncs:0,maxBack:0};
+ rbPressQ=[];
+ for(var i=0;i<fighters.length;i++){
+  rb.inputs.push({map:{},cont:-1});rb.used.push({});rb.lastRecv.push(-1);rb.cpuFrom.push(null);
+  var f=fighters[i];
+  f.rbBj=-999;f.rbBk=-999;f.rbBl=-999;f.rbBu=-999;f.rbPrevJ=false;
+  f.rbPj=-999;f.rbPk=-999;f.rbPl=-999;f.rbPu=-999;f.rbPd=-999;f.rbPdDir=0;f.rbPjump=-999;
+ }
+ if(net.role==="host"&&net.match){
+  for(var gi=0;gi<net.match.length;gi++){var rec=net.guests[net.match[gi].id];if(rec)rec.rbIdx=gi}
+ }
+ /* frames 0 and 1 are pre-stamped: the RB_DELAY pipeline means the
+    input for frame F is captured while stepping F-RB_DELAY, so the
+    first two frames are captured right here (the countdown is still
+    running, so they are virtually always idle) */
+ rbCaptureAndSend(0);rbCaptureAndSend(1);
+}
+/* pacing: a peer may run ahead of the slowest peer's received inputs
+   by at most RB_MAX_AHEAD frames — prediction covers that window, so
+   nobody ever waits longer than the rollback ring is deep */
+function rbCanAdvance(){
+ if(rb.needResync){
+  /* a resync request can race a host cooldown or a closing socket:
+     keep asking once a second until the host's state lands */
+  if(net.role==="guest"){var now=performance.now();if(now-rb.lastRsq>1000){rb.lastRsq=now;if(net.conn&&net.conn.open){try{net.conn.send({t:"rsq"})}catch(e){}}}}
+  return false;
+ }
+ var minL=Infinity;
+ for(var p=0;p<fighters.length;p++){
+  if(p===net.myIdx)continue;
+  if(rb.cpuFrom[p]!=null&&rb.frame>=rb.cpuFrom[p])continue;
+  if(rb.lastRecv[p]<minL)minL=rb.lastRecv[p];
+ }
+ if(minL===Infinity)return true;
+ return (rb.frame-minL)<=RB_MAX_AHEAD;
+}
+function rbShowEnd(){
+ var topF=fighters.slice().sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)})[0];
+ var tw=(topF===P1);
+ showCenter(tw?"🏆 TIME UP\n"+cname(P1.char)+" WIN":"TIME UP\n"+cname(topF.char)+" WIN",99999);
+ $("endBtns").classList.add("on");
+}
+function rbAdvance(dtms){
+ if(!matchOver&&rb.endShown){rb.endShown=false;$("endBtns").classList.remove("on");showCenter("",0)}
+ if(matchOver){
+  /* decided on every peer at the same frame; only the cosmetic tail
+     keeps moving afterwards, like the local loop's post-match steps */
+  rb.acc+=Math.min(0.1,dtms/1000);
+  var cn=0;
+  while(rb.acc>=SIM_STEP&&cn<5){rb.acc-=SIM_STEP;cn++;rbTail()}
+  if(cn===5)rb.acc=0;
+  drawAlpha=1;
+  if(!rb.endShown){rb.endShown=true;rbShowEnd()}
+ }else{
+  rb.acc+=Math.min(0.1,dtms/1000);
+  var n=0;
+  while(rb.acc>=SIM_STEP&&n<5){
+   if(!rbCanAdvance())break;
+   rb.acc-=SIM_STEP;n++;
+   rbStepNext();
+   if(matchOver){rb.endShown=true;rbShowEnd();break}
+  }
+  if(n===5&&rb.acc>=SIM_STEP)rb.acc=0;
+  drawAlpha=Math.min(1,rb.acc/SIM_STEP);
+ }
+ var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
+ var tx=ipX+P1.vx*0.32-viewW/2,ty=ipY-viewH*0.54;
+ var k=1-Math.pow(0.0001,Math.min(0.05,dtms/1000));
+ cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
 }
 /* ================= ACCOUNTS + FRIENDS (Firebase cloud accounts) =================
    Accounts are username + password, kept in the cloud (Firebase Auth):
@@ -1840,12 +2128,12 @@ window.addEventListener("keydown",function(e){
    keys[k]=true;press(k);
    if(running&&P1&&(k==="left"||k==="right")){
      var now=performance.now();
-     if(now-lastTap[k]<280){tryDash(P1,k==="left"?-1:1);if(net.role==="guest"&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:"dash",dir:k==="left"?-1:1})}catch(e){}}}
+     if(now-lastTap[k]<280){if(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"){rbPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1);if(net.role==="guest"&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:"dash",dir:k==="left"?-1:1})}catch(e){}}}}
      lastTap[k]=now;
    }
  }
 });
-window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0)P1.vy=-JUMP_CUT}});
+window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0&&!(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"))P1.vy=-JUMP_CUT}});
 window.addEventListener("blur",function(){keys={}});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
@@ -2660,19 +2948,19 @@ function aiControl(f,foe){
    return input;
  }
  f.aiT-=1/60;
- if(f.aiT<=0){f.aiT=0.2+Math.random()*0.25;f.aiMove=Math.random()}
- if(foe.y<f.y-120&&adx<170&&f.onGround&&Math.random()<0.5)input.jump=true;
+ if(f.aiT<=0){f.aiT=0.2+rnd()*0.25;f.aiMove=rnd()}
+ if(foe.y<f.y-120&&adx<170&&f.onGround&&rnd()<0.5)input.jump=true;
  if(adx>86){
    input[dx>0?"right":"left"]=true;
-   if(Math.random()<0.012)input.jump=true;
+   if(rnd()<0.012)input.jump=true;
    /* shoot while closing in (KOJIRO and AXE have NO projectile at all — they close in instead) */
-   if(f.char!=="kojiro"&&f.char!=="axe"&&f.char!=="sara"&&f.attackCd<=0&&adx>240&&adx<760&&Math.random()<0.5){f.state="shard";f.stateT=0.24;f.attackCd=0.85;projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*528,vy:-8,owner:f,life:1.3,kind:f.char==="warden"?"bolt":"shard"});beep(500,.08,"sine",.03)}
-   else if(f.char==="axe"&&f.attackCd<=0&&f.specCd<=0&&adx>70&&adx<190&&Math.random()<0.6)startAttack(f,"l");
-   else if(f.char==="sara"&&f.attackCd<=0&&f.specCd<=0&&adx>200&&adx<640&&Math.random()<0.5)startAttack(f,"l"); /* CPU SARA lobs her fire javelin while closing in (it lands as a placed orb) */
+   if(f.char!=="kojiro"&&f.char!=="axe"&&f.char!=="sara"&&f.attackCd<=0&&adx>240&&adx<760&&rnd()<0.5){f.state="shard";f.stateT=0.24;f.attackCd=0.85;projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*528,vy:-8,owner:f,life:1.3,kind:f.char==="warden"?"bolt":"shard"});beep(500,.08,"sine",.03)}
+   else if(f.char==="axe"&&f.attackCd<=0&&f.specCd<=0&&adx>70&&adx<190&&rnd()<0.6)startAttack(f,"l");
+   else if(f.char==="sara"&&f.attackCd<=0&&f.specCd<=0&&adx>200&&adx<640&&rnd()<0.5)startAttack(f,"l"); /* CPU SARA lobs her fire javelin while closing in (it lands as a placed orb) */
  }else{
    f.face=dx>0?1:-1;
-   if(foe.y<f.y-60&&f.onGround&&Math.random()<0.35)input.jump=true;
-   else if(f.attackCd<=0){var r=Math.random();startAttack(f,foe.hp<70&&r<0.45?"k":(r<0.6?"j":(r<0.82?"k":"j")))}
+   if(foe.y<f.y-60&&f.onGround&&rnd()<0.35)input.jump=true;
+   else if(f.attackCd<=0){var r=rnd();startAttack(f,foe.hp<70&&r<0.45?"k":(r<0.6?"j":(r<0.82?"k":"j")))}
  }
  return input;
 }
@@ -3626,7 +3914,8 @@ function loop(ts){
  var dtms=ts-lastTs;lastTs=ts;
  if(dtms>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,dtms))*0.05;
  fpsTick+=dtms;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=Math.round(fpsEMA)}
- if(mode==="online"&&net.role==="guest"){guestFrame(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
+ if(mode==="online"&&rb.active){rbAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
+ if(mode==="online"){draw();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){drawAlpha=1;draw();return}
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
@@ -3647,7 +3936,7 @@ function loop(ts){
      if(!matchOver){
        var pInp=gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
-         var inpF=(ff===P1)?pInp:((mode==="online")?((ff.netGuest&&ff.netGuest.open&&!ff.netGuest.gone)?gatherRemoteInput(ff):aiControl(ff,foeF)):aiControl(ff,foeF));
+         var inpF=(ff===P1)?pInp:aiControl(ff,foeF);
          stepFighter(ff,STEP,inpF,foeF);
        }
      }
@@ -3681,7 +3970,6 @@ function loop(ts){
  var tx=ipX+P1.vx*0.32-viewW/2,ty=ipY-viewH*0.54;
  var k=1-Math.pow(0.0001,Math.min(0.05,dtms/1000));
  cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
- if(mode==="online"&&net.role==="host"){snapSendT+=dtms;if(snapSendT>=40){snapSendT=0;sendSnap()}}
  /* render shake offset */
  var ox=shake?(Math.random()-.5)*shake:0,oy=shake?(Math.random()-.5)*shake:0;
  ctx.save();ctx.translate(ox,oy);draw();ctx.restore();
