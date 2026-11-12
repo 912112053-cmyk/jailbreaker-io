@@ -323,6 +323,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["01:20"],tag:"修正・調整",title:"フレンド申請が届かない問題を修正／オンラインのラグ軽減",
+  items:["フレンド申請が相手に届かなかった問題を修正。申請の受け取り方法を見直し、ログイン中はつねに受信できる状態にしたので、オフラインの間に送られた申請も次回ログインした時に必ず表示される。届いている申請はまとめて知らせるようにし（複数件でも見落とさない）、メニューの FRIENDS ボタンにも未処理の申請件数が出るようにした",
+         "ユーザーネームの照合方法を登録・ログイン・検索すべてで統一（文字の正規化を同じにした）。あわせて、名前から相手を引くための登録が保存できていなかったアカウントは、ログイン時に自動で保存し直すようにしたので、これまで検索で見つからなかった人も次回ログイン以降は見つかるようになる",
+         "申請を送る側も見直し：送信に失敗した場合は理由を日本語で表示するようにし、裏側の都合で送信自体が行われなかったケースを解消した",
+         "オンライン対戦のラグ軽減：ホストから送る対戦データを軽量化した（値が変わっていない項目は送らない形に整理し、タイマー類の精度も見直し。エフェクト同期で増えた分も含む）。送信間隔も最適化した",
+         "ゲスト側に補間（インターポレーション）を追加：相手ファイターを直近2つの受信データの間で滑らかに補間して表示するようにし、カクつきと遅延感を減らした。自分のファイターの表示は従来どおり最新データに追従するので、操作のレスポンスは変えていない。ホスト側の操作感・ゲーム内容・バランスも変更なし"]},
  {date:"2026/11/13",times:["01:10"],tag:"修正・調整",title:"落下をもう少しゆっくりに／オンラインでゲストにもエフェクトが表示されるよう修正",
   items:["落下中の重力をもう少しだけ弱くした（落下がもう少しだけゆっくりになる程度の小さい変更。上昇中の重力・ジャンプの初速・最大落下速度は前回のまま変更なし）",
          "オンライン対戦で、ホスト以外のプレイヤー（ゲスト）の画面にエフェクトが見えていなかった問題を修正。ホスト側で発生したエフェクト（攻撃・ヒットのパーティクルや衝撃リング、火花、技ごとのエフェクト画像、ダメージ表示などの浮動テキスト、氷の床、画面の揺れ）を、対戦データと一緒にゲストへ送って同じタイミングで表示するようにした",
@@ -767,7 +773,7 @@ function hideBanner(){$("banner").style.display="none"}
    VS CPU / TRAINING stay fully offline. ONLINE VS uses the free PeerJS
    cloud broker for signalling and a direct WebRTC channel for play — no
    account or API key needed. The HOST runs the real simulation and streams
-   snapshots (~30/s); the GUEST sends held keys + press events and renders
+   snapshots (~25/s); the GUEST sends held keys + press events and renders
    interpolated snapshots (locally, its own fighter is always "P1").
    Honest limits: no rollback netcode (the guest view trails by roughly the
    round-trip time), some network pairs cannot connect through NAT, and if
@@ -785,6 +791,11 @@ function hideBanner(){$("banner").style.display="none"}
    fighters by their canonical roster index (netIdx). */
 var net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};
 var guestChar=null,hostChar=null,forceP2Char=null,latestSnap=null,snapSendT=0;
+/* guest interpolation buffer: the last few snapshots with their
+   arrival times. Remote fighters are rendered ~100ms in the past,
+   lerped between the two snapshots bracketing that moment (see
+   guestFrame), so a 25/s snapshot stream still moves smoothly. */
+var snapBuf=[];
 /* ---- FX event sync (host -> guests) ----
    Effects are spawned ONLY inside the host's simulation (particles,
    sparks, rings, texture bursts, floating texts, ice patches, screen
@@ -831,7 +842,7 @@ function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
-function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};guestChar=null;hostChar=null;latestSnap=null;rkeys={left:false,right:false,down:false,jump:false};rbuf={};rPrevJump=false;var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
+function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};guestChar=null;hostChar=null;latestSnap=null;snapBuf=[];rkeys={left:false,right:false,down:false,jump:false};rbuf={};rPrevJump=false;var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
 function createRoom(){
  cleanupNet();net.role="host";net.code=genRoomCode();
  net.selfName=(social.loggedIn&&social.name)?social.name:"ゲスト1";
@@ -959,7 +970,7 @@ function onHostMsg(m){
    forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
    $("lobbyScreen").classList.remove("on");showCenter("",0);startMatch("online");return;
  }
- if(m.t==="s"){latestSnap=m;return}
+ if(m.t==="s"){latestSnap=m;snapBuf.push({at:performance.now(),m:m});if(snapBuf.length>8)snapBuf.splice(0,snapBuf.length-8);return}
  if(m.t==="banner"){showBanner(m.big,m.pts,m.sub);return}
  if(m.t==="center"){showCenter(m.txt,m.hold||0);return}
 }
@@ -1050,7 +1061,28 @@ function beginRematch(){
  $("endBtns").classList.remove("on");
  openCharSelect("online-host");
 }
-function snapFighter(f){return{x:Math.round(f.x),y:Math.round(f.y),vx:Math.round(f.vx),vy:Math.round(f.vy),face:f.face,hp:Math.round(f.hp),hg:Math.round(f.hpGhost),sc:f.score,st:f.state,sT:Math.round(f.stateT*100)/100,lt:Math.round((f.landT||0)*100)/100,ds:f.dashT>0?1:0,gd:f.guarding?1:0,gg:f.guardDir||f.face,uc:Math.round((f.ultChargeT||0)*100)/100,dc:Math.round(f.dashCd*10)/10,sp:Math.round((f.specCd||0)*10)/10,rl:Math.round((f.reloadT||0)*10)/10,cb:f.comboHits,cg:f.comboDmg,mt:Math.round(f.meter),am:f.ammo,dead:f.dead?1:0,fr:f.frozen>0?1:0,fl:f.flash>0?1:0,iv:f.invuln>0?1:0,hs:f.hitstun>0?1:0,og:f.onGround?1:0,ch:f.ultChain,gb:f.grabT>0?1:0}}
+/* Snapshot payload diet (lag pass): fields sitting at their default
+   value are OMITTED instead of sent — the guest's applySnap already
+   defaults every one of them — timers are quantised to 1/20s steps,
+   the combo damage is rounded, and hpGhost only rides along while it
+   actually differs from hp (the guest decays its own ghost bar at the
+   host's rate in between). Same information, far fewer bytes per
+   fighter per tick, which matters most in 8-player rooms. */
+function snapFighter(f){
+ var o={x:Math.round(f.x),y:Math.round(f.y),vx:Math.round(f.vx),vy:Math.round(f.vy),face:f.face,hp:Math.round(f.hp),sc:f.score,st:f.state,mt:Math.round(f.meter),am:f.ammo,dead:f.dead?1:0,fr:f.frozen>0?1:0,fl:f.flash>0?1:0,iv:f.invuln>0?1:0,hs:f.hitstun>0?1:0,og:f.onGround?1:0,ds:f.dashT>0?1:0,gd:f.guarding?1:0,gb:f.grabT>0?1:0};
+ if(f.hpGhost>o.hp+1)o.hg=Math.round(f.hpGhost);
+ var sT=Math.round(f.stateT*20)/20;if(sT)o.sT=sT;
+ var lt=Math.round((f.landT||0)*20)/20;if(lt)o.lt=lt;
+ if(f.guarding)o.gg=f.guardDir||f.face;
+ var uc=Math.round((f.ultChargeT||0)*20)/20;if(uc)o.uc=uc;
+ var dc=Math.round(f.dashCd*10)/10;if(dc)o.dc=dc;
+ var sp=Math.round((f.specCd||0)*10)/10;if(sp)o.sp=sp;
+ var rl=Math.round((f.reloadT||0)*10)/10;if(rl)o.rl=rl;
+ if(f.comboHits)o.cb=f.comboHits;
+ if(f.comboDmg)o.cg=Math.round(f.comboDmg);
+ if(f.ultChain)o.ch=f.ultChain;
+ return o;
+}
 function sendSnap(){
  if(!P1||!P2)return;
  /* floaters and ice patches are pushed inline at their call sites rather
@@ -1061,7 +1093,11 @@ function sendSnap(){
  for(var fi=0;fi<floaters.length;fi++){var fl=floaters[fi];if(!fl._s){fl._s=1;fxRec({k:"f",x:Math.round(fl.x),y:Math.round(fl.y),t:fl.txt,c:fl.col,l:Math.round(fl.life*100)/100})}}
  for(var ii=0;ii<icePatches.length;ii++){var ip=icePatches[ii];if(!ip._s){ip._s=1;fxRec({k:"i",x:Math.round(ip.x),y:Math.round(ip.y),w:ip.w})}}
  var fx=fxQueue;fxQueue=[];
- hostBroadcast({t:"s",fs:fighters.map(snapFighter),pr:projectiles.map(function(p){return{x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),k:p.kind}}),tm:Math.round(timer*10)/10,over:matchOver?1:0,fx:fx,shk:Math.round(shake*10)/10});
+ /* fx / shk keys are attached only when they carry something */
+ var sm={t:"s",fs:fighters.map(snapFighter),pr:projectiles.map(function(p){return{x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),k:p.kind}}),tm:Math.round(timer*10)/10,over:matchOver?1:0};
+ if(fx.length)sm.fx=fx;
+ var shkNow=Math.round(shake*10)/10;if(shkNow>0)sm.shk=shkNow;
+ hostBroadcast(sm);
 }
 function hostStartOnline(){
  /* in-match restart (reset button): same roster, same characters */
@@ -1098,20 +1134,24 @@ function gatherRemoteInput(f){
 /* guest rendering: fighters mirror the host snapshot (local P1 is always
    the guest's own fighter); positions ease toward the snapshot, teleports
    and respawns snap straight onto it */
-function applySnap(f,t,other){
+function applySnap(f,t,other,direct){
  /* no locally invented hit burst here any more: the host's real hit /
     attack particles now arrive as FX events on the same snapshot, so
-    the guest sees exactly what the host spawned, nothing extra */
+    the guest sees exactly what the host spawned, nothing extra.
+    "direct" (interpolated remote fighters) places the position
+    exactly; otherwise the position eases toward the snapshot, and
+    teleports / respawns always snap straight onto it. Omitted
+    snapshot fields mean their default value (see snapFighter). */
  var dx=t.x-f.x,dy=t.y-f.y;
- if(Math.abs(dx)>260||Math.abs(dy)>260){f.x=t.x;f.y=t.y}else{f.x+=dx*0.45;f.y+=dy*0.45}
- f.vx=t.vx;f.vy=t.vy;f.face=t.face;f.hp=t.hp;f.hpGhost=t.hg;f.score=t.sc;f.state=t.st;f.meter=t.mt;f.ammo=t.am;f.dead=!!t.dead;
+ if(direct||Math.abs(dx)>260||Math.abs(dy)>260){f.x=t.x;f.y=t.y}else{f.x+=dx*0.45;f.y+=dy*0.45}
+ f.vx=t.vx;f.vy=t.vy;f.face=t.face;f.hp=t.hp;f.hpGhost=(t.hg!=null)?t.hg:t.hp;f.score=t.sc;f.state=t.st;f.meter=t.mt;f.ammo=t.am;f.dead=!!t.dead;
  /* pose / dressing state the draw pass reads: without stateT the
     swing-texture pass (which requires stateT>0) never ran on guests at
     all, and dash trails, the guard sphere, landing squash and AXE's
     ult-charge ring were likewise missing */
  f.stateT=t.sT||0;f.landT=t.lt||0;f.dashT=t.ds?0.12:0;f.guarding=!!t.gd;f.guardDir=t.gg||t.face;f.ultChargeT=t.uc||0;
  f.dashCd=t.dc||0;f.specCd=t.sp||0;f.reloadT=t.rl||0;f.comboHits=t.cb||0;f.comboDmg=t.cg||0;
- f.frozen=t.fr?0.15:0;f.flash=t.fl?0.1:0;f.invuln=t.iv?0.12:0;f.hitstun=t.hs?0.15:0;f.onGround=!!t.og;f.ultChain=t.ch;
+ f.frozen=t.fr?0.15:0;f.flash=t.fl?0.1:0;f.invuln=t.iv?0.12:0;f.hitstun=t.hs?0.15:0;f.onGround=!!t.og;f.ultChain=t.ch||0;
  f.grabT=t.gb?0.3:0;f.grabBy=t.gb?other:null;
  if(f.onGround&&Math.abs(f.vx)>=30)f.runPhase+=Math.abs(f.vx)*0.000832;
 }
@@ -1123,7 +1163,31 @@ function guestFrame(dtms){
       the host attached to it (attack / hit / ult effects, floating
       texts, ice patches) and take its screen-shake level */
    if(latestSnap!==fxSeenSnap){fxSeenSnap=latestSnap;replayFx(latestSnap.fx);if(latestSnap.shk)shake=Math.max(shake,latestSnap.shk)}
-   if(latestSnap.fs){for(var gi=0;gi<fighters.length;gi++){var gf=fighters[gi],gt=latestSnap.fs[gf.netIdx];if(gt)applySnap(gf,gt,gf===P1?(P2||gf):P1)}}
+   if(latestSnap.fs){
+     /* INTERPOLATION (lag pass): remote fighters are drawn ~100ms in
+        the past, positioned by lerping between the two snapshots
+        that bracket that moment — packet jitter and the 25/s send
+        rate stop showing up as stutter. The guest's OWN fighter is
+        deliberately NOT interpolated: it keeps following the newest
+        snapshot with the old easing, so local responsiveness is
+        exactly what it was. Everything except position (HP, state,
+        pose timers…) still comes from the newer bracketing snapshot. */
+     var rtNow=performance.now()-100,saB=null,sbB=null;
+     for(var sbi=0;sbi<snapBuf.length;sbi++){if(snapBuf[sbi].at<=rtNow)saB=snapBuf[sbi];if(snapBuf[sbi].at>rtNow){sbB=snapBuf[sbi];break}}
+     if(!sbB&&snapBuf.length)sbB=snapBuf[snapBuf.length-1];
+     if(!saB)saB=sbB;
+     var sAlpha=(saB&&sbB&&sbB.at>saB.at)?Math.min(1,Math.max(0,(rtNow-saB.at)/(sbB.at-saB.at))):1;
+     for(var gi=0;gi<fighters.length;gi++){
+       var gf=fighters[gi],gt=latestSnap.fs[gf.netIdx];if(!gt)continue;
+       var gOther=gf===P1?(P2||gf):P1;
+       if(gf===P1||!saB||!sbB||saB===sbB){applySnap(gf,gt,gOther);continue}
+       var taS=saB.m.fs?saB.m.fs[gf.netIdx]:null,tbS=sbB.m.fs?sbB.m.fs[gf.netIdx]:null;
+       if(!taS||!tbS){applySnap(gf,gt,gOther);continue}
+       var ttS={};for(var tkS in tbS)ttS[tkS]=tbS[tkS];
+       ttS.x=taS.x+(tbS.x-taS.x)*sAlpha;ttS.y=taS.y+(tbS.y-taS.y)*sAlpha;
+       applySnap(gf,ttS,gOther,true);
+     }
+   }
    projectiles=latestSnap.pr.map(function(p){return{x:p.x,y:p.y,vx:p.vx,vy:0,kind:p.k,owner:null,life:1}});
    /* KOJIRO's slash wave sheds trail particles inline in the host's
       projectile step (not via spawnParticles), so they never enter the
@@ -1172,7 +1236,7 @@ function nameFromPeerId(pid){
  if(suf.charAt(0)==="e"&&suf.length>2){var dec=b64UrlToUtf8(suf.slice(1));if(dec&&!isLegacyName(dec)&&validDisplayName(dec)&&utf8ToB64Url(dec)===suf.slice(1))return dec}
  return isLegacyName(suf)?suf:null;
 }
-function cleanName(s){var t=String(s||"").replace(/[\u0000-\u001F\u007F]/g,"").replace(/\s+/g," ").trim();return Array.from(t).slice(0,20).join("")}
+function cleanName(s){var t=String(s||"").replace(/[\u0000-\u001F\u007F]/g,"").replace(/\s+/g," ").trim().normalize("NFC");return Array.from(t).slice(0,20).join("")}
 function validDisplayName(n){if(typeof n!=="string"||!n||n!==n.trim())return false;var len=Array.from(n).length;return len>=1&&len<=20&&!/[\u0000-\u001F\u007F]/.test(n)}
 /* peer names are REMOTE, attacker-controlled strings (anyone can pick any
    PeerJS id): they are only ever rendered escaped, and incoming social
@@ -1289,7 +1353,8 @@ function connectSocialPeer(n){
  return true;
 }
 /* ---- Firestore listeners (friends + requests) ---- */
-function stopFbListeners(){social.unsubs.forEach(function(u){try{u()}catch(e){}});social.unsubs=[];social.reqSeen={};social.pendingIn=[]}
+function updateFriendsBadge(){var b=$("friendsBtn");if(!b)return;var n=(social.pendingIn&&social.pendingIn.length)||0;b.textContent=n>0?("FRIENDS（申請"+n+"件）"):"FRIENDS"}
+function stopFbListeners(){social.unsubs.forEach(function(u){try{u()}catch(e){}});social.unsubs=[];social.reqSeen={};social.pendingIn=[];social.listenRetry=0;updateFriendsBadge()}
 function refreshFriendNames(){
  var uids=social.friendUids.slice();
  if(!uids.length){if(social.friends.length){social.friends=[];social.friendNames={};if($("friendsSheet"))openFriends(social.lastMsg)}return}
@@ -1310,47 +1375,81 @@ function refreshFriendNames(){
 }
 function approveRequest(reqId,fromUid){
  if(!FB_OK||!social.uid||!reqId)return;
- fbDb.collection("users").doc(social.uid).update({friends:firebase.firestore.FieldValue.arrayUnion(fromUid)}).catch(function(){});
- fbDb.collection("requests").doc(reqId).update({status:"accepted"}).then(function(){friendsSay("フレンド申請を承認しました")}).catch(function(){friendsSay("承認に失敗しました。通信環境を確認してください。")});
+ fbDb.collection("users").doc(social.uid).set({friends:firebase.firestore.FieldValue.arrayUnion(fromUid)},{merge:true}).catch(function(e){friendsSay("フレンド登録の保存に失敗しました。"+fbErrMsg(e))});
+ fbDb.collection("requests").doc(reqId).update({status:"accepted"}).then(function(){friendsSay("フレンド申請を承認しました")}).catch(function(e){friendsSay("承認に失敗しました。"+fbErrMsg(e))});
 }
 function rejectRequest(reqId){
  if(!FB_OK||!reqId)return;
- fbDb.collection("requests").doc(reqId).delete().then(function(){friendsSay("フレンド申請を断りました")}).catch(function(){});
+ fbDb.collection("requests").doc(reqId).delete().then(function(){friendsSay("フレンド申請を断りました")}).catch(function(e){friendsSay("申請を断る処理に失敗しました。"+fbErrMsg(e))});
 }
 function startFbListeners(){
  if(!FB_OK||!social.uid)return;
  var uid=social.uid;
+ /* A listener error must never die silently again: the old empty error
+    handlers are how friend requests could stop arriving with nobody
+    able to tell. Surface the reason in Japanese and re-subscribe once
+    (reqSeen is preserved across the retry, so pending requests are
+    not re-announced, only picked up). */
+ function listenErr(what){
+   return function(e){
+     friendsSay(what+"の受信に失敗しました。"+fbErrMsg(e));
+     if(social.listenRetry>=1)return;
+     social.listenRetry=(social.listenRetry||0)+1;
+     var seen=social.reqSeen;
+     setTimeout(function(){
+       if(!social.loggedIn||social.uid!==uid)return;
+       social.unsubs.forEach(function(u){try{u()}catch(x){}});social.unsubs=[];
+       social.reqSeen=seen;
+       startFbListeners();
+     },6000);
+   };
+ }
  social.unsubs.push(fbDb.collection("users").doc(uid).onSnapshot(function(snap){
    var d=snap.exists?snap.data():null;
    social.friendUids=(d&&Array.isArray(d.friends))?d.friends.filter(function(x){return typeof x==="string"}).slice(0,100):[];
    refreshFriendNames();
- },function(){}));
- social.unsubs.push(fbDb.collection("requests").where("to","==",uid).where("status","==","pending").onSnapshot(function(qs){
-   var list=[];
+ },listenErr("フレンド一覧")));
+ /* Incoming requests: query on the SINGLE field "to" only and pick
+    the pending ones out on this side. The old to+status compound
+    query needs a composite index the database may not have — when it
+    doesn't, the query errors out, and with the error swallowed the
+    listener died and requests simply never arrived. A single-field
+    query needs no index, and it is exactly what the security rules
+    can prove (every returned doc has to == my uid). The listener
+    starts at login (startFbSession) — not when the FRIENDS sheet is
+    opened — so requests sent while I was offline are picked up and
+    announced at the next login. */
+ social.unsubs.push(fbDb.collection("requests").where("to","==",uid).onSnapshot(function(qs){
+   var list=[],newOnes=[];
    qs.forEach(function(doc){
      var r=doc.data()||{};
+     if(r.status!=="pending")return;
      list.push({id:doc.id,from:r.from||"",fromName:typeof r.fromName==="string"?r.fromName:""});
-     if(!social.reqSeen[doc.id]){
-       social.reqSeen[doc.id]=1;
-       (function(reqId,fromUid,fromName){
-         showSocialToast("<b>"+escHtml(fromName)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(reqId,fromUid)}},{label:"断る",fn:function(){rejectRequest(reqId)}}]);
-       })(doc.id,r.from||"",typeof r.fromName==="string"?r.fromName:"");
-     }
+     if(!social.reqSeen[doc.id]){social.reqSeen[doc.id]=1;newOnes.push({id:doc.id,from:r.from||"",fromName:typeof r.fromName==="string"?r.fromName:""})}
    });
    var changed=list.map(function(x){return x.id}).join(",")!==social.pendingIn.map(function(x){return x.id}).join(",");
    social.pendingIn=list;
+   updateFriendsBadge();
+   if(newOnes.length===1){
+     (function(nw){showSocialToast("<b>"+escHtml(nw.fromName)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(nw.id,nw.from)}},{label:"断る",fn:function(){rejectRequest(nw.id)}}])})(newOnes[0]);
+   }else if(newOnes.length>1){
+     /* one toast per request used to overwrite the previous one, so
+        with several waiting only the last was ever seen — announce
+        them together and let the FRIENDS sheet carry the details */
+     showSocialToast("フレンド申請が <b>"+newOnes.length+" 件</b> 届いています",[{label:"確認する",fn:function(){openFriends()}}]);
+   }
    if(changed&&$("friendsSheet"))openFriends(social.lastMsg);
- },function(){}));
+ },listenErr("フレンド申請")));
  social.unsubs.push(fbDb.collection("requests").where("from","==",uid).onSnapshot(function(qs){
    qs.forEach(function(doc){
      var r=doc.data()||{};
      if(r.status==="accepted"&&typeof r.to==="string"){
-       fbDb.collection("users").doc(uid).update({friends:firebase.firestore.FieldValue.arrayUnion(r.to)}).catch(function(){});
+       fbDb.collection("users").doc(uid).set({friends:firebase.firestore.FieldValue.arrayUnion(r.to)},{merge:true}).catch(function(){});
        doc.ref.delete().catch(function(){});
        showSocialToast("フレンド申請が承認され、フレンドになりました",[]);
      }
    });
- },function(){}));
+ },listenErr("申請の結果")));
 }
 /* ---- session handling ---- */
 function startFbSession(uid,displayName){
@@ -1366,6 +1465,12 @@ function startFbSession(uid,displayName){
  if(net.role==="host"){net.selfName=displayName;rebuildRoster();broadcastRoster();renderLobby()}
  else if(net.role==="guest"&&net.conn&&net.conn.open){try{net.conn.send({t:"name",name:displayName})}catch(e){}}
  startFbListeners();
+ /* self-heal the name -> uid mapping: accounts created while the
+    usernames write was failing silently can never be found by name
+    search, so no friend request can ever reach them. If this
+    account's mapping is missing, write it now (never overwrite a
+    mapping that belongs to a different account). */
+ (function(){var un=fbDb.collection("usernames").doc(userDocId(displayName));un.get().then(function(s){if(!s.exists)un.set({uid:uid}).catch(function(){})}).catch(function(){})})();
  if(typeof Peer==="undefined"){
    openFriends("ログインしました。ただしオンライン基盤（PeerJS）の読み込みに失敗したため、オンライン状態の表示と対戦の招待は使えません。フレンド申請・承認はそのまま使えます。");
    return;
@@ -1381,8 +1486,17 @@ function claimPendingName(uid,n){
     sign-up back instead of stealing or sharing the name. */
  var unRef=fbDb.collection("usernames").doc(userDocId(n));
  function writeProfile(){
-   unRef.set({uid:uid}).catch(function(){});
-   fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n)}).catch(function(){startFbSession(uid,n)});
+   /* The usernames write is what makes this account FINDABLE by name
+      search — a friend request can only be addressed once it exists.
+      Its failure used to be swallowed whole, leaving an account nobody
+      could ever send a request to; now it retries once and, if it
+      still fails, the user is told in plain Japanese. */
+   var prof=function(warn){
+     fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n);if(warn)friendsSay(warn)}).catch(function(){startFbSession(uid,n);if(warn)friendsSay(warn)});
+   };
+   unRef.set({uid:uid}).then(function(){prof("")}).catch(function(){
+     unRef.set({uid:uid}).then(function(){prof("")}).catch(function(){prof("ログインしました。ただしユーザーネームの登録保存に失敗したため、今は他の人から検索で見つけられない状態です。通信環境を確認して、ページを開き直してください。")});
+   });
  }
  unRef.get().then(function(us){
    var owner=us.exists?(us.data()||{}).uid:null;
@@ -1463,19 +1577,28 @@ function sendFriendRequest(){
  if(!social.name||!social.loggedIn){openFriends("先にログインしてください。");return}
  if(!validDisplayName(n)){openFriends("検索するユーザーネームを入力してください（1〜20文字）。");return}
  if(nameKey(n)===nameKey(social.name)){openFriends("それは自分のユーザーネームです。");return}
- if(social.friends.indexOf(n)>=0){openFriends(n+" さんとは既にフレンドです。");return}
+ if(social.friends.some(function(fn){return nameKey(fn)===nameKey(n)})){openFriends(n+" さんとは既にフレンドです。");return}
  openFriends(n+" さんを探しています…");
  fbDb.collection("usernames").doc(userDocId(n)).get().then(function(s){
    if(!s.exists){friendsSay("「"+n+"」さんは見つかりませんでした。ユーザーネームを正確に入力してください（大文字・小文字も区別されます）。");return}
    var toUid=(s.data()||{}).uid;
    if(typeof toUid!=="string"||!toUid||toUid===social.uid){friendsSay("「"+n+"」さんは見つかりませんでした。");return}
-   fbDb.collection("requests").where("from","==",social.uid).where("to","==",toUid).where("status","==","pending").get().then(function(qs){
-     if(!qs.empty){friendsSay(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
-     fbDb.collection("requests").add({from:social.uid,to:toUid,fromName:social.name,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+   /* One request document per (sender -> recipient) pair, under a
+      deterministic id: the duplicate check becomes a single document
+      read and the write a single set — the old three-condition query
+      needed a composite index and, when that query failed, the
+      request was never written at all (the sender only saw a generic
+      "communication error"). The "to" field is the recipient's
+      Firebase Auth uid, taken from their usernames mapping. */
+   var reqRef=fbDb.collection("requests").doc(social.uid+"_"+toUid);
+   reqRef.get().then(function(rs){
+     var rd=rs.exists?(rs.data()||{}):null;
+     if(rd&&rd.status==="pending"){friendsSay(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
+     reqRef.set({from:social.uid,to:toUid,fromName:social.name,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
        friendsSay(n+" さんにフレンド申請を送りました。相手がオフラインでも、次にログインした時に届きます。");
-     }).catch(function(){friendsSay("申請の送信に失敗しました。通信環境を確認してください。")});
-   }).catch(function(){friendsSay("通信エラーが発生しました。ネットワーク接続を確認してください。")});
- }).catch(function(){friendsSay("通信エラーが発生しました。ネットワーク接続を確認してください。")});
+     }).catch(function(e){friendsSay("申請の送信に失敗しました。"+fbErrMsg(e))});
+   }).catch(function(e){friendsSay("申請の送信に失敗しました。"+fbErrMsg(e))});
+ }).catch(function(e){friendsSay("相手の検索に失敗しました。"+fbErrMsg(e))});
 }
 function inviteFriend(name){
  if(net.role!=="host"||!net.code){openFriends("招待は、ONLINE VS でルームを作って待機している時に送れます。まずルームを作成してください。");return}
@@ -2052,8 +2175,8 @@ function startAxeAttack(f,type,foe){
    /* 無敵突進「猪突猛進」: 1 second of FULL invincibility, uncontrollable
       slow forward charge. Anyone caught is pinned in hitstun and CARRIED
       along in front of the axe, taking grind damage the whole way; when
-      the charge ends they are released with NO finishing launch — the
-      old final blow's damage was folded into the grind ticks
+      the charge ends they are simply released — there is NO finishing
+      launch (its damage was folded into the grind ticks)
       (the push logic lives in stepFighter under ultChargeT) */
    if(f.meter<100)return;f.meter=0;f.ultDir=f.face;f.ultChargeT=1.0;f.invuln=1.0;f.state="ultcharge";f.stateT=1.0;f.attackCd=1.65;shake=10;
    spawnParticles(f.x,f.y+f.h*0.45,26,"#fb923c",260);spawnParticles(f.x,f.y+f.h-4,14,"#a8a29e",180);
@@ -2429,14 +2552,8 @@ function stepFighter(f,dt,input,foe){
    if(Math.random()<0.3)spawnParticles(f.x+f.ultDir*24,f.y+f.h*0.4,1,"#fb923c",140);
    if(f.ultChargeT<=0){
      f.ultChargeT=0;f.state="idle";f.stateT=0;
-     /* NO finishing launch (user tuning): when the charge ends, pushed
-        victims are simply released where they stand — no final blow, no
-        launch. That damage now lives in the grind ticks (13 per 0.25s). */
-     for(var uj=0;uj<fighters.length;uj++){var lo=fighters[uj];if(lo.pushBy===f){lo.pushBy=null;lo.pushT=0;lo.pushDmgT=0}}
-     shake=Math.max(shake,8);
-     spawnParticles(f.x+f.ultDir*36,f.y+f.h*0.45,26,"#fb923c",290);
-     floaters.push({x:f.x+f.ultDir*30,y:f.y-26,txt:"突進終了…",life:.9,col:"#fdba74"});
-     beep(90,.28,"sawtooth",.08);
+     /* charge over: anyone still pinned is simply released in place
+        (their pushT runs out and pushBy clears) — NO finishing launch */
    }
  }
  /* GUARD: grounded + S held together with A or D. S+A guards facing
@@ -3168,7 +3285,7 @@ function loop(ts){
    var k=1-Math.pow(0.0001,STEP);
    cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
  }
- if(mode==="online"&&net.role==="host"){snapSendT+=dtms;if(snapSendT>=33){snapSendT=0;sendSnap()}}
+ if(mode==="online"&&net.role==="host"){snapSendT+=dtms;if(snapSendT>=40){snapSendT=0;sendSnap()}}
  /* render shake offset */
  var ox=shake?(Math.random()-.5)*shake:0,oy=shake?(Math.random()-.5)*shake:0;
  ctx.save();ctx.translate(ox,oy);draw();ctx.restore();
