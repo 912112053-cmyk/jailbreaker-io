@@ -77,7 +77,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 #banner .sub{font-family:"DotGothic16";font-size:clamp(15px,2.4vw,22px);color:#f9a8d4;margin-top:2px}
 #centerMsg{position:absolute;inset:0;z-index:9;display:none;place-items:center;text-align:center;pointer-events:none}
 #centerMsg div{font-family:"Bowlby One";font-size:clamp(40px,8vw,92px);color:#fff;text-shadow:0 5px 0 #06283d,0 0 44px rgba(34,211,238,.8);white-space:pre-line;line-height:1.15;padding:0 12px}
-#endBtns{position:absolute;left:50%;bottom:15%;transform:translateX(-50%);z-index:10;display:none;gap:10px}
+#endBtns{position:absolute;left:50%;bottom:15%;transform:translateX(-50%);z-index:10;display:none;gap:10px;flex-wrap:wrap;justify-content:center;max-width:94vw}
 #endBtns.on{display:flex}
 /* touch controls — floating joystick (left) + bandit-style boxes (right) */
 #stickZone{position:absolute;left:0;bottom:0;width:46%;height:78%;z-index:8;display:none;touch-action:none}
@@ -142,6 +142,25 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 .csPerLabel.bulk{color:#9db4d6}
 .csBulkRow{border-bottom:1px dashed rgba(103,232,249,.25);padding-bottom:6px;margin-bottom:2px}
 #csStart{font-size:16px;padding:10px 28px}
+/* online lobby — after the room connects, everyone waits here until the
+   host presses 試合開始. The roster is owned by the host and broadcast to
+   every guest, so all screens show the same list. */
+#lobbyScreen{position:absolute;inset:0;z-index:12;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(700px 340px at 50% 28%,rgba(34,211,238,.16),transparent 70%),rgba(2,6,17,.92);padding:14px;overflow:auto}
+#lobbyScreen.on{display:flex}
+.lobbyCode{font-weight:900;color:#9db4d6;font-size:14px;letter-spacing:.08em}
+.lobbyCode b{color:#7dd3fc;font-size:24px;letter-spacing:.22em;margin:0 6px}
+#lobbyList{background:rgba(3,14,26,.88);border:1.5px solid rgba(103,232,249,.3);border-radius:14px;padding:8px 18px;min-width:min(440px,92vw);max-width:92vw}
+.lobRow{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:8px 0;border-top:1px solid rgba(34,211,238,.14)}
+.lobRow:first-child{border-top:0}
+.lobName{font-weight:900;color:#fff;font-size:15.5px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.lobStat{font-weight:800;font-size:13px;white-space:nowrap}
+.lobBadge{border-radius:999px;padding:1px 9px;font-size:11px;font-weight:900;line-height:1.8;white-space:nowrap}
+.lobBadge.host{background:rgba(251,191,36,.18);color:#fde68a;border:1px solid rgba(251,191,36,.55)}
+.lobBadge.me{background:rgba(74,222,128,.18);color:#bbf7d0;border:1px solid rgba(74,222,128,.5)}
+#lobbyStatus{color:#cffafe;font-weight:900;font-size:14.5px;text-align:center;min-height:1.5em}
+#lobbyStartBtn{font-size:16px;padding:10px 28px}
+.gbtn.disabled{opacity:.42;cursor:not-allowed}
+.gbtn:disabled{opacity:.42;cursor:not-allowed}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(2,6,23,.78);display:none;place-items:center;z-index:60;padding:16px}.modal.on{display:grid}
 .sheet{background:var(--panel);border:1.5px solid var(--line);border-radius:20px;max-width:640px;width:100%;max-height:86svh;overflow:auto;padding:20px}
@@ -240,7 +259,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div id="rotateHint">横画面にするとステージが広く見えます</div>
   <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts">+100 POINTS</div><div class="sub" id="bannerSub"></div></div>
   <div id="centerMsg"><div id="centerText">3</div></div>
-  <div id="endBtns"><button class="gbtn primary" id="againBtn" style="font-size:15px;padding:10px 22px">もう一度たたかう</button><button class="gbtn" id="endMenuBtn" style="font-size:15px;padding:10px 22px">メニューへ</button></div>
+  <div id="endBtns"><button class="gbtn primary" id="againBtn" style="font-size:15px;padding:10px 22px">もう一度たたかう</button><button class="gbtn" id="endCharBtn" style="font-size:15px;padding:10px 22px">キャラ変更</button><button class="gbtn" id="endMenuBtn" style="font-size:15px;padding:10px 22px">メニューへ</button></div>
   <div id="charSelect">
     <div class="csTitle brush" id="csTitle">キャラを選んでください</div>
     <div id="csNote" style="display:none;color:#fda4af;font-weight:900;font-size:14px;text-align:center">倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）</div>
@@ -256,6 +275,13 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
       <div style="font-size:11.5px;color:#9db4d6;font-weight:700">試合は最大8人まで（あなた＋CPU最大7人）</div>
     </div>
     <div class="csBtns"><button class="gbtn primary" id="csStart">▶ バトル開始</button><button class="gbtn" id="csBack">← メニューへ</button></div>
+  </div>
+  <div id="lobbyScreen">
+    <div class="csTitle brush">ルームロビー</div>
+    <div class="lobbyCode">ルームコード<b id="lobbyCodeVal">------</b><span id="lobbyCount">1 / 8 人</span></div>
+    <div id="lobbyList"></div>
+    <div id="lobbyStatus"></div>
+    <div class="csBtns"><button class="gbtn primary" id="lobbyStartBtn">▶ 試合開始</button><button class="gbtn" id="lobbyInviteBtn">フレンドを招待</button><button class="gbtn" id="lobbyLeaveBtn">ルームを退出</button></div>
   </div>
   <div id="stickZone"><div id="stickBase"></div><div id="stickKnob"></div></div>
   <div class="touchUI">
@@ -297,6 +323,17 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["00:50"],tag:"修正・調整",title:"試合後にキャラ変更可能に／重力・滑り・KOJIRO突進を調整",
+  items:["試合終了後の画面に「キャラ変更」ボタンを追加。ローカル対戦ではそのままキャラ選択画面へ戻って選び直せる（同じキャラのまま始めることもできる）",
+         "オンライン対戦では、試合終了後に全員がキャラを選び直してロビーへ戻る流れにした。選び直しが終わったら、ホストがロビーの「試合開始」を押した時に次の試合が全員同時に始まる",
+         "重力をほんの少しだけ軽くした（落下が少しだけゆっくりになる程度。ジャンプの初速など他の数値は変更なし）",
+         "ノックバックで吹っ飛んだ後に地面へ着いてから横へ異常に滑り続ける問題を修正。着地後はノックバックの横速度が地面の摩擦ですぐに収まるようにした（通常の移動やダッシュの操作感は変更なし）",
+         "KOJIROの前+J「疾風突き」にしっかりしたノックバックを追加し、当たると相手がはっきり吹っ飛ぶようにした（ダメージとクールタイムは変更なし）"]},
+ {date:"2026/11/13",times:["00:41"],tag:"新機能",title:"オンライン対戦にロビーを追加（最大8人・ホスト開始）",
+  items:["オンライン対戦にロビー（待機画面）を追加：ルーム作成・参加が成立してもすぐには始まらず、全員がロビーに集まってから、ホストが「試合開始」を押した時だけ全員同時に試合が始まるようにした",
+         "ロビーでは今ルームに入っているプレイヤーの一覧が見れて、入退室のたびに全員の画面で自動更新される。表示名は、クラウドアカウントにログインしている人はそのユーザーネーム、未ログインの人は接続順の「ゲスト○」。ホストと自分には目印が付く",
+         "オンラインの上限を合計8人（ホスト含む）にした。満員のルームには「満員です」、試合中のルームには「試合中です」と表示して入れないようにした",
+         "ロビーでホストが退出するとルームは解散し、ゲストにはその旨が表示されてメニューに戻る。ロビー画面からフレンド一覧を開いて、オンライン中のフレンドをそのまま招待できるようにした（招待された側はワンタップで参加してロビーに入る）"]},
  {date:"2026/11/13",times:["00:15"],tag:"修正・調整",title:"入力できない文字とアカウント作成エラーを修正",
   items:["入力欄（ユーザーネーム・パスワード・ルームコード・検索など）で、ゲームの操作キーと重なっている文字（W／A／S／D／J／K／U／L、矢印キー、スペースなど）が打てなかった不具合を修正。文字を入力している間は、キー入力がゲーム側に渡らないようにした",
          "アカウント作成がエラーになって失敗する不具合を修正。作成の前に行っていた名前チェックが権限エラーで止まっていたため、手順の順番を見直した",
@@ -408,7 +445,7 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。</p></div></div>';
 var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れの剣士。突き・斬り上げ・振り下ろし・袈裟斬り・居合と、剣の軌跡も体の動きも踏み込み方も一技ごとに違う、近接特化のキャラ。<b>飛び道具は一切持たない</b>（唯一の例外はウルトの斬撃だけ）。間合いの中で剣を振り分けて戦う。</p>'
 +'<div class="moveRow"><div><b>J — 三段剣（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J で形そのものが変わる</span><p>①<b>突き</b>：体を沈めて真っ直ぐに突く。リーチが長く出が速い、間合いを測る一手。→ ②<b>斬り上げ</b>：下から上へ大きく斬り上げる。相手を浮かせる。→ ③<b>振り下ろし</b>：大きく振りかぶって真上から叩き斬る。大ダメージで強く吹っ飛ばすが、隙も大きい。3つは判定違いではなく、モーションも役割も完全に別物。</p></div></div>'
-+'<div class="moveRow"><div><b>J＋方向 — 剣技バリエーション</b><p><b>前+J＝疾風突き</b>（素早く踏み込んでの突き。突っ込む軌跡が一直線）／ <b>後ろ+J＝退き斬り</b>（前に斬りながら後ろへ下がり、間合いを作る）／ <b>↑+J＝昇り斬り</b>（斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する）／ <b>↓+J＝下段斬り</b>（姿勢を低くして足元を薙ぐ）／ <b>空中J＝空斬り</b>（空中で横一文字に斬る。少し滞空する）／ <b>空中↓+J＝落下斬り</b>（斜め下へ落ちながら斬り込み、<b>着地時に衝撃波</b>が両側に出る）。</p></div></div>'
++'<div class="moveRow"><div><b>J＋方向 — 剣技バリエーション</b><p><b>前+J＝疾風突き</b>（素早く踏み込んでの突き。突っ込む軌跡が一直線。当たると相手をはっきり吹っ飛ばすノックバック付き）／ <b>後ろ+J＝退き斬り</b>（前に斬りながら後ろへ下がり、間合いを作る）／ <b>↑+J＝昇り斬り</b>（斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する）／ <b>↓+J＝下段斬り</b>（姿勢を低くして足元を薙ぐ）／ <b>空中J＝空斬り</b>（空中で横一文字に斬る。少し滞空する）／ <b>空中↓+J＝落下斬り</b>（斜め下へ落ちながら斬り込み、<b>着地時に衝撃波</b>が両側に出る）。</p></div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>突きで刺してから体を返して回転斬り。2ヒットで大きく吹っ飛ばす。Jチェーンはリセットされる。</p></div></div>'
 +'<div class="moveRow"><div><b>K — 袈裟斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>肩口から斜めに斬り下ろす重い一撃。出は遅いが一撃の威力と吹っ飛ばしは最大級。<br>空中K：空中袈裟（下方向へ叩き斬る）。空中↓+K：急降下斬り（真下へ落ちながら刺す）。地上↓+K：旋風斬り（その場で一回転し、前後両方を斬る）。</p></div></div>'
 +'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約2.2秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で間合いを一気に詰め、斬り抜ける。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p></div></div>'
@@ -481,7 +518,7 @@ var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
 /* --- physics constants (units per second) — overall speed pass: 0.8x ---
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
-var GRAV=2000,GRAV_FALL=2360,MAXFALL=784,FASTFALL=920;
+var GRAV=1840,GRAV_FALL=2170,MAXFALL=784,FASTFALL=920; /* gravity lightened a touch (user tuning): falls float slightly longer — jump velocity itself is unchanged */
 var JUMP_V=816,DJUMP_V=744,JUMP_CUT=288;
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
@@ -530,9 +567,35 @@ function startMatch(m){
  fighters=[];respawnSelectPending=false;csMode="start";
  P1=Fighter(playerChar,true,SPAWNS_ALL[0].x,SPAWNS_ALL[0].y);fighters.push(P1);
  if(mode==="online"){
-   P2=Fighter(forceP2Char||(playerChar==="kairo"?"warden":(playerChar==="kojiro"?"kairo":"kojiro")),false,SPAWNS_ALL[1].x,SPAWNS_ALL[1].y);forceP2Char=null;fighters.push(P2);
-   P2.remote=(net.role==="host");
-   if(net.role==="guest"){P2.x=SPAWNS_ALL[0].x;P2.y=SPAWNS_ALL[0].y;P2.face=1;P1.x=SPAWNS_ALL[1].x;P1.y=SPAWNS_ALL[1].y;P1.face=-1}
+   /* fighters come from the lobby roster (net.match, canonical order:
+      host first, then guests in connection order, up to 8). The host
+      simulates everyone; a guest builds its own fighter first (local P1)
+      and renders the rest from snapshots matched by netIdx. */
+   var mp=(net.match&&net.match.length>=2)?net.match:null;
+   if(!mp){
+     if(net.role==="guest"){mp=[{id:"host",char:forceP2Char||"warden"},{id:net.myId||"guest",char:playerChar}];net.myIdx=1}
+     else{mp=[{id:"host",char:playerChar},{id:"guest",char:forceP2Char||guestChar||"warden"}];net.myIdx=0}
+   }
+   fighters=[];
+   if(net.role==="host"){
+     for(var hi=0;hi<mp.length;hi++){
+       var hp=mp[hi],hf=Fighter(hp.char,hi===0,SPAWNS_ALL[hi%SPAWNS_ALL.length].x,SPAWNS_ALL[hi%SPAWNS_ALL.length].y);
+       hf.netIdx=hi;hf.face=hf.x<1300?1:-1;
+       if(hi>0){hf.remote=true;hf.netGuest=net.guests[hp.id]||null}
+       fighters.push(hf);
+     }
+     P1=fighters[0];
+   }else{
+     var order=[net.myIdx];
+     for(var oi=0;oi<mp.length;oi++){if(oi!==net.myIdx)order.push(oi)}
+     for(var oj=0;oj<order.length;oj++){
+       var ci=order[oj],gp=mp[ci],gf=Fighter(gp.char,ci===net.myIdx,SPAWNS_ALL[ci%SPAWNS_ALL.length].x,SPAWNS_ALL[ci%SPAWNS_ALL.length].y);
+       gf.netIdx=ci;gf.face=gf.x<1300?1:-1;
+       fighters.push(gf);
+     }
+     P1=fighters[0];
+   }
+   P2=fighters[1]||P1;forceP2Char=null;
  }else{
    var mixCycle=["warden","kojiro","kairo","axe"];
    var nCpu=Math.max(1,Math.min(7,cpuCount));
@@ -597,7 +660,10 @@ function refreshCsCards(){
  $("csAxe").classList.toggle("sel",playerChar==="axe");
  var isRespawn=(csMode==="respawn");
  $("csTitle").textContent=isRespawn?"キャラを変えて復活！":"キャラを選んでください";
- $("csNote").style.display=isRespawn?"block":"none";
+ var csN=$("csNote");
+ if(isRespawn){csN.textContent="倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）";csN.style.color="#fda4af";csN.style.display="block"}
+ else if(pendingMode==="online-host"&&net.code){csN.textContent="ルームコード： "+net.code+"（相手に伝えてください。キャラを選ぶとロビーに入ります）";csN.style.color="#7dd3fc";csN.style.display="block"}
+ else csN.style.display="none";
  $("csCpuConfig").style.display=(!isRespawn&&pendingMode!=="online-host"&&pendingMode!=="online-guest")?"block":"none";
  $("csBack").style.display=isRespawn?"none":"";
  if(isRespawn)$("csStart").textContent="▶ このキャラで復活";
@@ -631,14 +697,17 @@ $("csStart").onclick=function(){
    return;
  }
  if(pendingMode==="online-host"){
-   if(!net.conn||!net.conn.open){beep(200,.12);$("csStart").textContent="接続が切れました";return}
-   if(!guestChar){beep(200,.12);$("csStart").textContent="相手のキャラ選択を待っています…";return}
-   $("charSelect").classList.remove("on");beep(700,.07);hostStartOnline();return;
+   /* picking a character no longer starts the match: the host marks
+      themselves ready and waits in the lobby until they press 試合開始 */
+   net.selfChar=playerChar;net.selfReady=true;hostChar=playerChar;
+   rebuildRoster();broadcastRoster();
+   $("charSelect").classList.remove("on");beep(700,.07);enterLobby();return;
  }
  if(pendingMode==="online-guest"){
    $("charSelect").classList.remove("on");beep(700,.07);
    if(net.conn&&net.conn.open){try{net.conn.send({t:"char",char:playerChar})}catch(e){}}
-   showCenter("ホストの開始を待っています…",99999);return;
+   for(var ri=0;ri<net.roster.length;ri++){if(net.roster[ri].id===net.myId){net.roster[ri].char=playerChar;net.roster[ri].ready=true}}
+   enterLobby();return;
  }
  $("charSelect").classList.remove("on");beep(700,.07);startMatch(pendingMode)
 };
@@ -651,8 +720,24 @@ $("endMenuBtn").onclick=toMenu;
 $("againBtn").onclick=function(){
  if(mode==="online"){
    $("endBtns").classList.remove("on");
-   if(net.role==="host")openCharSelect("online-host");
+   if(net.role==="host")beginRematch();
    else{if(net.conn&&net.conn.open){try{net.conn.send({t:"rematch"})}catch(e){}}showCenter("再戦をリクエストしました\nホストの開始を待っています…",99999)}
+   return;
+ }
+ openCharSelect(mode)
+};
+/* post-match character change (user request): after a match ends the
+   player can always go back and pick a different fighter.
+   LOCAL: straight to the character select (same fighter is fine too —
+   just press start). ONLINE: the rematch flow — everyone re-picks a
+   character, lands back in the lobby, and the host's 試合開始 button
+   starts the next match for everyone at once. */
+$("endCharBtn").onclick=function(){
+ beep(600,.06);
+ if(mode==="online"){
+   $("endBtns").classList.remove("on");
+   if(net.role==="host")beginRematch();
+   else{if(net.conn&&net.conn.open){try{net.conn.send({t:"rematch"})}catch(e){}}showCenter("キャラ変更をリクエストしました\nホストの開始を待っています…",99999)}
    return;
  }
  openCharSelect(mode)
@@ -660,9 +745,9 @@ $("againBtn").onclick=function(){
 $("resetBtn").onclick=function(){if(!P1)return;if(mode==="online"){if(net.role==="host")hostStartOnline();return}startMatch(mode)};
 function togglePause(){if(!running||matchOver||mode==="online")return;paused=!paused;showCenter(paused?"PAUSE":"",paused?99999:0)}
 $("pauseBtn").onclick=togglePause;
-function showCenter(t,hold){var c=$("centerMsg");if(mode==="online"&&net.role==="host"&&net.conn&&net.conn.open){try{net.conn.send({t:"center",txt:t,hold:hold||0})}catch(e){}}if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
+function showCenter(t,hold){var c=$("centerMsg");if(mode==="online"&&net.role==="host")hostBroadcast({t:"center",txt:t,hold:hold||0});if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
 var bannerTO=null;
-function showBanner(big,pts,sub,ms){$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(mode==="online"&&net.role==="host"&&net.conn&&net.conn.open){try{net.conn.send({t:"banner",big:big,pts:pts||"",sub:sub||""})}catch(e){}}if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
+function showBanner(big,pts,sub,ms){$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(mode==="online"&&net.role==="host")hostBroadcast({t:"banner",big:big,pts:pts||"",sub:sub||""});if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
 function hideBanner(){$("banner").style.display="none"}
 /* ================= ONLINE VS (PeerJS P2P, host-authoritative) =================
    VS CPU / TRAINING stay fully offline. ONLINE VS uses the free PeerJS
@@ -673,13 +758,25 @@ function hideBanner(){$("banner").style.display="none"}
    Honest limits: no rollback netcode (the guest view trails by roughly the
    round-trip time), some network pairs cannot connect through NAT, and if
    the host closes the page the match ends. */
-var net={role:null,peer:null,conn:null,code:null};
+/* LOBBY: connecting never starts a match any more. Room create / join
+   (room code or friend invite) lands everyone in the lobby first: the
+   host owns the roster (display names: the cloud username when signed
+   in, otherwise ゲスト+connection-order number), broadcasts it on every
+   join / leave / character pick, and only the host's 試合開始 button
+   starts the match for everyone at once. Rooms hold up to 8 players
+   total (host included); a full room answers 満員です and a room whose
+   match already started answers 試合中です. The match itself stays
+   host-authoritative, generalised from 1 guest to up to 7: the host
+   simulates every fighter, each guest renders snapshots matched to
+   fighters by their canonical roster index (netIdx). */
+var net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};
 var guestChar=null,hostChar=null,forceP2Char=null,latestSnap=null,snapSendT=0;
+function hostBroadcast(m){for(var id in net.conns){var c=net.conns[id];if(c&&c.open){try{c.send(m)}catch(e){}}}}
 var rkeys={left:false,right:false,down:false,jump:false},rbuf={},rPrevJump=false,rDashDir=0;
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と1対1のオンライン対戦（P2P接続・ホストが対戦を進行する方式）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。アカウント登録やAPIキーは不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦（P2P接続・ホストが対戦を進行する方式）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録やAPIキーは不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
  +'<p style="color:var(--muted)">※ ネットワーク環境によっては接続できない場合があります。ホストがページを閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
@@ -696,77 +793,233 @@ function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
-function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null};guestChar=null;hostChar=null;latestSnap=null;rkeys={left:false,right:false,down:false,jump:false};rbuf={};rPrevJump=false}
+function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false};guestChar=null;hostChar=null;latestSnap=null;rkeys={left:false,right:false,down:false,jump:false};rbuf={};rPrevJump=false;var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
 function createRoom(){
  cleanupNet();net.role="host";net.code=genRoomCode();
+ net.selfName=(social.loggedIn&&social.name)?social.name:"ゲスト1";
  openOnline("接続を準備しています…");
  try{net.peer=new Peer("jailbreaker-io-"+net.code)}catch(e){openOnline("ルーム作成に失敗しました。もう一度お試しください。");return}
- net.peer.on("open",function(){if(net.role==="host")openOnline("ルームを作成しました。コード：<b style='color:#7dd3fc;font-size:19px;letter-spacing:.2em'>"+net.code+"</b><br>このコードを相手に伝えてください。相手の参加を待っています…<br>フレンド登録済みなら、この画面を閉じて FRIENDS から「ルームに招待」を押すだけでも呼べます。")});
- net.peer.on("connection",function(c){if(net.conn)return;net.conn=c;wireConn()});
+ net.peer.on("open",function(){
+   if(net.role!=="host")return;
+   rebuildRoster();
+   /* the host picks a character first, then waits in the lobby where
+      they can invite friends — the match never starts from here */
+   openCharSelect("online-host");
+ });
+ net.peer.on("connection",function(c){hostAcceptConn(c)});
  net.peer.on("error",function(err){if(net.role==="host"&&!running)openOnline("エラーが発生しました（"+err.type+"）。もう一度お試しください。")});
 }
+function hostGuestCount(){var n=0;for(var id in net.guests){if(!net.guests[id].gone)n++}return n}
+function hostAcceptConn(c){
+ if(net.role!=="host")return;
+ if(net.started){rejectConn(c,"playing");return}
+ if(hostGuestCount()>=7){rejectConn(c,"full");return}
+ var rec={id:c.peer,conn:c,name:null,num:net.nextNum++,char:null,ready:false,open:false,gone:false,keys:{left:false,right:false,down:false,jump:false},buf:{},prevJump:false,dashDir:0};
+ net.guests[rec.id]=rec;net.conns[rec.id]=c;
+ c.on("open",function(){rec.open=true});
+ c.on("data",function(m){onGuestMsg(rec,m)});
+ c.on("close",function(){onGuestGone(rec)});
+ c.on("error",function(){onGuestGone(rec)});
+}
+function rejectConn(c,reason){
+ c.on("open",function(){try{c.send({t:"reject",reason:reason})}catch(e){}setTimeout(function(){try{c.close()}catch(e){}},400)});
+}
+function onGuestGone(rec){
+ if(rec.gone)return;rec.gone=true;rec.open=false;
+ if(net.guests[rec.id]===rec)delete net.guests[rec.id];
+ if(net.conns[rec.id]===rec.conn)delete net.conns[rec.id];
+ if(net.role!=="host")return;
+ rebuildRoster();broadcastRoster();
+ /* in the lobby the list simply loses the leaver; mid-match their
+    fighter stays in the snapshot order and is handed to the CPU */
+ if(!net.started)renderLobby();
+}
+function onGuestMsg(rec,m){
+ if(!m||!m.t||net.role!=="host"||rec.gone)return;
+ if(m.t==="hello"){
+   var nm=(typeof m.name==="string")?m.name.replace(/\s+/g," ").trim():"";
+   rec.name=(nm&&nm.length<=20)?nm:("ゲスト"+rec.num);
+   try{rec.conn.send({t:"welcome",id:rec.id,num:rec.num,code:net.code})}catch(e){}
+   rebuildRoster();broadcastRoster();renderLobby();
+ }
+ else if(m.t==="char"){
+   if(["kairo","warden","kojiro","axe"].indexOf(m.char)>=0){rec.char=m.char;rec.ready=true;rebuildRoster();broadcastRoster();renderLobby()}
+ }
+ else if(m.t==="i"){rec.keys.left=!!m.l;rec.keys.right=!!m.r;rec.keys.down=!!m.d;rec.keys.jump=!!m.j}
+ else if(m.t==="p"){if(m.a==="dash"){rec.buf.dash=performance.now();rec.dashDir=m.dir||0}else if(typeof m.a==="string")rec.buf[m.a]=performance.now()}
+ else if(m.t==="rematch"){if(matchOver)beginRematch()}
+ else if(m.t==="bye"){try{rec.conn.close()}catch(e){}}
+}
+function rebuildRoster(){
+ if(net.role!=="host")return;
+ var r=[{id:"host",name:net.selfName||"ゲスト1",host:true,char:net.selfChar,ready:!!net.selfReady}];
+ var gs=[];for(var id in net.guests){var g=net.guests[id];if(g.name&&!g.gone)gs.push(g)}
+ gs.sort(function(a,b){return a.num-b.num});
+ for(var i=0;i<gs.length;i++)r.push({id:gs[i].id,name:gs[i].name,host:false,char:gs[i].char,ready:!!gs[i].ready});
+ net.roster=r;
+ guestChar=gs.length?gs[0].char:null;
+}
+function broadcastRoster(){hostBroadcast({t:"roster",players:net.roster,code:net.code})}
 function joinRoom(code){
  if(!code||code.length<4){openOnline("コードを入力してください。");return}
  cleanupNet();net.role="guest";net.code=code;
  openOnline("ルーム "+code+" に接続しています…");
  try{net.peer=new Peer()}catch(e){openOnline("接続に失敗しました。");return}
- net.peer.on("open",function(){net.conn=net.peer.connect("jailbreaker-io-"+code,{reliable:true});wireConn()});
+ net.peer.on("open",function(){net.conn=net.peer.connect("jailbreaker-io-"+code,{reliable:true});wireGuestConn()});
  net.peer.on("error",function(err){if(net.role!=="guest")return;if(err.type==="peer-unavailable")openOnline("そのコードのルームが見つかりませんでした。コードを確認してください。");else if(!running)openOnline("エラーが発生しました（"+err.type+"）。")});
 }
-function wireConn(){
+function wireGuestConn(){
  var c=net.conn;if(!c)return;
  c.on("open",function(){
-   $("modal").classList.remove("on");
-   if(net.role==="host"){guestChar=null;openCharSelect("online-host")}
-   else openCharSelect("online-guest");
+   /* self-report the display name: the cloud username when signed in,
+      otherwise the host assigns ゲスト+connection-order number */
+   try{c.send({t:"hello",name:(social.loggedIn&&social.name)?social.name:null})}catch(e){}
  });
- c.on("data",onNetData);
- c.on("close",function(){if(running&&mode==="online"){showCenter("接続が切れました",99999);$("endBtns").classList.add("on")}});
+ c.on("data",onHostMsg);
+ c.on("close",function(){onHostGone()});
 }
-function onNetData(m){
- if(!m||!m.t)return;
- if(net.role==="host"){
-   if(m.t==="char"){guestChar=m.char;if($("charSelect").classList.contains("on"))$("csStart").textContent="▶ バトル開始"}
-   else if(m.t==="i"){rkeys.left=!!m.l;rkeys.right=!!m.r;rkeys.down=!!m.d;rkeys.jump=!!m.j}
-   else if(m.t==="p"){if(m.a==="dash"){rbuf.dash=performance.now();rDashDir=m.dir||0}else rbuf[m.a]=performance.now()}
-   else if(m.t==="rematch"){if(matchOver)openCharSelect("online-host")}
- }else if(net.role==="guest"){
-   if(m.t==="start"){hostChar=m.hostChar;forceP2Char=m.hostChar;showCenter("",0);startMatch("online")}
-   else if(m.t==="s"){latestSnap=m}
-   else if(m.t==="banner"){showBanner(m.big,m.pts,m.sub)}
-   else if(m.t==="center"){showCenter(m.txt,m.hold||0)}
+function onHostMsg(m){
+ if(!m||!m.t||net.role!=="guest")return;
+ if(m.t==="reject"){
+   var msg=(m.reason==="full")?"そのルームは満員です（最大8人まで）。人数が減るまで入ることはできません。":"そのルームは試合中です。試合が終わるまで参加できません。";
+   cleanupNet();openOnline(msg);return;
  }
+ if(m.t==="welcome"){net.myId=m.id;$("modal").classList.remove("on");openCharSelect("online-guest");return}
+ if(m.t==="roster"){net.roster=m.players||[];if(m.code)net.code=m.code;renderLobby();return}
+ if(m.t==="dissolved"){guestRoomDissolved();return}
+ if(m.t==="rematch"){net.started=false;$("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();showCenter("",0);openCharSelect("online-guest");return}
+ if(m.t==="start"){
+   net.match=m.players||[];net.started=true;net.myIdx=0;
+   for(var i=0;i<net.match.length;i++){if(net.match[i].id===net.myId)net.myIdx=i}
+   hostChar=(net.match[0]&&net.match[0].char)||null;
+   forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
+   $("lobbyScreen").classList.remove("on");showCenter("",0);startMatch("online");return;
+ }
+ if(m.t==="s"){latestSnap=m;return}
+ if(m.t==="banner"){showBanner(m.big,m.pts,m.sub);return}
+ if(m.t==="center"){showCenter(m.txt,m.hold||0);return}
+}
+function onHostGone(){
+ if(net.role!=="guest"||net.leaving||net.dissolved)return;
+ if(running&&mode==="online"){showCenter("接続が切れました",99999);$("endBtns").classList.add("on");return}
+ /* the host left before the match started: the room is dissolved */
+ guestRoomDissolved();
+}
+function guestRoomDissolved(){
+ if(net.dissolved)return;net.dissolved=true;
+ cleanupNet();toMenu();
+ openOnline("ホストが退出したため、ルームは解散しました。");
+}
+/* ================= LOBBY UI ================= */
+function enterLobby(){
+ $("modal").classList.remove("on");$("charSelect").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();
+ $("menu").style.display="none";$("gameScreen").classList.add("on");resize();
+ $("lobbyScreen").classList.add("on");renderLobby();
+ window.scrollTo(0,0);
+}
+function renderLobby(){
+ var scr=$("lobbyScreen");if(!scr||!scr.classList.contains("on"))return;
+ var isHost=(net.role==="host");
+ $("lobbyCodeVal").textContent=net.code||"------";
+ var r=net.roster||[];
+ $("lobbyCount").textContent=r.length+" / 8 人";
+ var myKey=isHost?"host":net.myId;
+ var h="";
+ for(var i=0;i<r.length;i++){
+   var p=r[i],badges="";
+   if(p.host)badges+='<span class="lobBadge host">ホスト</span>';
+   if(p.id===myKey)badges+='<span class="lobBadge me">自分</span>';
+   var st=p.ready?('<span style="color:#4ade80">'+cname(p.char)+"・準備OK</span>"):('<span style="color:var(--muted)">キャラ選択中…</span>');
+   h+='<div class="lobRow"><span class="lobName">'+escHtml(p.name)+badges+'</span><span class="lobStat">'+st+'</span></div>';
+ }
+ if(!r.length)h='<div class="lobRow"><span class="lobName">接続中…</span><span class="lobStat"></span></div>';
+ $("lobbyList").innerHTML=h;
+ var startBtn=$("lobbyStartBtn"),stat=$("lobbyStatus");
+ $("lobbyInviteBtn").style.display=isHost?"":"none";
+ $("lobbyLeaveBtn").textContent=isHost?"ルームを解散":"ルームを退出";
+ if(isHost){
+   startBtn.style.display="";
+   var guests=r.length-1,allReady=true;
+   for(var j=0;j<r.length;j++){if(!r[j].ready)allReady=false}
+   var can=(guests>=1&&allReady);
+   startBtn.disabled=!can;startBtn.classList.toggle("disabled",!can);
+   stat.textContent=can?"全員そろいました。「試合開始」を押すと全員同時に始まります。":(guests<1?"参加者を待っています… フレンドを招待するか、コードを伝えてください。":"全員がキャラを選ぶのを待っています…");
+ }else{
+   startBtn.style.display="none";
+   stat.textContent="ホストが開始するのを待っています…";
+ }
+}
+$("lobbyStartBtn").onclick=function(){
+ if(net.role!=="host")return;
+ var r=net.roster||[];
+ if(r.length<2){beep(200,.12);renderLobby();return}
+ for(var i=0;i<r.length;i++){if(!r[i].ready){beep(200,.12);renderLobby();return}}
+ beep(700,.07);hostStartFromLobby();
+};
+$("lobbyInviteBtn").onclick=function(){beep(600,.06);openFriends()};
+$("lobbyLeaveBtn").onclick=function(){
+ beep(500,.06);
+ if(net.role==="host"){
+   hostBroadcast({t:"dissolved"});
+   net.leaving=true;
+   setTimeout(function(){cleanupNet();toMenu()},300);
+ }else if(net.role==="guest"){
+   net.leaving=true;
+   if(net.conn&&net.conn.open){try{net.conn.send({t:"bye"})}catch(e){}}
+   setTimeout(function(){cleanupNet();toMenu()},150);
+ }
+};
+function hostStartFromLobby(){
+ net.match=(net.roster||[]).map(function(p){return{id:p.id,name:p.name,char:p.char}});
+ if(net.match.length<2)return;
+ net.started=true;
+ guestChar=(net.match[1]&&net.match[1].char)||null;forceP2Char=guestChar;
+ hostBroadcast({t:"start",players:net.match});
+ $("lobbyScreen").classList.remove("on");
+ startMatch("online");
+}
+function beginRematch(){
+ if(net.role!=="host")return;
+ net.started=false;net.selfReady=false;net.selfChar=null;
+ for(var id in net.guests){net.guests[id].ready=false;net.guests[id].char=null}
+ rebuildRoster();hostBroadcast({t:"rematch"});broadcastRoster();
+ $("endBtns").classList.remove("on");
+ openCharSelect("online-host");
 }
 function snapFighter(f){return{x:Math.round(f.x),y:Math.round(f.y),vx:Math.round(f.vx),vy:Math.round(f.vy),face:f.face,hp:Math.round(f.hp),hg:Math.round(f.hpGhost),sc:f.score,st:f.state,mt:Math.round(f.meter),am:f.ammo,dead:f.dead?1:0,fr:f.frozen>0?1:0,fl:f.flash>0?1:0,iv:f.invuln>0?1:0,hs:f.hitstun>0?1:0,og:f.onGround?1:0,ch:f.ultChain,gb:f.grabT>0?1:0}}
 function sendSnap(){
- if(!net.conn||!net.conn.open||!P1||!P2)return;
- try{net.conn.send({t:"s",p1:snapFighter(P1),p2:snapFighter(P2),pr:projectiles.map(function(p){return{x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),k:p.kind}}),tm:Math.round(timer*10)/10,over:matchOver?1:0})}catch(e){}
+ if(!P1||!P2)return;
+ hostBroadcast({t:"s",fs:fighters.map(snapFighter),pr:projectiles.map(function(p){return{x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),k:p.kind}}),tm:Math.round(timer*10)/10,over:matchOver?1:0});
 }
 function hostStartOnline(){
- forceP2Char=guestChar||"warden";
+ /* in-match restart (reset button): same roster, same characters */
+ if(!net.match||net.match.length<2)return;
+ net.started=true;
+ hostBroadcast({t:"start",players:net.match});
  startMatch("online");
- if(net.conn&&net.conn.open){try{net.conn.send({t:"start",hostChar:playerChar})}catch(e){}}
 }
 /* guest inputs are assembled on the HOST: rkeys/rbuf mirror the local
    keys/buf pair, so the remote fighter gets the same buffered presses, the
    same J+K simultaneity window and the same variable jump cut as local */
-function rconsumeWithin(a,ms){var t=rbuf[a];if(t&&performance.now()-t<=ms){delete rbuf[a];return true}if(t)delete rbuf[a];return false}
-function gatherRemoteInput(){
- var f=P2,inp={left:!!rkeys.left,right:!!rkeys.right,down:!!rkeys.down,jump:false};
- if(!f)return inp;
- f.hDown=!!rkeys.down;f.hUp=!!rkeys.jump;
- f.hFwd=(f.face===1&&!!rkeys.right)||(f.face===-1&&!!rkeys.left);
- f.hBack=(f.face===1&&!!rkeys.left)||(f.face===-1&&!!rkeys.right);
- if(rPrevJump&&!rkeys.jump&&!f.onGround&&f.vy<-JUMP_CUT&&f.hitstun<=0)f.vy=-JUMP_CUT;
- rPrevJump=!!rkeys.jump;
- if(rbuf.jump){if(performance.now()-rbuf.jump<=BUFFER_S*1000)inp.jump=true;delete rbuf.jump}
- if(rbuf.dash){var dashFresh=performance.now()-rbuf.dash<=350;delete rbuf.dash;if(dashFresh)tryDash(f,rDashDir||(inp.right?1:(inp.left?-1:f.face)))}
+function rconsumeWithin(rec,a,ms){var t=rec.buf[a];if(t&&performance.now()-t<=ms){delete rec.buf[a];return true}if(t)delete rec.buf[a];return false}
+function gatherRemoteInput(f){
+ var inp={left:false,right:false,down:false,jump:false};
+ var rec=f?f.netGuest:null;if(!rec)return inp;
+ var rk=rec.keys;
+ inp.left=!!rk.left;inp.right=!!rk.right;inp.down=!!rk.down;
+ f.hDown=!!rk.down;f.hUp=!!rk.jump;
+ f.hFwd=(f.face===1&&!!rk.right)||(f.face===-1&&!!rk.left);
+ f.hBack=(f.face===1&&!!rk.left)||(f.face===-1&&!!rk.right);
+ if(rec.prevJump&&!rk.jump&&!f.onGround&&f.vy<-JUMP_CUT&&f.hitstun<=0)f.vy=-JUMP_CUT;
+ rec.prevJump=!!rk.jump;
+ if(rec.buf.jump){if(performance.now()-rec.buf.jump<=BUFFER_S*1000)inp.jump=true;delete rec.buf.jump}
+ if(rec.buf.dash){var dashFresh=performance.now()-rec.buf.dash<=350;var dd=rec.dashDir;delete rec.buf.dash;if(dashFresh)tryDash(f,dd||(inp.right?1:(inp.left?-1:f.face)))}
  if(f.attackCd<=0&&f.hitstun<=0){
-   var nowP=performance.now(),tj=rbuf.j,tk=rbuf.k;
-   if(tj&&tk&&Math.abs(tj-tk)<=90&&nowP-Math.max(tj,tk)<=350){delete rbuf.j;delete rbuf.k;startAttack(f,"jk")}
-   else if(tj&&nowP-tj>=55){if(rconsumeWithin("j",350))startAttack(f,"j")}
-   else if(tk&&nowP-tk>=55){if(rconsumeWithin("k",350))startAttack(f,"k")}
-   else if(!tj&&!tk){if(rconsumeWithin("l",350))startAttack(f,"l");else if(rconsumeWithin("ult",350))startAttack(f,"ult")}
+   var nowP=performance.now(),tj=rec.buf.j,tk=rec.buf.k;
+   if(tj&&tk&&Math.abs(tj-tk)<=90&&nowP-Math.max(tj,tk)<=350){delete rec.buf.j;delete rec.buf.k;startAttack(f,"jk")}
+   else if(tj&&nowP-tj>=55){if(rconsumeWithin(rec,"j",350))startAttack(f,"j")}
+   else if(tk&&nowP-tk>=55){if(rconsumeWithin(rec,"k",350))startAttack(f,"k")}
+   else if(!tj&&!tk){if(rconsumeWithin(rec,"l",350))startAttack(f,"l");else if(rconsumeWithin(rec,"ult",350))startAttack(f,"ult")}
  }
  return inp;
 }
@@ -786,7 +1039,7 @@ var guestSendT=0;
 function guestFrame(dtms){
  var dt=Math.min(0.05,dtms/1000);time+=dt;
  if(latestSnap){
-   applySnap(P1,latestSnap.p2,P2);applySnap(P2,latestSnap.p1,P1);
+   if(latestSnap.fs){for(var gi=0;gi<fighters.length;gi++){var gf=fighters[gi],gt=latestSnap.fs[gf.netIdx];if(gt)applySnap(gf,gt,gf===P1?(P2||gf):P1)}}
    projectiles=latestSnap.pr.map(function(p){return{x:p.x,y:p.y,vx:p.vx,vy:0,kind:p.k,owner:null,life:1}});
    timer=latestSnap.tm;
    if(latestSnap.over&&!matchOver){matchOver=true;$("endBtns").classList.add("on")}
@@ -1124,7 +1377,7 @@ function sendFriendRequest(){
 function inviteFriend(name){
  if(net.role!=="host"||!net.code){openFriends("招待は、ONLINE VS でルームを作って待機している時に送れます。まずルームを作成してください。");return}
  if(!social.online[name]){openFriends(name+" さんは今オフラインのようです。");return}
- if(socialSend(name,{t:"invite",from:social.name,code:net.code}))openFriends(name+" さんに招待を送りました。相手が参加すると、そのままキャラ選択画面に進みます。");
+ if(socialSend(name,{t:"invite",from:social.name,code:net.code}))openFriends(name+" さんに招待を送りました。相手が参加すると、キャラ選択をしてロビーに入ります。");
  else openFriends(name+" さんに招待を送れませんでした。接続を確認してください。");
 }
 var FRIEND_INPUT_STYLE="background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:150px;font-size:15px";
@@ -1509,7 +1762,7 @@ function startKojiroAttack(f,type,foe){
      /* 疾風突き: a real dash-in thrust — a straight-line lunge, no teleport */
      f.state="dashthrust";f.stateT=0.32;f.attackCd=0.56;f.comboWin=0;f.dashT=0; /* thrust: a little extra recovery */
      f.vx=f.face*560;
-     meleeHit(f,foe,86,56,13,400,f.face,-0.25);
+     meleeHit(f,foe,86,56,13,620,f.face,-0.38); /* real knockback (user fix): the thrust now clearly launches the foe — damage (13) and cooldown (0.56) unchanged */
      spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);
    }else{
      /* 三段剣 chain — three genuinely different motions:
@@ -2077,7 +2330,15 @@ function stepFighter(f,dt,input,foe){
  }else if(f.guarding){
    var gs=Math.sign(f.vx);f.vx-=gs*RUN_FRICTION*dt;if(Math.sign(f.vx)!==gs)f.vx=0; /* rooted while guarding */
  }else if(f.hitstun>0){
-   f.hitstun-=dt; /* launched: keep flying, almost no drag */
+   f.hitstun-=dt; /* launched: while AIRBORNE keep flying, almost no drag */
+   if(f.onGround){
+     /* LANDED while still launched: the floor bites. Knockback slide
+        decays fast (5000/s) instead of skating across the ground at full
+        launch speed until hitstun runs out — this was the runaway
+        post-knockback slide. Normal run/dash handling is untouched:
+        this only applies inside hitstun, after touchdown. */
+     var ksgn=Math.sign(f.vx);f.vx-=ksgn*Math.min(Math.abs(f.vx),5000*dt);
+   }
  }else if(f.dashT>0){
    f.dashT-=dt;f.vx=f.dashDir*(f.dashSpd||DASH_SPEED);f.vy=0; /* horizontal-only dash: height is held for the whole burst, no up/down dash exists */
    if(f.dashT<=0){ /* dash ends: hand back a small carry, never full dash speed */
@@ -2699,7 +2960,7 @@ function loop(ts){
      if(!matchOver){
        var pInp=gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
-         var inpF=(ff===P1)?pInp:((mode==="online")?gatherRemoteInput():aiControl(ff,foeF));
+         var inpF=(ff===P1)?pInp:((mode==="online")?((ff.netGuest&&ff.netGuest.open&&!ff.netGuest.gone)?gatherRemoteInput(ff):aiControl(ff,foeF)):aiControl(ff,foeF));
          stepFighter(ff,STEP,inpF,foeF);
        }
      }
