@@ -324,6 +324,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["03:12"],tag:"修正・調整",title:"SARAを下方修正（フレイムノヴァ／ダッシュ／モードカオス／飛翔）",
+  items:["K＝フレイムノヴァを下方修正：溜めを長くし、押してからヒットするまでの遅延を 約0.26秒 → 約0.52秒 に延長（避けられる時間が倍になった）。数値は指定どおり 50ダメージ・ノックバック700・判定範囲96×74・クールタイム0.72秒",
+         "SARAのダッシュ速度を下方修正：1080 → 980。ダッシュのクールタイム（2.4秒）や地上・空中の移動速度は変更なし",
+         "地上↓+K＝モードカオスを下方修正：現在HPの1/3を削るコストと、与ダメージ全て+30%（燃焼の継続ダメージ＝tickも対象）はそのままに、効果時間が無制限（倒されるまで）→ 12秒間 に短縮。あわせて発動中は受ける回復量が35%減少するようになった（自動回復・キル回復の両方が対象で、キル回復は 51 → 33）。重ねがけは従来どおり不可（発動中に押しても延長されない）",
+         "地上↑+K＝飛翔を下方修正：上昇速度 vy -980 → -500（真上への即上昇はそのまま）、クールタイム 2.5秒 → 5.0秒。2段ジャンプが回復する仕様は変更なし",
+         "対象はSARAのみ。他キャラは変更なし"]},
  {date:"2026/11/13",times:["03:04"],tag:"修正・調整",title:"SARAを上方修正（吹っ飛び耐性／フレイムブレス／ジャベリン／火炎放射）",
   items:["SARAのふっとばされやすさを0.89倍に上方修正：ノックバックの受け倍率が 1.00 → 0.89 になり、これまでより吹っ飛びにくくなった",
          "空中↑+J＝フレイムブレスを上方修正：約1.0秒の溜め中は空中で静止するようにし、その後は従来どおり0.85秒間・0.16秒間隔で8ダメージの左右に広がるコーン＋燃焼は1.0秒→2.0秒に延長。放射中の落下速度は40→20に抑えられ、ゆっくり落ちながら吹けるようになった",
@@ -516,12 +522,12 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×1.60</b>と速い。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。</p>'
 +'<div class="moveRow"><div><b>J — ラッシュ（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J→J で次段へ・全4段</span><p>地上Jは最大4連撃のチェーン。各段とも<b>0.2秒スタン</b>付き。<br>①<b>爪ひっかき</b>：小ダメージの素早い一爪。→ ②<b>火の粉ブレス</b>：火の粉を吹いて<b>小ダメージ2ヒット</b>。→ ③<b>アッパー</b>：相手を空へ浮かせる小ダメージ。浮かせた相手は空中Jで追撃できる。→ ④<b>尻尾フィニッシュ</b>：振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。間が空くと1段目に戻る。<br>方向との組み合わせ：<b>ダッシュ中J＝ホーンチャージ</b>（ツノで突進。中ダメージ＋吹っ飛ばし）／ <b>↓+J＝ハンドフレア</b>（両手を左右に広げて炎を出し続ける継続攻撃。発生は遅めで、技中は自分の移動速度が大きく下がり、技後の硬直も長め）／ <b>↑+J＝ライジングフレア【暫定】</b>（指定が「考え中」だった枠の仮実装。斬り上げアッパーで、当てると<b>2段ジャンプが回復</b>する）／ <b>空中J＝スピンフレイム</b>（炎を纏った拳で左右に回転しながら攻撃。<b>全5ヒットの小ダメージ</b>、各ヒット0.2秒スタン）／ <b>空中↑+J＝フレイムブレス</b>（上方向の円錐形・広範囲に炎を吹く。<b>約1.0秒の溜め中は空中で静止</b>し、その後<b>0.85秒間・0.16秒間隔で8ダメージ</b>の左右に広がるコーン＋<b>燃焼2.0秒</b>。放射中の落下速度は<b>20</b>に抑えられる）／ <b>空中↓+J＝落下フレイムフィスト</b>（炎を纏った拳で真下へ落下攻撃。中ダメージ＋着地時に衝撃波）。</p></div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — フレイムテイル・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>爪の一撃→回転尻尾の2ヒットで吹っ飛ばす。Jチェーンはリセットされる。</p></div></div>'
-+'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・発生遅め・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。出は遅いが一撃は重い。空中でも同じ拳が出る。</p></div></div>'
-+'<div class="moveRow"><div><b>↓+K — モードカオス</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト</span><p>発動時に<b>自分のHPを1/3削る</b>代わりに、以降の<b>すべての攻撃の与ダメージが+30%</b>になる。効果は倒されるまで続く（HPは残り1未満にはならない）。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p></div></div>'
-+'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム約2.5秒</span><p>翼をはためかせて<b>その場で真上へ即座に飛び上がる</b>。復帰・回避・空中コンボの起点に。飛翔のあとも2段ジャンプが残る。</p></div></div>'
++'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・長めの遅延ヒット・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。溜めが長く、押してから<b>約0.52秒遅れて</b>ヒットする（避けられやすい代わりに一撃は重い）。<b>50ダメージ・ノックバック700・判定範囲96×74・クールタイム0.72秒</b>。空中でも同じ拳が出る。</p></div></div>'
++'<div class="moveRow"><div><b>↓+K — モードカオス</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト・12秒間</span><p>発動時に<b>自分の現在HPを1/3削る</b>代わりに、<b>12秒間</b>、<b>すべての攻撃の与ダメージが+30%</b>になる（<b>燃焼の継続ダメージ（tick）も対象</b>）。その代わり発動中は<b>受ける回復量が35%減少</b>する（自動回復・キル回復の両方）。効果は12秒で切れ、倒されても終了する。<b>重ねがけは不可</b>（発動中に押しても延長・再発動しない）。HPは残り1未満にはならない。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p></div></div>'
++'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム5.0秒</span><p>翼をはためかせて<b>その場で真上へ vy -500 で即座に上昇</b>し、<b>2段ジャンプが回復</b>する。復帰・回避・空中コンボの起点に。</p></div></div>'
 +'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・クールタイム4.2秒</span><p>炎の玉を<b>投射速度520・放物線</b>で投げる。直撃は<b>24ダメージ・ノックバック300＋燃焼2.0秒</b>。地面・台に着弾するとその場に<b>設置型の火種</b>として約6秒残り、<b>半径64以内</b>の相手を<b>燃焼1.1秒</b>で燃やし続ける。（スマホでは K/L 枠の L 側タップ）</p></div></div>'
 +'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、正面の広範囲に炎を放射し続ける（<b>約1.86秒・0.16秒間隔</b>）。<b>前方6〜215</b>の範囲に当たっている間ずっと<b>1ヒット9ダメージ</b>を与え、相手は燃え続ける。<b>吹っ飛ばしは一切なし</b>——逃げ場のない場所で押し込み続けるための必殺。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p></div></div>'
-+'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。ダッシュ速度は1080と速い。</p></div></div>';
++'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。ダッシュ速度は980。</p></div></div>';
 function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":"KAIRO")))}
 var playerChar="kairo";
 function currentMovesHTML(){return bindingSummaryHTML()+relabelMoves(playerChar==="warden"?wardenMovesHTML:(playerChar==="kojiro"?kojiroMovesHTML:(playerChar==="axe"?axeMovesHTML:(playerChar==="sara"?saraMovesHTML:movesHTML))))}
@@ -606,14 +612,14 @@ function charStats(c){
  if(c==="axe")return{hp:360,spd:0.72,kb:0.72,dash:800};
  if(c==="warden")return{hp:MAXHP,spd:0.9,kb:0.86,dash:920};
  if(c==="kojiro")return{hp:MAXHP,spd:1.16,kb:1.02,dash:1080};
- if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:1080}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 1080, HP 270 (user spec) */
+ if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:980}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 980 (nerfed from 1080), HP 270 (user spec) */
  return{hp:MAXHP,spd:1,kb:1,dash:DASH_SPEED};
 }
 function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":"#a5f3fc")))}
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:3,reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:3,reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -623,7 +629,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=3;f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=3;f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1165,7 +1171,7 @@ var SIM_STEP=1/60,RB_DELAY=2,RB_MAX_AHEAD=12,RB_KEEP=30;
    (peer-local dressing — isPlayer / remote / netIdx / trail — is
    deliberately NOT in the list: it is fixed at build time and must
    never travel in a resync state) */
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 function rbSaveState(){
  var st={tm:time,ti:timer,cd:countdown,mo:matchOver,sh:shake,hs:hitstop,rng:simSeedState,fs:[],pr:[],fo:[],ip:[]};
  for(var i=0;i<fighters.length;i++){var f=fighters[i],o={};
@@ -2551,8 +2557,9 @@ function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
 function startSaraAttack(f,type,foe){
  /* SARA — dragon girl (user spec). Midweight, fastest feet on the ground.
     Her kit is built around the 4-stage J rush, flame DoT (burn), a
-    self-buff paid for in HP (モードカオス: -1/3 HP, all damage +30%,
-    applied centrally in applyHit while f.chaos is on), a placed fire
+    self-buff paid for in HP (モードカオス: -1/3 current HP, all damage
+    +30% incl. burn ticks for 12s, healing received -35% while active,
+    no stacking; applied centrally in applyHit while f.chaos is on), a placed fire
     orb (ファイアジャヴェリン, CD 4.2s) and a no-knockback flame jet as
     her L (火炎放射). 地上上+J was left "考え中" in the spec, so it is a
     provisional rising upper for now (ライジングフレア). */
@@ -2647,23 +2654,29 @@ function startSaraAttack(f,type,foe){
  }else if(type==="k"){
    if(downHeld&&f.onGround){
      /* 下K: モードカオス — burns 1/3 of her CURRENT HP (never below 1)
-        and raises ALL of her damage by 30% until she is KO'd. The
-        multiplier itself is applied in applyHit (att.chaos). */
+        and raises ALL of her damage by 30% (burn ticks included, since
+        they also route through applyHit) for 12 SECONDS only (chaosT,
+        ticked down in stepFighter; dying also ends it). While it lasts,
+        ALL healing she receives is cut by 35% (regen in stepFighter and
+        the kill heal in killFighter). No stacking / no refresh: pressing
+        it again while active does nothing. The multiplier itself is
+        applied in applyHit (att.chaos). */
      if(f.chaos){beep(200,.07);return}
-     f.chaos=true;
+     f.chaos=true;f.chaosT=12;
      var cut=Math.floor(f.hp/3);if(f.hp-cut<1)cut=f.hp-1;
      f.hp-=cut;if(f.hpGhost>f.hp)f.hpGhost=f.hp;f.lastHurt=time;f.flash=0.22;
      f.state="schaos";f.stateT=0.5;f.attackCd=0.6;f.comboWin=0;
-     floaters.push({x:f.x,y:f.y-32,txt:"モードカオス！ 与ダメ+30%",life:1.15,col:"#fca5a5"});
+     floaters.push({x:f.x,y:f.y-32,txt:"モードカオス！ 与ダメ+30%（12秒）",life:1.15,col:"#fca5a5"});
      floaters.push({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
      spawnParticles(f.x,f.y+f.h*0.45,30,"#ef4444",250);spawnParticles(f.x,f.y+f.h*0.45,18,"#fb923c",210);spawnRing(f.x,f.y+f.h*0.45,"#ef4444",64);
      shake=Math.max(shake,5);beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
    }else if(upHeld){
-     /* 上K: 飛翔 — instantly rockets straight up on her wings.
-        flyCd (2.5s) stops it chaining into permanent flight */
+     /* 上K: 飛翔 — instantly rises straight up on her wings at vy -500
+        (nerfed from -980) and refunds the double jump (jumps=1).
+        flyCd is 5.0s (nerfed from 2.5s) */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=2.5;f.state="sfly";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
-     f.vy=-980;f.onGround=false;f.fastfall=false;f.jumps=1;
+     f.flyCd=5.0;f.state="sfly";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
+     f.vy=-500;f.onGround=false;f.fastfall=false;f.jumps=1;
      spawnParticles(f.x,f.y+f.h,16,"#ff8f5c",190);spawnParticles(f.x,f.y+f.h-6,8,"#fca5a5",140);beep(980,.14,"sine",.05);setTimeout(function(){beep(1400,.12,"sine",.04)},60);
    }else if(downHeld&&!f.onGround){
      /* air down+K falls back to the dive fist, same as air down+J */
@@ -2672,9 +2685,11 @@ function startSaraAttack(f,type,foe){
      meleeHit(f,foe,70,62,15,480,f.face,0.85);beep(300,.09,"sawtooth",.05);
    }else{
      /* K: フレイムノヴァ — a slow, heavy flaming fist. The hit itself
-        is DELAYED (lands in stepFighter when stateT runs down), so the
-        wind-up is real, dodgeable time */
-     f.state="snova";f.stateT=0.52;f.attackCd=0.72;f.hitDone=false;f.comboWin=0;
+        is DELAYED (lands in stepFighter when stateT runs down to 0.26),
+        and the wind-up was LENGTHENED (stateT 0.52 -> 0.78, so the hit
+        now lands ~0.52s after the press instead of ~0.26s): the wind-up
+        is real, dodgeable time. Cooldown stays 0.72s */
+     f.state="snova";f.stateT=0.78;f.attackCd=0.72;f.hitDone=false;f.comboWin=0;
      spawnParticles(f.x-f.face*8,f.y+f.h*0.45,7,"#fb923c",130);beep(170,.16,"sawtooth",.055);
    }
  }else if(type==="l"){
@@ -2874,8 +2889,10 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up){
 function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.6:1)))/1.5;if(att.char==="kojiro"||att.char==="warden")m/=1.2;if(att.char==="kojiro")m*=1.75;return dmg*1.9*m} /* SARA: ult gain from damage dealt is x1.60 (user spec) */
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
  if(def.dead||def.invuln>0)return false;
- /* SARA モードカオス: while her chaos mode is on, EVERY damage she
-    deals is +30% (paid for with 1/3 of her HP at activation) */
+ /* SARA モードカオス: while her chaos mode is on (12s max), EVERY
+    damage she deals is +30% (paid for with 1/3 of her HP at
+    activation) — burn ticks included, since the burn DoT in
+    stepFighter also deals its damage through this function */
  if(att&&att!==def&&att.char==="sara"&&att.chaos)dmg=Math.round(dmg*1.3);
  /* GUARD (all characters): while guarding on the ground, a FRONTAL hit
     deals 1/10 damage, pushes only a few millimetres, and causes NO
@@ -2916,7 +2933,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
  return true;
 }
 function killFighter(def,att){
- def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.chaos=false;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels */
+ def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.chaos=false;def.chaosT=0;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels */
  for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}}
  if(def.isPlayer&&mode!=="online"&&!matchOver)respawnSelectPending=true; /* every death re-opens character select (local modes) */
  shake=16;hitstop=0.08;
@@ -2925,11 +2942,12 @@ function killFighter(def,att){
  spawnFxBurst(FXIMG.hit,def.x,def.y+def.h/2,265,0.5,Math.random()*0.8-0.4,1,1);spawnFxBurst(charFxImg(att&&att!==def?att.char:def.char),def.x,def.y+def.h/2,225,0.55,Math.random()*6.28,1,0.85);
  beep(90,.35,"sawtooth",.08);
  if(att&&att!==def){
-   att.score+=100;att.hp=Math.min(att.maxHp||MAXHP,att.hp+51); /* kill heal 60 -> 51 (healing -15%, user tuning) */
+   var killHeal=att.chaos?Math.round(51*0.65):51; /* SARA in モードカオス heals 35% less: kill heal 51 -> 33 while chaos is on */
+   att.score+=100;att.hp=Math.min(att.maxHp||MAXHP,att.hp+killHeal); /* kill heal 60 -> 51 (healing -15%, user tuning) */
    /* kill reward heal, made visible so the player can see it land */
-   floaters.push({x:att.x,y:att.y-24,txt:"+51 HP",life:.95,col:"#4ade80"});
+   floaters.push({x:att.x,y:att.y-24,txt:"+"+killHeal+" HP",life:.95,col:"#4ade80"});
    spawnParticles(att.x,att.y+att.h*0.4,12,"#4ade80",150);
-   if(att.isPlayer)showBanner("KNOCKOUT!","+100 POINTS","REGEN +51HP");
+   if(att.isPlayer)showBanner("KNOCKOUT!","+100 POINTS","REGEN +"+killHeal+"HP");
    else showBanner("DOWN…",cname(att.char)+" +100","");
  }else if(def.isPlayer){showBanner("DOWN…","","")}
 }
@@ -2984,11 +3002,16 @@ function stepFighter(f,dt,input,foe){
  f.flash=Math.max(0,f.flash-dt);
  f.specCd=Math.max(0,(f.specCd||0)-dt);
  f.flyCd=Math.max(0,(f.flyCd||0)-dt); /* SARA 飛翔 cooldown */
+ /* SARA モードカオス duration: 12s max — when chaosT runs out the mode
+    ends on the spot (it also ends on death: killFighter / resetFighter).
+    No stacking: startSaraAttack refuses to re-activate while f.chaos */
+ if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;floaters.push({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
  if(f.stateT===0&&f.state!=="idle")f.state="idle";
  if(f.reloadT>0){f.reloadT-=dt;if(f.reloadT<=0)f.ammo=3}
  /* hp ghost drains toward real hp; regen when out of combat */
  if(f.hpGhost>f.hp){f.hpGhost=Math.max(f.hp,f.hpGhost-95*dt)}
  var regenDelay=(mode==="training"&&!f.isPlayer)?1.2:REGEN_DELAY,regenRate=(mode==="training"&&!f.isPlayer)?59.5:REGEN_RATE; /* training dummy regen also -15%: 70 -> 59.5 HP/s (user tuning) */
+ if(f.chaos)regenRate*=0.65; /* SARA モードカオス中は回復量-35%: out-of-combat regen included */
  if(time-f.lastHurt>regenDelay&&f.hp>0&&f.hp<(f.maxHp||MAXHP)){
    var before=f.hp;f.hp=Math.min(f.maxHp||MAXHP,f.hp+regenRate*dt);
    if(Math.floor(before/50)!==Math.floor(f.hp/50))floaters.push({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
@@ -3018,8 +3041,10 @@ function stepFighter(f,dt,input,foe){
    if(f.spinTick>=0.11&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,300,f.face,-0.3);meleeHit(f,foe,68,62,4,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,6,"#67e8f9",170)}
  }
  /* SARA delayed heavy hit: フレイムノヴァ (K) lands partway through its
-    slow wind-up, not on the press */
- if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;var nvHit=meleeHit(f,foe,96,74,24,700,f.face,-0.42);spawnParticles(f.x+f.face*34,f.y+f.h*0.45,16,"#fb923c",240);spawnFxBurst(FXIMG.fire,f.x+f.face*34,f.y+f.h*0.45,150,0.3,0,f.face,0.85);if(nvHit){shake=Math.max(shake,5);spawnRing(f.x+f.face*36,f.y+f.h*0.45,"#fb923c",52)}beep(210,.12,"sawtooth",.06)}
+    slow wind-up, not on the press. Spec: damage 50, KB 700, range 96x74,
+    CD 0.72s, and a LONG delay — stateT starts at 0.78 and the hit fires
+    at 0.26, so it connects ~0.52s after the press */
+ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;var nvHit=meleeHit(f,foe,96,74,50,700,f.face,-0.42);spawnParticles(f.x+f.face*34,f.y+f.h*0.45,16,"#fb923c",240);spawnFxBurst(FXIMG.fire,f.x+f.face*34,f.y+f.h*0.45,150,0.3,0,f.face,0.85);if(nvHit){shake=Math.max(shake,5);spawnRing(f.x+f.face*36,f.y+f.h*0.45,"#fb923c",52)}beep(210,.12,"sawtooth",.06)}
  /* SARA air J (スピンフレイム): while the spin state lasts the fall is
     nearly cancelled and the spin ticks out up to 5 small hits, both
     sides, ~0.2s stun each (kb-sized like her chain openers) */
