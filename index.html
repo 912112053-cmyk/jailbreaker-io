@@ -323,6 +323,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["00:57"],tag:"修正・調整",title:"WARDENのJとKを見た目で作り分け（Jは3段別モーション／Kは盾バッシュ）",
+  items:["WARDENのJ（バトンラッシュ）を、3段とも同じ振りに見えた状態から、1段ごとにモーションとエフェクトが変わる形に作り分け：1段目＝バトンを水平に薙ぐ横薙ぎ（金の弧）、2段目＝逆方向に切り返すバックハンド（弧の向きが反転し色も変化）、3段目＝頭上から叩き落とす振り下ろしフィニッシュ（弧は最大で、オレンジ色の衝撃エフェクト＋衝撃リングで締めだと分かるようにした）。段が進むほど弧・残像エフェクトも大きくなる",
+         "これまでJの2段目が↑+J（ライジングバトン）と同じモーションを流用していたのも解消し、3段それぞれ専用の振り方にした",
+         "WARDENのK（シールドバッシュ）をJと別物に：バトンの斬撃の弧はやめ、肩のシールドを前に突き出して前方へ踏み込む体当たりモーションに変更。エフェクトも弧線ではなく四角い衝撃波のバーストにした",
+         "ダメージ・クールタイム・範囲・ノックバックなどの数値は一切変更なし（見た目とモーションだけの変更）。他キャラも変更なし"]},
  {date:"2026/11/13",times:["00:50"],tag:"修正・調整",title:"試合後にキャラ変更可能に／重力・滑り・KOJIRO突進を調整",
   items:["試合終了後の画面に「キャラ変更」ボタンを追加。ローカル対戦ではそのままキャラ選択画面へ戻って選び直せる（同じキャラのまま始めることもできる）",
          "オンライン対戦では、試合終了後に全員がキャラを選び直してロビーへ戻る流れにした。選び直しが終わったら、ホストがロビーの「試合開始」を押した時に次の試合が全員同時に始まる",
@@ -437,9 +442,9 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。あの回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要。判定も全体的に小さくなり、ウルトの範囲は特に狭い）。ゲージMAX中は体に青い電撃オーラ（帯電した光の放電）がまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると（5回目の命中では再チャージされず）連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p></div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>（ボタンに残り秒数が出る）。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p></div></div>';
 var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>刑務所の看守ロボ。重量級で足は遅いぶん、一撃が重く吹っ飛ばしが強いパワータイプ。バトンで制圧し、ボルトで撃ち抜き、必殺のスカイフック・クレーンで上空から確保して叩き落とす。</p>'
-+'<div class="moveRow"><div><b>J — バトンラッシュ（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J で次段へ</span><p>①横払い → ②縦割り（相手を浮かせる）→ ③フルスイング（範囲・吹っ飛ばし最大）。一段ずつ重く、硬直も少し長め。空中J＝回転バトン、空中↓+J＝ダイブバトン（着地時に衝撃波が両側に出る）、ダッシュ中J／前+J＝突進バトン、↑+J＝ライジングバトン、↓+J＝ショックウェーブ（バトンで地面を叩き、床を走る衝撃波を放つ遠距離技）、後ろ+J＝バックバトン（薙ぎながら下がって間合いを作る）。</p></div></div>'
++'<div class="moveRow"><div><b>J — バトンラッシュ（チェーン式）</b> <span style="color:var(--cyan);font-weight:900">J→J→J で次段へ・1段ごとにモーションが変わる</span><p>①<b>横薙ぎ</b>：バトンを水平に薙ぐ（金の弧が前に膨らむ）→ ②<b>返し（バックハンド）</b>：1段目と逆方向に切り返す（弧が体側に反り返り、色も淡く変わる）→ ③<b>振り下ろしフィニッシュ</b>：頭上から叩き落とす（弧は最大・オレンジ色の衝撃エフェクトで締めだと一目で分かる）。一段ずつ重く、硬直も少し長め。空中J＝回転バトン、空中↓+J＝ダイブバトン（着地時に衝撃波が両側に出る）、ダッシュ中J／前+J＝突進バトン、↑+J＝ライジングバトン、↓+J＝ショックウェーブ（バトンで地面を叩き、床を走る衝撃波を放つ遠距離技）、後ろ+J＝バックバトン（薙ぎながら下がって間合いを作る）。</p></div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — スタンバッシュ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>バトン→シールドバッシュの2ヒット。大きく吹っ飛ばす。</p></div></div>'
-+'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>盾ごと体当たりする看守の主力技。空中K＝メテオシールド（下方向へ叩く）。空中↓+K＝メテオドロップ。地上↓+K＝ショックスイープ（前後両方を薙ぐ）。</p></div></div>'
++'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>バトンは振らず、肩のシールドを前に突き出して前方へ踏み込み体当たりする看守の主力技。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中K＝メテオシールド（下方向へ叩く）。空中↓+K＝メテオドロップ。地上↓+K＝ショックスイープ（前後両方を薙ぐ）。</p></div></div>'
 +'<div class="moveRow"><div><b>U — ショックボルト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>電撃ボルトを撃つ。3発で自動リロード。（スマホでは K/L 枠の L 側タップ）</p></div></div>'
 +'<div class="moveRow"><div><b>L — スカイフック・クレーン（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>空からマグネットクレーンを呼び、目の前の相手を磁力で確保して真上へ吊り上げ、そのまま地面へ叩き落とす逮捕技。周囲を薙ぐ技ではなく「捕まえて落とす」一点集中の大技で、吊り上げ中、相手はなにもできない。スラムの瞬間に大ダメージ（46）＋強いヒットストップ。射程は前方約520・上下約320。ゲージMAX中は体に金色の電撃オーラ（帯電した光の放電）がまとわりつく。外すと確保失敗でゲージは消費される。</p></div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。<b>クールタイム2.4秒</b>。</p></div></div>';
@@ -1667,10 +1672,18 @@ function startWardenAttack(f,type,foe){
      f.vx=f.face*Math.min(Math.max(Math.abs(f.vx),470),640);
      meleeHit(f,foe,88,60,17,460,f.face,-0.3);beep(460,.06,"square",.05);
    }else{
+     /* BATON RUSH chain — three VISIBLY different swings (numbers are
+        untouched: same damage / cooldown / range / knockback per step).
+        Each step now has its OWN state so the drawing + FX can tell them
+        apart (step 2 used to reuse "clawup", the up+J launcher pose, and
+        every step shared one arm pose and one effect):
+          1段目 wswing  = horizontal baton sweep
+          2段目 wswing2 = backhand return, arc reversed vs step 1
+          3段目 wslam   = overhead slam finish, biggest arc, orange impact */
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;f.comboWin=0.65;
-     if(f.comboStep===0){f.state="claw";f.stateT=0.22;f.attackCd=0.28;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,68,60,14,330,f.face,-0.24);beep(420,.05,"square",.04)}
-     else if(f.comboStep===1){f.state="clawup";f.stateT=0.28;f.attackCd=0.32;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,66,80,15,380,f.face,-0.95);spawnParticles(f.x+f.face*18,f.y+f.h*0.3,7,"#fde68a",150);beep(360,.07,"square",.045)}
-     else{f.state="clawspin";f.stateT=0.38;f.attackCd=0.48;f.vx+=f.face*165;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,92,74,21,580,f.face,-0.42);spawnParticles(f.x,f.y+f.h*0.45,14,"#f59e0b",220);beep(600,.09,"square",.05)}
+     if(f.comboStep===0){f.state="wswing";f.stateT=0.22;f.attackCd=0.28;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,68,60,14,330,f.face,-0.24);beep(420,.05,"square",.04)}
+     else if(f.comboStep===1){f.state="wswing2";f.stateT=0.28;f.attackCd=0.32;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,66,80,15,380,f.face,-0.95);spawnParticles(f.x+f.face*18,f.y+f.h*0.3,9,"#fef3c7",170);beep(330,.07,"square",.045)}
+     else{f.state="wslam";f.stateT=0.38;f.attackCd=0.48;f.vx+=f.face*165;capVx(f,RUN_MAX*1.25);var wSlamHit=meleeHit(f,foe,92,74,21,580,f.face,-0.42);spawnParticles(f.x+f.face*26,f.y+f.h*0.55,18,"#fb923c",250);spawnParticles(f.x+f.face*30,f.y+f.h*0.7,8,"#fde68a",190);spawnRing(f.x+f.face*34,f.y+f.h*0.55,"#fb923c",52);spawnFxBurst(FXIMG.hit,f.x+f.face*30,f.y+f.h*0.5,150,0.3,0.4,f.face,0.85);if(wSlamHit)shake=Math.max(shake,3.5);beep(170,.11,"sawtooth",.06)}
    }
  }else if(type==="k"){
    if(downHeld&&f.onGround){
@@ -1681,7 +1694,16 @@ function startWardenAttack(f,type,foe){
      f.state="taildrop";f.stateT=0.42;f.attackCd=0.54;f.hitDone=false;f.comboWin=0;
      f.vy=Math.max(f.vy,752);f.vx*=0.3;beep(140,.14,"sawtooth",.055);
    }else{
-     f.state="tail";f.stateT=0.38;f.attackCd=0.54;f.hitDone=false;beep(180,.12,"sawtooth",.05);
+     /* SHIELD BASH — its own state "wbash" (was "tail", drawn with the
+        exact same baton-swing pose as J, so J and K read as one move).
+        Now a shoulder/shield charge: a short forward step-in (motion
+        only — the delayed hit in stepFighter keeps the SAME range,
+        damage, knockback and timing the old "tail" hit used), a shield
+        plate thrust out front and a square shockwave burst instead of
+        a slash arc. See the wbash branch in stepFighter + drawWarden. */
+     f.state="wbash";f.stateT=0.38;f.attackCd=0.54;f.hitDone=false;
+     f.vx+=f.face*170;capVx(f,RUN_MAX*1.25);
+     spawnParticles(f.x-f.face*8,f.y+f.h-4,6,"#94a3b8",120);beep(180,.12,"sawtooth",.05);
    }
  }else if(type==="l"){
    if(f.ammo<=0){if(f.reloadT<=0)f.reloadT=0.9;beep(200,.08);return}
@@ -2236,6 +2258,11 @@ function stepFighter(f,dt,input,foe){
  }
  var frozenFactor=1;if(f.frozen>0){f.frozen-=dt;frozenFactor=0.45}
  if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?64:74,f.char==="kairo"?58:66,airT?22:24,airT?620:580,f.face,airT?0.95:-0.5);beep(240,.1,"sawtooth",.05)} /* Kairo's boxes run smaller than the other chars' (user tuning) */
+ /* WARDEN shield bash delayed hit: EXACTLY the numbers his old K ("tail")
+    hit used above (range 74x66, dmg 24 / air 22, kb 580 / air 620) — only
+    the presentation differs: a dull square shockwave burst on connect,
+    never a slash arc */
+ if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,74,66,airB?22:24,airB?620:580,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
  if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=0.28){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?66:76,f.char==="kairo"?62:72,26,700,f.face,1.05);spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);beep(170,.12,"sawtooth",.06)}
  if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?74:86,f.char==="kairo"?64:74,16,560,f.face,-0.52);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#f87171":(f.char==="axe"?"#fb923c":"#22d3ee"),230);beep(420,.1,"sawtooth",.05)}
  /* KOJIRO delayed heavy hits: 袈裟斬り (ground K) and 空中袈裟 (air K) land
@@ -2642,6 +2669,59 @@ function drawWarden(f){
  ctx.fillStyle="#94a3b8";[[-15,19.5],[14.5,19.5],[-15,43.5],[14.5,43.5]].forEach(function(b){ctx.beginPath();ctx.arc(b[0],b[1],1.25,0,6.29);ctx.fill()});
  var wAtk=f.state==="claw"||f.state==="clawup"||f.state==="clawspin"||f.state==="airclaw"||f.state==="dashclaw"||f.state==="diveclaw"||f.state==="lowclaw"||f.state==="backclaw"||f.state==="jkcombo"||f.state==="tailsweep"||f.state==="taildrop"||f.state==="tail";
  if(isGuardW){ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-11,25);ctx.lineTo(17,35);ctx.stroke();ctx.beginPath();ctx.moveTo(12,23);ctx.lineTo(27,27);ctx.stroke();ctx.beginPath();ctx.moveTo(-9,33);ctx.lineTo(22,22);ctx.stroke();ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(27,18);ctx.lineTo(27,38);ctx.stroke();ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(27,16,4,0,6.29);ctx.fill()}
+ else if(f.state==="wswing"){
+  /* J 1段目 — horizontal baton sweep: arm straight out front, baton held
+     flat and horizontal, gold arc bowing AWAY from the body across the front */
+  ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(35,31);ctx.stroke();
+  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(35,31);ctx.lineTo(54,29);ctx.stroke();
+  ctx.strokeStyle="rgba(253,230,138,.9)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(40,6);ctx.quadraticCurveTo(58,30,38,54);ctx.stroke();
+  ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(44,10);ctx.quadraticCurveTo(59,30,43,50);ctx.stroke();
+ }
+ else if(f.state==="wswing2"){
+  /* J 2段目 — backhand return: arm crossed low, baton angled down-forward,
+     and the arc bows BACK toward the body (the exact opposite curve of
+     1段目) in pale cream, so the return stroke reads at a glance */
+  ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(30,38);ctx.stroke();
+  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(30,38);ctx.lineTo(46,51);ctx.stroke();
+  ctx.strokeStyle="rgba(254,243,199,.9)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(42,4);ctx.quadraticCurveTo(18,30,44,56);ctx.stroke();
+  ctx.strokeStyle="rgba(253,230,138,.7)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(47,9);ctx.quadraticCurveTo(27,30,48,51);ctx.stroke();
+ }
+ else if(f.state==="wslam"){
+  /* J 3段目 — overhead slam finish, two phases by stateT: baton raised
+     high overhead first, then crashed down in front with the biggest,
+     thickest arc of the chain in ORANGE (not gold) + ground impact lines */
+  if(f.stateT>0.19){
+   ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(24,4);ctx.stroke();
+   ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(24,4);ctx.lineTo(31,-17);ctx.stroke();
+   ctx.strokeStyle="rgba(251,146,60,.75)";ctx.lineWidth=4;ctx.beginPath();ctx.arc(6,20,44,-1.9,-1.15);ctx.stroke();
+  }else{
+   ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(33,19);ctx.stroke();
+   ctx.strokeStyle="#0f172a";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(33,19);ctx.lineTo(50,47);ctx.stroke();
+   ctx.strokeStyle="#fb923c";ctx.lineWidth=6.5;ctx.beginPath();ctx.arc(2,20,56,-0.95,1.05);ctx.stroke();
+   ctx.strokeStyle="rgba(255,247,237,.9)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(2,20,48,-0.85,0.95);ctx.stroke();
+   ctx.strokeStyle="rgba(251,146,60,.95)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(44,54);ctx.lineTo(54,48);ctx.moveTo(48,57);ctx.lineTo(60,55);ctx.stroke();
+  }
+ }
+ else if(f.state==="wbash"){
+  /* K — shield bash: NO baton swing at all. The arm is tucked with the
+     baton pointing down at his side, the shoulder shield plate is thrust
+     out in front, the whole upper body leans into the charge, and SQUARE
+     shockwave outlines expand ahead of the shield (never an arc) */
+  ctx.translate(3,2);
+  ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(17,31);ctx.stroke();
+  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(17,31);ctx.lineTo(19,48);ctx.stroke();
+  ctx.fillStyle=flash?"#c22f2f":"#475569";ctx.fillRect(19,15,11,34);
+  ctx.fillStyle="#f59e0b";ctx.fillRect(19,15,11,4);ctx.fillRect(19,45,11,4);
+  ctx.fillStyle="#0f172a";ctx.fillRect(28.4,15,1.6,34);
+  ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(24.5,32,2.6,0,6.29);ctx.fill();
+  var bProg=1-Math.max(0,f.stateT)/0.38;
+  for(var bq=0;bq<2;bq++){
+   var bx=33+bProg*15+bq*11,bs=30+bProg*12+bq*7;
+   ctx.strokeStyle=bq===0?"rgba(252,211,77,.9)":"rgba(148,163,184,.65)";ctx.lineWidth=bq===0?3.5:2.5;
+   ctx.strokeRect(bx,32-bs/2,bs*0.42,bs);
+  }
+  ctx.strokeStyle="rgba(253,230,138,.8)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-12,20);ctx.lineTo(-26,20);ctx.moveTo(-10,32);ctx.lineTo(-22,32);ctx.stroke();
+ }
  else{ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(wAtk?35:22,34);ctx.stroke();
  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(wAtk?35:22,wAtk?21:34);ctx.lineTo(wAtk?42:26,wAtk?10:45);ctx.stroke()}
  if(f.state==="ultgrab"){ctx.strokeStyle="#fde68a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(6,-2);ctx.lineTo(2,-30);ctx.stroke();ctx.fillStyle="#f59e0b";ctx.fillRect(-5,-44,14,15);ctx.fillStyle="#fde68a";ctx.fillRect(-9,-29,5,8);ctx.fillRect(8,-29,5,8)}
@@ -2877,6 +2957,10 @@ function draw(){
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
      if(f.state==="ult")drawFxTex(charFxImg(f.char),f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
      else if(f.char==="kojiro")drawFxTex(FXIMG.slash,f.x+f.face*38,f.y+f.h*0.42,132,-0.55*f.face,f.face,0.55);
+     else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
+     else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
+     else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
+     else if(f.char==="warden"&&f.state==="wbash")drawFxTex(FXIMG.hit,f.x+f.face*46,f.y+f.h*0.46,98,0,f.face,0.5); /* K: a blunt burst at the shield, no slash texture */
      else drawFxTex(charFxImg(f.char),f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46);
    }
  });
