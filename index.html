@@ -9,9 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Permanent+Marker&family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js" integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PlayFab/JavaScriptSDK@master/PlayFabSdk/src/PlayFab/PlayFabClientApi.js"></script>
 <style>
 :root{--bg:#04060f;--panel:#0b142e;--panel2:#101d3d;--line:#22345f;--cyan:#22d3ee;--ice:#b9f3ff;--teal:#2dd4bf;--text:#eefaff;--muted:#9db4d6;--danger:#fb7185;--gold:#fbbf24}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans JP",system-ui,sans-serif;overflow-x:hidden}
@@ -348,6 +346,17 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["22:13"],tag:"修正・調整",title:"被弾硬直の仕様変更：技に書かれた秒数がそのまま相手に入るように",
+  items:["被弾硬直は、その技が命中した相手に付与される硬直で、効果時間は技ごとに決まっています。これまでは技に書かれた秒数は「下限」の扱いで、相手の残りHPが少ないときは KB 由来の硬直の方が長くなり、表示の秒数を超えてしまうことがありました。今回から、被弾硬直の数値が書かれている技は、その秒数がそのまま正確に適用されます（ノックバックの吹っ飛ばしは、これまでどおり別に発生します）",
+         "対象は被弾硬直を持つ技だけです。例：KOJIRO J 1段目 袈裟斬り 0.24秒／J 2段目 斬り上げ 0.26秒／J 3段目 三突き 0.26秒（ほか KAIRO の J 1・2段目とアイスフット、WARDEN の J 1・2段目と電気警棒、AXE の壊斧も同じ仕様です）",
+         "被弾硬直の数値が書かれていない技の硬直は、これまでどおり KB と相手の残りHPで変動します（約0.13〜0.50秒）。技一覧の「数値の読み方」の説明も新しい仕様に合わせて更新しました。なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
+ {date:"2026/11/13",times:["22:10"],tag:"大型更新",title:"アカウント／フレンド機能を PlayFab へ移行",
+  items:["アカウントとフレンドの仕組みを Firebase から PlayFab に作り替えました。ユーザーネーム＋パスワードで登録・ログインする使い方、ログイン状態が保持されて次回から自動ログインになる点はこれまでどおりです",
+         "フレンド申請・承認・一覧・削除は PlayFab のフレンド機能で管理されるようになりました。申請を送ると相手に届き、相手が承認するとフレンド成立です（申請中は「申請中」の欄に表示され、取り消しもできます）",
+         "※移行にともない、これまでのアカウントとフレンドはリセットされました。お手数ですが、FRIENDS 画面からもう一度アカウント作成をお願いします。ゲーム本体・対戦サーバー・キー設定に変更はありません"]},
+ {date:"2026/11/13",times:["21:59"],tag:"修正・調整",title:"KAIRO 空中↓+K メテオドロップの判定を左右両側に拡大（左右122×84）",
+  items:["KAIRO 空中↓+K メテオドロップ：判定 122×84→左右122×84 に上方修正。これまでは向いている側にだけ出ていた判定が、左右両側に出るようになり、真横や背後側の相手にも当たるようになりました",
+         "ダメージ26／KB700／発生 約0.12秒／全体0.40秒／後硬直0.45秒／着地硬直0.34秒は変更なし。技一覧の表示数値も新しい実数値に更新しました"]},
  {date:"2026/11/13",times:["21:55"],tag:"修正・調整",title:"KAIRO 空中↑+K フロストスピンの着地硬直を延長（0.30秒→0.40秒）",
   items:["KAIRO 空中↑+K フロストスピン：着地硬直 0.30秒→0.40秒に延長し、着地後の隙が大きくなりました（下方修正）",
          "ダメージ 前6／後6 ×最大5／KB 前180／後180／発生 即時／全体0.55秒／後硬直0.69秒／判定68×62／上昇 vy -550（0.55秒間）／再使用5.0秒は変更なし。技一覧の表示数値も新しい実数値に更新しました"]},
@@ -634,7 +643,7 @@ function openUpdateLog(){
 $("updBtn").onclick=function(){openUpdateLog()};
 $("updMoreBtn").onclick=function(){openUpdateLog()};
 renderUpdPreview();
-var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ 被弾硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから動けるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。その間は移動・ジャンプ・ダッシュ・ガード・技のすべてができない）。</div>';
+var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ <b>被弾硬直＝その技が命中した相手に付与される硬直</b>。技ごとに秒数が決まっている技は、その秒数がそのまま入る（ノックバックとは別に発生し、KBや相手の残りHPでは変わらない）。被弾硬直の数値が書かれていない技では、硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから動けるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。その間は移動・ジャンプ・ダッシュ・ガード・技のすべてができない）。</div>';
 function mvSpec(s){return '<div class="mvSpec">'+s+'</div>'}
 function mvS(k,v){return '<span><i>'+k+'</i>'+v+'</span>'}
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
@@ -651,7 +660,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68')+mvS('着地硬直','0.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は移動速度0.45倍に鈍る）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','122×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。判定は<b>左右両側</b>に出るので、真横や背後側にいる相手にも当たる。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は移動速度0.45倍に鈍る）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','左右122×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず、全体の拘束も長い大技。</p>'+mvSpec(mvS('ダメージ','一段目34／二段目28／三段目14')+mvS('KB','一段目600（真上へ）／二段目460（真上へ）／三段目600')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒')+mvS('後硬直','0.62秒')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','5.0秒')+mvS('着地硬直','0.40秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発撃つと自動リロード。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.25秒'))+'</div></div>'
@@ -1780,23 +1789,47 @@ function svAdvance(dtms){
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
  updateCamera(dtms,ipX,ipY);
 }
-/* ================= ACCOUNTS + FRIENDS (Firebase cloud accounts) =================
-   Accounts are username + password, kept in the cloud (Firebase Auth):
+/* ================= ACCOUNTS + FRIENDS (PlayFab cloud accounts) =================
+   Accounts are username + password, kept in the cloud (PlayFab):
    sign in from ANY device with the same username and password and your
-   account — including your friend list (Firestore) — is right there.
-   The username is never used as an email address directly: a synthetic
-   address is derived from it with the same deterministic encoding used
-   for PeerJS ids ("jb-<id>@example.com"), and the password only ever
-   goes to Firebase Auth — it is never written into Firestore or kept in
-   this page's data.
+   account — including your friend list — is right there. (This replaced
+   the old Firebase Auth / Firestore implementation; Firebase accounts
+   and friends were NOT migrated — everybody registers once more.)
 
-   Friend requests live in Firestore, so they can be sent to someone who
-   is offline right now; the request is waiting for them the next time
-   they sign in. Online presence and room invites still travel over a
-   second, independent PeerJS peer (your username maps to a peer id),
-   exactly as before: inviting a friend to a hosted room sends them the
-   room code over that channel, so they can join with one tap. */
-var social={name:"",uid:"",peer:null,friends:[],friendUids:[],friendNames:{},pendingIn:[],conns:Object.create(null),online:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null,unsubs:[],reqSeen:{}};
+   PlayFab logins need a machine-friendly Username + Email even though
+   the player only ever picks a display name, so both are derived from
+   the display name deterministically: the email keeps the synthetic
+   encoding used since the Firebase build ("jb-<id>@example.com"), and
+   the username is "jb" + the first 16 hex chars of SHA-256(name key) —
+   [a-z0-9] only, always 18 chars, and the same name always derives the
+   same username on every device, which is what makes login work. The
+   password only ever goes to PlayFab — it is never written into user
+   data or kept in this page's data.
+
+   Friends run on the PlayFab Friends API (AddFriend / RemoveFriend /
+   GetFriendsList). PlayFab friendship is a MUTUAL-ADD model: AddFriend
+   is one-sided, so the request flow is layered on top of it —
+     * sending a request = AddFriend (one-sided) + a "sent" record in
+       MY OWN PlayFab user data (jb_out), shown as 申請中;
+     * the request signal itself rides the existing PeerJS social
+       channel (the same one presence and room invites already use):
+       the recipient's client stores it in THEIR OWN user data
+       (jb_inbox), so it survives until they approve or reject it, and
+       the sender re-sends the signal on every login until it lands;
+     * approving = AddFriend back + an "established" record (jb_est)
+       on both sides (the approver writes theirs at once; the sender
+       promotes theirs when the acceptance signal arrives over PeerJS,
+       or when the two next meet online — an established friend who
+       connects sends a "we are friends" reminder for exactly this);
+     * deleting a friend = RemoveFriend + dropping the jb_est record
+       (the other side keeps their own records, which is how the
+       mutual-add model works).
+   Online presence and room invites still travel over the PeerJS peer
+   (your username maps to a peer id), exactly as before: inviting a
+   friend to a hosted room sends them the room code over that channel,
+   so they can join with one tap. Lobby display names are the PlayFab
+   username (the display name picked at registration). */
+var social={name:"",uid:"",peer:null,friends:[],friendUids:[],friendNames:{},pendingIn:[],conns:Object.create(null),online:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null,reqSeen:{},est:{},outReq:{},inbox:{},pfListById:{},sendQueue:{},pfPoll:null};
 function isLegacyName(n){return /^[a-z0-9_-]{3,24}$/.test(n||"")}
 function utf8ToB64Url(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function b64UrlToUtf8(s){try{var b64=String(s).replace(/-/g,"+").replace(/_/g,"/");while(b64.length%4)b64+="=";return decodeURIComponent(escape(atob(b64)))}catch(e){return null}}
@@ -1814,29 +1847,86 @@ function validDisplayName(n){if(typeof n!=="string"||!n||n!==n.trim())return fal
    connections are accepted only when the id decodes to a name this page
    itself could have produced */
 function escHtml(s){return String(s).replace(/[&<>"']/g,function(ch){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]})}
-/* ---- Firebase setup ---- */
-var FB_OK=false,fbAuth=null,fbDb=null,pendingRegName="";
+/* ---- PlayFab setup ---- */
+var PF_OK=false,PF_TITLE_ID="1CA142";
 try{
- if(typeof firebase!=="undefined"){
-  firebase.initializeApp({apiKey:"AIzaSyBbtn08diCTsLiagvepGgUAkl8IH34p3-0",authDomain:"jailbreaker-io.firebaseapp.com",projectId:"jailbreaker-io",storageBucket:"jailbreaker-io.firebasestorage.app",messagingSenderId:"935080896944",appId:"1:935080896944:web:0ac87f060f1eb361878e75"});
-  fbAuth=firebase.auth();fbDb=firebase.firestore();FB_OK=true;
+ if(typeof PlayFab!=="undefined"&&typeof PlayFabClientApi!=="undefined"){
+  PlayFab.settings.titleId=PF_TITLE_ID;
+  PF_OK=true;
  }
-}catch(e){FB_OK=false;fbAuth=null;fbDb=null}
+}catch(e){PF_OK=false}
 function nameKey(n){return String(n||"").normalize("NFC").toLowerCase()}
-function userDocId(n){var k=nameKey(n);return k.indexOf("/")>=0?encodeURIComponent(k):k}
 function authEmailFor(n){return "jb-"+(isLegacyName(n)?n:"e"+utf8ToB64Url(n))+"@example.com"}
-function fbErrMsg(e){
- var c=e&&e.code?String(e.code):"";
- if(c==="auth/wrong-password"||c==="auth/invalid-credential")return "パスワードが違います。もう一度入力してください。";
- if(c==="auth/user-not-found")return "そのユーザーネームは登録されていません。下の「アカウント作成」から登録してください。";
- if(c==="auth/email-already-in-use")return "そのユーザーネームは既に使われています。ログイン欄からログインしてください。";
- if(c==="auth/weak-password")return "パスワードは6文字以上で入力してください。";
- if(c==="auth/network-request-failed")return "通信エラーが発生しました。ネットワーク接続を確認して、もう一度お試しください。";
- if(c==="auth/too-many-requests")return "ログイン試行が続いたため、一時的に制限されています。しばらく待ってからお試しください。";
- if(c==="auth/invalid-email")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
- if(c==="auth/operation-not-allowed")return "アカウント機能が一時的に使えなくなっています。しばらく待ってからお試しください。";
- if(c==="permission-denied"||c==="firestore/permission-denied")return "データベースへのアクセスが拒否されました。時間をおいてもう一度お試しください。";
+/* The PlayFab Username for a display name: "jb" + 16 hex chars of
+   SHA-256 over the lowercased name key. Deterministic across devices
+   (login re-derives it from the typed name); the djb2 fallback only
+   runs on browsers without crypto.subtle, and is equally deterministic
+   there (registering and logging in on such a browser still agree). */
+function pfUsernameFor(n,cb){
+ var k=nameKey(n);
+ function fallback(){var h=5381;for(var i=0;i<k.length;i++){h=((h<<5)+h+k.charCodeAt(i))>>>0}cb("jb"+("0000000000000000"+h.toString(16)).slice(-13)+k.length.toString(16))}
+ try{
+  if(window.crypto&&crypto.subtle&&crypto.subtle.digest&&window.TextEncoder){
+   crypto.subtle.digest("SHA-256",new TextEncoder().encode("jailbreaker-io:"+k)).then(function(buf){
+     var bytes=new Uint8Array(buf),hex="";
+     for(var i=0;i<8;i++)hex+=("0"+bytes[i].toString(16)).slice(-2);
+     cb("jb"+hex);
+   }).catch(function(){fallback()});
+  }else fallback();
+ }catch(e){fallback()}
+}
+function pfErrMsg(e){
+ var c=e&&e.error?String(e.error):"";
+ if(c==="AccountNotFound")return "そのユーザーネームは登録されていません。下の「アカウント作成」から登録してください。";
+ if(c==="InvalidUsernameOrPassword"||c==="InvalidEmailOrPassword")return "パスワードが違います。もう一度入力してください。";
+ if(c==="UsernameNotAvailable"||c==="NameNotAvailable"||c==="EmailAddressNotAvailable")return "そのユーザーネームは既に使われています。ログイン欄からログインしてください。";
+ if(c==="InvalidPassword")return "パスワードは6文字以上で入力してください。";
+ if(c==="InvalidUsername")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
+ if(c==="InvalidEmailAddress")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
  return "エラーが発生しました"+(c?"（"+c+"）":"")+"。通信環境を確認して、もう一度お試しください。";
+}
+/* ---- session persistence: the PlayFab session ticket is kept on this
+   device (localStorage), so later visits sign in automatically until
+   the ticket expires (about a day) or the player logs out. PlayFab has
+   no refresh token for the JS SDK, so an expired ticket simply means
+   logging in with the password once more. ---- */
+var PF_STORE_KEY="jailbreaker.playfab.v1";
+function pfSaveSession(){try{if(social.uid)localStorage.setItem(PF_STORE_KEY,JSON.stringify({name:social.name,id:social.uid,ticket:(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)?(PlayFab._internalSettings.sessionTicket||""):""}))}catch(e){}}
+function pfLoadSession(){try{var s=localStorage.getItem(PF_STORE_KEY);if(!s)return null;var o=JSON.parse(s);return (o&&typeof o.ticket==="string"&&o.ticket&&typeof o.name==="string")?o:null}catch(e){return null}}
+function pfClearSession(){try{localStorage.removeItem(PF_STORE_KEY)}catch(e){}}
+/* ---- my own PlayFab user data: jb_est (established friends),
+   jb_out (requests I sent), jb_inbox (requests waiting for me).
+   Values are JSON strings; every record is capped and name-checked on
+   the way in, because user data is only as trustworthy as the client
+   that wrote it. ---- */
+function pfParseMap(raw,isReq){
+ var out={};
+ if(typeof raw!=="string"||!raw)return out;
+ var o=null;try{o=JSON.parse(raw)}catch(e){return out}
+ if(!o||typeof o!=="object")return out;
+ var n=0;
+ for(var k in o){
+   if(n>=100)break;
+   if(typeof k!=="string"||!k)continue;
+   if(isReq){var v=o[k];if(v&&typeof v==="object"&&validDisplayName(v.name)){out[k]={name:v.name,ts:(typeof v.ts==="number"?v.ts:0)};n++}}
+   else if(typeof o[k]==="string"&&validDisplayName(o[k])){out[k]=o[k];n++}
+ }
+ return out;
+}
+function pfGetMyData(cb){
+ if(!PF_OK||!social.loggedIn){cb(null,null,null);return}
+ try{
+  PlayFabClientApi.GetUserData({Keys:["jb_est","jb_out","jb_inbox"]},function(res){
+   var d=(res&&res.data&&res.data.Data)||{};
+   cb(pfParseMap(d.jb_est?d.jb_est.Value:null,false),pfParseMap(d.jb_out?d.jb_out.Value:null,true),pfParseMap(d.jb_inbox?d.jb_inbox.Value:null,true));
+  },function(){cb(null,null,null)});
+ }catch(e){cb(null,null,null)}
+}
+function pfSaveMyData(){
+ if(!PF_OK||!social.loggedIn)return;
+ try{
+  PlayFabClientApi.UpdateUserData({Data:{jb_est:JSON.stringify(social.est),jb_out:JSON.stringify(social.outReq),jb_inbox:JSON.stringify(social.inbox)}},function(){},function(){});
+ }catch(e){}
 }
 var toastTimer=null;
 function hideSocialToast(){var t=$("socialToast");if(t)t.classList.remove("on");if(toastTimer){clearTimeout(toastTimer);toastTimer=null}}
@@ -1851,8 +1941,29 @@ function showSocialToast(html,actions){
  beep(880,.09,"sine",.05);
 }
 function socialSend(name,msg){var c=social.conns[name];if(c&&c.open){try{c.send(msg);return true}catch(e){}}return false}
+/* Send now if the peer connection is already open; otherwise remember
+   the message and deliver it the moment the connection to that name
+   opens (friend requests and acceptances must not evaporate just
+   because the PeerJS handshake was still in flight). */
+function queueSocialSend(name,msg){
+ if(!name||name===social.name)return;
+ if(socialSend(name,msg))return;
+ social.sendQueue[name]=msg;
+ friendConnect(name);
+}
 function wireSocialConn(c,name){
- c.on("open",function(){social.online[name]=true;friendsSay("")});
+ c.on("open",function(){
+   social.online[name]=true;
+   var q=social.sendQueue[name];
+   if(q){delete social.sendQueue[name];try{c.send(q)}catch(e){}}
+   /* meeting an established friend online is also the moment a
+      pending acceptance can be reconciled: if THEY still show me as
+      申請中, their client promotes the request on this signal */
+   if(social.loggedIn&&Object.keys(social.est).some(function(id){return social.est[id]===name})){
+     try{c.send({t:"fest",from:social.name,fromId:social.uid})}catch(e){}
+   }
+   friendsSay("");
+ });
  c.on("data",function(m){onSocialData(name,m)});
  c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];friendsSay("")});
  c.on("error",function(){social.online[name]=false});
@@ -1867,9 +1978,45 @@ function friendConnect(name){
  return c;
 }
 function onSocialData(from,m){
- if(!m||!m.t||!social.name)return;
+ if(!m||!m.t||!social.name||!social.loggedIn)return;
  if(m.t==="invite"&&m.code){
    showSocialToast("<b>"+escHtml(from)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
+   return;
+ }
+ /* friend-request signals carry a PlayFab id + display name from a
+    REMOTE peer: both are validated before anything is stored, and the
+    name is only ever rendered escaped */
+ if((m.t==="freq"||m.t==="facc"||m.t==="frej"||m.t==="fest")&&typeof m.fromId==="string"&&m.fromId&&m.fromId!==social.uid){
+   var fid=m.fromId,fname=cleanName(typeof m.from==="string"?m.from:"");
+   if(!validDisplayName(fname))return;
+   if(m.t==="freq"){
+     if(social.est[fid]){queueSocialSend(fname,{t:"fest",from:social.name,fromId:social.uid});return}
+     if(social.inbox[fid])return;
+     social.inbox[fid]={name:fname,ts:Date.now()};
+     pfSaveMyData();rebuildFriendArrays();
+     (function(fn2,fid2){showSocialToast("<b>"+escHtml(fn2)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(fid2)}},{label:"断る",fn:function(){rejectRequest(fid2)}}])})(fname,fid);
+     if($("friendsSheet"))openFriends(social.lastMsg);
+   }else if(m.t==="facc"||m.t==="fest"){
+     if(social.outReq[fid]){
+       social.est[fid]=social.outReq[fid].name||fname;
+       delete social.outReq[fid];
+       pfSaveMyData();rebuildFriendArrays();refreshPfFriends();
+       if(m.t==="facc")showSocialToast("フレンド申請が承認され、フレンドになりました",[]);
+       if($("friendsSheet"))openFriends(social.lastMsg);
+     }else if(!social.est[fid]&&m.t==="fest"){
+       /* they consider us friends (e.g. my acceptance signal reached
+          them on a device where my out-record was already gone):
+          mirror the established record so both sides agree */
+       social.est[fid]=fname;pfSaveMyData();rebuildFriendArrays();refreshPfFriends();
+     }
+   }else if(m.t==="frej"){
+     if(social.outReq[fid]){
+       delete social.outReq[fid];
+       if(PF_OK){try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:fid},function(){},function(){})}catch(e){}}
+       pfSaveMyData();rebuildFriendArrays();
+       friendsSay("フレンド申請は断られました");
+     }
+   }
  }
 }
 function teardownSocialPeer(){
@@ -1892,6 +2039,10 @@ function connectSocialPeer(n){
    social.retryN=0;
    friendsSay("ユーザーネーム「"+n+"」でオンラインになりました。友達にこの名前を教えて、検索してもらいましょう。");
    social.friends.forEach(function(fn){friendConnect(fn)});
+   /* re-send any outgoing friend requests whose signal may not have
+      landed yet (the recipient stores it in their own data on
+      receipt, so a duplicate delivery is a no-op for them) */
+   Object.keys(social.outReq).forEach(function(id){queueSocialSend(social.outReq[id].name,{t:"freq",from:social.name,fromId:social.uid})});
  });
  p.on("connection",function(c){if(social.peerGen!==gen||social.peer!==p)return;var nm=nameFromPeerId(c.peer||"");if(!nm||nm===n)return;social.conns[nm]=c;wireSocialConn(c,nm)});
  p.on("error",function(err){
@@ -1923,187 +2074,137 @@ function connectSocialPeer(n){
  });
  return true;
 }
-/* ---- Firestore listeners (friends + requests) ---- */
+/* ---- friend state (PlayFab Friends API + my own user data) ---- */
 function updateFriendsBadge(){var b=$("friendsBtn");if(!b)return;var n=(social.pendingIn&&social.pendingIn.length)||0;b.textContent=n>0?("FRIENDS（申請"+n+"件）"):"FRIENDS"}
-function stopFbListeners(){social.unsubs.forEach(function(u){try{u()}catch(e){}});social.unsubs=[];social.reqSeen={};social.pendingIn=[];social.listenRetry=0;updateFriendsBadge()}
-function refreshFriendNames(){
- var uids=social.friendUids.slice();
- if(!uids.length){if(social.friends.length){social.friends=[];social.friendNames={};if($("friendsSheet"))openFriends(social.lastMsg)}return}
- var names={},done=0;
- uids.forEach(function(u){
-   fbDb.collection("users").doc(u).get().then(function(s){
-     if(s.exists){var d=s.data();if(d&&typeof d.name==="string")names[u]=d.name}
-   }).catch(function(){}).then(function(){
-     done++;
-     if(done<uids.length)return;
-     var newFriends=uids.map(function(x){return names[x]}).filter(function(x){return !!x});
-     var changed=newFriends.join("\u0001")!==social.friends.join("\u0001");
-     social.friendNames=names;social.friends=newFriends;
-     social.friends.forEach(function(fn){friendConnect(fn)});
-     if(changed&&$("friendsSheet"))openFriends(social.lastMsg);
+function rebuildFriendArrays(){
+ social.friendUids=Object.keys(social.est);
+ social.friendNames={};social.friends=[];
+ social.friendUids.forEach(function(id){var nm=social.est[id];if(nm){social.friendNames[id]=nm;social.friends.push(nm)}});
+ social.pendingIn=Object.keys(social.inbox).map(function(id){return {id:id,from:id,fromName:social.inbox[id].name||""}});
+ updateFriendsBadge();
+}
+function refreshPfFriends(){
+ if(!PF_OK||!social.loggedIn)return;
+ try{
+  PlayFabClientApi.GetFriendsList({},function(res){
+   if(!social.loggedIn)return;
+   var list=(res&&res.data&&res.data.Friends)||[];
+   var byId={};
+   list.forEach(function(fi){if(fi&&typeof fi.FriendPlayFabId==="string")byId[fi.FriendPlayFabId]={name:(typeof fi.TitleDisplayName==="string"&&fi.TitleDisplayName)?fi.TitleDisplayName:(typeof fi.Username==="string"?fi.Username:"")}});
+   social.pfListById=byId;
+   /* keep established friends' display names current */
+   var changed=false;
+   Object.keys(social.est).forEach(function(id){
+     if(byId[id]&&byId[id].name&&validDisplayName(byId[id].name)&&social.est[id]!==byId[id].name){social.est[id]=byId[id].name;changed=true}
    });
- });
+   Object.keys(social.outReq).forEach(function(id){
+     if(byId[id]&&byId[id].name&&validDisplayName(byId[id].name)&&social.outReq[id].name!==byId[id].name){social.outReq[id].name=byId[id].name;changed=true}
+   });
+   if(changed){pfSaveMyData();rebuildFriendArrays()}
+   social.friends.forEach(function(fn){friendConnect(fn)});
+   if($("friendsSheet"))openFriends(social.lastMsg);
+  },function(){});
+ }catch(e){}
 }
-function approveRequest(reqId,fromUid){
- if(!FB_OK||!social.uid||!reqId)return;
- fbDb.collection("users").doc(social.uid).set({friends:firebase.firestore.FieldValue.arrayUnion(fromUid)},{merge:true}).catch(function(e){friendsSay("フレンド登録の保存に失敗しました。"+fbErrMsg(e))});
- fbDb.collection("requests").doc(reqId).update({status:"accepted"}).then(function(){friendsSay("フレンド申請を承認しました")}).catch(function(e){friendsSay("承認に失敗しました。"+fbErrMsg(e))});
+function stopPfPoll(){
+ if(social.pfPoll){clearInterval(social.pfPoll);social.pfPoll=null}
+ social.reqSeen={};social.pendingIn=[];updateFriendsBadge();
 }
-function rejectRequest(reqId){
- if(!FB_OK||!reqId)return;
- fbDb.collection("requests").doc(reqId).delete().then(function(){friendsSay("フレンド申請を断りました")}).catch(function(e){friendsSay("申請を断る処理に失敗しました。"+fbErrMsg(e))});
-}
-function startFbListeners(){
- if(!FB_OK||!social.uid)return;
- var uid=social.uid;
- /* A listener error must never die silently again: the old empty error
-    handlers are how friend requests could stop arriving with nobody
-    able to tell. Surface the reason in Japanese and re-subscribe once
-    (reqSeen is preserved across the retry, so pending requests are
-    not re-announced, only picked up). */
- function listenErr(what){
-   return function(e){
-     friendsSay(what+"の受信に失敗しました。"+fbErrMsg(e));
-     if(social.listenRetry>=1)return;
-     social.listenRetry=(social.listenRetry||0)+1;
-     var seen=social.reqSeen;
-     setTimeout(function(){
-       if(!social.loggedIn||social.uid!==uid)return;
-       social.unsubs.forEach(function(u){try{u()}catch(x){}});social.unsubs=[];
-       social.reqSeen=seen;
-       startFbListeners();
-     },6000);
-   };
+function approveRequest(fromId){
+ if(!PF_OK||!social.loggedIn||!fromId||!social.inbox[fromId])return;
+ var fromName=social.inbox[fromId].name||"";
+ function done(){
+   social.est[fromId]=fromName;
+   delete social.inbox[fromId];
+   pfSaveMyData();rebuildFriendArrays();
+   queueSocialSend(fromName,{t:"facc",from:social.name,fromId:social.uid});
+   refreshPfFriends();
+   friendsSay("フレンド申請を承認しました");
  }
- social.unsubs.push(fbDb.collection("users").doc(uid).onSnapshot(function(snap){
-   var d=snap.exists?snap.data():null;
-   social.friendUids=(d&&Array.isArray(d.friends))?d.friends.filter(function(x){return typeof x==="string"}).slice(0,100):[];
-   refreshFriendNames();
- },listenErr("フレンド一覧")));
- /* Incoming requests: query on the SINGLE field "to" only and pick
-    the pending ones out on this side. The old to+status compound
-    query needs a composite index the database may not have — when it
-    doesn't, the query errors out, and with the error swallowed the
-    listener died and requests simply never arrived. A single-field
-    query needs no index, and it is exactly what the security rules
-    can prove (every returned doc has to == my uid). The listener
-    starts at login (startFbSession) — not when the FRIENDS sheet is
-    opened — so requests sent while I was offline are picked up and
-    announced at the next login. */
- social.unsubs.push(fbDb.collection("requests").where("to","==",uid).onSnapshot(function(qs){
-   var list=[],newOnes=[];
-   qs.forEach(function(doc){
-     var r=doc.data()||{};
-     if(r.status!=="pending")return;
-     list.push({id:doc.id,from:r.from||"",fromName:typeof r.fromName==="string"?r.fromName:""});
-     if(!social.reqSeen[doc.id]){social.reqSeen[doc.id]=1;newOnes.push({id:doc.id,from:r.from||"",fromName:typeof r.fromName==="string"?r.fromName:""})}
-   });
-   var changed=list.map(function(x){return x.id}).join(",")!==social.pendingIn.map(function(x){return x.id}).join(",");
-   social.pendingIn=list;
-   updateFriendsBadge();
-   if(newOnes.length===1){
-     (function(nw){showSocialToast("<b>"+escHtml(nw.fromName)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(nw.id,nw.from)}},{label:"断る",fn:function(){rejectRequest(nw.id)}}])})(newOnes[0]);
-   }else if(newOnes.length>1){
-     /* one toast per request used to overwrite the previous one, so
-        with several waiting only the last was ever seen — announce
-        them together and let the FRIENDS sheet carry the details */
-     showSocialToast("フレンド申請が <b>"+newOnes.length+" 件</b> 届いています",[{label:"確認する",fn:function(){openFriends()}}]);
-   }
-   if(changed&&$("friendsSheet"))openFriends(social.lastMsg);
- },listenErr("フレンド申請")));
- social.unsubs.push(fbDb.collection("requests").where("from","==",uid).onSnapshot(function(qs){
-   qs.forEach(function(doc){
-     var r=doc.data()||{};
-     if(r.status==="accepted"&&typeof r.to==="string"){
-       fbDb.collection("users").doc(uid).set({friends:firebase.firestore.FieldValue.arrayUnion(r.to)},{merge:true}).catch(function(){});
-       doc.ref.delete().catch(function(){});
-       showSocialToast("フレンド申請が承認され、フレンドになりました",[]);
-     }
-   });
- },listenErr("申請の結果")));
+ try{
+  PlayFabClientApi.AddFriend({FriendPlayFabId:fromId},function(){done()},function(e){
+   /* already being in my PlayFab list means the add half of the
+      approval is effectively done — finish the bookkeeping anyway */
+   if(e&&e.error&&String(e.error).indexOf("Already")>=0){done();return}
+   friendsSay("承認に失敗しました。"+pfErrMsg(e));
+  });
+ }catch(e){friendsSay("承認に失敗しました。"+pfErrMsg(e))}
+}
+function rejectRequest(fromId){
+ if(!fromId||!social.inbox[fromId])return;
+ var fromName=social.inbox[fromId].name||"";
+ delete social.inbox[fromId];
+ pfSaveMyData();rebuildFriendArrays();
+ queueSocialSend(fromName,{t:"frej",from:social.name,fromId:social.uid});
+ friendsSay("フレンド申請を断りました");
+}
+function cancelRequest(toId){
+ if(!PF_OK||!toId||!social.outReq[toId])return;
+ delete social.outReq[toId];
+ try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:toId},function(){},function(){})}catch(e){}
+ pfSaveMyData();rebuildFriendArrays();
+ friendsSay("フレンド申請を取り消しました");
+ if($("friendsSheet"))openFriends(social.lastMsg);
+}
+function removeFriendById(fid){
+ if(!PF_OK||!fid||!social.est[fid])return;
+ var nm=social.est[fid];
+ delete social.est[fid];
+ try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:fid},function(){},function(){})}catch(e){}
+ pfSaveMyData();rebuildFriendArrays();
+ friendsSay(nm+" さんをフレンドから削除しました");
+ if($("friendsSheet"))openFriends(social.lastMsg);
 }
 /* ---- session handling ---- */
-function startFbSession(uid,displayName){
- teardownSocialPeer();stopFbListeners();
- social.uid=uid;social.name=displayName;social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];
+function startPfSession(uid,displayName,silent){
+ teardownSocialPeer();stopPfPoll();
+ social.uid=uid;social.name=displayName;social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};social.reqSeen={};
+ pfSaveSession();
  /* note: a match-server room takes its display names at join time
     (the server protocol has no rename), so a sign-in that completes
     after joining a room cannot rename that room's entry — the name
     is picked up from the next room join on. Friend presence below
     still announces the username as before. */
- startFbListeners();
- /* self-heal the name -> uid mapping: accounts created while the
-    usernames write was failing silently can never be found by name
-    search, so no friend request can ever reach them. If this
-    account's mapping is missing, write it now (never overwrite a
-    mapping that belongs to a different account). */
- (function(){var un=fbDb.collection("usernames").doc(userDocId(displayName));un.get().then(function(s){if(!s.exists)un.set({uid:uid}).catch(function(){})}).catch(function(){})})();
+ pfGetMyData(function(est,out,inbox){
+   if(!social.loggedIn||social.uid!==uid)return;
+   if(est)social.est=est;
+   if(out)social.outReq=out;
+   if(inbox)social.inbox=inbox;
+   rebuildFriendArrays();
+   /* requests that arrived while this device was signed out are
+      announced once, together (individual toasts used to overwrite
+      each other, so only the last was ever seen) */
+   var waiting=social.pendingIn.slice();
+   waiting.forEach(function(r){social.reqSeen[r.from]=1});
+   if(waiting.length===1){
+     (function(w){showSocialToast("<b>"+escHtml(w.fromName)+"</b> さんからフレンド申請が届いています",[{label:"承認する",fn:function(){approveRequest(w.from)}},{label:"断る",fn:function(){rejectRequest(w.from)}},{label:"確認する",fn:function(){openFriends()}}])})(waiting[0]);
+   }else if(waiting.length>1){
+     showSocialToast("フレンド申請が <b>"+waiting.length+" 件</b> 届いています",[{label:"確認する",fn:function(){openFriends()}}]);
+   }
+   refreshPfFriends();
+   Object.keys(social.outReq).forEach(function(id){queueSocialSend(social.outReq[id].name,{t:"freq",from:social.name,fromId:social.uid})});
+   if($("friendsSheet"))openFriends(social.lastMsg);
+ });
+ social.pfPoll=setInterval(function(){
+   if(!social.loggedIn)return;
+   pfGetMyData(function(est,out,inbox){
+     if(!social.loggedIn)return;
+     if(est)social.est=est;
+     if(out)social.outReq=out;
+     if(inbox)social.inbox=inbox;
+     rebuildFriendArrays();
+   });
+   refreshPfFriends();
+ },45000);
  if(typeof Peer==="undefined"){
-   openFriends("ログインしました。ただしオンライン基盤（PeerJS）の読み込みに失敗したため、オンライン状態の表示と対戦の招待は使えません。フレンド申請・承認はそのまま使えます。");
+   if(!silent)openFriends("ログインしました。ただしオンライン基盤（PeerJS）の読み込みに失敗したため、オンライン状態の表示と対戦の招待は使えません。フレンド申請・承認はそのまま使えます。");
    return;
  }
  connectSocialPeer(displayName);
- openFriends("ログインしました。ユーザーネーム「"+displayName+"」で接続しています…");
-}
-function claimPendingName(uid,n){
- /* Runs SIGNED IN (the only state in which Firestore reads are allowed):
-    claim the username for this account, then create the profile doc.
-    If a DIFFERENT account already owns the name key (possible when two
-    spellings map to the same key, e.g. "Taro" vs "taro"), roll the fresh
-    sign-up back instead of stealing or sharing the name. */
- var unRef=fbDb.collection("usernames").doc(userDocId(n));
- function writeProfile(){
-   /* The usernames write is what makes this account FINDABLE by name
-      search — a friend request can only be addressed once it exists.
-      Its failure used to be swallowed whole, leaving an account nobody
-      could ever send a request to; now it retries once and, if it
-      still fails, the user is told in plain Japanese. */
-   var prof=function(warn){
-     fbDb.collection("users").doc(uid).set({name:n,friends:[]}).then(function(){startFbSession(uid,n);if(warn)friendsSay(warn)}).catch(function(){startFbSession(uid,n);if(warn)friendsSay(warn)});
-   };
-   unRef.set({uid:uid}).then(function(){prof("")}).catch(function(){
-     unRef.set({uid:uid}).then(function(){prof("")}).catch(function(){prof("ログインしました。ただしユーザーネームの登録保存に失敗したため、今は他の人から検索で見つけられない状態です。通信環境を確認して、ページを開き直してください。")});
-   });
- }
- unRef.get().then(function(us){
-   var owner=us.exists?(us.data()||{}).uid:null;
-   if(us.exists&&owner!==uid){
-     var cu=null;try{cu=fbAuth.currentUser}catch(e){}
-     if(cu&&cu.uid===uid){try{cu.delete().catch(function(){})}catch(e){}}
-     try{fbAuth.signOut()}catch(e){}
-     openFriends("そのユーザーネームは既に使われています。別の名前で登録するか、ログイン欄からログインしてください。");
-     return;
-   }
-   writeProfile();
- }).catch(function(){writeProfile()});
-}
-function loadUserProfile(uid,retried){
- fbDb.collection("users").doc(uid).get().then(function(s){
-   if(social.uid===uid&&social.loggedIn)return;
-   if(s.exists){var d=s.data();if(d&&typeof d.name==="string"&&validDisplayName(d.name)){startFbSession(uid,d.name);return}}
-   if(pendingRegName){
-     var n=pendingRegName;pendingRegName="";
-     claimPendingName(uid,n);
-     return;
-   }
-   if($("friendsSheet"))openFriends("アカウント情報の読み込みに失敗しました。ページを開き直してください。");
- }).catch(function(){
-   /* A failed profile read during registration must not dead-end the
-      sign-up silently: retry once, then surface a real message. */
-   if(pendingRegName&&!retried){setTimeout(function(){if(fbAuth&&fbAuth.currentUser&&fbAuth.currentUser.uid===uid)loadUserProfile(uid,true)},1500);return}
-   if($("friendsSheet"))openFriends("アカウント情報の読み込みに失敗しました。通信環境を確認して、ページを開き直してください。");
- });
-}
-function onFbAuth(user){
- if(user){loadUserProfile(user.uid);return}
- if(social.loggedIn){
-   teardownSocialPeer();stopFbListeners();
-   social.loggedIn=false;social.name="";social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];
-   if($("friendsSheet"))openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
- }
+ if(!silent)openFriends("ログインしました。ユーザーネーム「"+displayName+"」で接続しています…");
 }
 function registerAccount(){
- if(!FB_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
+ if(!PF_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
  var nInp=$("regNameInput"),pInp=$("regPassInput"),p2Inp=$("regPass2Input");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"",pw2=p2Inp?p2Inp.value:"";
@@ -2112,60 +2213,83 @@ function registerAccount(){
  if(pw.length>64){openFriends("パスワードは64文字以内で入力してください。");return}
  if(pw!==pw2){openFriends("パスワードが確認用と一致しません。もう一度入力してください。");return}
  openFriends("アカウントを作成しています…");
- /* Create the Auth account FIRST, then claim the username while signed
-    in. The old order read the usernames collection while signed out,
-    which the Firestore rules deny (permission-denied) — so EVERY
-    registration aborted with a generic error before it even reached
-    Firebase Auth. A taken name now surfaces as auth/email-already-in-use
-    (same synthetic address), and claimPendingName() covers spellings
-    that share a name key. */
- pendingRegName=n;
- fbAuth.createUserWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){pendingRegName="";openFriends(fbErrMsg(e))});
+ pfUsernameFor(n,function(un){
+   try{
+    PlayFabClientApi.RegisterPlayFabUser({TitleId:PF_TITLE_ID,Username:un,Email:authEmailFor(n),Password:pw,DisplayName:n,RequireBothUsernameAndEmail:true},function(res){
+     var d=(res&&res.data)||{};
+     startPfSession(typeof d.PlayFabId==="string"?d.PlayFabId:"",n,false);
+    },function(e){openFriends(pfErrMsg(e))});
+   }catch(e){openFriends(pfErrMsg(e))}
+ });
 }
 function loginAccount(){
- if(!FB_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
+ if(!PF_OK){openFriends("アカウント機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。");return}
  var nInp=$("loginNameInput"),pInp=$("loginPassInput");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"";
  if(!validDisplayName(n)){openFriends("ユーザーネームを入力してください（1〜20文字）。");return}
  if(!pw){openFriends("パスワードを入力してください。");return}
  openFriends("ログインしています…");
- fbAuth.signInWithEmailAndPassword(authEmailFor(n),pw).catch(function(e){openFriends(fbErrMsg(e))});
+ pfUsernameFor(n,function(un){
+   try{
+    PlayFabClientApi.LoginWithPlayFab({TitleId:PF_TITLE_ID,Username:un,Password:pw},function(res){
+     var d=(res&&res.data)||{};
+     var pid=typeof d.PlayFabId==="string"?d.PlayFabId:"";
+     /* the canonical display name lives on the account profile —
+        read it back so this device always shows the registered name */
+     try{
+      PlayFabClientApi.GetAccountInfo({},function(ai){
+       var disp=n;
+       try{var ti=ai&&ai.data&&ai.data.AccountInfo?ai.data.AccountInfo.TitleInfo:null;if(ti&&typeof ti.DisplayName==="string"&&validDisplayName(ti.DisplayName))disp=ti.DisplayName}catch(e){}
+       startPfSession(pid,disp,false);
+      },function(){startPfSession(pid,n,false)});
+     }catch(e){startPfSession(pid,n,false)}
+    },function(e){openFriends(pfErrMsg(e))});
+   }catch(e){openFriends(pfErrMsg(e))}
+ });
 }
 function logoutAccount(){
- teardownSocialPeer();stopFbListeners();
- social.loggedIn=false;social.name="";social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];
- if(FB_OK&&fbAuth)fbAuth.signOut().catch(function(){});
+ teardownSocialPeer();stopPfPoll();
+ social.loggedIn=false;social.name="";social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};
+ pfClearSession();
+ try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
 }
 function sendFriendRequest(){
  var inp=$("friendSearchInput");var n=cleanName(inp?inp.value:"");
- if(!FB_OK){openFriends("フレンド申請にはオンライン環境が必要です。ネットワーク接続を確認してください。");return}
+ if(!PF_OK){openFriends("フレンド申請にはオンライン環境が必要です。ネットワーク接続を確認してください。");return}
  if(!social.name||!social.loggedIn){openFriends("先にログインしてください。");return}
  if(!validDisplayName(n)){openFriends("検索するユーザーネームを入力してください（1〜20文字）。");return}
  if(nameKey(n)===nameKey(social.name)){openFriends("それは自分のユーザーネームです。");return}
  if(social.friends.some(function(fn){return nameKey(fn)===nameKey(n)})){openFriends(n+" さんとは既にフレンドです。");return}
+ if(Object.keys(social.outReq).some(function(id){return nameKey(social.outReq[id].name)===nameKey(n)})){openFriends(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
  openFriends(n+" さんを探しています…");
- fbDb.collection("usernames").doc(userDocId(n)).get().then(function(s){
-   if(!s.exists){friendsSay("「"+n+"」さんは見つかりませんでした。ユーザーネームを正確に入力してください（大文字・小文字も区別されます）。");return}
-   var toUid=(s.data()||{}).uid;
-   if(typeof toUid!=="string"||!toUid||toUid===social.uid){friendsSay("「"+n+"」さんは見つかりませんでした。");return}
-   /* One request document per (sender -> recipient) pair, under a
-      deterministic id: the duplicate check becomes a single document
-      read and the write a single set — the old three-condition query
-      needed a composite index and, when that query failed, the
-      request was never written at all (the sender only saw a generic
-      "communication error"). The "to" field is the recipient's
-      Firebase Auth uid, taken from their usernames mapping. */
-   var reqRef=fbDb.collection("requests").doc(social.uid+"_"+toUid);
-   reqRef.get().then(function(rs){
-     var rd=rs.exists?(rs.data()||{}):null;
-     if(rd&&rd.status==="pending"){friendsSay(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
-     reqRef.set({from:social.uid,to:toUid,fromName:social.name,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
-       friendsSay(n+" さんにフレンド申請を送りました。相手がオフラインでも、次にログインした時に届きます。");
-     }).catch(function(e){friendsSay("申請の送信に失敗しました。"+fbErrMsg(e))});
-   }).catch(function(e){friendsSay("申請の送信に失敗しました。"+fbErrMsg(e))});
- }).catch(function(e){friendsSay("相手の検索に失敗しました。"+fbErrMsg(e))});
+ try{
+  PlayFabClientApi.AddFriend({FriendTitleDisplayName:n},function(){
+   /* AddFriend answers nothing about WHO was added — resolve the
+      display name to a PlayFab id through the (now longer) friend
+      list, which is also where the one-sided add lives until the
+      other side adds back */
+   try{
+    PlayFabClientApi.GetFriendsList({},function(res){
+     var list=(res&&res.data&&res.data.Friends)||[];
+     var entry=null;
+     list.forEach(function(fi){if(fi&&typeof fi.TitleDisplayName==="string"&&nameKey(fi.TitleDisplayName)===nameKey(n))entry=fi});
+     if(!entry||typeof entry.FriendPlayFabId!=="string"){friendsSay("「"+n+"」さんは見つかりませんでした。ユーザーネームを正確に入力してください（大文字・小文字も区別されます）。");return}
+     var toId=entry.FriendPlayFabId,toName=entry.TitleDisplayName;
+     social.outReq[toId]={name:toName,ts:Date.now()};
+     pfSaveMyData();rebuildFriendArrays();
+     queueSocialSend(toName,{t:"freq",from:social.name,fromId:social.uid});
+     friendsSay(n+" さんにフレンド申請を送りました。相手がゲームを開いた時に届き、承認されるとフレンドになります。");
+     if($("friendsSheet"))openFriends(social.lastMsg);
+    },function(e){friendsSay("申請の送信に失敗しました。"+pfErrMsg(e))});
+   }catch(e){friendsSay("申請の送信に失敗しました。"+pfErrMsg(e))}
+  },function(e){
+   if(e&&e.error&&String(e.error).indexOf("NotFound")>=0){friendsSay("「"+n+"」さんは見つかりませんでした。ユーザーネームを正確に入力してください（大文字・小文字も区別されます）。");return}
+   if(e&&e.error&&String(e.error).indexOf("Already")>=0){friendsSay(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
+   friendsSay("申請の送信に失敗しました。"+pfErrMsg(e));
+  });
+ }catch(e){friendsSay("申請の送信に失敗しました。"+pfErrMsg(e))}
 }
 function inviteFriend(name){
  if(net.role!=="host"||!net.code){openFriends("招待は、ONLINE VS でルームを作って待機している時に送れます。まずルームを作成してください。");return}
@@ -2176,11 +2300,12 @@ function inviteFriend(name){
 var FRIEND_INPUT_STYLE="background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:150px;font-size:15px";
 function friendsHTML(msg){
  var rows="";
- if(!FB_OK){
+ if(!PF_OK){
    rows='<p>アカウント・フレンド機能はオンライン環境が必要です。ネットワーク接続を確認して、ページを開き直してください。</p>'
    +'<p style="color:var(--muted)">VS CPU・TRAINING・ローカル対戦は、ネットにつながっていなくても今まで通り遊べます。</p>';
  }else if(!social.loggedIn||!social.name){
    rows='<p>フレンド機能を使うには、アカウントでログインしてください。初めての人は下の「アカウント作成」から、ユーザーネームとパスワードを登録してください。</p>'
+   +'<p style="color:#fda4af">※システム移行（PlayFab化）のため、これまでのアカウントとフレンドはリセットされました。お手数ですが、もう一度アカウント作成をお願いします。</p>'
    +'<h3 style="margin:12px 0 2px;color:#fff;font-size:15px">ログイン</h3>'
    +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="current-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="loginBtn" style="min-width:96px">ログイン</button></span></div>'
@@ -2188,23 +2313,31 @@ function friendsHTML(msg){
    +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span><br><span class="bnote">日本語・英数字・記号など、ほとんどの文字が使えます（1〜20文字）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード</span><br><span class="bnote">6〜64文字。ログインのたびに必要になります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード（確認）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPass2Input" type="password" maxlength="64" placeholder="もう一度入力" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="registerBtn" style="min-width:96px">作成してログイン</button></span></div>'
-   +'<p style="color:var(--muted)">アカウントはクラウドに保存されるので、どの端末からでも同じユーザーネームとパスワードでログインでき、フレンド一覧もそのまま引き継がれます。一度ログインすれば、次回開いた時は自動でログインします（ログアウトするまで）。フレンド申請は相手がオフラインの時でも送っておけます。パスワードを忘れると復旧できないので、忘れないものにしてください。</p>';
+   +'<p style="color:var(--muted)">アカウントはクラウド（PlayFab）に保存されるので、どの端末からでも同じユーザーネームとパスワードでログインでき、フレンド一覧もそのまま引き継がれます。一度ログインすれば、次回開いた時は自動でログインします（セッションの有効期限が切れた時は、もう一度パスワードでログインしてください）。パスワードを忘れると復旧できないので、忘れないものにしてください。</p>';
  }else{
    rows='<p>あなたのユーザーネーム：<b style="color:#7dd3fc;font-size:16px">'+escHtml(social.name)+'</b>（ログイン中）　<button class="bindKey" id="logoutBtn" style="min-width:96px">ログアウト</button></p>'
-   +'<div class="bindRow"><div><span class="bname">フレンドを検索して追加</span><br><span class="bnote">相手のユーザーネームを入力して申請を送ります。相手がオフラインでも送っておけて、相手は次にログインした時に承認できます</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="friendSearchInput" maxlength="20" placeholder="相手の名前" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="friendSearchBtn" style="min-width:80px">申請する</button></span></div>';
+   +'<div class="bindRow"><div><span class="bname">フレンドを検索して追加</span><br><span class="bnote">相手のユーザーネームを入力して申請を送ります。申請は相手がゲームを開いた時に届き、相手が承認するとフレンドになります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="friendSearchInput" maxlength="20" placeholder="相手の名前" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="friendSearchBtn" style="min-width:80px">申請する</button></span></div>';
    if(social.pendingIn.length){
      rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">届いているフレンド申請</h3>';
      social.pendingIn.forEach(function(r){
-       rows+='<div class="bindRow"><div><span class="bname">'+escHtml(r.fromName)+'</span><br><span class="bnote">フレンド申請が届いています</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-approve="'+escHtml(r.id)+'" data-from="'+escHtml(r.from)+'" style="min-width:88px">承認する</button><button class="bindKey" data-reject="'+escHtml(r.id)+'" style="min-width:72px">断る</button></span></div>';
+       rows+='<div class="bindRow"><div><span class="bname">'+escHtml(r.fromName)+'</span><br><span class="bnote">フレンド申請が届いています</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-approve="'+escHtml(r.from)+'" style="min-width:88px">承認する</button><button class="bindKey" data-reject="'+escHtml(r.from)+'" style="min-width:72px">断る</button></span></div>';
+     });
+   }
+   var outIds=Object.keys(social.outReq);
+   if(outIds.length){
+     rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">申請中（相手の承認待ち）</h3>';
+     outIds.forEach(function(id){
+       rows+='<div class="bindRow"><div><span class="bname">'+escHtml(social.outReq[id].name)+'</span><br><span class="bnote">承認されるのを待っています</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-cancel="'+escHtml(id)+'" style="min-width:88px">取り消す</button></span></div>';
      });
    }
    rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">フレンド一覧</h3>';
    if(!social.friends.length)rows+='<p style="color:var(--muted)">まだフレンドがいません。上の検索から申請してみましょう。</p>';
-   social.friends.forEach(function(fn){
+   social.friendUids.forEach(function(fid){
+     var fn=social.est[fid];if(!fn)return;
      var on=!!social.online[fn];
-     rows+='<div class="bindRow"><div><span class="bname">'+escHtml(fn)+'</span><br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"● オンライン":"○ オフライン")+'</span></div><button class="bindKey" data-invite="'+escHtml(fn)+'" style="min-width:104px">ルームに招待</button></div>';
+     rows+='<div class="bindRow"><div><span class="bname">'+escHtml(fn)+'</span><br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"● オンライン":"○ オフライン")+'</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-invite="'+escHtml(fn)+'" style="min-width:104px">ルームに招待</button><button class="bindKey" data-remove="'+escHtml(fid)+'" style="min-width:72px">削除</button></span></div>';
    });
-   rows+='<p style="color:var(--muted)">フレンド一覧はクラウドに保存されるので、どの端末でログインしても同じ一覧が表示されます。招待は、ONLINE VS でルームを作って待機している時に送れます（相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。</p>';
+   rows+='<p style="color:var(--muted)">フレンド一覧はクラウド（PlayFab）に保存されるので、どの端末でログインしても同じ一覧が表示されます。招待は、ONLINE VS でルームを作って待機している時に送れます（相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。フレンドを削除すると、相手の側の一覧には残る場合があります。</p>';
  }
  return '<div id="friendsSheet"><h2>FRIENDS — フレンド</h2>'+rows+'<p id="bindMsg">'+escHtml(msg||"")+'</p></div>';
 }
@@ -2216,9 +2349,13 @@ function wireFriendsBtns(){
  var inv=document.querySelectorAll("[data-invite]");
  for(var i=0;i<inv.length;i++)(function(b){b.onclick=function(){inviteFriend(b.getAttribute("data-invite"))}})(inv[i]);
  var ap=document.querySelectorAll("[data-approve]");
- for(var j=0;j<ap.length;j++)(function(b){b.onclick=function(){approveRequest(b.getAttribute("data-approve"),b.getAttribute("data-from"))}})(ap[j]);
+ for(var j=0;j<ap.length;j++)(function(b){b.onclick=function(){approveRequest(b.getAttribute("data-approve"))}})(ap[j]);
  var rj=document.querySelectorAll("[data-reject]");
  for(var k=0;k<rj.length;k++)(function(b){b.onclick=function(){rejectRequest(b.getAttribute("data-reject"))}})(rj[k]);
+ var cn=document.querySelectorAll("[data-cancel]");
+ for(var c2=0;c2<cn.length;c2++)(function(b){b.onclick=function(){cancelRequest(b.getAttribute("data-cancel"))}})(cn[c2]);
+ var rm=document.querySelectorAll("[data-remove]");
+ for(var r2=0;r2<rm.length;r2++)(function(b){b.onclick=function(){removeFriendById(b.getAttribute("data-remove"))}})(rm[r2]);
  var lp=$("loginPassInput");if(lp)lp.onkeydown=function(e){if(e.key==="Enter")loginAccount()};
  var rp=$("regPass2Input");if(rp)rp.onkeydown=function(e){if(e.key==="Enter")registerAccount()};
 }
@@ -2229,10 +2366,30 @@ $("friendsBtn").onclick=function(){beep(600,.07);openFriends()};
    and friends now live in the cloud. Drop the stale keys so nothing on
    this device keeps using them. */
 try{localStorage.removeItem("jailbreaker.social.v1");localStorage.removeItem("jailbreaker.accounts.v1")}catch(e){}
-/* Firebase Auth keeps the session on this device: once signed in, later
-   visits sign in automatically until you log out — and because the
-   account itself lives in the cloud, the same login works everywhere. */
-if(FB_OK&&fbAuth)fbAuth.onAuthStateChanged(onFbAuth);
+/* Auto-login: if this device holds a PlayFab session ticket, validate
+   it against the account and sign back in silently (no sheet pops up —
+   the FRIENDS badge and presence come alive on their own). An expired
+   ticket is dropped and the player just logs in with the password. */
+(function(){
+ var s=pfLoadSession();
+ if(!PF_OK||!s)return;
+ try{PlayFab._internalSettings.sessionTicket=s.ticket}catch(e){return}
+ try{
+  PlayFabClientApi.GetAccountInfo({},function(ai){
+   var disp=s.name,pid=s.id||"";
+   try{
+     var aiD=ai&&ai.data?ai.data:{};
+     if(typeof aiD.PlayFabId==="string"&&aiD.PlayFabId)pid=aiD.PlayFabId;
+     var ti=aiD.AccountInfo?aiD.AccountInfo.TitleInfo:null;
+     if(ti&&typeof ti.DisplayName==="string"&&validDisplayName(ti.DisplayName))disp=ti.DisplayName;
+   }catch(e){}
+   startPfSession(pid,disp,true);
+  },function(){
+   pfClearSession();
+   try{PlayFab._internalSettings.sessionTicket=null}catch(e){}
+  });
+ }catch(e){pfClearSession()}
+})();
 
 /* ---- keyboard input ----
    WASD (and the arrow keys) are FIXED movement keys: they can never be
@@ -2476,7 +2633,7 @@ function startWardenAttack(f,type,foe){
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
      f.state="dashclaw";f.stateT=0.34;f.attackCd=0.48;f.comboWin=0;f.dashT=0; /* thrust: a little extra recovery after the move */
      f.vx=f.face*Math.min(Math.max(Math.abs(f.vx),470),640);
-     meleeHit(f,foe,88,60,17,100,f.face,-0.3,0.44) /* 電気警棒 (user spec): KB 460 -> 100, but a heavy 0.44s stun (hitstun floor) — the shock baton pins instead of launching */;beep(460,.06,"square",.05);
+     meleeHit(f,foe,88,60,17,100,f.face,-0.3,0.44) /* 電気警棒 (user spec): KB 460 -> 100, but 被弾硬直 0.44秒 fixed on the hit foe — the shock baton pins instead of launching */;beep(460,.06,"square",.05);
    }else{
      /* BATON RUSH chain — three VISIBLY different swings (numbers are
         untouched: same damage / cooldown / range / knockback per step).
@@ -2639,13 +2796,13 @@ function startKojiroAttack(f,type,foe){
        f.comboWin=0.8;
        f.state="chop";f.stateT=0.26;f.attackCd=0.09; /* 袈裟斬り: overhead kesa cut (was the 突き thrust) */
        f.vx+=f.face*55;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,80,52,10,250,f.face,-0.18,0.24); /* 被弾硬直 0.24 floor (user spec) */
+       meleeHit(f,foe,80,52,10,250,f.face,-0.18,0.24); /* 被弾硬直 0.24秒: hit foe is stunned exactly 0.24s, separate from the KB (user spec) */
        spawnParticles(f.x+f.face*20,f.y+f.h*0.4,8,"#fecaca",170);
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.8;
        f.state="rise";f.stateT=0.26;f.attackCd=0.11;
-       meleeHit(f,foe,68,84,12,280,f.face,-1.0,0.26); /* 斬り上げ: KB 340 -> 280 (still a strong upward launch), 被弾硬直 0.26 floor */
+       meleeHit(f,foe,68,84,12,280,f.face,-1.0,0.26); /* 斬り上げ: KB 340 -> 280 (still a strong upward launch), 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
        spawnParticles(f.x+f.face*16,f.y+f.h*0.3,7,"#fecaca",150);
        beep(800,.06,"square",.045);
      }else if(f.comboStep===2){
@@ -2655,7 +2812,7 @@ function startKojiroAttack(f,type,foe){
        f.state="thrust3";f.stateT=0.36;f.attackCd=0.13;
        f.spinHits=1;f.spinTick=0;
        f.vx+=f.face*80;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,92,68,5,330,f.face,-0.18,0.26); /* 三突き: 18 -> 5 x max 3 hits, KB 540 -> 330, box 82x72 -> 92x68, 被弾硬直 0.26 floor */
+       meleeHit(f,foe,92,68,5,330,f.face,-0.18,0.26); /* 三突き: 18 -> 5 x max 3 hits, KB 540 -> 330, box 82x72 -> 92x68, 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
        spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fecaca",180);
        beep(1100,.05,"square",.045);
      }else{
@@ -2799,8 +2956,8 @@ function startAxeAttack(f,type,foe){
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%2:0;
      if(f.comboStep===0){
        /* J 1段目: 壊斧 — brings the axe down in front of him:
-          22 dmg / KB 400, a guaranteed 0.4s of hitstun on the
-          victim (the hs floor), and much shorter recovery than
+          22 dmg / KB 400, 被弾硬直 0.4秒 fixed on the hit foe
+          (the hs value), and much shorter recovery than
           before (後硬直 0.77s -> 0.4s: attackCd 0.33 + 0.07) */
        f.comboWin=1.0;
        f.state="claw";f.stateT=0.48;f.attackCd=0.33;
@@ -3453,7 +3610,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*(def.kbMul||1); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
- else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=Math.min(0.5,Math.max(0.13+kbs/3600,hs||0));def.dashT=0;def.fastfall=false;if(def.jumps<1)def.jumps=1} /* hs: per-move minimum hitstun floor (user spec — KAIRO's J1/J2/ice foot guarantee their listed 被弾硬直 even at full HP) */
+ else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false;if(def.jumps<1)def.jumps=1} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5) */
  hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011);
  spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  floaters.push({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
@@ -3562,7 +3719,7 @@ function stepFighter(f,dt,input,foe){
     KB 600 / air 640. Presentation: a dull square shockwave burst on
     connect, never a slash arc */
  if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,80,70,airB?22:24,airB?640:600,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
- if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:0.28)){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?122:76,f.char==="kairo"?84:72,26,700,f.face,1.05); /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 88x84 -> 122x84 (user spec); dmg 26 / KB 700 shared */
+ if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:0.28)){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else{meleeHit(f,foe,76,72,26,700,f.face,1.05)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
  if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:86),f.char==="kojiro"?80:(f.char==="kairo"?68:74),f.char==="axe"?18:16,f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?660:560))),f.face,-0.52 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE 一閃重ね 2段目 (user spec): dmg 16 -> 18, KB 560 -> 660 */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden")?"#fcd34d":"#22d3ee"))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */beep(420,.1,"sawtooth",.05)}
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
