@@ -348,6 +348,32 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["20:28"],tag:"大型更新",title:"オンライン対戦サーバーが稼働開始",
+  items:["サーバー方式のオンライン対戦が実際に遊べるようになりました。専用サーバーが試合を計算するので、対戦中のカクつきや固まりが起きにくくなります"]},
+ {date:"2026/11/13",times:["20:03"],tag:"修正・調整",title:"WARDENのバランス調整（基礎強化／Jチェーン高速化／↓+Kが地雷設置に変化／ボルト4発化）",
+  items:["基礎：HP 250→280、受けKB ×0.86→×0.91（吹っ飛びにくく）。ウルト溜まり 約0.56倍→約0.46倍（遅く）。地上速度360／空中速度349／ダッシュ920は変更なし",
+         "Jチェーン：1段目 ダメージ14→16・KB 330→300・後硬直 0.35秒→0.21秒・判定 68×60→74×66・被弾硬直0.22秒を追加。2段目は「平返し」に改名し ダメージ15→18・KB 380→330・後硬直 0.39秒→0.22秒・判定 66×80→76×88・被弾硬直0.22秒を追加。3段目 ダメージ21→26・KB 580→620、メテオ判定（空中の相手を真下へ叩き落とす）を追加",
+         "前+Jは「電気警棒」に変更：KB 460→100の代わりに被弾硬直0.44秒のスタン付き。↓+J ショックウェーブ：波の速度 430→480、射程 約366→約420",
+         "空中Jは「回転警棒」に変更：前後両側へ4ダメージ×最大4ヒットの多段攻撃（KB 前330／後330）、着地硬直0.33秒を追加。空中↓+Jは「ウェーブショット」に変更：真下へ発射して落下し、本体 ダメージ18→17・KB 500→600、着地は両側とも12ダメージ・KB430、着地判定 96×58→108×80",
+         "J+K スタンバッシュ：2段目KB 560→640。K シールドバッシュ：発生 約0.14秒→約0.18秒、KB 地上580→600／空中620→640、判定 74×66→80×70。空中↓+K メテオドロップ：発生 約0.14秒→約0.32秒、着地硬直0.36秒を追加",
+         "↓+K ショックスイープは地雷設置に変更：その場に地雷を置く（20ダメージ／KB560、判定62×40）。地雷はフィールドに2つまで（3つ目を置くと一番古いものが消える）。後硬直 0.65秒→0.44秒",
+         "空中↑+K アームキャッチ・ミー：上昇 vy -680→-820、発生が即時になった。U ショックボルト：KB 235→220、弾速 560→630、射程 約728→約770、装填数 3→4発。L スカイフック・クレーン：確保範囲 前方約520×上下約320→前方約500×上下約430。技一覧の表示数値もすべて新しい実数値に更新した"]},
+ {date:"2026/11/13",times:["18:10"],tag:"修正・調整",title:"KAIROのバランス調整 第2弾（↓+Kが「アイスエッジ」に変化／フロストテイル・ウルト・ダッシュ強化）",
+  items:["K（フロストテイル）：ダメージ 地上24／空中22→地上33／空中32、KB 地上580／空中620→地上620／空中660、判定 64×58→80×64",
+         "空中↓+K（メテオドロップ）：判定 66×62→88×84。着地すると地面に氷を張るようになった（幅150・3.5秒の氷の床）＋着地硬直0.34秒を追加",
+         "↓+K は「テイルスイープ」から「アイスエッジ」に変更：地面から左右へ三段階の氷が生える大技になった（0.2秒／0.3秒／0.4秒に発生、ダメージ34／28／14、すべて真上へ吹き上げ）。技中はその場を動けず、全体1.38秒＋後硬直0.62秒",
+         "空中↑+K（フロストスピン）：ダメージ 後4→6（前6／後6）、最大ヒット 4→5、KB 前300／後180→前180／後180。上昇が vy -550 で1.2秒間続くようになった",
+         "U（アイスシャード）：KB 245→260、弾速 640→660、射程 約736→約860、リロード 1.15秒→1.25秒。L（アブソリュート・ゼロ）：ダメージ 55→50、KB 920→940、判定 横135×縦105→横135×縦125",
+         "ダッシュ：速度 1024→1100、再使用 2.4秒→2.2秒（KAIROのみ）。あわせて、URLの ?server= 指定で接続先サーバーを差し替えられる仕組みを廃止し、接続先を公式サーバーに固定した（セキュリティ対応）"]},
+ {date:"2026/11/13",times:["18:07"],tag:"修正・調整",title:"KAIROのバランス調整（Jチェーン強化／急降下斬り大幅強化／アイスフット化）",
+  items:["J 1段目：ダメージ 11→13、判定 56×50→64×58、後硬直 0.37秒→0.2秒、被弾硬直0.24秒を追加。J 2段目：判定 58×52→66×60、後硬直 0.43秒→0.22秒、被弾硬直0.26秒を追加。チェーンが繋がりやすくなった",
+         "J 3段目：KB 470→530、全体 0.34秒→0.4秒、判定 72×60→80×68。前+J（ブリンク斬り）：KB 390→440、判定 72×50→80×62、後硬直 0.72秒→0.8秒",
+         "↓+J は「アイススライド」から「アイスフット」に変更：しゃがみながら足を突き出す足払いになった。ダメージ 12→8、全体 0.30秒→0.12秒、後硬直 0.43秒→0.22秒、判定 66×32→72×34、被弾硬直0.2秒を追加（氷の床はそのまま残る）",
+         "空中J（ホバースピン）：ダメージ 前6／後4→前5／後5、KB 前300／後180→前330／後330、最大ヒット 3→5（間隔 0.11秒→0.08秒）、着地硬直0.53秒を追加",
+         "空中↓+J（急降下斬り）：本体ダメージ 15→34・KB 430→600、着地ダメージ 前12・後9→前16・後16、着地判定 80×50→92×68、後硬直 0.41秒→0.55秒",
+         "J+K同時押し（アイスファング・コンボ）：2段目KB 560→660、判定 62×54／74×64→66×58／78×68。基礎ステータス（HP250／地上400／空中388／受けKB×1.00／ダッシュ1024／ウルト溜まり約0.42倍）は変更なし。技一覧の表示数値もすべて新しい実数値に更新した"]},
+ {date:"2026/11/13",times:[],tag:"大型更新",title:"オンライン対戦をサーバー方式に刷新",
+  items:["オンライン対戦の通信方式を、端末同士の直接通信（P2P）から、専用サーバーが試合を計算する方式に作り替えました。対戦中のカクつきや固まりが起きにくくなります"]},
  {date:"2026/11/13",times:["16:48"],tag:"新機能",title:"全キャラの技一覧に数値データを追加（発生／全体／後硬直／ダメージ／吹っ飛ばし／判定／再使用）",
   items:["全6キャラ（KAIRO／WARDEN／KOJIRO／AXE／SARA／ORCHID）の全技に、ゲームのコード上の実数値をもとにしたデータ表示を追加した。これまで文章だけで「重い」「硬直長め」などと書かれていた技も、正確な秒数・数値で比べられるようになった",
          "各技に表示する数値：ダメージ／吹っ飛ばし（KB）／発生（押してから判定が出るまで）／全体（モーション時間）／後硬直（判定が出終わってから次の行動ができるまで。全技共通の仕上げ硬直 +0.07秒 を含む）／判定の大きさ（横×縦）／専用クールタイムがある技は「再使用」。飛び道具には弾速・射程・リロード時間、必殺技には消費や無敵時間なども併記した",
@@ -556,47 +582,48 @@ var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通�
 function mvSpec(s){return '<div class="mvSpec">'+s+'</div>'}
 function mvS(k,v){return '<span><i>'+k+'</i>'+v+'</span>'}
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
-+mvSpec(mvS('HP','250')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.00')+mvS('ダッシュ','1024')+mvS('ウルト溜まり','遅め（約0.42倍）'))
++mvSpec(mvS('HP','250')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.00')+mvS('ダッシュ','1100')+mvS('ウルト溜まり','遅め（約0.42倍）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','270')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.37秒')+mvS('判定','56×50'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.43秒')+mvS('判定','58×52'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','470')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.65秒')+mvS('判定','72×60'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ瞬間移動し、斬撃。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','390')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.72秒')+mvS('判定','72×50'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','270')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','530')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ瞬間移動し、斬撃。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.8秒')+mvS('判定','80×62'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックステップ斬り</b><p>前に薙ぎながら後ろへ跳んで距離を作る間合い調整技。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','64×50'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングアッパー</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','56×74')+mvS('上昇','vy -448'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — アイススライド</b><p>低く滑りながら薙ぐ。滑った地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。相手が乗っている間は移動速度が 0.45倍 に鈍り続ける。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','66×32'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.11秒間隔で<b>最大3ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。</p>'+mvSpec(mvS('ダメージ','前6／後4 ×最大3')+mvS('KB','前300／後180')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体15／着地 前12・後9')+mvS('KB','本体430／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.41秒')+mvS('判定','本体62×52／着地80×50'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。爪の一撃→回転テイルの2ヒットで大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／560')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','62×54／74×64'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>凍った尻尾を大きく振り回す。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上580／空中620')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','64×58'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下しながら真下へ叩く。落下スピードは最速クラスで、ダメージも大きい。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','66×62'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — テイルスイープ</b><p>低い回転で前後両方を薙ぐ。</p>'+mvSpec(mvS('ダメージ','前15／後11')+mvS('KB','前430／後330')+mvS('発生','即時')+mvS('全体','0.42秒')+mvS('後硬直','0.62秒')+mvS('判定','70×34'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p>vy -450で真上へ上昇しながら氷を纏って回転攻撃。0.11秒間隔で前後両側へ最大4ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後4 ×最大4')+mvS('KB','前300／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('再使用','5.0秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発撃つと自動リロード。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','245')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','640')+mvS('射程','約736（1.15秒）')+mvS('リロード','1.15秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','55')+mvS('KB','920')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦105（周囲）'))+'</div></div>'
-+'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p>'+mvSpec(mvS('速度','1024')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。相手が乗っている間は移動速度が 0.45倍 に鈍り続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','360')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.22秒')+mvS('判定','72×34')+mvS('被弾硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.53秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.53秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。爪の一撃→回転テイルの2ヒットで大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
++'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>凍った尻尾を大きく振り回す。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下しながら真下へ叩く。落下スピードは最速クラスで、ダメージも大きい。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は移動速度0.45倍に鈍る）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','88×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず、全体の拘束も長い大技。</p>'+mvSpec(mvS('ダメージ','一段目34／二段目28／三段目14')+mvS('KB','一段目600（真上へ）／二段目460（真上へ）／三段目600')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒')+mvS('後硬直','0.62秒')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p>氷を纏って回転攻撃しながら、vy -550で<b>1.2秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（1.2秒間）')+mvS('再使用','5.0秒'))+'</div></div>'
++'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発撃つと自動リロード。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.25秒'))+'</div></div>'
++'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','940')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
++'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p>'+mvSpec(mvS('速度','1100')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>刑務所の看守ロボ。重量級で足は遅いぶん、一撃が重く吹っ飛ばしが強いパワータイプ。バトンで制圧し、ボルトで撃ち抜き、必殺のスカイフック・クレーンで上空から確保して叩き落とす。</p>'
-+mvSpec(mvS('HP','250')+mvS('地上速度','360')+mvS('空中速度','349')+mvS('受けKB','×0.86（吹っ飛びにくい）')+mvS('ダッシュ','920')+mvS('ウルト溜まり','やや遅め（約0.56倍）'))
++mvSpec(mvS('HP','280')+mvS('地上速度','360')+mvS('空中速度','349')+mvS('受けKB','×0.91（吹っ飛びにくい）')+mvS('ダッシュ','920')+mvS('ウルト溜まり','やや遅め（約0.46倍）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 横薙ぎ（バトンラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.65秒</span><p>バトンを水平に薙ぐ（金の弧が前に膨らむ）。一段ずつ重く、硬直も少し長めになるチェーン。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.35秒')+mvS('判定','68×60'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 返し（バックハンド）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.65秒</span><p>1段目と逆方向に切り返す（弧が体側に反り返り、色も淡く変わる）。上方向への吹き上げが強い。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.39秒')+mvS('判定','66×80'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 振り下ろしフィニッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>頭上から叩き落とす（弧は最大・オレンジ色の衝撃エフェクトで締めだと一目で分かる）。</p>'+mvSpec(mvS('ダメージ','21')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('判定','92×74'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J／ダッシュ中J — 突進バトン</b><p>前方へ踏み込みながらの突きバトン。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','460')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.55秒')+mvS('判定','88×60'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.65秒</span><p>横に警棒を振るう攻撃。後硬直が短くなり、被弾硬直0.22秒が付いた。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.21秒')+mvS('判定','74×66')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 平返し</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.65秒</span><p>一段目に引き続いてバックハンドに振りかざす攻撃。上方向への吹き飛ばし。被弾硬直0.22秒付き。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','330（上吹き飛び）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.22秒')+mvS('判定','76×88')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 振り下ろし</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>最後に警棒を振り下ろして攻撃する。<b>メテオ判定あり</b>：空中の相手に当てると真下へ叩き落とす（弧は最大・オレンジ色の衝撃エフェクトで締めだと一目で分かる）。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('判定','92×74'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J／ダッシュ中J — 電気警棒</b><p>正面に電気警棒で攻撃する。吹っ飛ばしは小さい代わりに<b>スタンあり</b>（被弾硬直0.44秒）。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','100')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.55秒')+mvS('判定','88×60')+mvS('被弾硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックバトン</b><p>前に薙ぎながら下がって間合いを作る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','340')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','78×60'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングバトン</b><p>斬り上げながら跳び上がる対空技（他キャラの上昇Jと違い、当てても2段ジャンプは回復しない）。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','420（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.49秒')+mvS('判定','68×86')+mvS('上昇','vy -430'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — ショックウェーブ</b><p>バトンで地面を叩き、床を走る衝撃波を放つ遠距離技。波は<b>ダメージのみ</b>で、吹っ飛ばしも被弾硬直も一切ない。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.53秒')+mvS('波の速度','430')+mvS('射程','約366（0.85秒）'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 回転バトン</b><p>空中で回転しながら前後両方を薙ぐ。</p>'+mvSpec(mvS('ダメージ','前16／後9')+mvS('KB','前390／後260')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.41秒')+mvS('判定','84×74'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — ダイブバトン</b><p>斜め下へ突っ込み、着地時に衝撃波が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体18／着地 前12・後9')+mvS('KB','本体500／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体76×62／着地96×58'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — スタンバッシュ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>バトン→シールドバッシュの2ヒット。大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','360／560')+mvS('発生','即時／2段目 約0.26秒')+mvS('全体','0.52秒')+mvS('後硬直','0.49秒')+mvS('判定','76×64／86×74'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>バトンは振らず、肩のシールドを前に突き出して前方へ踏み込み体当たりする看守の主力技。判定は約0.14秒後に出る。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中でも同じバッシュが出る。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上580／空中620')+mvS('発生','約0.14秒')+mvS('全体','0.38秒')+mvS('後硬直','0.47秒')+mvS('判定','74×66'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>真下へ急降下して叩く落下技。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.14秒')+mvS('全体','0.42秒')+mvS('後硬直','0.47秒')+mvS('判定','76×72'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — ショックスイープ</b><p>低い回転で前後両方を薙ぐ。</p>'+mvSpec(mvS('ダメージ','前18／後13')+mvS('KB','前500／後390')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.65秒')+mvS('判定','84×38'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — アームキャッチ・ミー</b><p>上空から伸びるアームに自分をキャッチさせ、vy -680で真上へ一気に上昇する復帰・回避技。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','—')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('上昇','vy -680')+mvS('再使用','5.0秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — ショックボルト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>電撃ボルトを撃つ。3発で自動リロード。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','235')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.43秒')+mvS('弾速','560')+mvS('射程','約728（1.3秒）')+mvS('リロード','1.15秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — スカイフック・クレーン（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>空からマグネットクレーンを呼び、目の前の相手を磁力で確保して真上へ吊り上げ（0.55秒間、相手はなにもできない）、そのまま地面へ叩き落とす逮捕技。周囲を薙ぐ技ではなく「捕まえて落とす」一点集中の大技。ゲージMAX中は体に金色の電撃オーラがまとわりつく。外すと確保失敗でゲージは消費される。</p>'+mvSpec(mvS('ダメージ','46（スラム時）')+mvS('KB','820')+mvS('発生','確保は即時／ダメージは約0.55秒後')+mvS('全体','0.55秒（確保時）／0.40秒（外し時）')+mvS('後硬直','0.92秒（発動から次の行動まで）')+mvS('確保範囲','前方約520×上下約320'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — ショックウェーブ</b><p>バトンで地面を叩き、床を走る衝撃波を放つ遠距離技。波は<b>ダメージのみ</b>で、吹っ飛ばしも被弾硬直も一切ない。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.53秒')+mvS('波の速度','480')+mvS('射程','約420（0.875秒）'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 回転警棒</b><p>警棒を回転させて多段ヒットの攻撃をする。前後両側へ0.08秒間隔で最大4ヒット。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前4／後4 ×最大4ヒット')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.41秒')+mvS('判定','84×74')+mvS('着地硬直','0.33秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — ウェーブショット</b><p>真下に巨大な銃弾を発射し、そのまま真下へ落下する。着弾と同時に左右に衝撃波を発生させる。</p>'+mvSpec(mvS('ダメージ','本体17／着地12')+mvS('KB','本体600／着地430')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体76×62／着地108×80'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — スタンバッシュ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>バトン→シールドバッシュの2ヒット。大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','360／640')+mvS('発生','即時／2段目 約0.26秒')+mvS('全体','0.52秒')+mvS('後硬直','0.49秒')+mvS('判定','76×64／86×74'))+'</div></div>'
++'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>盾を取り出して突進して攻撃する看守の主力技。判定は約0.18秒後に出る。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中でも同じバッシュが出る。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上600／空中640')+mvS('発生','約0.18秒')+mvS('全体','0.38秒')+mvS('後硬直','0.47秒')+mvS('判定','80×70'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下して攻撃する。判定は約0.32秒後に出て、着地すると<b>着地硬直0.36秒</b>がある。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.32秒')+mvS('全体','0.42秒')+mvS('後硬直','0.47秒')+mvS('判定','76×72')+mvS('着地硬直','0.36秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — ショックスイープ</b> <span style="color:#f59e0b;font-weight:900">地雷設置</span><p>その場に地雷を設置する。相手が踏むと爆発する。この地雷は<b>フィールドに二つまで</b>しか存在できない（3つ目を置くと一番古いものが消える）。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.44秒')+mvS('判定','62×40（地雷の当たり判定）'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — アームキャッチ・ミー</b><p>上空から伸びるアームに自分をキャッチさせ、vy -820で真上へ一気に上昇する復帰・回避技。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('上昇','vy -820')+mvS('再使用','5.0秒'))+'</div></div>'
++'<div class="moveRow"><div><b>U — ショックボルト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・4発</span><p>電撃ボルトを撃つ。4発で自動リロード。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.43秒')+mvS('弾速','630')+mvS('射程','約770（1.22秒）')+mvS('リロード','1.15秒'))+'</div></div>'
++'<div class="moveRow"><div><b>L — スカイフック・クレーン（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>空からマグネットクレーンを呼び、目の前の相手を磁力で確保して真上へ吊り上げ（0.55秒間、相手はなにもできない）、そのまま地面へ叩き落とす逮捕技。周囲を薙ぐ技ではなく「捕まえて落とす」一点集中の大技。ゲージMAX中は体に金色の電撃オーラがまとわりつく。外すと確保失敗でゲージは消費される。</p>'+mvSpec(mvS('ダメージ','46（スラム時）')+mvS('KB','820')+mvS('発生','確保は即時／ダメージは約0.55秒後')+mvS('全体','0.55秒（確保時）／0.40秒（外し時）')+mvS('後硬直','0.92秒（発動から次の行動まで）')+mvS('確保範囲','前方約500×上下約430'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','920')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
+
 var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れの剣士。突き・斬り上げ・振り下ろし・袈裟斬り・居合と、剣の軌跡も体の動きも踏み込み方も一技ごとに違う、近接特化のキャラ。<b>飛び道具は一切持たない</b>（唯一の例外はウルトの斬撃だけ）。間合いの中で剣を振り分けて戦う。</p>'
 +mvSpec(mvS('HP','250')+mvS('地上速度','464')+mvS('空中速度','450')+mvS('受けKB','×1.02')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','最速クラス（約1.41倍）'))
 +mvLegend
@@ -759,7 +786,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。全員の端末が同じ試合を60fpsで計算し、フレームごとの入力だけを送り合う「ロールバック方式」です。自分のキャラはほぼ遅延なく動き、相手の入力が遅れた場合は巻き戻して計算し直すことで吸収します。ホストは部屋の管理役で、対戦そのものは全員対等です。通信はP2P（PeerJSの無料シグナリング経由）で、アカウント登録やAPIキーは不要。ネットワーク環境によっては接続できない場合があり、ホストが閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。自分のキャラは手元で先行して動くので操作は即反応し、相手のキャラはサーバーからの情報を補間して滑らかに表示します。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -819,10 +846,10 @@ var BUFFER_S=0.12,COYOTE_S=0.09;
 var MAXHP=250,REGEN_DELAY=4.5,REGEN_RATE=12.75; /* out-of-combat regen: 15 -> 12.75 HP/s (healing -15%, user tuning). The delay before regen starts (4.5s) is unchanged */
 /* --- input: held state + press buffer (so taps are never dropped) --- */
 var keys={},buf={};
-function press(a){if(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"&&running){rbPressQ.push(a);return}buf[a]=performance.now();if(net.role==="guest"&&running&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:a})}catch(e){}}}
+function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
-var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[];
+var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[];
 var shake=0,hitstop=0,time=0,wins=0;
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
@@ -831,22 +858,22 @@ var cam={x:0,y:0};
    See updateCamera() for why both exist. */
 var camVel={x:0,y:0},camLook=0;
 var audioCtx=null;
-function beep(f,d,type,v){if(typeof rb!=="undefined"&&rb&&rb.resim)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
+function beep(f,d,type,v){if(typeof svMute!=="undefined"&&svMute)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
 /* per-character base stats. AXE is the heavyweight: far more HP and
    knockback resistance, but his run/air speed and dash are much slower */
 function charStats(c){
  if(c==="axe")return{hp:360,spd:0.72,kb:0.72,dash:800};
- if(c==="warden")return{hp:MAXHP,spd:0.9,kb:0.86,dash:920};
+ if(c==="warden")return{hp:280,spd:0.9,kb:0.91,dash:920}; /* WARDEN (user spec): HP 250 -> 280, knockback taken x0.86 -> x0.91; ground 360 (400x0.9) / air 349 (388x0.9) / dash 920 unchanged */
  if(c==="kojiro")return{hp:MAXHP,spd:1.16,kb:1.02,dash:1080};
  if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:980}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 980 (nerfed from 1080), HP 270 (user spec) */
  if(c==="orchid")return{hp:250,spd:0.975,air:1.108,kb:1.08,dash:1200,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250, ground 390 (400x0.975), air 430 (388x1.108), dash 1200, knockback taken x1.08, falls 11% faster (fall) */
- return{hp:MAXHP,spd:1,kb:1,dash:DASH_SPEED};
+ return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
 function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":(f.char==="orchid"?"#a3e635":"#a5f3fc"))))}
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:3,reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -856,7 +883,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=3;f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -866,11 +893,10 @@ function startMatch(m){
  P1=Fighter(playerChar,true,SPAWNS_ALL[0].x,SPAWNS_ALL[0].y);fighters.push(P1);
  if(mode==="online"){
    /* fighters come from the lobby roster (net.match, canonical order:
-      host first, then guests in connection order, up to 8) and are
-      built in that SAME order on every peer: rollback netcode steps
-      one shared simulation, so the fighters array itself must be
-      identical everywhere. The local player is fighters[net.myIdx]
-      (P1), wherever that sits in the order. */
+      host first, then guests in join order, up to 8) — the server's
+      start message fixes that order for the whole match, and its
+      snapshots index fighters by it. The local player is
+      fighters[net.myIdx] (P1), wherever that sits in the order. */
    var mp=(net.match&&net.match.length>=2)?net.match:null;
    if(!mp){
      if(net.role==="guest"){mp=[{id:"host",char:forceP2Char||"warden"},{id:net.myId||"guest",char:playerChar}];net.myIdx=1}
@@ -896,12 +922,12 @@ function startMatch(m){
    }
    P2=fighters[1];
  }
- projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
+ projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];mines=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
  buf={};$("endBtns").classList.remove("on");hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;camVel.x=0;camVel.y=0;camLook=0;clampCam();
  window.scrollTo(0,0);
- if(mode==="online")rbReset(net.seed||1);else rb.active=false;
+ if(mode==="online")svReset();else sv.active=false;
 }
 function clampCam(){
  var mx=WORLD_W-viewW+260,my=WORLD_H-viewH+320;
@@ -1051,21 +1077,15 @@ $("csStart").onclick=function(){
    csMode="start";paused=false;
    return;
  }
- if(pendingMode==="online-host"){
-   /* picking a character no longer starts the match: the host marks
-      themselves ready and waits in the lobby until they press 試合開始 */
-   net.selfChar=playerChar;net.selfReady=true;hostChar=playerChar;
-   rebuildRoster();broadcastRoster();
+ if(pendingMode==="online-host"||pendingMode==="online-guest"){
+   /* picking a character no longer starts the match: the pick is
+      reported to the server, whose roster broadcast keeps every
+      lobby in sync; the host starts the match from the lobby once
+      everyone has picked */
+   net.selfChar=playerChar;hostChar=playerChar;
+   svSend({t:"char",char:playerChar});
+   for(var ri=0;ri<net.roster.length;ri++){if(net.roster[ri].id===net.myId){net.roster[ri].char=playerChar;net.roster[ri].ready=true}}
    $("charSelect").classList.remove("on");beep(700,.07);enterLobby();return;
- }
- if(pendingMode==="online-guest"){
-   $("charSelect").classList.remove("on");beep(700,.07);
-   /* re-report the current display name with the pick: if sign-in only
-      finished after joining, the host still holds the ゲスト fallback
-      from hello time, and this pick is where it used to stick */
-   if(net.conn&&net.conn.open){try{net.conn.send({t:"char",char:playerChar,name:(social.loggedIn&&social.name)?social.name:null})}catch(e){}}
-   for(var ri=0;ri<net.roster.length;ri++){if(net.roster[ri].id===net.myId){net.roster[ri].char=playerChar;net.roster[ri].ready=true;if(social.loggedIn&&social.name)net.roster[ri].name=social.name}}
-   enterLobby();return;
  }
  $("charSelect").classList.remove("on");beep(700,.07);startMatch(pendingMode)
 };
@@ -1078,9 +1098,11 @@ $("backBtn").onclick=toMenu;
 $("endMenuBtn").onclick=toMenu;
 $("againBtn").onclick=function(){
  if(mode==="online"){
+   /* the server returns EVERYONE to the lobby on any player's
+      rematch (characters stay picked; anyone may re-pick first) */
    $("endBtns").classList.remove("on");
-   if(net.role==="host")beginRematch();
-   else{if(net.conn&&net.conn.open){try{net.conn.send({t:"rematch"})}catch(e){}}showCenter("再戦をリクエストしました\nホストの開始を待っています…",99999)}
+   svSend({t:"rematch"});
+   showCenter("再戦をリクエストしました\nホストの開始を待っています…",99999);
    return;
  }
  openCharSelect(mode)
@@ -1095,83 +1117,73 @@ $("endCharBtn").onclick=function(){
  beep(600,.06);
  if(mode==="online"){
    $("endBtns").classList.remove("on");
-   if(net.role==="host")beginRematch();
-   else{if(net.conn&&net.conn.open){try{net.conn.send({t:"rematch"})}catch(e){}}showCenter("キャラ変更をリクエストしました\nホストの開始を待っています…",99999)}
+   svSend({t:"rematch"});
+   showCenter("キャラ変更をリクエストしました\nホストの開始を待っています…",99999);
    return;
  }
  openCharSelect(mode)
 };
-$("resetBtn").onclick=function(){if(!P1)return;if(mode==="online"){if(net.role==="host")hostStartOnline();return}startMatch(mode)};
+$("resetBtn").onclick=function(){if(!P1)return;if(mode==="online")return;startMatch(mode)};
 function togglePause(){if(!running||matchOver||mode==="online")return;paused=!paused;showCenter(paused?"PAUSE":"",paused?99999:0)}
 $("pauseBtn").onclick=togglePause;
-function showCenter(t,hold){if(typeof rb!=="undefined"&&rb&&rb.resim)return;var c=$("centerMsg");if(mode==="online"&&net.role==="host"&&!(typeof rb!=="undefined"&&rb&&rb.active))hostBroadcast({t:"center",txt:t,hold:hold||0});if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
+function showCenter(t,hold){if(typeof svMute!=="undefined"&&svMute)return;var c=$("centerMsg");if(!t){c.style.display="none";return}c.style.display="grid";$("centerText").textContent=t;if(hold&&hold<9000)setTimeout(function(){if(!paused)c.style.display="none"},hold)}
 var bannerTO=null;
-function showBanner(big,pts,sub,ms){if(typeof rb!=="undefined"&&rb&&rb.resim)return;$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(mode==="online"&&net.role==="host"&&!(typeof rb!=="undefined"&&rb&&rb.active))hostBroadcast({t:"banner",big:big,pts:pts||"",sub:sub||""});if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
+function showBanner(big,pts,sub,ms){if(typeof svMute!=="undefined"&&svMute)return;$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
 function hideBanner(){$("banner").style.display="none"}
-/* ================= ONLINE VS (PeerJS P2P, rollback netcode) =================
-   VS CPU / TRAINING stay fully offline. ONLINE VS uses the free PeerJS
-   cloud broker for signalling and direct WebRTC channels for play — no
-   account or API key needed, and NO game server: every peer runs the
-   full fixed-60fps simulation locally and the peers exchange nothing
-   but per-frame INPUTS (the host is a relay + room manager, not a
-   simulation authority). Local input is stamped INPUT_DELAY frames
-   ahead so every peer applies it on the same frame; a remote input
-   that has not arrived yet is predicted from the previous frame's held
-   keys, and when the real input lands the simulation rewinds to that
-   frame and re-simulates (rollback, up to RB_MAX_BACK frames). The sim
-   is deterministic: the host deals a random seed in the start message
-   and every random call inside the simulation draws from that seeded
-   stream, so identical inputs reproduce identical matches everywhere.
-   Peers periodically exchange a lightweight state checksum at fully
-   confirmed frames; on a mismatch (or a rollback that would reach
-   past the saved-state ring) the host's state at its latest confirmed
-   frame is broadcast and everyone re-syncs from it (resync). Effects
-   need no sync at all: every peer simulates the whole fight, so every
-   effect spawns locally on every screen. Honest limits: some network
-   pairs cannot connect through NAT, and if the host (the relay)
-   closes the page the match ends. */
-/* LOBBY: connecting never starts a match any more. Room create / join
-   (room code or friend invite) lands everyone in the lobby first: the
-   host owns the roster (display names: the cloud username when signed
-   in, otherwise ゲスト+connection-order number), broadcasts it on every
-   join / leave / character pick, and only the host's 試合開始 button
-   starts the match for everyone at once. Rooms hold up to 8 players
-   total (host included); a full room answers 満員です and a room whose
-   match already started answers 試合中です. Fighters are always built
-   in canonical roster order (netIdx) on every peer — a rollback match
-   is only reproducible if everyone simulates the same array. */
-var net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false,seed:0};
+/* ================= ONLINE VS (dedicated match server) =================
+   VS CPU / TRAINING stay fully offline. ONLINE VS now runs on a
+   dedicated match server (Cloudflare Workers + Durable Objects, one
+   room object per room code): the SERVER runs the real simulation at
+   a fixed 60fps and broadcasts one identical state snapshot to every
+   client at 30/s. Clients send nothing but packed inputs (the same
+   bit layout rbApplyInput has always used), bundled at 30/s as
+   {t:"in", seq, ins:[i0,i1]} — see the server's PROTOCOL.md.
+   Rendering model:
+   - your own fighter is predicted locally: the same stepFighter /
+     rbApplyInput code steps it at 60fps from your inputs, and every
+     snapshot reconciles it (restore the authoritative state at the
+     snapshot frame, then re-step your buffered inputs up to the
+     present with effects muted). Small errors are absorbed by the
+     replay; large ones snap straight to the server state.
+   - everyone else (and projectiles) is rendered by interpolating
+     between the two snapshots that bracket a ~100ms render delay.
+   - effects for remote fighters are derived from the snapshot stream
+     (state changes, HP drops, dash cooldown jumps, deaths), the same
+     information the old guest rendering ultimately displayed.
+   The host is only the room's manager (creates the room, presses
+   試合開始): the server is the authority, so a player leaving
+   mid-match — host included — simply hands their fighter to the CPU
+   on the server. The host leaving the LOBBY still dissolves the room.
+   PeerJS survives ONLY as the friend-presence / invite channel in the
+   accounts section below; it carries no match traffic any more. */
+var JB_SERVER_URL="wss://jailbreaker-io-server.jailbreaker-io.workers.dev";
+function jbServerBase(){
+ /* the game server is fixed to the project's own deployment — a
+    ?server= query override was removed (security audit): a crafted
+    link could otherwise point a viewer's client (and their display
+    name / room code / inputs) at a stranger's WebSocket server */
+ return JB_SERVER_URL;
+}
+var net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
-/* FX events are NOT synced any more: with rollback netcode every peer
-   runs the full simulation, so every effect spawns locally on every
-   screen by itself. fxRec stays behind as a no-op so the spawn
-   helpers' call sites do not need to change. */
+/* FX spawn helpers call fxRec on every spawn; effects are produced
+   locally on every client (prediction + snapshot-derived), so there
+   is nothing to forward — fxRec stays a no-op so the spawn helpers'
+   call sites do not need to change. */
 function fxRec(ev){}
 function fxImgKey(img){for(var k in FXIMG){if(FXIMG[k]===img)return k}return null}
-function hostBroadcast(m){for(var id in net.conns){var c=net.conns[id];if(c&&c.open){try{c.send(m)}catch(e){}}}}
-/* ---- rollback engine state (rbReset / rbStepNext live further down,
-   next to the simulation step they drive) ----
-   inputs[p]  : {map: frame->bits, cont: highest contiguous real frame}
-   used[p]    : frame->bits the latest sim pass actually consumed
-   lastRecv[p]: highest frame received from p (pacing / stall rule)
-   cpuFrom[p] : frame from which p's fighter is CPU-driven, or null
-   states     : frame->saved sim state at the START of that frame
-   ck         : state-frame->checksum of the world at that frame */
-var rb={active:false,resim:false,frame:0,acc:0,seed:0,inputs:[],used:[],lastRecv:[],cpuFrom:[],states:{},ck:{},confirmed:-1,lastCkSent:-1,ckBook:{},needResync:false,lastRsq:0,lastRsT:0,lastRsF:-1,endShown:false,stats:{rollbacks:0,resyncs:0,maxBack:0}};
-var rbPressQ=[];
-/* seeded RNG for everything inside the online simulation (mulberry32):
-   the host deals the seed in the start message, every peer draws the
-   same stream, and the stream state is part of the saved sim state, so
-   a rollback replays the AI's decisions bit-for-bit */
+/* seeded RNG kept for parity with the shared simulation code paths
+   (the server runs its own seeded stream; the client's prediction of
+   its own fighter never depends on it for state the server owns) */
 var simSeedState=1;
 function simRand(){simSeedState=(simSeedState+0x6D2B79F5)|0;var t=simSeedState;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}
-function rnd(){return (mode==="online"&&rb&&rb.active)?simRand():Math.random()}
+function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?simRand():Math.random()}
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦（P2P接続・ロールバック方式：全員の端末が同じ試合を計算し、入力だけを送り合うので、遅延が少なくホスト有利もありません）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録やAPIキーは不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦（サーバー方式：専用サーバーが試合を60fpsで計算して全員に配信するので、カクつきや固まりが起きにくくなりました）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
- +'<p style="color:var(--muted)">※ ネットワーク環境によっては接続できない場合があります。ホストがページを閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
+ +'<p style="color:var(--muted)">※ 試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
  +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
  +'<p id="bindMsg">'+(msg||"")+'</p>';
@@ -1182,178 +1194,133 @@ function wireOnlineBtns(){
  if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
 }
 function openOnline(msg){
- if(typeof Peer==="undefined"){openSheet(onlineHTML("オンライン基盤（PeerJS）の読み込みに失敗しました。通信環境を確認して、ページを開き直してください。"));return}
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
-function cleanupNet(){if(net.peer){try{net.peer.destroy()}catch(e){}}net={role:null,peer:null,conn:null,code:null,conns:{},guests:{},roster:[],myId:null,myIdx:0,started:false,nextNum:2,selfName:"",selfChar:null,selfReady:false,match:null,leaving:false,dissolved:false,seed:0};guestChar=null;hostChar=null;rb.active=false;rb.resim=false;rbPressQ=[];var lb=$("lobbyScreen");if(lb)lb.classList.remove("on")}
+function cleanupNet(){
+ if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
+ net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
+ guestChar=null;hostChar=null;
+ sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];
+ var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
+}
+function svSend(o){if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}}
+function svConnect(){
+ var url=jbServerBase().replace(/\/+$/,"")+"/room/"+encodeURIComponent(net.code||"");
+ var ws=null;
+ try{ws=new WebSocket(url)}catch(e){openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+ net.ws=ws;
+ ws.onopen=function(){
+   if(net.ws!==ws)return;
+   /* the display name is fixed at join time (the protocol has no
+      rename): the cloud username when signed in, otherwise the
+      server assigns ゲスト+join-order number */
+   svSend({t:"join",name:(social.loggedIn&&social.name)?social.name:""});
+ };
+ ws.onmessage=function(ev){
+   if(net.ws!==ws)return;
+   var m=null;try{m=JSON.parse(ev.data)}catch(e){return}
+   svOnMsg(m);
+ };
+ ws.onclose=function(){
+   if(net.ws!==ws)return;
+   net.ws=null;
+   if(net.leaving||net.dissolved)return;
+   if(running&&mode==="online"&&net.started){
+     /* mid-match disconnect: the server hands our fighter to the CPU
+        and plays the match out; locally we just show the notice */
+     sv.active=false;drawAlpha=1;
+     showCenter("接続が切れました",99999);$("endBtns").classList.add("on");
+     return;
+   }
+   if(net.myId){
+     if(net.isHost){cleanupNet();toMenu();openOnline("接続が切れました。")}
+     else roomDissolved();
+   }
+ };
+ ws.onerror=function(){};
+}
 function createRoom(){
- cleanupNet();net.role="host";net.code=genRoomCode();
+ cleanupNet();net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();
  net.selfName=(social.loggedIn&&social.name)?social.name:"ゲスト1";
  openOnline("接続を準備しています…");
- try{net.peer=new Peer("jailbreaker-io-"+net.code)}catch(e){openOnline("ルーム作成に失敗しました。もう一度お試しください。");return}
- net.peer.on("open",function(){
-   if(net.role!=="host")return;
-   rebuildRoster();
-   /* the host picks a character first, then waits in the lobby where
-      they can invite friends — the match never starts from here */
-   openCharSelect("online-host");
- });
- net.peer.on("connection",function(c){hostAcceptConn(c)});
- net.peer.on("error",function(err){if(net.role==="host"&&!running)openOnline("エラーが発生しました（"+err.type+"）。もう一度お試しください。")});
+ svConnect();
 }
-function hostGuestCount(){var n=0;for(var id in net.guests){if(!net.guests[id].gone)n++}return n}
-function hostAcceptConn(c){
- if(net.role!=="host")return;
- if(net.started){rejectConn(c,"playing");return}
- if(hostGuestCount()>=7){rejectConn(c,"full");return}
- var rec={id:c.peer,conn:c,name:null,num:net.nextNum++,char:null,ready:false,open:false,gone:false,keys:{left:false,right:false,down:false,jump:false},buf:{},prevJump:false,dashDir:0};
- net.guests[rec.id]=rec;net.conns[rec.id]=c;
- c.on("open",function(){rec.open=true});
- c.on("data",function(m){onGuestMsg(rec,m)});
- c.on("close",function(){onGuestGone(rec)});
- c.on("error",function(){onGuestGone(rec)});
-}
-function rejectConn(c,reason){
- c.on("open",function(){try{c.send({t:"reject",reason:reason})}catch(e){}setTimeout(function(){try{c.close()}catch(e){}},400)});
-}
-function onGuestGone(rec){
- if(rec.gone)return;rec.gone=true;rec.open=false;
- if(net.guests[rec.id]===rec)delete net.guests[rec.id];
- if(net.conns[rec.id]===rec.conn)delete net.conns[rec.id];
- if(net.role!=="host")return;
- rebuildRoster();broadcastRoster();
- /* in the lobby the list simply loses the leaver; mid-match their
-    fighter stays in the canonical order and is handed to the CPU:
-    the takeover is scheduled for a frame a little in the future and
-    broadcast, so every peer switches that slot to the deterministic
-    AI on exactly the same frame and the simulations stay in sync */
- if(!net.started)renderLobby();
- else if(rb.active&&rec.rbIdx!=null&&rec.rbIdx>0&&rb.cpuFrom[rec.rbIdx]==null){
-   /* the takeover frame must stay REACHABLE: once the leaver's inputs
-      stop, every peer's pacing cap is (their last received frame +
-      RB_MAX_AHEAD), so the switch is scheduled a few frames inside
-      that bound — still in the future for the host, and any peer who
-      somehow already passed it applies it via rollback */
-   var cf=rb.lastRecv[rec.rbIdx]+RB_MAX_AHEAD-2;
-   rb.cpuFrom[rec.rbIdx]=cf;
-   hostBroadcast({t:"cpu",s:net.seed,idx:rec.rbIdx,f:cf});
-   if(cf<rb.frame)rbRollback(cf);
- }
-}
-/* a display name arriving from a guest: same shape the account system
-   itself allows (1-20 characters, counted as characters — a 20-character
-   name containing emoji is longer than 20 UTF-16 units and must NOT be
-   rejected into the ゲスト fallback) */
-function cleanNetName(n){if(typeof n!=="string")return null;var t=n.replace(/\s+/g," ").trim();if(!t||Array.from(t).length>20)return null;return t}
-function onGuestMsg(rec,m){
- if(!m||!m.t||net.role!=="host"||rec.gone)return;
- if(m.t==="hello"){
-   var nm=cleanNetName(m.name);
-   rec.name=nm?nm:("ゲスト"+rec.num);
-   try{rec.conn.send({t:"welcome",id:rec.id,num:rec.num,code:net.code})}catch(e){}
-   rebuildRoster();broadcastRoster();renderLobby();
- }
- else if(m.t==="name"){
-   /* mid-session name update: the guest's cloud sign-in finished AFTER
-      they joined (auto-login is async), so the name they reported in
-      hello was still empty and the host had parked them under the
-      ゲスト+number fallback. Adopt the real username whenever it
-      arrives instead of keeping the fallback for the rest of the room. */
-   var nm2=cleanNetName(m.name);
-   if(nm2&&nm2!==rec.name){rec.name=nm2;rebuildRoster();broadcastRoster();renderLobby()}
- }
- else if(m.t==="char"){
-   /* a character (re-)pick also re-reports the sender's current display
-      name: re-picking after a match is exactly where a stale ゲスト
-      fallback used to surface, so the pick itself carries the username
-      and the roster is rebuilt with it */
-   var nm3=cleanNetName(m.name);
-   if(nm3)rec.name=nm3;
-   if(["kairo","warden","kojiro","axe","sara","orchid"].indexOf(m.char)>=0){rec.char=m.char;rec.ready=true;rebuildRoster();broadcastRoster();renderLobby()}
- }
- else if(m.t==="in"){
-   /* one frame of guest input (plus a small redundancy window of the
-      previous frames): store it in the rollback log and relay it to
-      every other guest — the host is a relay here, not an authority */
-   if(rec.rbIdx==null||m.s!==net.seed)return;
-   var items=[[rec.rbIdx,m.f|0,m.b|0]];
-   if(m.w)for(var wi=0;wi<m.w.length;wi++){var wp=m.w[wi];if(wp&&rbStoreInput(rec.rbIdx,wp[0]|0,wp[1]|0))items.push([rec.rbIdx,wp[0]|0,wp[1]|0])}
-   rbStoreInput(rec.rbIdx,m.f|0,m.b|0);
-   hostBroadcast({t:"ins",s:net.seed,items:items});
- }
- else if(m.t==="ck"){if(m.s===net.seed)rbHostCk(m.f|0,rec.rbIdx,m.h|0)}
- else if(m.t==="rsq"){rbDoResync(true)}
- else if(m.t==="rematch"){if(matchOver)beginRematch()}
- else if(m.t==="bye"){try{rec.conn.close()}catch(e){}}
-}
-function rebuildRoster(){
- if(net.role!=="host")return;
- /* the host's own entry always prefers the LIVE account name over the
-    name captured when the room was created: sign-in may have completed
-    after createRoom() snapshotted net.selfName, and a roster rebuild
-    (e.g. the post-match character re-pick) must not fall back to the
-    stale ゲスト1 that snapshot holds */
- if(social.loggedIn&&social.name)net.selfName=social.name;
- var r=[{id:"host",name:net.selfName||"ゲスト1",host:true,char:net.selfChar,ready:!!net.selfReady}];
- var gs=[];for(var id in net.guests){var g=net.guests[id];if(g.name&&!g.gone)gs.push(g)}
- gs.sort(function(a,b){return a.num-b.num});
- for(var i=0;i<gs.length;i++)r.push({id:gs[i].id,name:gs[i].name,host:false,char:gs[i].char,ready:!!gs[i].ready});
- net.roster=r;
- guestChar=gs.length?gs[0].char:null;
-}
-function broadcastRoster(){hostBroadcast({t:"roster",players:net.roster,code:net.code})}
 function joinRoom(code){
  if(!code||code.length<4){openOnline("コードを入力してください。");return}
- cleanupNet();net.role="guest";net.code=code;
+ cleanupNet();net.role="guest";net.expectHost=false;net.code=code;
  openOnline("ルーム "+code+" に接続しています…");
- try{net.peer=new Peer()}catch(e){openOnline("接続に失敗しました。");return}
- net.peer.on("open",function(){net.conn=net.peer.connect("jailbreaker-io-"+code,{reliable:true});wireGuestConn()});
- net.peer.on("error",function(err){if(net.role!=="guest")return;if(err.type==="peer-unavailable")openOnline("そのコードのルームが見つかりませんでした。コードを確認してください。");else if(!running)openOnline("エラーが発生しました（"+err.type+"）。")});
+ svConnect();
 }
-function wireGuestConn(){
- var c=net.conn;if(!c)return;
- c.on("open",function(){
-   /* self-report the display name: the cloud username when signed in,
-      otherwise the host assigns ゲスト+connection-order number */
-   try{c.send({t:"hello",name:(social.loggedIn&&social.name)?social.name:null})}catch(e){}
- });
- c.on("data",onHostMsg);
- c.on("close",function(){onHostGone()});
-}
-function onHostMsg(m){
- if(!m||!m.t||net.role!=="guest")return;
- if(m.t==="reject"){
-   var msg=(m.reason==="full")?"そのルームは満員です（最大8人まで）。人数が減るまで入ることはできません。":"そのルームは試合中です。試合が終わるまで参加できません。";
-   cleanupNet();openOnline(msg);return;
- }
- if(m.t==="welcome"){net.myId=m.id;$("modal").classList.remove("on");openCharSelect("online-guest");return}
- if(m.t==="roster"){net.roster=m.players||[];if(m.code)net.code=m.code;renderLobby();return}
- if(m.t==="dissolved"){guestRoomDissolved();return}
- if(m.t==="rematch"){net.started=false;$("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();showCenter("",0);openCharSelect("online-guest");return}
- if(m.t==="start"){
-   net.match=m.players||[];net.started=true;net.myIdx=0;net.seed=m.seed|0;
-   for(var i=0;i<net.match.length;i++){if(net.match[i].id===net.myId)net.myIdx=i}
-   hostChar=(net.match[0]&&net.match[0].char)||null;
-   forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
-   $("lobbyScreen").classList.remove("on");showCenter("",0);startMatch("online");return;
- }
- if(m.t==="ins"){if(m.s!==net.seed)return;if(m.items)for(var ii=0;ii<m.items.length;ii++){var it=m.items[ii];if(it)rbStoreInput(it[0]|0,it[1]|0,it[2]|0)}return}
- if(m.t==="rs"){if(m.s===net.seed)rbApplyResync(m);return}
- if(m.t==="cpu"){if(m.s!==net.seed)return;if(rb.active&&m.idx>0){rb.cpuFrom[m.idx|0]=m.f|0;if((m.f|0)<rb.frame)rbRollback(m.f|0)}return}
- if(m.t==="banner"){showBanner(m.big,m.pts,m.sub);return}
- if(m.t==="center"){showCenter(m.txt,m.hold||0);return}
-}
-function onHostGone(){
- if(net.role!=="guest"||net.leaving||net.dissolved)return;
- if(running&&mode==="online"){showCenter("接続が切れました",99999);$("endBtns").classList.add("on");return}
- /* the host left before the match started: the room is dissolved */
- guestRoomDissolved();
-}
-function guestRoomDissolved(){
+function roomDissolved(){
  if(net.dissolved)return;net.dissolved=true;
  cleanupNet();toMenu();
  openOnline("ホストが退出したため、ルームは解散しました。");
+}
+function svOnMsg(m){
+ if(!m||!m.t)return;
+ if(m.t==="joined"){
+   net.myId=m.pid;net.isHost=!!m.host;
+   if(net.expectHost&&!net.isHost){
+     /* the code we generated was already a live room: we landed as a
+        guest in someone else's room — back out and mint a fresh code */
+     if(net.createRetry<3){
+       net.createRetry++;
+       var w=net.ws;net.ws=null;if(w){try{w.close()}catch(e){}}
+       net.code=genRoomCode();svConnect();return;
+     }
+   }
+   if(!net.expectHost&&net.isHost){
+     /* joining an unknown code made us host of a brand-new empty
+        room: that code's room does not exist */
+     net.leaving=true;cleanupNet();
+     openOnline("そのコードのルームが見つかりませんでした。コードを確認してください。");
+     return;
+   }
+   net.role=net.isHost?"host":"guest";
+   $("modal").classList.remove("on");
+   openCharSelect(net.isHost?"online-host":"online-guest");
+   return;
+ }
+ if(m.t==="roster"){
+   net.roster=(m.players||[]).map(function(p){return{id:p.pid,name:p.name,host:!!p.host,char:p.char,ready:!!p.char}});
+   renderLobby();
+   return;
+ }
+ if(m.t==="start"){
+   net.match=(m.roster||[]).map(function(r){return{id:r.pid,name:r.name,char:r.char}});
+   net.myIdx=0;
+   for(var i=0;i<net.match.length;i++){if(net.match[i].id===net.myId)net.myIdx=i}
+   net.seed=m.seed|0;net.started=true;
+   hostChar=(net.match[0]&&net.match[0].char)||null;
+   forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
+   $("lobbyScreen").classList.remove("on");showCenter("",0);
+   startMatch("online");
+   return;
+ }
+ if(m.t==="snap"){svOnSnap(m);return}
+ if(m.t==="ev"){return} /* server event banners are KO notices only; the client renders the same banners from snapshot death transitions (below), so these are intentionally not double-shown */
+ if(m.t==="cpu"){
+   if(running&&mode==="online")showCenter((m.name||"プレイヤー")+" さんが退出しました\nCPUが引き継ぎます",2600);
+   return;
+ }
+ if(m.t==="end"){sv.endResults=m.results||null;matchOver=true;return}
+ if(m.t==="tolobby"){
+   net.started=false;sv.active=false;sv.endResults=null;
+   $("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();showCenter("",0);
+   openCharSelect(net.isHost?"online-host":"online-guest");
+   return;
+ }
+ if(m.t==="dissolved"){roomDissolved();return}
+ if(m.t==="error"){
+   if(!net.myId){
+     var msg=(m.msg==="満員です")?"そのルームは満員です（最大8人まで）。人数が減るまで入ることはできません。":((m.msg==="試合中です")?"そのルームは試合中です。試合が終わるまで参加できません。":("エラーが発生しました（"+(m.msg||"")+"）。もう一度お試しください。"));
+     net.leaving=true;cleanupNet();openOnline(msg);
+   }else{
+     net.lobbyMsg=m.msg||"";renderLobby();
+   }
+   return;
+ }
 }
 /* ================= LOBBY UI ================= */
 function enterLobby(){
@@ -1364,16 +1331,15 @@ function enterLobby(){
 }
 function renderLobby(){
  var scr=$("lobbyScreen");if(!scr||!scr.classList.contains("on"))return;
- var isHost=(net.role==="host");
+ var isHost=net.isHost;
  $("lobbyCodeVal").textContent=net.code||"------";
  var r=net.roster||[];
  $("lobbyCount").textContent=r.length+" / 8 人";
- var myKey=isHost?"host":net.myId;
  var h="";
  for(var i=0;i<r.length;i++){
    var p=r[i],badges="";
    if(p.host)badges+='<span class="lobBadge host">ホスト</span>';
-   if(p.id===myKey)badges+='<span class="lobBadge me">自分</span>';
+   if(p.id===net.myId)badges+='<span class="lobBadge me">自分</span>';
    var st=p.ready?('<span style="color:#4ade80">'+cname(p.char)+"・準備OK</span>"):('<span style="color:var(--muted)">キャラ選択中…</span>');
    h+='<div class="lobRow"><span class="lobName">'+escHtml(p.name)+badges+'</span><span class="lobStat">'+st+'</span></div>';
  }
@@ -1382,6 +1348,7 @@ function renderLobby(){
  var startBtn=$("lobbyStartBtn"),stat=$("lobbyStatus");
  $("lobbyInviteBtn").style.display=isHost?"":"none";
  $("lobbyLeaveBtn").textContent=isHost?"ルームを解散":"ルームを退出";
+ if(net.lobbyMsg){stat.textContent=net.lobbyMsg;net.lobbyMsg="";if(isHost){startBtn.style.display="";startBtn.disabled=true;startBtn.classList.add("disabled")}else startBtn.style.display="none";return}
  if(isHost){
    startBtn.style.display="";
    var guests=r.length-1,allReady=true;
@@ -1395,185 +1362,55 @@ function renderLobby(){
  }
 }
 $("lobbyStartBtn").onclick=function(){
- if(net.role!=="host")return;
+ if(!net.isHost)return;
  var r=net.roster||[];
  if(r.length<2){beep(200,.12);renderLobby();return}
  for(var i=0;i<r.length;i++){if(!r[i].ready){beep(200,.12);renderLobby();return}}
- beep(700,.07);hostStartFromLobby();
+ beep(700,.07);svSend({t:"start"});
 };
 $("lobbyInviteBtn").onclick=function(){beep(600,.06);openFriends()};
 $("lobbyLeaveBtn").onclick=function(){
  beep(500,.06);
- if(net.role==="host"){
-   hostBroadcast({t:"dissolved"});
-   net.leaving=true;
-   setTimeout(function(){cleanupNet();toMenu()},300);
- }else if(net.role==="guest"){
-   net.leaving=true;
-   if(net.conn&&net.conn.open){try{net.conn.send({t:"bye"})}catch(e){}}
-   setTimeout(function(){cleanupNet();toMenu()},150);
- }
+ net.leaving=true;
+ svSend({t:"leave"});
+ cleanupNet();toMenu();
 };
-function hostStartFromLobby(){
- net.match=(net.roster||[]).map(function(p){return{id:p.id,name:p.name,char:p.char}});
- if(net.match.length<2)return;
- net.started=true;
- guestChar=(net.match[1]&&net.match[1].char)||null;forceP2Char=guestChar;
- /* the host deals the match seed: every peer seeds its simulation
-    RNG with it, so the same inputs replay to the same match */
- net.seed=(Math.random()*2147483646+1)|0;
- hostBroadcast({t:"start",players:net.match,seed:net.seed});
- $("lobbyScreen").classList.remove("on");
- startMatch("online");
-}
-function beginRematch(){
- if(net.role!=="host")return;
- net.started=false;net.selfReady=false;net.selfChar=null;
- for(var id in net.guests){net.guests[id].ready=false;net.guests[id].char=null}
- rebuildRoster();hostBroadcast({t:"rematch"});broadcastRoster();
- $("endBtns").classList.remove("on");
- openCharSelect("online-host");
-}
-function hostStartOnline(){
- /* in-match restart (reset button): same roster, same characters,
-    fresh seed so the new match re-seeds every peer's RNG */
- if(!net.match||net.match.length<2)return;
- net.started=true;
- net.seed=(Math.random()*2147483646+1)|0;
- hostBroadcast({t:"start",players:net.match,seed:net.seed});
- startMatch("online");
-}
-/* ================= ROLLBACK ENGINE =================
-   Every peer steps the SAME deterministic simulation at a fixed
-   60fps. Only inputs travel the network, packed into one integer per
-   player per frame:
-     1 left | 2 right | 4 down | 8 jump-held | 16 jump-press |
-     32 J | 64 K | 128 L | 256 ULT | 512 dash-left | 1024 dash-right |
-     2048 dash (direction resolved at apply time)
-   A peer stamps its own input RB_DELAY frames ahead, so by the time
-   frame F is stepped, F's local input is already fixed on every
-   peer. A remote input that has not arrived is predicted (previous
-   frame's held keys, no presses); when the real one lands and differs
-   from what was used, the state saved at that frame is restored and
-   the gap re-simulated. Saved states form a ring of RB_KEEP frames;
-   the checksum / resync machinery below covers anything deeper. */
-var SIM_STEP=1/60,RB_DELAY=2,RB_MAX_AHEAD=12,RB_KEEP=30;
-/* every scalar a Fighter carries that the simulation reads or writes
-   (peer-local dressing — isPlayer / remote / netIdx / trail — is
-   deliberately NOT in the list: it is fixed at build time and must
-   never travel in a resync state) */
+/* ================= SERVER-CLIENT MATCH ENGINE =================
+   Own fighter: client-side prediction. The local simulation steps
+   ONLY P1, with the exact stepFighter / rbApplyInput code the server
+   runs (the server's sim.js is byte-identical game code), driven by
+   packed input bits sampled once per 60fps step and kept in a ring
+   keyed by server frame. Every snapshot restores P1 to the server's
+   state at that frame (fields the snapshot does not carry are taken
+   from the predicted state at the same frame) and replays the
+   buffered inputs up to the present — with visual effects swapped
+   out and sounds / banners muted, so a replay pass is invisible.
+   Remote fighters: snapshot interpolation over a ~100ms buffer. */
+var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
-function rbSaveState(){
- var st={tm:time,ti:timer,cd:countdown,mo:matchOver,sh:shake,hs:hitstop,rng:simSeedState,fs:[],pr:[],fo:[],ip:[]};
- for(var i=0;i<fighters.length;i++){var f=fighters[i],o={};
-  for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
-  o.la=f.lastAttacker?fighters.indexOf(f.lastAttacker):-1;
-  o.gb=f.grabBy?fighters.indexOf(f.grabBy):-1;
-  o.bb=f.burnBy?fighters.indexOf(f.burnBy):-1;
-  o.psb=f.poisonBy?fighters.indexOf(f.poisonBy):-1;
-  o.pb=f.pushBy?fighters.indexOf(f.pushBy):-1;
-  o.gp=f.groundPlat?platforms.indexOf(f.groundPlat):-1;
-  o.dp=f.dropPlat?platforms.indexOf(f.dropPlat):-1;
-  st.fs.push(o);
- }
- st.pm=[];
- for(var j=0;j<projectiles.length;j++){var p=projectiles[j];st.pr.push({x:p.x,y:p.y,px:p.px,py:p.py,vx:p.vx,vy:p.vy,life:p.life,kind:p.kind,oi:p.owner?fighters.indexOf(p.owner):-1})}
- for(var m=0;m<fireOrbs.length;m++){var ob=fireOrbs[m];st.fo.push({x:ob.x,y:ob.y,t:ob.t,oi:ob.owner?fighters.indexOf(ob.owner):-1})}
- for(var pm2=0;pm2<poisonMists.length;pm2++){var mb2=poisonMists[pm2];st.pm.push({x:mb2.x,y:mb2.y,t:mb2.t,tick:mb2.tick,oi:mb2.owner?fighters.indexOf(mb2.owner):-1})}
- for(var n=0;n<icePatches.length;n++){var ip=icePatches[n];st.ip.push({x:ip.x,y:ip.y,w:ip.w,t:ip.t,oi:ip.owner?fighters.indexOf(ip.owner):-1})}
- return st;
-}
-function rbRestoreState(st){
- time=st.tm;timer=st.ti;countdown=st.cd;matchOver=st.mo;shake=st.sh;hitstop=st.hs;simSeedState=st.rng;
- for(var i=0;i<fighters.length;i++){var f=fighters[i],o=st.fs[i];if(!o)continue;
-  for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
-  f.lastAttacker=o.la>=0?fighters[o.la]:null;
-  f.grabBy=o.gb>=0?fighters[o.gb]:null;
-  f.burnBy=o.bb>=0?fighters[o.bb]:null;
-  f.poisonBy=o.psb>=0?fighters[o.psb]:null;
-  f.pushBy=o.pb>=0?fighters[o.pb]:null;
-  f.groundPlat=o.gp>=0?platforms[o.gp]:null;
-  f.dropPlat=o.dp>=0?platforms[o.dp]:null;
- }
- projectiles=st.pr.map(function(p){return{x:p.x,y:p.y,px:p.px,py:p.py,vx:p.vx,vy:p.vy,life:p.life,kind:p.kind,owner:p.oi>=0?fighters[p.oi]:null}});
- fireOrbs=st.fo.map(function(o){return{x:o.x,y:o.y,t:o.t,owner:o.oi>=0?fighters[o.oi]:null}});
- poisonMists=(st.pm||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,tick:o.tick,owner:o.oi>=0?fighters[o.oi]:null}});
- icePatches=st.ip.map(function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,owner:o.oi>=0?fighters[o.oi]:null}});
-}
-function rbChecksum(){
- var h=2166136261>>>0;
- function mix(n){h^=(n|0);h=Math.imul(h,16777619)>>>0}
- for(var i=0;i<fighters.length;i++){var f=fighters[i];
-  mix(Math.round(f.x*8));mix(Math.round(f.y*8));mix(Math.round(f.vx*4));mix(Math.round(f.vy*4));
-  mix(Math.round(f.hp*16));mix(f.score|0);mix(Math.round(f.meter*8));mix(f.face);
-  mix(f.dead?1:0);mix(Math.round(f.stateT*60));
-  var s=f.state||"";for(var j=0;j<s.length;j++)mix(s.charCodeAt(j));
- }
- mix(projectiles.length);mix(fireOrbs.length);mix(poisonMists.length);mix(Math.round(timer*60));mix(simSeedState|0);
- return h|0;
-}
-/* ---- local input capture: held keys / stick + the press queue ---- */
-function rbSampleLocal(){
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
+var svPressQ=[];
+var svMute=false;
+function svSampleLocal(){
  var bits=0;
  if(keys.left||stick.dx<-0.28)bits|=1;
  if(keys.right||stick.dx>0.28)bits|=2;
  if(keys.down||stick.dy>0.55)bits|=4;
  if(keys.jump)bits|=8;
- for(var i=0;i<rbPressQ.length;i++){var a=rbPressQ[i];
+ for(var i=0;i<svPressQ.length;i++){var a=svPressQ[i];
   if(a==="jump")bits|=16;else if(a==="j")bits|=32;else if(a==="k")bits|=64;else if(a==="l")bits|=128;else if(a==="ult")bits|=256;
   else if(a==="dashL")bits|=512;else if(a==="dashR")bits|=1024;else if(a==="dash")bits|=2048;
  }
- rbPressQ.length=0;
+ svPressQ.length=0;
  return bits;
 }
-function rbCaptureAndSend(f){
- var st=rb.inputs[net.myIdx];if(!st||st.map[f]!==undefined)return;
- var bits=rbSampleLocal();
- st.map[f]=bits;
- while(st.map[st.cont+1]!==undefined)st.cont++;
- if(f>rb.lastRecv[net.myIdx])rb.lastRecv[net.myIdx]=f;
- if(net.role==="host"){hostBroadcast({t:"ins",s:net.seed,items:[[net.myIdx,f,bits]]})}
- else if(net.conn&&net.conn.open){
-  var w=[],m1=st.map[f-1],m2=st.map[f-2];
-  if(m1!==undefined)w.push([f-1,m1]);if(m2!==undefined)w.push([f-2,m2]);
-  try{net.conn.send({t:"in",s:net.seed,f:f,b:bits,w:w})}catch(e){}
- }
- rbUpdateConfirmed();
-}
-/* ---- input log: store a real input, roll back if it rewrites history ---- */
-function rbStoreInput(idx,f,bits){
- if(!rb.active||idx<0||idx>=fighters.length||f<0)return false;
- var st=rb.inputs[idx];if(!st||st.map[f]!==undefined)return false;
- st.map[f]=bits;
- if(f>rb.lastRecv[idx])rb.lastRecv[idx]=f;
- while(st.map[st.cont+1]!==undefined)st.cont++;
- if(f<rb.frame){
-  var u=rb.used[idx]?rb.used[idx][f]:undefined;
-  if(u!==undefined&&u!==bits)rbRollback(f);
- }
- rbUpdateConfirmed();
- return true;
-}
-function rbInputFor(p,F){
- var st=rb.inputs[p];
- if(st&&st.map[F]!==undefined)return{bits:st.map[F],real:true};
- if(F<=0)return{bits:0,real:false};
- var prev=rb.used[p]?(rb.used[p][F-1]||0):0;
- return{bits:prev&15,real:false};
-}
-function rbIsAI(p,F){return rb.cpuFrom[p]!=null&&F>=rb.cpuFrom[p]}
-/* presses that landed on a frozen frame (countdown / hitstop) are
-   parked per fighter and fire on the first live frame, mirroring the
-   local input buffer's behaviour */
-function rbRecordInputs(F){
- for(var fi=0;fi<fighters.length;fi++){
-  if(rbIsAI(fi,F))continue;
-  var raw=rbInputFor(fi,F);rb.used[fi][F]=raw.bits;
-  var b=raw.bits,f=fighters[fi];
-  if(b&16)f.rbPjump=F;
-  if(b&32)f.rbPj=F;if(b&64)f.rbPk=F;if(b&128)f.rbPl=F;if(b&256)f.rbPu=F;
-  if(b&(512|1024|2048)){f.rbPd=F;f.rbPdDir=(b&512)?-1:((b&1024)?1:0)}
- }
+/* presses that land on a frozen frame (countdown / hitstop) are
+   parked per fighter and fire on the first live frame — the same
+   rule the server applies (its rbRecordInputs) */
+function svParkPresses(f,bits,F){
+ if(bits&16)f.rbPjump=F;
+ if(bits&32)f.rbPj=F;if(bits&64)f.rbPk=F;if(bits&128)f.rbPl=F;if(bits&256)f.rbPu=F;
+ if(bits&(512|1024|2048)){f.rbPd=F;f.rbPdDir=(bits&512)?-1:((bits&1024)?1:0)}
 }
 function rbPendBits(f,F){
  var b=0;
@@ -1586,11 +1423,10 @@ function rbPendBits(f,F){
  f.rbPj=f.rbPk=f.rbPl=f.rbPu=f.rbPd=f.rbPjump=-999;
  return b;
 }
-/* the deterministic twin of gatherPlayerInput + gatherRemoteInput:
-   same buffer windows, expressed in frames (350ms -> 21f, the J+K
+/* the deterministic input applier, identical to the server's copy:
+   same buffer windows expressed in frames (350ms -> 21f, the J+K
    simultaneity window 90ms -> 5f, the lone-press grace 55ms -> 3f),
-   the same jump cut and the same guard-eats-presses rule, driven
-   purely by the frame's input bits so every peer agrees */
+   the same jump cut and the same guard-eats-presses rule */
 function rbApplyInput(f,bits,F){
  f.hDown=!!(bits&4);f.hUp=!!(bits&8);
  f.hFwd=(f.face===1&&!!(bits&2))||(f.face===-1&&!!(bits&1));
@@ -1617,254 +1453,277 @@ function rbApplyInput(f,bits,F){
  }
  return inp;
 }
-/* the non-fighter half of a step, copied behaviour-for-behaviour from
-   the local loop: projectiles (with hit detection), particles, FX
-   bursts, ice patches, fire orbs, floaters, shake decay */
-function rbTail(){
- projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*SIM_STEP;pr.y+=pr.vy*SIM_STEP;if(pr.kind==="javelin")pr.vy+=980*SIM_STEP;else if(pr.kind!=="wave"&&pr.kind!=="slash")pr.vy+=128*SIM_STEP;pr.life-=SIM_STEP;if(pr.kind==="javelin"&&Math.random()<0.5)particles.push({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard")&&Math.random()<0.16)spawnFxBurst(charFxImg(pr.owner?pr.owner.char:"kairo"),pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="throwaxe"?38:30))&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="throwaxe"?0.6:0.56))){foe=qf;break}}
-  if(foe){
-   if(pr.kind==="slash"){applyHit(pr.owner,foe,74,780,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)}
-   else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)}
-   else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
-   else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
-   else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.0);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)}
-   else{applyHit(pr.owner,foe,13,245,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85}
-   return false}
-  for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:6,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}}
-  return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
- particles=particles.filter(function(p){p.x+=p.vx*SIM_STEP;p.y+=p.vy*SIM_STEP;p.vy+=(p.amb?-4:300)*SIM_STEP;p.vx*=0.97;return(p.life-=SIM_STEP)>0});
- fxBursts=fxBursts.filter(function(b){return(b.life-=SIM_STEP)>0});
- icePatches=icePatches.filter(function(p){return(p.t-=SIM_STEP)>0});
- fireOrbs=fireOrbs.filter(function(ob){ob.t-=SIM_STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
- poisonMists=poisonMists.filter(function(mb){mb.t-=SIM_STEP;mb.tick-=SIM_STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){mf.hp-=2;mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0}); /* ORCHID 毒霧: placed fog, direct 2dmg/0.1s ticks (grind-style, no hitstop) */
- floaters=floaters.filter(function(fl){fl.y-=34*SIM_STEP;return(fl.life-=SIM_STEP)>0});
- shake*=Math.pow(0.001,SIM_STEP);if(shake<0.25)shake=0;
+function svSaveP1(){
+ var f=P1,o={hs:hitstop};
+ if(!f)return o;
+ for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
+ o.la=f.lastAttacker;o.gb=f.grabBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;
+ o.trail=f.trail?f.trail.slice():[];
+ return o;
 }
-function rbCountCenter(){
- var ctxt=countdown>0.28?String(Math.min(3,Math.ceil(countdown/0.5))):"FIGHT!";
- if(ctxt!==lastCountTxt){lastCountTxt=ctxt;showCenter(ctxt,ctxt==="FIGHT!"?550:1500)}
+function svRestoreP1(o){
+ var f=P1;if(!f||!o)return;
+ for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
+ f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;
+ f.trail=o.trail?o.trail.slice():[];
+ hitstop=o.hs||0;
 }
-function rbStepFighters(F){
- for(var fi=0;fi<fighters.length;fi++){
-  var f=fighters[fi],foe=nearestOpponent(f),inp;
-  if(rbIsAI(fi,F)){
-   inp=aiControl(f,foe);
-   f.hDown=!!inp.down;f.hUp=!!inp.jump;
-   f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
-   f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
-   stepFighter(f,SIM_STEP,inp,foe);
-  }else{
-   var raw=rbInputFor(fi,F);rb.used[fi][F]=raw.bits;
-   var bits=raw.bits|rbPendBits(f,F);
-   if(fi===net.myIdx){
-    /* the attack tables read the LOCAL player's held keys live; feed
-       them this frame's bits for the duration of the step so the
-       local fighter is exactly as deterministic as every other */
-    var saveKeys=keys,saveDx=stick.dx,saveDy=stick.dy;
-    keys={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:!!(bits&8)};
-    stick.dx=(bits&2)?0.5:((bits&1)?-0.5:0);stick.dy=(bits&4)?0.8:0;
-    inp=rbApplyInput(f,bits,F);
-    stepFighter(f,SIM_STEP,inp,foe);
-    keys=saveKeys;stick.dx=saveDx;stick.dy=saveDy;
-   }else{
-    inp=rbApplyInput(f,bits,F);
-    stepFighter(f,SIM_STEP,inp,foe);
+function svCdEstAt(j){
+ if(sv.lastSnap)return Math.max(0,sv.lastSnap.cd-(j-sv.lastSnap.f)/60);
+ return Math.max(0,1.5-(performance.now()-sv.startAt)/1000);
+}
+/* one prediction step of the local fighter for server frame j.
+   Projectiles the step spawns are collected into sv.predPr (they are
+   drawn immediately and retired once the server's snapshot carries
+   the real one); during replay passes they are discarded instead. */
+function svStepP1(j,bits,replay){
+ var f=P1;if(!f)return;
+ if(svCdEstAt(j)>0){svParkPresses(f,bits,j);return}
+ if(hitstop>0){hitstop=Math.max(0,hitstop-SIM_STEP);svParkPresses(f,bits,j);return}
+ if(f.dead)return; /* the server owns the corpse and the respawn */
+ time=(j+1)*SIM_STEP;
+ f.px=f.x;f.py=f.y;
+ var foe=nearestOpponent(f);
+ var scratch=projectiles;projectiles=sv.scratchPr;sv.scratchPr=[];
+ var saveKeys=keys,saveDx=stick.dx,saveDy=stick.dy;
+ keys={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:!!(bits&8)};
+ stick.dx=(bits&2)?0.5:((bits&1)?-0.5:0);stick.dy=(bits&4)?0.8:0;
+ var inp=rbApplyInput(f,bits|rbPendBits(f,j),j);
+ stepFighter(f,SIM_STEP,inp,foe);
+ keys=saveKeys;stick.dx=saveDx;stick.dy=saveDy;
+ if(!replay){
+   for(var i=0;i<projectiles.length;i++){var pr=projectiles[i];
+     if(pr.owner===f)sv.predPr.push({x:pr.x,y:pr.y,px:pr.x,py:pr.y,vx:pr.vx,vy:pr.vy,kind:pr.kind,life:pr.life,owner:f,born:performance.now()});
    }
-  }
  }
+ projectiles=scratch;
 }
-/* one deterministic step, mirroring the local loop's step body:
-   hitstop freezes the world (inputs still recorded), the countdown
-   freezes the fighters, then fighters + tail */
-function rbSimStep(F){
- if(hitstop>0){hitstop-=SIM_STEP;rbRecordInputs(F);return}
- time+=SIM_STEP;
- for(var pvi=0;pvi<fighters.length;pvi++){var pf=fighters[pvi];pf.px=pf.x;pf.py=pf.y}
- for(var pvp=0;pvp<projectiles.length;pvp++){var pp=projectiles[pvp];pp.px=pp.x;pp.py=pp.y}
- if(countdown>0){countdown-=SIM_STEP;if(!rb.resim)rbCountCenter();rbRecordInputs(F)}
- else if(!matchOver){
-  timer-=SIM_STEP;if(timer<=0){timer=0;matchOver=true}
-  if(!matchOver)rbStepFighters(F);else rbRecordInputs(F);
- }
- rbTail();
+function svPredStep(){
+ var j=sv.predFrame;
+ var bits=svSampleLocal();
+ sv.inpHist[j]=bits;
+ svStepP1(j,bits,false);
+ sv.predFrame=j+1;
+ sv.hist[sv.predFrame]=svSaveP1();
+ delete sv.hist[sv.predFrame-120];
+ delete sv.inpHist[j-120];
 }
-function rbStepNext(){
- var F=rb.frame;
- rbCaptureAndSend(F+RB_DELAY);
- rb.states[F]=rbSaveState();
- rbSimStep(F);
- rb.frame=F+1;
- rb.ck[rb.frame]=rbChecksum();
- var cut=rb.frame-RB_KEEP;
- for(var k in rb.states){if(+k<cut)delete rb.states[k]}
- for(var p=0;p<rb.inputs.length;p++){
-  var mp=rb.inputs[p].map;for(var fk in mp){if(+fk<cut-8)delete mp[fk]}
-  var um=rb.used[p];for(var uk in um){if(+uk<cut-8)delete um[uk]}
- }
- rbUpdateConfirmed();
- rbMaybeSendCk();
+function svSendBundle(){
+ if(!sv.active||matchOver)return;
+ var b1=sv.inpHist[sv.predFrame-1],b2=sv.inpHist[sv.predFrame-2];
+ var ins=[];
+ if(b2!==undefined)ins.push(b2);
+ if(b1!==undefined)ins.push(b1);
+ if(!ins.length)ins=[0];
+ svSend({t:"in",seq:sv.seq++,ins:ins});
 }
-/* rewind to the start of frame fromF and re-simulate to the present
-   with the corrected input log. Visual-only arrays are swapped out
-   for the duration: a re-simulated frame must not re-spawn its
-   effects, sounds or banners (rb.resim also mutes beep / showCenter /
-   showBanner at their sources). */
-function rbRollback(fromF){
- if(!rb.active||fromF>=rb.frame)return;
- if(rb.states[fromF]===undefined){
-  var Fo=null;for(var k in rb.states){var kk=+k;if(Fo===null||kk<Fo)Fo=kk}
-  if(Fo===null||Fo>=rb.frame){rbOverflow();return}
-  fromF=Fo;
+function svApplySnapP1(s,hist){
+ var f=P1;if(!f)return;
+ if(hist)svRestoreP1(hist); /* fields the snapshot does not carry (jump state, combo step, press buffers…) come from the predicted state at the same frame */
+ f.char=s.c;applyCharStats(f);
+ f.x=s.x;f.y=s.y;f.px=s.px;f.py=s.py;f.vx=s.vx;f.vy=s.vy;
+ f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
+ f.dead=!!s.dead;f.guarding=!!s.gd;f.hitstun=s.hs;f.frozen=s.fr;f.invuln=s.inv;
+ f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
+ f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;
+ f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
+ if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
+}
+function svReconcile(snap){
+ var s=snap.fs[net.myIdx];if(!s||!P1)return;
+ var f0=snap.f;
+ if(f0>=sv.predFrame){
+   svApplySnapP1(s,sv.hist[f0]||null);
+   sv.predFrame=f0;
+   sv.hist={};sv.hist[f0]=svSaveP1();
+   return;
  }
- rb.stats.rollbacks++;var back=rb.frame-fromF;if(back>rb.stats.maxBack)rb.stats.maxBack=back;
+ svApplySnapP1(s,sv.hist[f0]||null);
+ /* replay the buffered inputs from the snapshot frame to the
+    present, invisibly: effect arrays are swapped out and beep /
+    showCenter / showBanner are muted by svMute for the duration */
  var vp=particles,vf=floaters,vr=rings,vb=fxBursts;
- rb.resim=true;
- rbRestoreState(rb.states[fromF]);
  particles=[];floaters=[];rings=[];fxBursts=[];
- for(var F=fromF;F<rb.frame;F++){rb.states[F]=rbSaveState();rbSimStep(F)}
- for(var ck in rb.ck){if(+ck>fromF)delete rb.ck[ck]}
- rb.ck[rb.frame]=rbChecksum();
- if(rb.lastCkSent>fromF)rb.lastCkSent=fromF;
+ svMute=true;
+ for(var j=f0;j<sv.predFrame;j++){
+   var bits=(sv.inpHist[j]!==undefined)?sv.inpHist[j]:((sv.inpHist[j-1]||0)&15);
+   svStepP1(j,bits,true);
+   sv.hist[j+1]=svSaveP1();
+ }
+ svMute=false;
  particles=vp;floaters=vf;rings=vr;fxBursts=vb;
- rb.resim=false;
- rbUpdateConfirmed();
 }
-function rbOverflow(){
- if(net.role==="host"){rbDoResync(true);return}
- if(rb.needResync)return;
- rb.needResync=true;
+function svApplySnapRemote(f,sf){
+ f.char=sf.c;applyCharStats(f);
+ f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;f.meter=sf.mt;f.face=sf.fc;
+ f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
+ f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
+ f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.onGround=!!sf.og;
+ f.comboHits=sf.cmb;f.comboDmg=sf.cdg;f.groundPlat=null;
+ if(sf.grb)f.grabT=Math.max(f.grabT||0,0.15);
+}
+function svFindWarden(){for(var i=0;i<fighters.length;i++){if(fighters[i]&&fighters[i].char==="warden")return fighters[i]}return null}
+function svIsAttackState(st){return st&&st!=="idle"&&st!=="guard"}
+/* a death the snapshots report: burst + banner, mirroring what
+   killFighter shows on a fully local simulation. Deaths the local
+   prediction already played (our own predicted kill) are skipped —
+   the fighter is already dead locally and the banner already ran. */
+function svOnDeathFx(i,preDead){
+ var f=fighters[i];if(!f)return;
+ if(preDead&&i!==net.myIdx)return;
+ spawnParticles(f.x,f.y+f.h/2,46,"#fda4af",330);
+ spawnRing(f.x,f.y+f.h/2,"#fda4af",124);spawnSparks(f.x,f.y+f.h/2,0,"#fda4af",12);
+ spawnFxBurst(FXIMG.hit,f.x,f.y+f.h/2,265,0.5,Math.random()*0.8-0.4,1,1);
+ spawnFxBurst(charFxImg(f.char),f.x,f.y+f.h/2,225,0.55,Math.random()*6.28,1,0.85);
+ shake=Math.max(shake,12);
+ var killer=(sv.lastScorer&&(performance.now()-sv.lastScorer.at)<500)?fighters[sv.lastScorer.i]:null;
+ if(i===net.myIdx)showBanner("DOWN…",killer?cname(killer.char)+" +100":"","");
+ else if(killer&&killer!==P1)showBanner("DOWN…",cname(killer.char)+" +100","");
+}
+function svOnSnap(m){
+ if(!sv.active||!m||!m.fs)return;
  var now=performance.now();
- if(now-rb.lastRsq>800){rb.lastRsq=now;if(net.conn&&net.conn.open){try{net.conn.send({t:"rsq"})}catch(e){}}}
-}
-function rbUpdateConfirmed(){
- var c=Infinity;
- for(var p=0;p<fighters.length;p++){
-  var t=(rb.cpuFrom[p]!=null&&rb.frame>rb.cpuFrom[p])?rb.frame:(rb.inputs[p]?rb.inputs[p].cont+1:0);
-  if(t<c)c=t;
+ m.at=now;
+ sv.snaps.push(m);if(sv.snaps.length>12)sv.snaps.shift();
+ sv.lastSnap=m;
+ timer=m.tm;countdown=m.cd;
+ if(m.ov)matchOver=true;
+ /* countdown centre text, driven by the server's countdown exactly
+    like the old rbCountCenter was driven by the local one */
+ if(m.cd>0||sv.prevCd>0){
+   var ctxt=m.cd>0.28?String(Math.min(3,Math.ceil(m.cd/0.5))):"FIGHT!";
+   if(ctxt!==lastCountTxt){lastCountTxt=ctxt;showCenter(ctxt,ctxt==="FIGHT!"?550:1500)}
  }
- if(c===Infinity)c=rb.frame;
- if(c>rb.confirmed)rb.confirmed=c;
-}
-/* checksums ride at fully-confirmed state frames, every 60 of them:
-   a frame only counts once every input below it is real, so two
-   peers comparing it are comparing identical histories */
-function rbMaybeSendCk(){
- var cf=rb.confirmed-(rb.confirmed%60);
- if(cf>=60&&cf>rb.lastCkSent&&rb.ck[cf]!==undefined){
-  rb.lastCkSent=cf;
-  if(net.role==="host")rbHostCk(cf,net.myIdx,rb.ck[cf]);
-  else if(net.conn&&net.conn.open){try{net.conn.send({t:"ck",s:net.seed,f:cf,h:rb.ck[cf]})}catch(e){}}
+ sv.prevCd=m.cd;
+ for(var i=0;i<m.fs.length;i++){
+   var sf=m.fs[i],f=fighters[i];if(!f||!sf)continue;
+   var preDead=f.dead;
+   if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now};
+   if(i!==net.myIdx){
+     if(f._svHp!==undefined&&sf.hp<f._svHp-0.01){f.flash=0.15;spawnParticles(f.x,f.y+f.h*0.45,6,charFX(f),170)}
+     if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2){f.dashT=0.15;f.dashDir=sf.fc}
+     if(sf.og&&!f._svOg)f.landT=0.14;
+     if(!sf.grb){f.grabT=0;f.grabBy=null}
+     else if(!f.grabBy)f.grabBy=svFindWarden();
+     if(sf.st==="ultcharge")f.ultChargeT=0.12;
+     if(f._svState!==undefined&&sf.st!==f._svState&&svIsAttackState(sf.st))spawnParticles(f.x+sf.fc*26,f.y+f.h*0.45,7,charFX(f),190);
+     svApplySnapRemote(f,sf);
+   }
+   if(sf.dead&&!f._svDead)svOnDeathFx(i,preDead);
+   f._svDead=!!sf.dead;
+   f._svHp=sf.hp;f._svScore=sf.sc;f._svDcd=sf.dcd;f._svOg=!!sf.og;f._svState=sf.st;
  }
+ svReconcile(m);
+ /* placed objects ride the newest snapshot verbatim */
+ icePatches=(m.ip||[]).map(function(p){return{x:p.x,y:p.y,w:p.w,t:p.t,owner:null}});
+ fireOrbs=(m.fo||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
+ poisonMists=(m.pm||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
 }
-function rbHostCk(f,idx,h){
- if(net.role!=="host"||!rb.active||idx==null||idx<0)return;
- var book=rb.ckBook[f]||(rb.ckBook[f]={});
- if(book[idx]===undefined)book[idx]=h;
- var ref=null,mismatch=false;
- for(var k in book){if(ref===null)ref=book[k];else if(book[k]!==ref)mismatch=true}
- if(rb.ck[f]!==undefined&&book[idx]!==rb.ck[f])mismatch=true;
- for(var fk in rb.ckBook){if(+fk<f-180)delete rb.ckBook[fk]}
- if(mismatch)rbDoResync(false);
+function svReset(){
+ sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;
+ sv.startAt=performance.now();
+ sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
+ sv.endShown=false;sv.endResults=null;sv.lastScorer=null;
+ simSeedState=(net.seed|0)||1;
+ for(var i=0;i<fighters.length;i++){var f=fighters[i];
+   f.rbBj=-999;f.rbBk=-999;f.rbBl=-999;f.rbBu=-999;f.rbPrevJ=false;
+   f.rbPj=-999;f.rbPk=-999;f.rbPl=-999;f.rbPu=-999;f.rbPd=-999;f.rbPdDir=0;f.rbPjump=-999;
+   f._svDead=false;f._svHp=undefined;f._svScore=undefined;f._svDcd=undefined;f._svOg=false;f._svState=undefined;
+ }
+ sv.hist[0]=svSaveP1();
 }
-/* resync: the host broadcasts its state at its latest confirmed
-   frame; everyone adopts it and re-simulates forward from the input
-   log (which is complete past a confirmed frame by definition) */
-function rbDoResync(force){
- if(net.role!=="host"||!rb.active)return;
- var now=performance.now();
- if(!force&&now-rb.lastRsT<2500)return;
- var Fs=rb.confirmed;
- if(Fs<0||rb.states[Fs]===undefined){
-  Fs=rb.frame;for(var k in rb.states){var kk=+k;if(kk<Fs)Fs=kk}
-  if(rb.states[Fs]===undefined)return;
- }
- rb.lastRsT=now;rb.stats.resyncs++;
- hostBroadcast({t:"rs",s:net.seed,f:Fs,st:rb.states[Fs]});
-}
-function rbApplyResync(m){
- if(net.role!=="guest"||!rb.active||!m||!m.st)return;
- if((m.f|0)<=rb.lastRsF)return;
- rb.lastRsF=m.f|0;rb.stats.resyncs++;
- rb.needResync=false;
- if(m.f>=rb.frame){
-  rbRestoreState(m.st);rb.frame=m.f;rb.states[m.f]=m.st;
-  rb.ck[rb.frame]=rbChecksum();
- }else{
-  rb.states[m.f]=m.st;
-  rbRollback(m.f);
- }
- rbUpdateConfirmed();
-}
-function rbReset(seed){
- rb.active=true;rb.resim=false;rb.frame=0;rb.acc=0;rb.seed=seed|0;
- simSeedState=(seed|0)||1;
- rb.inputs=[];rb.used=[];rb.lastRecv=[];rb.cpuFrom=[];rb.states={};rb.ck={};rb.ckBook={};
- rb.confirmed=-1;rb.lastCkSent=-1;rb.needResync=false;rb.lastRsq=0;rb.lastRsT=0;rb.lastRsF=-1;rb.endShown=false;
- rb.stats={rollbacks:0,resyncs:0,maxBack:0};
- rbPressQ=[];
- for(var i=0;i<fighters.length;i++){
-  rb.inputs.push({map:{},cont:-1});rb.used.push({});rb.lastRecv.push(-1);rb.cpuFrom.push(null);
-  var f=fighters[i];
-  f.rbBj=-999;f.rbBk=-999;f.rbBl=-999;f.rbBu=-999;f.rbPrevJ=false;
-  f.rbPj=-999;f.rbPk=-999;f.rbPl=-999;f.rbPu=-999;f.rbPd=-999;f.rbPdDir=0;f.rbPjump=-999;
- }
- if(net.role==="host"&&net.match){
-  for(var gi=0;gi<net.match.length;gi++){var rec=net.guests[net.match[gi].id];if(rec)rec.rbIdx=gi}
- }
- /* frames 0 and 1 are pre-stamped: the RB_DELAY pipeline means the
-    input for frame F is captured while stepping F-RB_DELAY, so the
-    first two frames are captured right here (the countdown is still
-    running, so they are virtually always idle) */
- rbCaptureAndSend(0);rbCaptureAndSend(1);
-}
-/* pacing: a peer may run ahead of the slowest peer's received inputs
-   by at most RB_MAX_AHEAD frames — prediction covers that window, so
-   nobody ever waits longer than the rollback ring is deep */
-function rbCanAdvance(){
- if(rb.needResync){
-  /* a resync request can race a host cooldown or a closing socket:
-     keep asking once a second until the host's state lands */
-  if(net.role==="guest"){var now=performance.now();if(now-rb.lastRsq>1000){rb.lastRsq=now;if(net.conn&&net.conn.open){try{net.conn.send({t:"rsq"})}catch(e){}}}}
-  return false;
- }
- var minL=Infinity;
- for(var p=0;p<fighters.length;p++){
-  if(p===net.myIdx)continue;
-  if(rb.cpuFrom[p]!=null&&rb.frame>=rb.cpuFrom[p])continue;
-  if(rb.lastRecv[p]<minL)minL=rb.lastRecv[p];
- }
- if(minL===Infinity)return true;
- return (rb.frame-minL)<=RB_MAX_AHEAD;
-}
-function rbShowEnd(){
- var topF=fighters.slice().sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)})[0];
+function svShowEnd(){
+ var top=(sv.endResults&&sv.endResults[0])||null;
+ var topF=null;
+ if(top){for(var i=0;i<fighters.length;i++){if(i===top.i)topF=fighters[i]}}
+ if(!topF){var sorted=fighters.slice().sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)});topF=sorted[0]}
+ if(!topF)return;
  var tw=(topF===P1);
  showCenter(tw?"🏆 TIME UP\n"+cname(P1.char)+" WIN":"TIME UP\n"+cname(topF.char)+" WIN",99999);
  $("endBtns").classList.add("on");
 }
-function rbAdvance(dtms){
- if(!matchOver&&rb.endShown){rb.endShown=false;$("endBtns").classList.remove("on");showCenter("",0)}
- if(matchOver){
-  /* decided on every peer at the same frame; only the cosmetic tail
-     keeps moving afterwards, like the local loop's post-match steps */
-  rb.acc+=Math.min(0.1,dtms/1000);
-  var cn=0;
-  while(rb.acc>=SIM_STEP&&cn<5){rb.acc-=SIM_STEP;cn++;rbTail()}
-  if(cn===5)rb.acc=0;
-  drawAlpha=1;
-  if(!rb.endShown){rb.endShown=true;rbShowEnd()}
- }else{
-  rb.acc+=Math.min(0.1,dtms/1000);
-  var n=0;
-  while(rb.acc>=SIM_STEP&&n<5){
-   if(!rbCanAdvance())break;
-   rb.acc-=SIM_STEP;n++;
-   rbStepNext();
-   if(matchOver){rb.endShown=true;rbShowEnd();break}
-  }
-  if(n===5&&rb.acc>=SIM_STEP)rb.acc=0;
-  drawAlpha=Math.min(1,rb.acc/SIM_STEP);
+function svRenderWorld(now){
+ /* bracket the ~100ms-delayed render time with two snapshots and
+    interpolate remote fighters + projectiles between them */
+ var rt=now-100,A=null,B=null;
+ for(var i=sv.snaps.length-1;i>=0;i--){if(sv.snaps[i].at<=rt){A=sv.snaps[i];B=sv.snaps[i+1]||null;break}}
+ if(!A){A=sv.snaps[0]||null;B=sv.snaps[1]||null}
+ if(!A)return;
+ var span=(B&&B.at>A.at)?(B.at-A.at):33;
+ var t=B?Math.max(0,Math.min(1,(rt-A.at)/span)):0;
+ for(var fi=0;fi<fighters.length;fi++){
+   if(fi===net.myIdx)continue;
+   var f=fighters[fi],sa=A.fs[fi];if(!f||!sa)continue;
+   var sb=B?B.fs[fi]:null;
+   if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*t;f.y=sa.y+(sb.y-sa.y)*t}
+   else{f.x=sa.x;f.y=sa.y}
+   f.px=f.x;f.py=f.y;
  }
+ var out=[],pa=A.pr||[],pb=B?(B.pr||[]):null;
+ if(pb&&pb.length===pa.length){
+   for(var pi=0;pi<pa.length;pi++){var p0=pa[pi],p1=pb[pi];
+     out.push({x:p0.x+(p1.x-p0.x)*t,y:p0.y+(p1.y-p0.y)*t,px:0,py:0,vx:p1.vx,vy:p1.vy,kind:p1.k,life:1,owner:(p1.o>=0&&fighters[p1.o])?fighters[p1.o]:null});
+   }
+ }else{
+   for(var pj2=0;pj2<pa.length;pj2++){var p2=pa[pj2];
+     out.push({x:p2.x,y:p2.y,px:p2.x,py:p2.y,vx:p2.vx,vy:p2.vy,kind:p2.k,life:1,owner:(p2.o>=0&&fighters[p2.o])?fighters[p2.o]:null});
+   }
+ }
+ for(var pk=0;pk<out.length;pk++){if(!out[pk].px&&!out[pk].py){out[pk].px=out[pk].x;out[pk].py=out[pk].y}}
+ for(var pm2=0;pm2<sv.predPr.length;pm2++)out.push(sv.predPr[pm2]);
+ projectiles=out;
+}
+function svAdvance(dtms){
+ if(!sv.active||!P1)return;
+ var now=performance.now(),dt=Math.min(0.1,dtms/1000);
+ if(matchOver){
+   drawAlpha=1;
+   svRenderWorld(now);
+   if(!sv.endShown){sv.endShown=true;svShowEnd()}
+ }else{
+   /* inputs out at 30/s, prediction steps at a fixed 60/s */
+   sv.sendAcc+=dtms;
+   while(sv.sendAcc>=33.333){sv.sendAcc-=33.333;svSendBundle()}
+   sv.acc+=dt;
+   var n=0;
+   while(sv.acc>=SIM_STEP&&n<5){sv.acc-=SIM_STEP;n++;svPredStep()}
+   if(n===5&&sv.acc>=SIM_STEP)sv.acc=0;
+   drawAlpha=Math.min(1,sv.acc/SIM_STEP);
+   time=sv.predFrame*SIM_STEP+sv.acc;
+   /* retire / advance my predicted projectiles */
+   for(var pj=sv.predPr.length-1;pj>=0;pj--){var pp=sv.predPr[pj];
+     pp.x+=pp.vx*dt;pp.y+=pp.vy*dt;
+     if(pp.kind==="javelin")pp.vy+=980*dt;else if(pp.kind!=="wave"&&pp.kind!=="slash")pp.vy+=128*dt;
+     pp.life-=dt;pp.px=pp.x;pp.py=pp.y;
+     var confirmed=false;
+     if(sv.lastSnap&&sv.lastSnap.pr){for(var si=0;si<sv.lastSnap.pr.length;si++){var sp=sv.lastSnap.pr[si];if(sp.k===pp.kind&&Math.abs(sp.x-pp.x)<70&&Math.abs(sp.y-pp.y)<70){confirmed=true;break}}}
+     if(confirmed||pp.life<=0||(now-pp.born)>400)sv.predPr.splice(pj,1);
+   }
+   svRenderWorld(now);
+ }
+ /* remote fighters' local animation clocks (the snapshot stream
+    refreshes the values; between snapshots they run down locally) */
+ for(var fi=0;fi<fighters.length;fi++){
+   if(fi===net.myIdx)continue;
+   var f=fighters[fi];if(!f)continue;
+   if(f.stateT>0)f.stateT=Math.max(0,f.stateT-dt);
+   if(f.flash>0)f.flash=Math.max(0,f.flash-dt);
+   if(f.landT>0)f.landT=Math.max(0,f.landT-dt);
+   if(f.grabT>0)f.grabT=Math.max(0,f.grabT-dt);
+   if(f.ultChargeT>0)f.ultChargeT=Math.max(0,f.ultChargeT-dt);
+   if(f.dashT>0){
+     f.dashT-=dt;
+     f.trail.push({x:f.x,y:f.y,life:0.2,face:f.face,isPlayer:f.isPlayer});
+     if(f.trail.length>12)f.trail.shift();
+   }
+   if(f.trail&&f.trail.length)f.trail=f.trail.filter(function(tr){tr.life-=dt;return tr.life>0});
+   if(f.onGround&&Math.abs(f.vx)>30)f.runPhase+=Math.abs(f.vx)*dt*0.052;
+ }
+ /* visual-only particle / floater / burst clocks (they used to ride
+    the rollback step; here they simply run at render rate) */
+ particles=particles.filter(function(p){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.amb?-4:300)*dt;p.vx*=Math.pow(0.97,dt*60);return(p.life-=dt)>0});
+ floaters=floaters.filter(function(fl){fl.y-=34*dt;return(fl.life-=dt)>0});
+ fxBursts=fxBursts.filter(function(b){return(b.life-=dt)>0});
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
  updateCamera(dtms,ipX,ipY);
 }
@@ -2114,15 +1973,11 @@ function startFbListeners(){
 function startFbSession(uid,displayName){
  teardownSocialPeer();stopFbListeners();
  social.uid=uid;social.name=displayName;social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];
- /* a room may already be live with display names captured BEFORE this
-    sign-in completed (room creation / room join snapshot the name once,
-    and auto-login resolves whenever it resolves). Push the username
-    into the live room now — as host by refreshing the roster's source
-    name, as guest with a name update the host adopts — so the lobby
-    list shows the username from here on, including after the
-    post-match character re-pick rebuilds the roster. */
- if(net.role==="host"){net.selfName=displayName;rebuildRoster();broadcastRoster();renderLobby()}
- else if(net.role==="guest"&&net.conn&&net.conn.open){try{net.conn.send({t:"name",name:displayName})}catch(e){}}
+ /* note: a match-server room takes its display names at join time
+    (the server protocol has no rename), so a sign-in that completes
+    after joining a room cannot rename that room's entry — the name
+    is picked up from the next room join on. Friend presence below
+    still announces the username as before. */
  startFbListeners();
  /* self-heal the name -> uid mapping: accounts created while the
     usernames write was failing silently can never be found by name
@@ -2437,12 +2292,12 @@ window.addEventListener("keydown",function(e){
    keys[k]=true;press(k);
    if(running&&P1&&(k==="left"||k==="right")){
      var now=performance.now();
-     if(now-lastTap[k]<280){if(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"){rbPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1);if(net.role==="guest"&&net.conn&&net.conn.open){try{net.conn.send({t:"p",a:"dash",dir:k==="left"?-1:1})}catch(e){}}}}
+     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
      lastTap[k]=now;
    }
  }
 });
-window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0&&!(typeof rb!=="undefined"&&rb&&rb.active&&mode==="online"))P1.vy=-JUMP_CUT}});
+window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0&&!(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"))P1.vy=-JUMP_CUT}});
 window.addEventListener("blur",function(){keys={}});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
@@ -2507,7 +2362,7 @@ function tryDash(f,dir){
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
- f.dashT=DASH_TIME;f.dashCd=DASH_CD;f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component */
+ f.dashT=DASH_TIME;f.dashCd=f.char==="kairo"?2.2:DASH_CD;f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s (user spec) */
  if(!f.onGround)f.airDashed=true;
  spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnFxBurst(charFxImg(f.char),f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5);beep(f.isPlayer?880:440,.06,"sawtooth",.03);
  return true;
@@ -2524,13 +2379,21 @@ function startWardenAttack(f,type,foe){
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#fde68a",200);beep(300,.07,"square",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
+     /* 空中↓+J: ウェーブショット — fires a huge shell STRAIGHT DOWN and
+        rides it to the floor; on landing the shared dive shockwave erupts
+        on both sides (WARDEN numbers in the landing block: 12 dmg /
+        KB 430 both sides, box 108x80) */
      f.state="diveclaw";f.stateT=0.32;f.attackCd=0.38;f.comboWin=0;f.diveArmed=true;
-     f.vx=f.face*280;f.vy=Math.max(f.vy,608);f.fastfall=false;
-     meleeHit(f,foe,76,62,18,500,f.face,0.85);beep(240,.09,"sawtooth",.05);
+     f.vx=0;f.vy=Math.max(f.vy,640);f.fastfall=false;
+     meleeHit(f,foe,76,62,17,600,f.face,0.85);beep(240,.09,"sawtooth",.05);
    }else if(!f.onGround){
+     /* 空中J: 回転警棒 — spins the baton for up to 4 small hits on BOTH
+        sides (4 dmg / KB 330 each; ticks live in stepFighter, state
+        "airclaw"). airJ marks the stint: landing after it costs 0.33s
+        of landing lag (landing block in stepFighter) */
      f.state="airclaw";f.stateT=0.32;f.attackCd=0.34;f.comboWin=0;
+     f.spinHits=0;f.spinTick=0.06;f.airJ=1;
      if(f.vy>40)f.vy=-90;
-     meleeHit(f,foe,84,74,16,390,f.face,-0.34);meleeHit(f,foe,84,74,9,260,-f.face,-0.2);
      spawnParticles(f.x,f.y+f.h*0.45,10,"#fbbf24",190);beep(520,.07,"square",.045);
    }else if(downHeld){
      /* ground down+J: SHOCKWAVE — slams the baton into the floor and sends
@@ -2539,7 +2402,7 @@ function startWardenAttack(f,type,foe){
         puts them in hitstun (user tuning — see the "wave" hit in the
         projectile step, which passes noKb to applyHit) */
      f.state="lowclaw";f.stateT=0.34;f.attackCd=0.46;f.comboWin=0;
-     projectiles.push({x:f.x+f.face*42,y:f.y+f.h-14,vx:f.face*430,vy:0,owner:f,life:0.85,kind:"wave"});
+     projectiles.push({x:f.x+f.face*42,y:f.y+f.h-14,vx:f.face*480,vy:0,owner:f,life:0.875,kind:"wave" /* wave speed 430 -> 480, range ~366 -> ~420 (user spec) */});
      spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#fde68a",160);beep(150,.12,"sawtooth",.05);
    }else if(upHeld){
      f.state="clawup";f.stateT=0.32;f.attackCd=0.42;f.comboWin=0;
@@ -2552,7 +2415,7 @@ function startWardenAttack(f,type,foe){
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
      f.state="dashclaw";f.stateT=0.34;f.attackCd=0.48;f.comboWin=0;f.dashT=0; /* thrust: a little extra recovery after the move */
      f.vx=f.face*Math.min(Math.max(Math.abs(f.vx),470),640);
-     meleeHit(f,foe,88,60,17,460,f.face,-0.3);beep(460,.06,"square",.05);
+     meleeHit(f,foe,88,60,17,100,f.face,-0.3,0.44) /* 電気警棒 (user spec): KB 460 -> 100, but a heavy 0.44s stun (hitstun floor) — the shock baton pins instead of launching */;beep(460,.06,"square",.05);
    }else{
      /* BATON RUSH chain — three VISIBLY different swings (numbers are
         untouched: same damage / cooldown / range / knockback per step).
@@ -2563,28 +2426,35 @@ function startWardenAttack(f,type,foe){
           2段目 wswing2 = backhand return, arc reversed vs step 1
           3段目 wslam   = overhead slam finish, biggest arc, orange impact */
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;f.comboWin=0.65;
-     if(f.comboStep===0){f.state="wswing";f.stateT=0.22;f.attackCd=0.28;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,68,60,14,330,f.face,-0.24);beep(420,.05,"square",.04)}
-     else if(f.comboStep===1){f.state="wswing2";f.stateT=0.28;f.attackCd=0.32;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,66,80,15,380,f.face,-0.95);spawnParticles(f.x+f.face*18,f.y+f.h*0.3,9,"#fef3c7",170);beep(330,.07,"square",.045)}
-     else{f.state="wslam";f.stateT=0.38;f.attackCd=0.48;f.vx+=f.face*165;capVx(f,RUN_MAX*1.25);var wSlamHit=meleeHit(f,foe,92,74,21,580,f.face,-0.42);spawnParticles(f.x+f.face*26,f.y+f.h*0.55,18,"#fb923c",250);spawnParticles(f.x+f.face*30,f.y+f.h*0.7,8,"#fde68a",190);spawnRing(f.x+f.face*34,f.y+f.h*0.55,"#fb923c",52);spawnFxBurst(FXIMG.hit,f.x+f.face*30,f.y+f.h*0.5,150,0.3,0.4,f.face,0.85);if(wSlamHit)shake=Math.max(shake,3.5);beep(170,.11,"sawtooth",.06)}
+     if(f.comboStep===0){f.state="wswing";f.stateT=0.22;f.attackCd=0.14;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,74,66,16,300,f.face,-0.24,0.22);beep(420,.05,"square",.04)}
+     else if(f.comboStep===1){f.state="wswing2";f.stateT=0.28;f.attackCd=0.15;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,76,88,18,330,f.face,-0.95,0.22);spawnParticles(f.x+f.face*18,f.y+f.h*0.3,9,"#fef3c7",170);beep(330,.07,"square",.045)}
+     else{f.state="wslam";f.stateT=0.38;f.attackCd=0.48;f.vx+=f.face*165;capVx(f,RUN_MAX*1.25);var wSlamHit=meleeHit(f,foe,92,74,26,620,f.face,-0.42);if(wSlamHit){for(var wm=0;wm<fighters.length;wm++){var wmf=fighters[wm];if(wmf!==f&&!wmf.dead&&!wmf.onGround&&wmf.lastAttacker===f&&wmf.lastAttackT===time)wmf.vy=Math.max(wmf.vy,620)}} /* メテオ判定: an airborne foe caught by the slam is spiked straight down */spawnParticles(f.x+f.face*26,f.y+f.h*0.55,18,"#fb923c",250);spawnParticles(f.x+f.face*30,f.y+f.h*0.7,8,"#fde68a",190);spawnRing(f.x+f.face*34,f.y+f.h*0.55,"#fb923c",52);spawnFxBurst(FXIMG.hit,f.x+f.face*30,f.y+f.h*0.5,150,0.3,0.4,f.face,0.85);if(wSlamHit)shake=Math.max(shake,3.5);beep(170,.11,"sawtooth",.06)}
    }
  }else if(type==="k"){
    if(!f.onGround&&upHeld){
      /* 空中↑+K: アームキャッチ・ミー — a crane arm drops from above,
         catches the WARDEN himself and hauls him straight up at
-        vy -680. Pure recovery / escape mobility: NO hitbox at all.
+        vy -820. Pure recovery / escape mobility: NO hitbox at all.
         CD 5.0s on the shared flyCd (same slot SARA / ORCHID use) */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=5.0;f.state="wcatch";f.stateT=0.38;f.attackCd=0.48;f.comboWin=0;
-     f.vy=-680;f.vx=0;f.onGround=false;f.fastfall=false;
+     f.vy=-820;f.vx=0;f.onGround=false;f.fastfall=false;
      floaters.push({x:f.x,y:f.y-30,txt:"アームキャッチ・ミー！",life:.85,col:"#fde68a"});
      spawnParticles(f.x,f.y-14,14,"#fde68a",170);spawnParticles(f.x,f.y+f.h*0.4,8,"#fbbf24",130);spawnRing(f.x,f.y-6,"#fde68a",40);
      beep(1250,.1,"square",.05);setTimeout(function(){beep(420,.12,"sawtooth",.045)},70);
    }else if(downHeld&&f.onGround){
-     f.state="tailsweep";f.stateT=0.44;f.attackCd=0.58;f.comboWin=0;
-     meleeHit(f,foe,84,38,18,500,f.face,0.05);meleeHit(f,foe,84,38,13,390,-f.face,0.05);
-     spawnParticles(f.x,f.y+f.h-8,13,"#fde68a",190);beep(160,.13,"sawtooth",.05);
+     /* ↓+K: ショックスイープ改 — no longer a sweep: he plants a shock
+        MINE at his feet. A mine is 62x40, deals 20 / KB 560 to whoever
+        steps into it, and each WARDEN can have at most 2 on the field
+        (planting a third removes his oldest). Mines are stepped in the
+        main loop next to fireOrbs / poisonMists */
+     f.state="tailsweep";f.stateT=0.44;f.attackCd=0.37;f.comboWin=0;
+     var ownMines=0,oldestMine=-1;for(var mi2=0;mi2<mines.length;mi2++){if(mines[mi2].owner===f){ownMines++;if(oldestMine<0)oldestMine=mi2}}
+     if(ownMines>=2&&oldestMine>=0)mines.splice(oldestMine,1);
+     mines.push({x:f.x,y:f.y+f.h,owner:f});
+     spawnParticles(f.x,f.y+f.h-8,13,"#fde68a",190);spawnRing(f.x,f.y+f.h-4,"#f59e0b",26);beep(160,.13,"sawtooth",.05);
    }else if(downHeld&&!f.onGround){
-     f.state="taildrop";f.stateT=0.42;f.attackCd=0.54;f.hitDone=false;f.comboWin=0;
+     f.state="taildrop";f.stateT=0.42;f.attackCd=0.72;f.hitDone=false; /* メテオドロップ (user spec): hit lands 0.32s after the press (stepFighter threshold) and landing costs 0.36s of lag — attackCd raised so 後硬直 stays 0.47 */f.comboWin=0;
      f.vy=Math.max(f.vy,752);f.vx*=0.3;beep(140,.14,"sawtooth",.055);
    }else{
      /* SHIELD BASH — its own state "wbash" (was "tail", drawn with the
@@ -2594,14 +2464,14 @@ function startWardenAttack(f,type,foe){
         damage, knockback and timing the old "tail" hit used), a shield
         plate thrust out front and a square shockwave burst instead of
         a slash arc. See the wbash branch in stepFighter + drawWarden. */
-     f.state="wbash";f.stateT=0.38;f.attackCd=0.54;f.hitDone=false;
+     f.state="wbash";f.stateT=0.38;f.attackCd=0.58;f.hitDone=false;
      f.vx+=f.face*170;capVx(f,RUN_MAX*1.25);
      spawnParticles(f.x-f.face*8,f.y+f.h-4,6,"#94a3b8",120);beep(180,.12,"sawtooth",.05);
    }
  }else if(type==="l"){
    if(f.ammo<=0){if(f.reloadT<=0)f.reloadT=0.9;beep(200,.08);return}
    f.ammo--;f.state="shard";f.stateT=0.24;f.attackCd=0.36;
-   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*560,vy:-8,owner:f,life:1.3,kind:"bolt"});
+   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*630,vy:-8,owner:f,life:1.22,kind:"bolt" /* bolt speed 560 -> 630, range ~728 -> ~770 (user spec); WARDEN now carries 4 bolts */});
    beep(500,.08,"sine",.05);
    if(f.ammo===0)f.reloadT=1.15;
  }else if(type==="ult"){
@@ -2611,7 +2481,7 @@ function startWardenAttack(f,type,foe){
       arrest move, not an area blast. Whiffing it still spends the meter. */
    if(f.meter<100)return;f.meter=0;f.attackCd=0.85;shake=8;
    var gd=Math.abs(foe.x-f.x),gdy=Math.abs(foe.y-f.y);
-   if(gd<520&&gdy<320&&!foe.dead&&foe.invuln<=0){
+   if(gd<500&&gdy<430&&!foe.dead&&foe.invuln<=0){ /* grab reach (user spec): forward ~520 -> ~500, vertical ~320 -> ~430 */
      f.state="ultgrab";f.stateT=0.55;
      foe.grabT=0.55;foe.grabBy=f;foe.dashT=0;foe.fastfall=false;foe.hitstun=Math.max(foe.hitstun,0.2);
      floaters.push({x:foe.x,y:foe.y-36,txt:"確保！",life:.95,col:"#fde68a"});
@@ -3204,7 +3074,7 @@ function startAttack(f,type){
       Two hits, long recovery; breaks the J chain. */
    f.state="jkcombo";f.stateT=0.48;f.attackCd=0.62;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*168;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,62,54,12,300,f.face,-0.3);
+   meleeHit(f,foe,66,58,12,300,f.face,-0.3);
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#a5f3fc",200);
    beep(1250,.06,"square",.05);setTimeout(function(){beep(280,.12,"sawtooth",.05)},110);
  }else if(type==="j"){
@@ -3214,13 +3084,13 @@ function startAttack(f,type){
    var backHeld=f.isPlayer?((f.face===1&&(!!keys.left||stick.dx<-0.28))||(f.face===-1&&(!!keys.right||stick.dx>0.28))):(f.remote?f.hBack:false);
    if(!f.onGround&&downHeld){
      /* air down+J: diagonal dive slash — falls fast, big downward hit on contact */
-     f.state="diveclaw";f.stateT=0.3;f.attackCd=0.34;f.comboWin=0;f.diveArmed=true;
+     f.state="diveclaw";f.stateT=0.3;f.attackCd=0.48;f.comboWin=0;f.diveArmed=true;
      f.vx=f.face*312;f.vy=Math.max(f.vy,608);f.fastfall=false;
-     meleeHit(f,foe,62,52,15,430,f.face,0.85);
+     meleeHit(f,foe,62,52,34,600,f.face,0.85);
      spawnParticles(f.x+f.face*20,f.y+f.h*0.6,8,"#a5f3fc",170);
      beep(620,.09,"square",.05);
    }else if(!f.onGround){
-     /* air J: HOVER SPIN — hangs in the air spinning and ticks out up to 3
+     /* air J: HOVER SPIN — hangs in the air spinning and ticks out up to 5
         real hits over its duration (not a single slash with a bigger box).
         Capped at 2 uses per airborne stint (refilled on landing): the
         fall-cancel can no longer be re-triggered forever to hover */
@@ -3232,12 +3102,13 @@ function startAttack(f,type){
      spawnParticles(f.x,f.y+f.h*0.45,10,"#67e8f9",190);
      beep(1500,.07,"square",.045);
    }else if(downHeld){
-     /* ground down+J: ICE SLIDE — low sliding sweep that also freezes the
+     /* ground down+J: ICE FOOT — crouches and thrusts a foot out in a
+        quick low sweep (user spec: アイスフット). It still chills the
         floor it crosses: a slick ice patch stays behind for a few seconds
         and chills (slows) any foe standing on it */
-     f.state="lowclaw";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
+     f.state="lowclaw";f.stateT=0.12;f.attackCd=0.15;f.comboWin=0;
      f.vx=f.face*344;
-     meleeHit(f,foe,66,32,12,360,f.face,0.08);
+     meleeHit(f,foe,72,34,8,360,f.face,0.08,0.2);
      icePatches.push({x:f.x+f.face*36,y:f.y+f.h,w:150,t:3.5,owner:f});
      spawnParticles(f.x+f.face*22,f.y+f.h-6,9,"#bae6fd",150);
      beep(760,.07,"square",.045);
@@ -3262,11 +3133,11 @@ function startAttack(f,type){
         and reappears ~105u ahead (shortened from ~170), slashing on arrival.
         The blink passes straight through the foe, so it can cross up behind
         them — but it now pays a longer cooldown, like every J lunge */
-     f.state="dashclaw";f.stateT=0.3;f.attackCd=0.65;f.comboWin=0;f.dashT=0; /* blink thrust slash: a little extra recovery */
+     f.state="dashclaw";f.stateT=0.3;f.attackCd=0.73;f.comboWin=0;f.dashT=0; /* blink thrust slash: a little extra recovery */
      spawnParticles(f.x,f.y+f.h*0.45,10,"#67e8f9",170);
      f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
-     meleeHit(f,foe,72,50,14,390,f.face,-0.3);
+     meleeHit(f,foe,80,62,14,440,f.face,-0.3);
      spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);
      beep(1350,.06,"square",.05);
    }else{
@@ -3279,23 +3150,23 @@ function startAttack(f,type){
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;
      if(f.comboStep===0){
        f.comboWin=0.9;
-       f.state="claw";f.stateT=0.22;f.attackCd=0.3;
+       f.state="claw";f.stateT=0.22;f.attackCd=0.13;
        /* stage 1: normal slash — no lunge, no step-in */
-       meleeHit(f,foe,56,50,11,270,f.face,-0.24);
+       meleeHit(f,foe,64,58,13,270,f.face,-0.24,0.24);
        beep(1200,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.9;
-       f.state="clawrev";f.stateT=0.26;f.attackCd=0.36;
+       f.state="clawrev";f.stateT=0.26;f.attackCd=0.15;
        /* stage 2: reverse slash — still no lunge */
-       meleeHit(f,foe,58,52,13,330,f.face,-0.3);
+       meleeHit(f,foe,66,60,13,330,f.face,-0.3,0.26);
        spawnParticles(f.x+f.face*18,f.y+f.h*0.4,7,"#a5f3fc",150);
        beep(1350,.06,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0; /* chain is spent — the next J restarts at stage 1 */
-       f.state="clawspin";f.stateT=0.34;f.attackCd=0.58; /* longer cooldown after the lunge */
+       f.state="clawspin";f.stateT=0.4;f.attackCd=0.58; /* longer cooldown after the lunge */
        f.x+=f.face*52;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50; /* stage 3 only: short lunge step */
        f.vx+=f.face*84;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,72,60,15,470,f.face,-0.42);
+       meleeHit(f,foe,80,68,15,530,f.face,-0.42);
        spawnParticles(f.x,f.y+f.h*0.45,12,"#22d3ee",210);
        beep(1700,.09,"square",.05);setTimeout(function(){beep(500,.08,"sawtooth",.04)},60);
      }
@@ -3304,22 +3175,25 @@ function startAttack(f,type){
    var kDown=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
    var kUp=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
    if(!f.onGround&&kUp){
-     /* 空中↑+K: フロストスピン — rises straight up at vy -450 while
-        spinning in ice: the spin ticks out small hits on BOTH sides
-        in stepFighter (state "fspin", up to 4 ticks, fall capped like
-        the hover spin). CD 5.0s on the shared flyCd */
+     /* 空中↑+K: フロストスピン — rises straight up at vy -550 for
+        1.2s while spinning in ice: the spin ticks out small hits on
+        BOTH sides in stepFighter (state "fspin", up to 5 ticks).
+        CD 5.0s on the shared flyCd */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=5.0;f.state="fspin";f.stateT=0.55;f.attackCd=0.62;f.comboWin=0;
-     f.vy=-450;f.vx=0;f.onGround=false;f.fastfall=false;
+     f.vy=-550;f.vx=0;f.onGround=false;f.fastfall=false;f.flyDur=1.2; /* rise held at vy -550 for 1.2s (user spec): flyDur counts it down in stepFighter and the gravity step holds the rise; landing clears it */
      f.spinHits=0;f.spinTick=0.05;
      spawnParticles(f.x,f.y+f.h*0.45,14,"#67e8f9",200);spawnRing(f.x,f.y+f.h*0.45,"#a5f3fc",42);
      beep(1500,.08,"square",.05);
    }else if(kDown&&f.onGround){
-     /* ground down+K: tail sweep — low spin that hits BOTH sides */
-     f.state="tailsweep";f.stateT=0.42;f.attackCd=0.55;f.comboWin=0;
-     meleeHit(f,foe,70,34,15,430,f.face,0.05);
-     meleeHit(f,foe,70,34,11,330,-f.face,0.05);
-     spawnParticles(f.x,f.y+f.h-8,13,"#7dd3fc",190);
+     /* ground down+K: アイスエッジ — three waves of ice spikes erupt
+        from the ground on BOTH sides (0.2s / 0.3s / 0.4s; the eruptions
+        and their straight-up launches live in stepFighter, state
+        "iceedge", spinHits counts the waves). Kairo is rooted for the
+        whole 1.38s and the total lockout is 2.0s (attackCd 1.93 + the
+        shared 0.07 recovery = 全体1.38 + 後硬直0.62) */
+     f.state="iceedge";f.stateT=1.38;f.attackCd=1.93;f.comboWin=0;f.spinHits=0;f.vx=0;
+     spawnParticles(f.x,f.y+f.h-6,12,"#7dd3fc",170);spawnRing(f.x,f.y+f.h-4,"#a5f3fc",40);
      beep(240,.13,"sawtooth",.05);
    }else if(kDown&&!f.onGround){
      /* air down+K: meteor drop — plunges straight down, tail spike on the way */
@@ -3334,14 +3208,14 @@ function startAttack(f,type){
  }else if(type==="l"){
    if(f.ammo<=0){if(f.reloadT<=0)f.reloadT=0.9;beep(200,.08);return}
    f.ammo--;f.state="shard";f.stateT=0.22;f.attackCd=0.32;
-   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*640,vy:-14,owner:f,life:1.15,kind:"shard"});
+   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*660,vy:-14,owner:f,life:1.3,kind:"shard"}); /* speed 640 -> 660, life 1.3s = range ~860 (user spec) */
    beep(1600,.07,"sine",.05);
-   if(f.ammo===0)f.reloadT=1.15;
+   if(f.ammo===0)f.reloadT=1.25;
  }else if(type==="ult"){
    if(f.meter<100)return;f.meter=0;f.state="ult";f.stateT=0.62;f.attackCd=0.72;shake=15;
    spawnParticles(f.x,f.y+f.h/2,60,"#a5f3fc",330);spawnParticles(f.x,f.y+f.h/2,40,"#22d3ee",240);
    var ultHit=false;
-   for(var ui=0;ui<fighters.length;ui++){var uf=fighters[ui];if(uf===f||uf.dead||uf.invuln>0)continue;if(Math.abs(uf.x-f.x)<135&&Math.abs(uf.y-f.y)<105){if(applyHit(f,uf,55,920,f.face,-0.62,true))ultHit=true}} /* ult hitbox shrunk hard (user tuning: 185x145 -> 135x105) — Kairo's other hitboxes shrank this pass too */
+   for(var ui=0;ui<fighters.length;ui++){var uf=fighters[ui];if(uf===f||uf.dead||uf.invuln>0)continue;if(Math.abs(uf.x-f.x)<135&&Math.abs(uf.y-f.y)<125){if(applyHit(f,uf,50,940,f.face,-0.62,true))ultHit=true}} /* ult: dmg 55 -> 50, KB 920 -> 940, box widened vertically 135x105 -> 135x125 (user spec) */
    /* Kairo ult recharge rule: landing the ult instantly recharges it, so it
       can be fired again — but consecutive hits are capped at 5 per charge
       cycle. Using up all 5 RESETS the count on the spot (not only on
@@ -3359,13 +3233,13 @@ function startAttack(f,type){
  }
  addRecovery(f);
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up){
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs){
  var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead)continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy))hitAny=true}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs))hitAny=true}
  }
  return hitAny;
 }
@@ -3374,8 +3248,8 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up){
    on top of that. Kairo keeps his older personal 1/1.6 rate and Kojiro
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.75 on top of all that. */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.6:(att.char==="orchid"?0.88:1))))/1.5;if(att.char==="kojiro"||att.char==="warden")m/=1.2;if(att.char==="kojiro")m*=1.75;return dmg*1.9*m} /* SARA: ult gain from damage dealt is x1.60 (user spec). ORCHID: x0.88 (user spec) */
-function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.6:(att.char==="orchid"?0.88:1))))/1.5;if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="kojiro")m*=1.75; /* WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x1.60 (user spec). ORCHID: x0.88 (user spec) */
+function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs){
  if(def.dead||def.invuln>0)return false;
  /* SARA モードカオス: while her chaos mode is on (12s max), EVERY
     damage she deals is +30% (paid for with 1/3 of her HP at
@@ -3410,7 +3284,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*(def.kbMul||1); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
- else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false;if(def.jumps<1)def.jumps=1}
+ else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=Math.min(0.5,Math.max(0.13+kbs/3600,hs||0));def.dashT=0;def.fastfall=false;if(def.jumps<1)def.jumps=1} /* hs: per-move minimum hitstun floor (user spec — KAIRO's J1/J2/ice foot guarantee their listed 被弾硬直 even at full HP) */
  hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011);
  spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  floaters.push({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
@@ -3419,7 +3293,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb){
  spawnFxBurst(charFxImg(att?att.char:"kairo"),cx||def.x,cy||def.y+def.h*0.45,isUlt?196:122,isUlt?0.42:0.3,Math.random()*6.28,dir,0.8);
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
  att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
- if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* meter gain is for HUMAN fighters: the local player (isPlayer) and, in online matches, the guest fighter simulated on the host (remote) — gating on isPlayer alone left the guest's ult gauge stuck at 0 forever. Rates live in meterGainFor (overall 1/1.5, KOJIRO/WARDEN a further 1/1.2, Kairo 1/1.6); ult hits never feed the meter — the recharge is governed only by the capped chain rule above */
+ if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* meter gain is for HUMAN fighters: the local player (isPlayer) and, in online matches, the guest fighter simulated on the host (remote) — gating on isPlayer alone left the guest's ult gauge stuck at 0 forever. Rates live in meterGainFor (overall 1/1.5, KOJIRO a further 1/1.2, WARDEN x0.69 for x0.46 total, Kairo 1/1.6); ult hits never feed the meter — the recharge is governed only by the capped chain rule above */
  beep(180+Math.random()*120,.07,"square",.06);
  if(def.hp<=0)killFighter(def,att);
  return true;
@@ -3503,7 +3377,7 @@ function stepFighter(f,dt,input,foe){
     No stacking: startSaraAttack refuses to re-activate while f.chaos */
  if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;floaters.push({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
  if(f.stateT===0&&f.state!=="idle")f.state="idle";
- if(f.reloadT>0){f.reloadT-=dt;if(f.reloadT<=0)f.ammo=3}
+ if(f.reloadT>0){f.reloadT-=dt;if(f.reloadT<=0)f.ammo=(f.char==="warden"?4:3)}
  /* hp ghost drains toward real hp; regen when out of combat */
  if(f.hpGhost>f.hp){f.hpGhost=Math.max(f.hp,f.hpGhost-95*dt)}
  var regenDelay=(mode==="training"&&!f.isPlayer)?1.2:REGEN_DELAY,regenRate=(mode==="training"&&!f.isPlayer)?59.5:REGEN_RATE; /* training dummy regen also -15%: 70 -> 59.5 HP/s (user tuning) */
@@ -3513,14 +3387,14 @@ function stepFighter(f,dt,input,foe){
    if(Math.floor(before/50)!==Math.floor(f.hp/50))floaters.push({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
  }
  var frozenFactor=1;if(f.frozen>0){f.frozen-=dt;frozenFactor=0.45}
- if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?64:74,f.char==="kairo"?58:66,airT?22:24,airT?620:580,f.face,airT?0.95:-0.5);beep(240,.1,"sawtooth",.05)} /* Kairo's boxes run smaller than the other chars' (user tuning) */
- /* WARDEN shield bash delayed hit: EXACTLY the numbers his old K ("tail")
-    hit used above (range 74x66, dmg 24 / air 22, kb 580 / air 620) — only
-    the presentation differs: a dull square shockwave burst on connect,
-    never a slash arc */
- if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,74,66,airB?22:24,airB?620:580,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
- if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=0.28){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?66:76,f.char==="kairo"?62:72,26,700,f.face,1.05);spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);beep(170,.12,"sawtooth",.06)}
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?74:86,f.char==="kairo"?64:74,16,560,f.face,-0.52);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#f87171":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":"#22d3ee")),230);beep(420,.1,"sawtooth",.05)}
+ if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?80:74,f.char==="kairo"?64:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?660:620):(airT?620:580),f.face,airT?0.95:-0.5);beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64, dmg 33 ground / 32 air, KB 620 ground / 660 air; other chars keep their values */
+ /* WARDEN shield bash delayed hit (user spec): lands 0.18s after the
+    press (stateT 0.38 -> threshold 0.20), box 80x70, dmg 24 / air 22,
+    KB 600 / air 640. Presentation: a dull square shockwave burst on
+    connect, never a slash arc */
+ if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,80,70,airB?22:24,airB?640:600,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
+ if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:0.28)){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?88:76,f.char==="kairo"?84:72,26,700,f.face,1.05); /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 66x62 -> 88x84 (user spec); dmg 26 / KB 700 shared */
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kairo"?78:86,f.char==="kairo"?68:74,16,f.char==="kairo"?660:(f.char==="warden"?640:560),f.face,-0.52 /* WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#f87171":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":"#22d3ee")),230);beep(420,.1,"sawtooth",.05)}
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
  if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,148,58,7,320,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)}
@@ -3537,20 +3411,47 @@ function stepFighter(f,dt,input,foe){
  if(f.char==="axe"&&f.state==="axeheavy"&&!f.hitDone&&f.stateT<=0.4){f.hitDone=true;meleeHit(f,foe,114,86,31,780,f.face,-0.4);spawnParticles(f.x+f.face*30,f.y+f.h*0.5,18,"#fdba74",250);shake=Math.max(shake,7);beep(110,.16,"sawtooth",.07)}
  if(f.char==="axe"&&f.state==="axeair"&&!f.hitDone&&f.stateT<=0.38){f.hitDone=true;meleeHit(f,foe,106,82,27,760,f.face,0.95);spawnParticles(f.x,f.y+f.h*0.7,15,"#fdba74",230);beep(100,.15,"sawtooth",.07)}
  /* HOVER SPIN (Kairo air J): while the spin state lasts, the fall is nearly
-    cancelled and the spin ticks out up to 3 real hits around the body */
+    cancelled and the spin ticks out up to 5 real hits around the body
+    (user tuning: dmg 5/5, KB 330 both sides, max 5 ticks — the tick
+    interval is 0.08s so all 5 can land inside the 0.38s spin) */
  if(f.state==="airclaw"&&f.char==="kairo"){
    if(f.vy>30)f.vy=30;
    f.spinTick+=dt;
-   if(f.spinTick>=0.11&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,300,f.face,-0.3);meleeHit(f,foe,68,62,4,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,6,"#67e8f9",170)}
+   if(f.spinTick>=0.08&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,5,330,f.face,-0.3);meleeHit(f,foe,68,62,5,330,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,6,"#67e8f9",170)}
  }
- /* FROST SPIN (Kairo air up+K): same both-sides spin ticks as the
-    hover spin, but up to 4 of them — and he is RISING through them
-    (the vy -450 impulse was set at the press; the same fall cap keeps
-    the spin from dropping him once the rise runs out) */
- if(f.state==="fspin"&&f.char==="kairo"){
-   if(f.vy>30)f.vy=30;
+ /* SPIN BATON (WARDEN air J): while the spin state lasts, the baton
+    ticks out up to 4 small hits on BOTH sides (user spec: 4 dmg /
+    KB 330 each, box 84x74, first tick almost immediately) */
+ if(f.state==="airclaw"&&f.char==="warden"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.11&&f.spinHits<4){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,300,f.face,-0.3);meleeHit(f,foe,68,62,4,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,7,"#67e8f9",180);spawnParticles(f.x,f.y+f.h*0.45,3,"#e0f2fe",140)}
+   if(f.spinTick>=0.08&&f.spinHits<4){f.spinTick=0;f.spinHits++;meleeHit(f,foe,84,74,4,330,f.face,-0.3);meleeHit(f,foe,84,74,4,330,-f.face,-0.2);spawnParticles(f.x,f.y+f.h*0.45,5,"#fde68a",170)}
+ }
+ /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
+    them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
+    vy -550 through them: flyDur (1.2s from the press) counts down
+    here and the gravity step holds vy at -550 while it lasts, even
+    after the 0.55s spin state itself has ended */
+ if(f.char==="kairo"&&(f.flyDur||0)>0){f.flyDur-=dt;if(f.flyDur<=0)f.flyDur=0}
+ if(f.state==="fspin"&&f.char==="kairo"){
+   f.spinTick+=dt;
+   if(f.spinTick>=0.11&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,180,f.face,-0.3);meleeHit(f,foe,68,62,6,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,7,"#67e8f9",180);spawnParticles(f.x,f.y+f.h*0.45,3,"#e0f2fe",140)}
+ }
+ /* アイスエッジ (Kairo ground down+K): rooted in place while three
+    waves of ice spikes erupt on BOTH sides — 0.2s / 0.3s / 0.4s after
+    the press (stateT thresholds 1.18 / 1.08 / 0.98 of the 1.38s
+    state), each wave further out, weaker and shorter, and every
+    spike launches STRAIGHT UP (dir 0). spinHits counts waves done */
+ if(f.char==="kairo"&&f.state==="iceedge"){
+   f.vx=0;
+   var ieT=[1.18,1.08,0.98],ieD=[34,28,14],ieK=[600,460,600],ieH=[140,120,90],ieO=[40,95,150];
+   while(f.spinHits<3&&f.stateT<=ieT[f.spinHits]){
+     var ii=f.spinHits;f.spinHits++;
+     for(var isd=-1;isd<=1;isd+=2){var sx=f.x+isd*ieO[ii],sTop=f.y+f.h-ieH[ii];
+       for(var iq=0;iq<fighters.length;iq++){var qf=fighters[iq];if(qf===f||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-sx)<26+qf.w/2&&(qf.y+qf.h)>sTop&&qf.y<f.y+f.h)applyHit(f,qf,ieD[ii],ieK[ii],0,-1.25,false,sx,sTop+ieH[ii]*0.4)}
+       spawnParticles(sx,f.y+f.h-10,10,"#a5f3fc",220);spawnFxBurst(charFxImg("kairo"),sx,f.y+f.h-ieH[ii]*0.4,ieH[ii]*0.9,0.3,-1.57,isd,0.8);
+     }
+     beep(300+ii*80,.09,"square",.05);
+   }
  }
  /* SARA delayed heavy hit: フレイムノヴァ (K) lands partway through its
     slow wind-up, not on the press. Spec: damage 50, KB 700, range 96x74,
@@ -3806,6 +3707,7 @@ function stepFighter(f,dt,input,foe){
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
  else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
  else if(f.char==="orchid"&&(f.flyDur||0)>0){f.vy=-120} /* ORCHID 飛翔: a steady vy -120 rise for the whole 5s (user spec) */
+ else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 1.2s (user spec) */
  else f.vy+=g*dt;
  var cap=f.fastfall?FASTFALL:MAXFALL;if(f.vy>0)cap*=(f.fallMul||1);if(f.vy>cap)f.vy=cap;
  if(f.char==="sara"&&f.flameMode===2&&f.flameT>0&&f.vy>20)f.vy=20; /* SARA flame breath: fall speed held at 20 while breathing */
@@ -3829,15 +3731,17 @@ function stepFighter(f,dt,input,foe){
      f.y=p.y-f.h;f.vy=0;f.onGround=true;f.groundPlat=p;break;
    }
  }
- if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;f.airJ=0;f.fastfall=false;if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
+ if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
+   if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
+   if(f.char==="warden"&&f.state==="taildrop")f.attackCd=Math.max(f.attackCd,0.36); /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed)f.attackCd=Math.max(f.attackCd,0.33); /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop")f.attackCd=Math.max(f.attackCd,0.53);f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.53s (user spec): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
       landing — ice spikes / impact ring hit grounded foes on BOTH sides */
-   if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?80:96,dvH=f.char==="kairo"?50:58;
+   if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?92:(f.char==="warden"?108:96),dvH=f.char==="kairo"?68:(f.char==="warden"?80:58); /* WARDEN ウェーブショット landing box 108x80 (user spec) */
      if(f.char==="orchid"){ /* ドロップポーション landing (user spec): the shockwave is front 8 / back 5 (not the shared 12 / 9) and everyone caught is poisoned for 1.2s */
        meleeHit(f,foe,dvRg,dvH,8,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,5,340,-f.face,-0.2);
        for(var dpo=0;dpo<fighters.length;dpo++){var dpf=fighters[dpo];if(dpf!==f&&!dpf.dead&&Math.abs(dpf.x-f.x)<dvRg&&Math.abs((dpf.y+dpf.h)-(f.y+f.h))<dvH+26)applyPoison(f,dpf,1.2)}
        spawnParticles(f.x,f.y+f.h-4,18,"#a3e635",230);
-     }else{meleeHit(f,foe,dvRg,dvH,12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230)}
+     }else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230)} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
  /* ICE PATCHES (from Kairo's ice slide): standing on a foe's frozen floor
@@ -4007,6 +3911,7 @@ function drawKairo(f){
  else{ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(20,38+(run?Math.sin(f.runPhase)*2.5:0));ctx.stroke()}
  if(f.state==="tail"||f.state==="taildrop"||f.state==="jkcombo"){ctx.strokeStyle="#7dd3fc";ctx.lineWidth=8;ctx.beginPath();ctx.arc(5,29,42,-.5,1.15);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(5,29,48,-.3,.9);ctx.stroke()}
  if(f.state==="tailsweep"){ctx.strokeStyle="#7dd3fc";ctx.lineWidth=8;ctx.beginPath();ctx.arc(0,48,44,.15,2.6);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,48,50,.4,2.3);ctx.stroke()}
+ if(f.state==="iceedge"){ctx.fillStyle="rgba(165,243,252,.85)";var ieO2=[40,95,150],ieH2=[140,120,90];for(var is2=0;is2<(f.spinHits||0);is2++){for(var isd2=-1;isd2<=1;isd2+=2){var sx2=isd2*ieO2[is2];ctx.beginPath();ctx.moveTo(sx2-13,68);ctx.lineTo(sx2,68-ieH2[is2]);ctx.lineTo(sx2+13,68);ctx.closePath();ctx.fill()}}ctx.strokeStyle="#7dd3fc";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(10,38);ctx.lineTo(34,52);ctx.stroke()} /* アイスエッジ: erupted spike waves stay drawn for the rest of the move */
  ctx.fillStyle=darkC;ctx.beginPath();ctx.moveTo(-14,4);ctx.lineTo(-20,-30);ctx.lineTo(-3,1);ctx.closePath();ctx.fill();
  ctx.beginPath();ctx.moveTo(13,4);ctx.lineTo(22,-32);ctx.lineTo(4,1);ctx.closePath();ctx.fill();
  ctx.fillStyle=accC;[[-13,-16],[15,-18]].forEach(function(d){ctx.save();ctx.translate(d[0],d[1]);ctx.rotate(.78);ctx.fillRect(-3.5,-3.5,7,7);ctx.restore()});
@@ -4462,7 +4367,7 @@ function draw(){
     refresh rate. Guests already interpolate remote fighters from
     snapshots, so the swap applies to local / host rendering only.
     Real positions are restored at the end of draw(). */
- var useInterp=!(mode==="online"&&net.role==="guest"),swapped=[];
+ var useInterp=true,swapped=[];
  if(useInterp){
    var dList=fighters.length?fighters:[P1,P2];
    for(var di2=0;di2<dList.length;di2++){var df2=dList[di2];if(!df2||df2.px==null)continue;swapped.push(df2);df2._rx=df2.x;df2._ry=df2.y;df2.x=df2.px+(df2.x-df2.px)*drawAlpha;df2.y=df2.py+(df2.y-df2.py)*drawAlpha}
@@ -4476,6 +4381,8 @@ function draw(){
  icePatches.forEach(function(p){ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
  fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,64*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
+ /* WARDEN placed shock mines: a squat gold mine on the floor with a blinking light */
+ mines.forEach(function(mn){ctx.fillStyle="#334155";ctx.beginPath();ctx.ellipse(mn.x,mn.y-6,24,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(mn.x-15,mn.y-13,30,5);ctx.fillStyle=(Math.sin(time*7+mn.x)>0?"#ef4444":"#7f1d1d");ctx.beginPath();ctx.arc(mn.x,mn.y-16,3.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(245,158,11,.5)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,31,4,0,0,6.29);ctx.stroke()});
  /* ORCHID placed poison mist: a low, wide bank of green-purple fog that hangs where she summoned it */
  poisonMists.forEach(function(mb){var pu2=1+Math.sin(time*5+mb.x)*0.05;ctx.globalAlpha=Math.min(0.85,mb.t/1.0);ctx.fillStyle="rgba(101,163,13,.20)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-16,118*pu2,34,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(163,230,53,.16)";ctx.beginPath();ctx.ellipse(mb.x-40+Math.sin(time*3+mb.x)*8,mb.y-10,62,20,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(192,132,252,.15)";ctx.beginPath();ctx.ellipse(mb.x+44+Math.cos(time*2.6+mb.x)*8,mb.y-12,58,18,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(217,249,157,.10)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-30,80,16,0,0,6.29);ctx.fill()});ctx.globalAlpha=1;
  projectiles.forEach(function(pr){
@@ -4565,7 +4472,7 @@ function syncHUD(){
  var lbHtml="";sorted.forEach(function(f,ri){lbHtml+='<div class="lbRow"><span>'+(ri+1)+'. <b style="color:'+FIGHTER_COLORS[fighters.indexOf(f)%FIGHTER_COLORS.length]+'">'+cname(f.char)+(f.isPlayer?" (YOU)":"")+'</b></span><b>'+f.score+'</b></div>'});
  var lbEl=$("lbRows");if(lbEl)lbEl.innerHTML=lbHtml;
  $("scoreText").textContent=P1.score;
- $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.ammo+" / 3"+(P1.reloadT>0?"…":"")))));
+ $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))));
  $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%(P1.char==="sara"?4:3))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
@@ -4579,7 +4486,7 @@ function syncHUD(){
  var chainTxt=P1.char==="warden"?"BATON":(P1.char==="kojiro"?"KEN":(P1.char==="axe"?"AXE":(P1.char==="sara"?"RUSH":(P1.char==="orchid"?"VINE":"CLAW"))));
  $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%(P1.char==="sara"?4:3))+1:1)));
  $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"OHFURI":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"SHOT":"TAIL"))));
- $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")))));
+ $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))));
  var kbd=$("kbDash");
  if(P1.dashCd>0){$("kbDashCnt").textContent="DASH "+P1.dashCd.toFixed(1);kbd.classList.add("cooling")}
  else{$("kbDashCnt").textContent="DASH";kbd.classList.remove("cooling")}
@@ -4633,8 +4540,7 @@ function loop(ts){
  var dtms=ts-lastTs;lastTs=ts;
  if(dtms>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,dtms))*0.05;
  fpsTick+=dtms;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=Math.round(fpsEMA)}
- if(mode==="online"&&rb.active){rbAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
- if(mode==="online"){draw();syncHUD();return}
+ if(mode==="online"){svAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){drawAlpha=1;draw();return}
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
@@ -4665,10 +4571,10 @@ function loop(ts){
      if(foe){
        if(pr.kind==="slash"){applyHit(pr.owner,foe,74,780,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult slash wave damage buffed x1.75 (user tuning): 42 -> 74 (42*1.75=73.5, rounded) */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
-       else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,235,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)}
+       else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,220,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 235 -> 220 (user spec) */
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
        else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.0);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin: direct hit damages and ignites */
-       else{applyHit(pr.owner,foe,13,245,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85}
+       else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=0.85} /* KAIRO ice shard: KB 245 -> 260 (user spec) */
        return false}
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:6,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
@@ -4677,6 +4583,10 @@ function loop(ts){
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~6s; foes within radius 64 keep burning (burn 1.1s) */
    fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+   /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
+      into its 62x40 box, then bursts for 20 damage / KB 560 away from the
+      mine. At most 2 per WARDEN (enforced when planted) */
+   mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<55&&Math.abs((mf2.y+mf2.h)-mn.y)<46){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){mf.hp-=2;mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
