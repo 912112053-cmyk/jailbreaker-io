@@ -374,6 +374,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+  {date:"2026/11/14",times:["02:21"],tag:"修正・調整",title:"ジャンプ・落下速度を参考動画の実測値に合わせ直し／浮き台を短く",
+   items:["前回の「ふわりと高く跳び、遅く落ちる」物理が参考動画と違いすぎたため、動画をフレーム単位で測り直して（HPバーと台の位置関係から算出）作り直しました：ジャンプ初速 640→860、上昇重力 1000→1900（頂点 約188＝約2.7キャラ分・到達 約0.45秒）、2段ジャンプ初速 600→720（上昇 約130＝約1.9キャラ分）、落下重力 450→2000、最大落下速度 380→770、急降下 560→920。頂点から地面までの落下は約0.43秒で、動画の実測（約0.40〜0.47秒）と一致します",
+          "固定ジャンプ（W を押す長さで高さが変わらない仕様）と、ORCHID の落下倍率（×1.11）はそのまま維持しています",
+          "浮いている台の横幅を約7割に短くしました（中心位置・高さはそのまま、地面は変更なし）。台の段差は最大115のままで全て1回のジャンプで届き、同段の台同士の間隔（最大321）もジャンプの飛距離（約343）で渡れます",
+          "サーバー側の対戦計算にも同じ物理と台を反映し、ローカルの対戦テストは全て合格済みです。本番サーバーへの反映は再デプロイ待ちです"]},
  {date:"2026/11/14",times:["02:16"],tag:"修正・調整",title:"プレイヤーネームを1文字から設定できるように変更",
   items:["プレイヤーネームのルールを3〜20文字から1〜20文字に変更しました。日本語1文字・英字1文字・絵文字1つだけの名前でも設定できます",
          "変更は FRIENDS 画面のプレイヤーネーム変更から行えます。変更はこれまでどおりクラウド（PlayFab）に保存され、他の端末からログインしても同じ名前になります",
@@ -1005,23 +1010,27 @@ window.addEventListener("resize",resize);
    one-way tops; the main floor is a separate SOLID surface and can never
    be dropped through. */
 /* Every step up is <=115u, so EVERY ledge is reachable with a single jump
-   (apex ~200u with the honka physics). No ledge assumes a double jump.
+   (apex ~188u with the honka physics). No ledge assumes a double jump.
+   Floating ledges were shortened to ~70% width (centres and heights
+   unchanged; owner request) — the widest same-tier gap is now 321u,
+   inside the ~343u same-level jump range at full air speed (388u/s x
+   ~0.88s airtime), and any gap can also be crossed via the floor.
    Highest ledge: 225u above the floor, reached via the 115u step then
    the 110u step. */
 var platforms=[
  {x:120, y:1020,w:2360,h:92,main:true},
- {x:300, y:905, w:560, h:34},
- {x:1740,y:905, w:560, h:34},
- {x:1010,y:905, w:580, h:34},
- {x:640, y:795, w:340, h:28},
- {x:1620,y:795, w:340, h:28}
+ {x:384, y:905, w:392, h:34},
+ {x:1824,y:905, w:392, h:34},
+ {x:1097,y:905, w:406, h:34},
+ {x:691, y:795, w:238, h:28},
+ {x:1671,y:795, w:238, h:28}
 ];
 var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
 /* --- physics constants (units per second) — overall speed pass: 0.8x ---
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
-var GRAV=1000,GRAV_FALL=450,MAXFALL=380,FASTFALL=560; /* HONKA (bandit.rip) physics pass (owner request, tuned against the owner's training-mode video): the v89 "falling eased ~10%" values (1845 / 706 / 828) are DISCARDED and the whole jump/fall model is rebuilt floaty — rise gravity 1840 -> 1000, fall gravity 1845 -> 450, max fall 706 -> 380, fastfall 828 -> 560. Falling one stage tier (115u) from rest now takes ~0.72s and a full apex-to-ground fall ~0.95s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier on these new base values. The match server's sim.js carries the identical numbers. */
-var JUMP_V=640,DJUMP_V=600; /* FIXED-HEIGHT jumps (owner request): there is no short hop / long hop — the jump cut is gone entirely, so W's press length never changes the height. JUMP_V 816 -> 640 with the lower rise gravity gives apex ~200u (about 2.85 character heights) reached in ~0.64s; the double jump (744 -> 600) adds ~180u of rise. Every stage step is <=115u, so every ledge is still reachable with a single jump, as before. */
+var GRAV=1900,GRAV_FALL=2000,MAXFALL=770,FASTFALL=920; /* HONKA physics pass v2 (owner request, measured frame-by-frame against the owner's reference video, tracking the HP bar against the ledges): the v90 floaty rebuild (1000 / 450 / 380 / 560) was WRONG — falling was far too slow vs the video. Measured from the video: apex ~190u (~2.8 char heights) reached in ~0.44-0.47s, and the apex-to-ledge fall takes ~0.40-0.47s (~475u/s average). These values are back near the pre-v89 set (1840 / 2050 / 784 / 920). Verified by discrete 60fps simulation of the exact stepFighter integration: apex 187.5u (2.68 char heights), apex reached in 0.450s, apex-to-ground fall 0.433s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier. The match server's sim.js carries the identical numbers. */
+var JUMP_V=860,DJUMP_V=720; /* FIXED-HEIGHT jumps (unchanged from v90): no short hop / long hop — W's press length never changes the height. JUMP_V 860 with rise gravity 1900: the analytic apex is ~195u, and the discrete 60fps sim measures 187.5u (~2.68 char heights) at 0.450s, matching the reference video (~190u / ~0.44-0.47s). Spec starting point was 840/1900 (analytic apex ~186u); fine-tuned to 860 because the semi-implicit integration loses ~7u of apex. DJUMP_V 720 adds ~130u of rise in the discrete sim (~1.86 char heights; video: ~1.8-2.0). Every stage step is <=115u, so every ledge is still reachable with a single jump. */
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
@@ -4498,8 +4507,9 @@ function stepFighter(f,dt,input,foe){
    else if(!f.onGround&&f.vy>260&&f.char==="kojiro")spawnParticles(f.x,f.y+f.h*0.4,1,"#fecaca",70);
    else if(!f.onGround&&f.char==="kairo"&&Math.random()<0.3)spawnParticles(f.x,f.y+f.h*0.5,1,"#67e8f9",60);
  }
- /* gravity (honka physics: the fall is LIGHTER than the rise — floaty
-    descents like bandit.rip). ORCHID falls 11% faster: her fallMul
+ /* gravity (honka physics v2: falling gravity 2000 is slightly HEAVIER
+    than the rise gravity 1900, as measured from the reference video —
+    the fall is fast, not floaty). ORCHID falls 11% faster: her fallMul
     scales the FALLING gravity and the fall-speed cap only — rise
     gravity and jump velocity are untouched, and every other character
     keeps fallMul 1 */
