@@ -21,7 +21,7 @@
    exactly as it does when the SDK is missing. */
 var PlayFabClientApi=(typeof PlayFab!=="undefined"&&PlayFab.ClientApi)?PlayFab.ClientApi:undefined;
 if(PlayFabClientApi){
- ["RegisterPlayFabUser","LoginWithPlayFab","GetAccountInfo","GetFriendsList","AddFriend","RemoveFriend","GetUserData","UpdateUserData"].forEach(function(m){
+ ["RegisterPlayFabUser","LoginWithPlayFab","GetAccountInfo","GetFriendsList","AddFriend","RemoveFriend","GetUserData","UpdateUserData","UpdateUserTitleDisplayName"].forEach(function(m){
   var orig=PlayFabClientApi[m];
   if(typeof orig!=="function")return;
   PlayFabClientApi[m]=function(req,onOk,onErr){
@@ -332,6 +332,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
     <div id="lobbyList"></div>
     <div id="lobbyStatus"></div>
     <div class="csBtns"><button class="gbtn primary" id="lobbyStartBtn">▶ 試合開始</button><button class="gbtn" id="lobbyInviteBtn">フレンドを招待</button><button class="gbtn" id="lobbyLeaveBtn">ルームを退出</button></div>
+    <div id="lobbyInvitePanel" style="display:none;background:rgba(3,14,26,.88);border:1.5px solid rgba(103,232,249,.3);border-radius:14px;padding:8px 18px;min-width:min(440px,92vw);max-width:92vw"></div>
   </div>
   <div id="stickZone"><div id="stickBase"></div><div id="stickKnob"></div></div>
   <div class="touchUI">
@@ -373,6 +374,14 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["01:45"],tag:"大型更新",title:"オンライン対戦の同期を作り直し／アカウント削除を追加／落下速度を少し遅く",
+  items:["オンライン対戦が「動けない／技が無限に打てるように見える／キャラが荒ぶる／同期しない」問題を修正。原因は、手元の先行予測がサーバー側の計算（旧バージョンのまま）と技の硬直・クールタイムで食い違い、ぶつかるたびに位置とクールタイムが巻き戻っていたことと、入力の送信で同じフレームを二重に送ったり送り漏らしたりしていたことです",
+         "オンライン対戦の表示を、全キャラ（自分含む）ともサーバーの計算結果を補間して表示する方式に統一しました。全員の画面で同じ位置・同じ状態になり、技はサーバー側のクールタイムで管理されるため無限には打てません。入力は60fpsで記録し、順番どおり・漏れなくサーバーへ送るようにしました",
+         "なおオンライン対戦中の技の数値（ダメージや硬直など）は、サーバー側の計算に入っているものが全員共通で適用されます。このページ側だけが新しい数値の技（最近の調整分）は、サーバー側の計算が更新されるまでオンラインでは旧数値になります",
+         "アカウント削除を追加：FRIENDS（ログイン中）から、確認のためユーザーネーム入力を求める2段階の手続きで削除できます。フレンド関係はすべて解消され、相手のフレンド一覧からも（相手がオンラインなら即時、オフラインなら次回ログイン時に自動で）消えます。削除したアカウントでは二度とログインできません。※PlayFab の仕様上、アカウント記録そのものの完全消去は管理者側でしか行えないため、同じユーザーネームでの再登録はできません",
+         "フレンド画面の「ルームに招待」ボタンを廃止しました（ルームに入っていないと実際には送れず、エラーになるだけだったため）。招待はロビー画面の「フレンドを招待」から、オンライン中のフレンドを選んで送る形に一本化しました",
+         "フレンド一覧でオンライン状態が見える表示を強化：緑のドット＋「オンライン中」表示に加え、フレンド何人中何人がオンライン中かを表示し、状態が変わると自動で更新されます",
+         "全キャラ共通で落下速度を少し遅くしました：落下重力 2050→1845、最大落下速度 784→706、急降下 920→828（すべて約1割減・比率は維持）。ジャンプの跳躍や上昇、ORCHID の落下倍率（×1.11）などの関係はそのままです。対戦サーバー側の計算にも同じ値を入れました（サーバーの再デプロイ後にオンラインへ反映されます）"]},
  {date:"2026/11/14",times:["00:22"],tag:"修正・調整",title:"KAIRO ↓+K アイスエッジを大幅強化",
   items:["一段階目：ダメージ 34→62、KB 600→800（真上へ）",
          "二段階目：ダメージ 28→56、KB 460→720（真上へ）",
@@ -1002,7 +1011,7 @@ var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
 /* --- physics constants (units per second) — overall speed pass: 0.8x ---
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
-var GRAV=1840,GRAV_FALL=2050,MAXFALL=784,FASTFALL=920; /* gravity lightened a touch (user tuning): falls float slightly longer — jump velocity itself is unchanged. GRAV_FALL eased a little further (2170 -> 2050) so the descent itself hangs slightly longer; rise gravity, jump velocity and terminal fall speed are unchanged */
+var GRAV=1840,GRAV_FALL=1845,MAXFALL=706,FASTFALL=828; /* falling eased ~10% overall (owner tuning): GRAV_FALL 2050 -> 1845, MAXFALL 784 -> 706, FASTFALL 920 -> 828, all scaled by the same 0.9 ratio so the fastfall-vs-normal gap and the rise/fall balance are unchanged. Rise gravity (GRAV) and jump velocity are untouched; per-character fallMul (e.g. ORCHID x1.11) still multiplies these values. The match server's sim.js carries the identical numbers. */
 var JUMP_V=816,DJUMP_V=744,JUMP_CUT=288;
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
@@ -1370,6 +1379,7 @@ function cleanupNet(){
  guestChar=null;hostChar=null;
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
+ var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
 }
 function svSend(o){if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}}
 function svConnect(){
@@ -1536,7 +1546,48 @@ $("lobbyStartBtn").onclick=function(){
  for(var i=0;i<r.length;i++){if(!r[i].ready){beep(200,.12);renderLobby();return}}
  beep(700,.07);svSend({t:"start"});
 };
-$("lobbyInviteBtn").onclick=function(){beep(600,.06);openFriends()};
+/* invites live ONLY here in the lobby (the FRIENDS sheet no longer
+   carries invite buttons: outside a hosted room an invite cannot be
+   delivered, and the old button just produced an error message).
+   The panel lists friends with their PeerJS presence; inviting sends
+   the room code over the social channel and the friend joins with
+   one tap. */
+function renderLobbyInvites(){
+ var p=$("lobbyInvitePanel");if(!p)return;
+ if(!social.loggedIn||!social.name){
+   p.innerHTML='<div class="lobRow"><span class="lobName">フレンド招待には FRIENDS でログインが必要です</span></div>';
+   return;
+ }
+ social.friends.forEach(function(fn){friendConnect(fn)});
+ if(!social.friends.length){
+   p.innerHTML='<div class="lobRow"><span class="lobName">まだフレンドがいません（FRIENDS から申請できます）</span></div>';
+   return;
+ }
+ var h='<div style="font-weight:900;color:#9db4d6;font-size:12.5px;padding:4px 0 2px">オンライン中のフレンドをこのルームに招待できます</div>';
+ social.friendUids.forEach(function(fid){
+   var fn=social.est[fid];if(!fn)return;
+   var on=!!social.online[fn];
+   var pn=dispNameFor(fid,fn);
+   h+='<div class="lobRow"><span class="lobName"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn)+'</span><span class="lobStat" style="display:flex;gap:8px;align-items:center"><span style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":"オフライン")+'</span>'+(on?('<button class="gbtn" data-linv="'+escHtml(fn)+'" style="min-height:32px">招待する</button>'):'')+'</span></div>';
+ });
+ p.innerHTML=h;
+ var bs=p.querySelectorAll("[data-linv]");
+ for(var i=0;i<bs.length;i++)(function(b){b.onclick=function(){inviteFriendFromLobby(b.getAttribute("data-linv"))}})(bs[i]);
+}
+function inviteFriendFromLobby(name){
+ var stat=$("lobbyStatus");
+ if(!net.isHost||!net.code){if(stat)stat.textContent="招待はホストのロビーでのみ送れます。";return}
+ if(!social.online[name]){if(stat)stat.textContent=name+" さんは今オフラインのようです。";renderLobbyInvites();return}
+ if(socialSend(name,{t:"invite",from:social.name,code:net.code})){if(stat)stat.textContent=name+" さんに招待を送りました。相手が参加するとロビーに入ります。"}
+ else if(stat)stat.textContent=name+" さんに招待を送れませんでした。接続を確認してください。";
+}
+$("lobbyInviteBtn").onclick=function(){
+ beep(600,.06);
+ var p=$("lobbyInvitePanel");if(!p)return;
+ var show=p.style.display==="none";
+ p.style.display=show?"":"none";
+ if(show)renderLobbyInvites();
+};
 $("lobbyLeaveBtn").onclick=function(){
  beep(500,.06);
  net.leaving=true;
@@ -1544,19 +1595,33 @@ $("lobbyLeaveBtn").onclick=function(){
  cleanupNet();toMenu();
 };
 /* ================= SERVER-CLIENT MATCH ENGINE =================
-   Own fighter: client-side prediction. The local simulation steps
-   ONLY P1, with the exact stepFighter / rbApplyInput code the server
-   runs (the server's sim.js is byte-identical game code), driven by
-   packed input bits sampled once per 60fps step and kept in a ring
-   keyed by server frame. Every snapshot restores P1 to the server's
-   state at that frame (fields the snapshot does not carry are taken
-   from the predicted state at the same frame) and replays the
-   buffered inputs up to the present — with visual effects swapped
-   out and sounds / banners muted, so a replay pass is invisible.
-   Remote fighters: snapshot interpolation over a ~100ms buffer. */
+   v89 rework — fully server-authoritative rendering for EVERY
+   fighter, including your own. The previous build predicted P1
+   locally with this page's stepFighter / rbApplyInput and reconciled
+   against snapshots, but the server still runs the v53 extraction of
+   the game code while this page has moved on (land-lag, new move
+   timings / cooldowns / damage since v54–v88). Every attack made the
+   prediction and the server disagree about stateT / attackCd, so
+   reconciliation kept snapping the fighter back and forth (荒ぶる),
+   the server kept resetting the locally-spent cooldown to its own
+   value (技が無限に打てるように見える), and whenever the client's
+   prediction frame drifted from the server frame (its accumulator
+   drops time under load) the replay used the WRONG buffered inputs
+   (動けない／同期しない). Prediction with a non-identical sim can
+   never converge, so it is gone:
+   - inputs are sampled at a fixed 60fps into a numbered queue and
+     sent in order, each sampled frame exactly once (see
+     svSampleStep / svSendBundle — the old sender re-sent / dropped
+     frames whenever the send timer and the step timer drifted);
+   - ALL fighters are rendered by interpolating between the two
+     snapshots bracketing a ~80ms render delay, and every scalar
+     (HP, cooldowns, state, ammo…) is taken from the newest snapshot
+     verbatim. What you see is exactly what the server decided, on
+     every screen at once. The server is the only place an attack can
+     start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
-var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
@@ -1666,24 +1731,39 @@ function svStepP1(j,bits,replay){
  }
  projectiles=scratch;
 }
-function svPredStep(){
- var j=sv.predFrame;
+/* one 60fps input sample. Samples are numbered by sampleFrame and
+   kept until the sender has shipped them; nothing is ever sampled
+   twice or skipped, so a press lands in exactly one bundle. (The old
+   code coupled sampling to the prediction step and shipped
+   "the last two steps" by relative index — whenever the 30Hz send
+   timer and the 60fps step timer drifted apart, a frame was either
+   sent twice, re-firing its press bits on the server, or never sent
+   at all, eating the input.) */
+function svSampleStep(){
  var bits=svSampleLocal();
- sv.inpHist[j]=bits;
- svStepP1(j,bits,false);
- sv.predFrame=j+1;
- sv.hist[sv.predFrame]=svSaveP1();
- delete sv.hist[sv.predFrame-120];
- delete sv.inpHist[j-120];
+ sv.inpHist[sv.sampleFrame]=bits;
+ sv.sampleFrame++;
+ sv.predFrame=sv.sampleFrame;
+ for(var k in sv.inpHist){if(+k<sv.sentFrame-600)delete sv.inpHist[k]}
 }
 function svSendBundle(){
  if(!sv.active||matchOver)return;
- var b1=sv.inpHist[sv.predFrame-1],b2=sv.inpHist[sv.predFrame-2];
- var ins=[];
- if(b2!==undefined)ins.push(b2);
- if(b1!==undefined)ins.push(b1);
- if(!ins.length)ins=[0];
- svSend({t:"in",seq:sv.seq++,ins:ins});
+ /* ship every unsent sampled frame, oldest first, in protocol-sized
+    chunks of at most 4 (the server schedules each bundle at
+    max(its cursor, server frame + 2) and chains the rest, so chunk
+    boundaries do not change which frame an input lands on) */
+ var guard=0;
+ while(sv.sentFrame<sv.sampleFrame&&guard<8){
+   guard++;
+   var ins=[];
+   while(ins.length<4&&sv.sentFrame+ins.length<sv.sampleFrame){
+     var b=sv.inpHist[sv.sentFrame+ins.length];
+     ins.push(b===undefined?0:b);
+   }
+   if(!ins.length)break;
+   svSend({t:"in",seq:sv.seq++,ins:ins});
+   sv.sentFrame+=ins.length;
+ }
 }
 function svApplySnapP1(s,hist){
  var f=P1;if(!f)return;
@@ -1697,29 +1777,15 @@ function svApplySnapP1(s,hist){
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
 }
+/* no reconciliation any more (see the engine note above): the
+   newest snapshot's own-fighter state is applied verbatim, exactly
+   like a remote fighter's. Kept under the old call name so svOnSnap
+   does not change shape. */
 function svReconcile(snap){
  var s=snap.fs[net.myIdx];if(!s||!P1)return;
- var f0=snap.f;
- if(f0>=sv.predFrame){
-   svApplySnapP1(s,sv.hist[f0]||null);
-   sv.predFrame=f0;
-   sv.hist={};sv.hist[f0]=svSaveP1();
-   return;
- }
- svApplySnapP1(s,sv.hist[f0]||null);
- /* replay the buffered inputs from the snapshot frame to the
-    present, invisibly: effect arrays are swapped out and beep /
-    showCenter / showBanner are muted by svMute for the duration */
- var vp=particles,vf=floaters,vr=rings,vb=fxBursts;
- particles=[];floaters=[];rings=[];fxBursts=[];
- svMute=true;
- for(var j=f0;j<sv.predFrame;j++){
-   var bits=(sv.inpHist[j]!==undefined)?sv.inpHist[j]:((sv.inpHist[j-1]||0)&15);
-   svStepP1(j,bits,true);
-   sv.hist[j+1]=svSaveP1();
- }
- svMute=false;
- particles=vp;floaters=vf;rings=vr;fxBursts=vb;
+ svApplySnapRemote(P1,s);
+ if(s.grb){if(!P1.grabBy)P1.grabBy=svFindWarden()}
+ else{P1.grabT=0;P1.grabBy=null}
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
@@ -1738,7 +1804,9 @@ function svIsAttackState(st){return st&&st!=="idle"&&st!=="guard"}
    the fighter is already dead locally and the banner already ran. */
 function svOnDeathFx(i,preDead){
  var f=fighters[i];if(!f)return;
- if(preDead&&i!==net.myIdx)return;
+ /* the caller only invokes this on the _svDead false->true edge of
+    the snapshot stream, so it fires exactly once per death for every
+    fighter, our own included */
  spawnParticles(f.x,f.y+f.h/2,46,"#fda4af",330);
  spawnRing(f.x,f.y+f.h/2,"#fda4af",124);spawnSparks(f.x,f.y+f.h/2,0,"#fda4af",12);
  spawnFxBurst(FXIMG.hit,f.x,f.y+f.h/2,265,0.5,Math.random()*0.8-0.4,1,1);
@@ -1767,7 +1835,7 @@ function svOnSnap(m){
    var sf=m.fs[i],f=fighters[i];if(!f||!sf)continue;
    var preDead=f.dead;
    if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now};
-   if(i!==net.myIdx){
+   if(true){ /* snapshot-derived effects + authoritative apply run for EVERY fighter now, our own included */
      if(f._svHp!==undefined&&sf.hp<f._svHp-0.01){f.flash=0.15;spawnParticles(f.x,f.y+f.h*0.45,6,charFX(f),170)}
      if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2){f.dashT=0.15;f.dashDir=sf.fc}
      if(sf.og&&!f._svOg)f.landT=0.14;
@@ -1788,7 +1856,7 @@ function svOnSnap(m){
  poisonMists=(m.pm||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
 }
 function svReset(){
- sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;
+ sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.endShown=false;sv.endResults=null;sv.lastScorer=null;
@@ -1798,7 +1866,7 @@ function svReset(){
    f.rbPj=-999;f.rbPk=-999;f.rbPl=-999;f.rbPu=-999;f.rbPd=-999;f.rbPdDir=0;f.rbPjump=-999;
    f._svDead=false;f._svHp=undefined;f._svScore=undefined;f._svDcd=undefined;f._svOg=false;f._svState=undefined;
  }
- sv.hist[0]=svSaveP1();
+ svPressQ.length=0;
 }
 function svShowEnd(){
  var top=(sv.endResults&&sv.endResults[0])||null;
@@ -1811,16 +1879,16 @@ function svShowEnd(){
  $("endBtns").classList.add("on");
 }
 function svRenderWorld(now){
- /* bracket the ~100ms-delayed render time with two snapshots and
-    interpolate remote fighters + projectiles between them */
- var rt=now-100,A=null,B=null;
+ /* bracket the ~80ms-delayed render time with two snapshots and
+    interpolate EVERY fighter (our own included) + projectiles
+    between them — one shared timeline for all screens */
+ var rt=now-80,A=null,B=null;
  for(var i=sv.snaps.length-1;i>=0;i--){if(sv.snaps[i].at<=rt){A=sv.snaps[i];B=sv.snaps[i+1]||null;break}}
  if(!A){A=sv.snaps[0]||null;B=sv.snaps[1]||null}
  if(!A)return;
  var span=(B&&B.at>A.at)?(B.at-A.at):33;
  var t=B?Math.max(0,Math.min(1,(rt-A.at)/span)):0;
  for(var fi=0;fi<fighters.length;fi++){
-   if(fi===net.myIdx)continue;
    var f=fighters[fi],sa=A.fs[fi];if(!f||!sa)continue;
    var sb=B?B.fs[fi]:null;
    if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*t;f.y=sa.y+(sb.y-sa.y)*t}
@@ -1849,30 +1917,21 @@ function svAdvance(dtms){
    svRenderWorld(now);
    if(!sv.endShown){sv.endShown=true;svShowEnd()}
  }else{
-   /* inputs out at 30/s, prediction steps at a fixed 60/s */
+   /* inputs sampled at a fixed 60/s and shipped at 30/s — sampling
+      no longer steps any local simulation */
    sv.sendAcc+=dtms;
    while(sv.sendAcc>=33.333){sv.sendAcc-=33.333;svSendBundle()}
    sv.acc+=dt;
    var n=0;
-   while(sv.acc>=SIM_STEP&&n<5){sv.acc-=SIM_STEP;n++;svPredStep()}
+   while(sv.acc>=SIM_STEP&&n<5){sv.acc-=SIM_STEP;n++;svSampleStep()}
    if(n===5&&sv.acc>=SIM_STEP)sv.acc=0;
-   drawAlpha=Math.min(1,sv.acc/SIM_STEP);
-   time=sv.predFrame*SIM_STEP+sv.acc;
-   /* retire / advance my predicted projectiles */
-   for(var pj=sv.predPr.length-1;pj>=0;pj--){var pp=sv.predPr[pj];
-     pp.x+=pp.vx*dt;pp.y+=pp.vy*dt;
-     if(pp.kind==="javelin")pp.vy+=980*dt;else if(pp.kind!=="wave"&&pp.kind!=="slash")pp.vy+=128*dt;
-     pp.life-=dt;pp.px=pp.x;pp.py=pp.y;
-     var confirmed=false;
-     if(sv.lastSnap&&sv.lastSnap.pr){for(var si=0;si<sv.lastSnap.pr.length;si++){var sp=sv.lastSnap.pr[si];if(sp.k===pp.kind&&Math.abs(sp.x-pp.x)<70&&Math.abs(sp.y-pp.y)<70){confirmed=true;break}}}
-     if(confirmed||pp.life<=0||(now-pp.born)>400)sv.predPr.splice(pj,1);
-   }
+   drawAlpha=1;
+   time+=dt;
    svRenderWorld(now);
  }
- /* remote fighters' local animation clocks (the snapshot stream
+ /* every fighter's local animation clocks (the snapshot stream
     refreshes the values; between snapshots they run down locally) */
  for(var fi=0;fi<fighters.length;fi++){
-   if(fi===net.myIdx)continue;
    var f=fighters[fi];if(!f)continue;
    if(f.stateT>0)f.stateT=Math.max(0,f.stateT-dt);
    if(f.flash>0)f.flash=Math.max(0,f.flash-dt);
@@ -2047,14 +2106,15 @@ function pfParseMap(raw,isReq){
  return out;
 }
 function pfGetMyData(cb){
- if(!PF_OK||!social.loggedIn){cb(null,null,null,null);return}
+ if(!PF_OK||!social.loggedIn){cb(null,null,null,null,null);return}
  try{
-  PlayFabClientApi.GetUserData({Keys:["jb_est","jb_out","jb_inbox","jb_pname"]},function(res){
+  PlayFabClientApi.GetUserData({Keys:["jb_est","jb_out","jb_inbox","jb_pname","jb_deleted"]},function(res){
    var d=(res&&res.data&&res.data.Data)||{};
    var pn=(d.jb_pname&&typeof d.jb_pname.Value==="string"&&validDisplayName(d.jb_pname.Value))?d.jb_pname.Value:null;
-   cb(pfParseMap(d.jb_est?d.jb_est.Value:null,false),pfParseMap(d.jb_out?d.jb_out.Value:null,true),pfParseMap(d.jb_inbox?d.jb_inbox.Value:null,true),pn);
-  },function(){cb(null,null,null,null)});
- }catch(e){cb(null,null,null,null)}
+   var del=(d.jb_deleted&&d.jb_deleted.Value==="1")?"1":null;
+   cb(pfParseMap(d.jb_est?d.jb_est.Value:null,false),pfParseMap(d.jb_out?d.jb_out.Value:null,true),pfParseMap(d.jb_inbox?d.jb_inbox.Value:null,true),pn,del);
+  },function(){cb(null,null,null,null,null)});
+ }catch(e){cb(null,null,null,null,null)}
 }
 function pfSaveMyData(){
  if(!PF_OK||!social.loggedIn)return;
@@ -2089,13 +2149,31 @@ function resolveFriendPnames(){
    if(!id||id===social.uid)return;
    if(social.friendPnames[id]!==undefined&&(now-(social.pnameAt[id]||0))<120000)return;
    social.pnameAt[id]=now;
-   try{PlayFabClientApi.GetUserData({PlayFabId:id,Keys:["jb_pname"]},function(res){
+   try{PlayFabClientApi.GetUserData({PlayFabId:id,Keys:["jb_pname","jb_deleted"]},function(res){
      if(!social.loggedIn)return;
      var d=(res&&res.data&&res.data.Data)||{};
+     /* a friend who deleted their account leaves a public jb_deleted
+        tombstone (client APIs cannot delete the account itself):
+        purge them from my list the moment it is seen, so a deleted
+        account disappears from BOTH sides' friend lists */
+     if(d.jb_deleted&&d.jb_deleted.Value==="1"){pfPurgeDeletedFriend(id);return}
      var v=(d.jb_pname&&typeof d.jb_pname.Value==="string"&&validDisplayName(d.jb_pname.Value))?d.jb_pname.Value:"";
      if(social.friendPnames[id]!==v){social.friendPnames[id]=v;if($("friendsSheet"))openFriends(social.lastMsg)}
    },function(){})}catch(e){}
  });
+}
+/* remove a deleted account from my friend list (my PlayFab friend
+   entry + my established-friend record), used by the tombstone sweep
+   above and by the PeerJS "fdel" signal in onSocialData */
+function pfPurgeDeletedFriend(id){
+ if(!id||!social.est[id])return;
+ var nm=social.est[id];
+ delete social.est[id];
+ delete social.friendPnames[id];
+ if(PF_OK){try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:id},function(){},function(){})}catch(e){}}
+ pfSaveMyData();rebuildFriendArrays();
+ friendsSay(nm+" さんのアカウントが削除されたため、フレンド一覧から除去しました");
+ if($("friendsSheet"))openFriends(social.lastMsg);
 }
 /* the name shown for another player anywhere in the UI: their player
    name when they have set one, their username otherwise */
@@ -2134,11 +2212,17 @@ function wireSocialConn(c,name){
    if(social.loggedIn&&Object.keys(social.est).some(function(id){return social.est[id]===name})){
      try{c.send({t:"fest",from:social.name,fromId:social.uid})}catch(e){}
    }
-   friendsSay("");
+   friendsSay("");refreshLobbyInvites();
  });
  c.on("data",function(m){onSocialData(name,m)});
- c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];friendsSay("")});
- c.on("error",function(){social.online[name]=false});
+ c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];friendsSay("");refreshLobbyInvites()});
+ c.on("error",function(){social.online[name]=false;friendsSay("");refreshLobbyInvites()});
+}
+/* re-render the lobby invite panel if it is open (defined with the
+   lobby UI; presence changes arrive through the handlers above) */
+function refreshLobbyInvites(){
+ var p=$("lobbyInvitePanel");
+ if(p&&p.style.display!=="none"&&typeof renderLobbyInvites==="function")renderLobbyInvites();
 }
 function friendConnect(name){
  if(!social.peer||!social.peer.open||!name||name===social.name)return null;
@@ -2151,6 +2235,13 @@ function friendConnect(name){
 }
 function onSocialData(from,m){
  if(!m||!m.t||!social.name||!social.loggedIn)return;
+ if(m.t==="fdel"&&typeof m.fromId==="string"&&m.fromId&&m.fromId!==social.uid){
+   /* a friend deleted their account: drop them from my list right
+      now (the jb_deleted tombstone sweep covers friends who were
+      offline at deletion time) */
+   pfPurgeDeletedFriend(m.fromId);
+   return;
+ }
  if(m.t==="invite"&&m.code){
    showSocialToast("<b>"+escHtml(from)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
    return;
@@ -2338,8 +2429,19 @@ function startPfSession(uid,displayName,silent){
     after joining a room cannot rename that room's entry — the name
     is picked up from the next room join on. Friend presence below
     still announces the username as before. */
- pfGetMyData(function(est,out,inbox,pname){
+ pfGetMyData(function(est,out,inbox,pname,deleted){
    if(!social.loggedIn||social.uid!==uid)return;
+   if(deleted==="1"){
+     /* this account was deleted (see deleteAccount): the tombstone
+        in its own user data is checked on every sign-in, on every
+        device, so a deleted account can never be used again */
+     teardownSocialPeer();stopPfPoll();
+     social.loggedIn=false;social.name="";social.pname="";social.uid="";social.friends=[];social.friendUids=[];social.est={};social.outReq={};social.inbox={};
+     pfClearSession();
+     try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
+     openFriends("このアカウントは削除済みのため、ログインできません。");
+     return;
+   }
    if(est)social.est=est;
    if(out)social.outReq=out;
    if(inbox)social.inbox=inbox;
@@ -2361,8 +2463,9 @@ function startPfSession(uid,displayName,silent){
  });
  social.pfPoll=setInterval(function(){
    if(!social.loggedIn)return;
-   pfGetMyData(function(est,out,inbox,pname){
+   pfGetMyData(function(est,out,inbox,pname,deleted){
      if(!social.loggedIn)return;
+     if(deleted==="1"){logoutAccount();openFriends("このアカウントは削除済みのため、ログアウトしました。");return}
      if(est)social.est=est;
      if(out)social.outReq=out;
      if(inbox)social.inbox=inbox;
@@ -2434,6 +2537,65 @@ function logoutAccount(){
  pfClearSession();
  try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
+}
+/* ================= ACCOUNT DELETION =================
+   PlayFab's CLIENT API has no "delete this player" call — full
+   deletion of the account record itself is an admin/server-API
+   operation. What the client CAN do, and what deleteAccount does,
+   is the strongest deletion available from here:
+   1. every friend is removed on my side (RemoveFriend for the whole
+      PlayFab friend list) and notified over PeerJS ({t:"fdel"}), so
+      online friends drop me from their lists immediately;
+   2. all of my user data (friend records, requests, inbox, player
+      name) is wiped, and a PUBLIC jb_deleted="1" tombstone is left
+      behind: any friend whose client next resolves my data purges me
+      from their list automatically (pfPurgeDeletedFriend), even if
+      they were offline at deletion time;
+   3. the tombstone is checked at every sign-in (startPfSession), on
+      every device, so this account can never log in to the game
+      again; the local session is destroyed like a logout.
+   Known limits (stated honestly in the completion message too):
+   the PlayFab account record itself remains on PlayFab's side, and
+   because the login Username / Email are derived from the user name
+   and cannot be changed from the client, the same user name cannot
+   be re-registered afterwards. */
+var acctDelArm=false;
+function deleteAccount(){
+ if(!PF_OK||!social.loggedIn||!social.name)return;
+ var inp=$("delNameInput");
+ var typed=cleanName(inp?inp.value:"");
+ if(typed!==social.name){acctDelArm=true;openFriends("確認のため、自分のユーザーネーム「"+social.name+"」を正確に入力してください。");return}
+ var myName=social.name,myId=social.uid;
+ var friendIds={};
+ Object.keys(social.est).forEach(function(id){friendIds[id]=1});
+ Object.keys(social.pfListById||{}).forEach(function(id){friendIds[id]=1});
+ Object.keys(social.outReq).forEach(function(id){friendIds[id]=1});
+ /* 1) tell online friends now; their clients remove me at once */
+ Object.keys(social.est).forEach(function(id){queueSocialSend(social.est[id],{t:"fdel",from:myName,fromId:myId})});
+ /* 2) remove every friend on my side */
+ Object.keys(friendIds).forEach(function(id){try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:id},function(){},function(){})}catch(e){}});
+ /* 3) best effort: rename the account's display name so the old
+    user name stops resolving in friend search (titles that forbid
+    client display-name changes simply ignore this) */
+ try{if(typeof PlayFabClientApi.UpdateUserTitleDisplayName==="function")PlayFabClientApi.UpdateUserTitleDisplayName({DisplayName:"削除済み"},function(){},function(){})}catch(e){}
+ /* 4) wipe my data + leave the public tombstone, then sign out for
+    good. The tombstone write is the point of no return, so the
+    local teardown runs in its callback (and on its error too — the
+    friend removals above already happened either way). */
+ var finished=false;
+ function finish(){
+   if(finished)return;finished=true;
+   acctDelArm=false;
+   teardownSocialPeer();stopPfPoll();
+   social.loggedIn=false;social.name="";social.pname="";social.friendPnames={};social.pnameAt={};social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};social.pfListById={};
+   pfClearSession();
+   try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
+   openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消され、このアカウントでは二度とログインできません。※PlayFab の仕様上、アカウントの記録自体の完全消去は管理者側でしか行えないため、同じユーザーネームでの再登録はできません。新しい名前でなら、新規アカウントを作成できます。");
+ }
+ try{
+  PlayFabClientApi.UpdateUserData({Data:{jb_deleted:"1",jb_est:"{}",jb_out:"{}",jb_inbox:"{}",jb_pname:"削除済み"},Permission:"Public"},function(){finish()},function(){finish()});
+ }catch(e){finish()}
+ setTimeout(finish,4000);
 }
 /* change my player name: validated like a username (3-20 chars),
    written to my PlayFab user data (jb_pname) where every other
@@ -2535,13 +2697,27 @@ function friendsHTML(msg){
    }
    rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">フレンド一覧</h3>';
    if(!social.friends.length)rows+='<p style="color:var(--muted)">まだフレンドがいません。上の検索から申請してみましょう。</p>';
+   else{
+     var onCount=0;social.friends.forEach(function(fn2){if(social.online[fn2])onCount++});
+     rows+='<p style="color:var(--muted);margin:2px 0 4px">フレンド '+social.friends.length+' 人中 <b style="color:#4ade80">'+onCount+' 人がオンライン中</b>です（オンライン表示は自動で更新されます）。</p>';
+   }
    social.friendUids.forEach(function(fid){
      var fn=social.est[fid];if(!fn)return;
      var on=!!social.online[fn];
      var pn3=dispNameFor(fid,fn);
-     rows+='<div class="bindRow"><div><span class="bname">'+escHtml(pn3)+'</span>'+(pn3!==fn?('<br><span class="bnote">ユーザーネーム：'+escHtml(fn)+'</span>'):'')+'<br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"● オンライン":"○ オフライン")+'</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-invite="'+escHtml(fn)+'" style="min-width:104px">ルームに招待</button><button class="bindKey" data-remove="'+escHtml(fid)+'" style="min-width:72px">削除</button></span></div>';
+     rows+='<div class="bindRow"><div><span class="bname"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:baseline;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn3)+'</span>'+(pn3!==fn?('<br><span class="bnote">ユーザーネーム：'+escHtml(fn)+'</span>'):'')+'<br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":"オフライン")+'</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-remove="'+escHtml(fid)+'" style="min-width:72px">削除</button></span></div>';
    });
-   rows+='<p style="color:var(--muted)">フレンド一覧はクラウド（PlayFab）に保存されるので、どの端末でログインしても同じ一覧が表示されます。招待は、ONLINE VS でルームを作って待機している時に送れます（相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。フレンドを削除すると、相手の側の一覧には残る場合があります。</p>';
+   rows+='<p style="color:var(--muted)">フレンド一覧はクラウド（PlayFab）に保存されるので、どの端末でログインしても同じ一覧が表示されます。ルームへの招待は、この画面ではなくロビー画面の「フレンドを招待」から送れます（ホストがロビーで待機している時だけ・相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。フレンドを削除すると、相手の側の一覧には残る場合があります。</p>';
+   /* ---- account deletion (two-step: arm, then type-to-confirm) ---- */
+   if(!acctDelArm){
+     rows+='<h3 style="margin:18px 0 2px;color:#fda4af;font-size:15px">アカウント削除</h3>'
+     +'<div class="bindRow"><div><span class="bname">アカウントを削除する</span><br><span class="bnote">フレンド関係がすべて解消され、このアカウントでは二度とログインできなくなります。元には戻せません</span></div><button class="bindKey" id="deleteAcctBtn" style="min-width:104px;border-color:#fb7185;color:#fda4af">削除手続きへ</button></div>';
+   }else{
+     rows+='<h3 style="margin:18px 0 2px;color:#fda4af;font-size:15px">アカウント削除 — 最終確認</h3>'
+     +'<p style="color:#fda4af">本当にアカウント「'+escHtml(social.name)+'」を削除しますか？<br>・フレンド関係はすべて解消され、相手のフレンド一覧からも消えます<br>・このアカウントでは二度とログインできません（元には戻せません）<br>・PlayFab の仕様上、同じユーザーネームでの再登録はできません</p>'
+     +'<div class="bindRow"><div><span class="bname">確認のため、自分のユーザーネームを入力してください</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="delNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="off" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
+     +'<p style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="delDoBtn" style="min-width:140px;background:#7f1d1d;border-color:#fb7185;color:#fff">本当に削除する</button><button class="bindKey" id="delCancelBtn" style="min-width:96px">やめる</button></p>';
+   }
  }
  return '<div id="friendsSheet"><h2>FRIENDS — フレンド</h2>'+rows+'<p id="bindMsg">'+escHtml(msg||"")+'</p></div>';
 }
@@ -2552,8 +2728,9 @@ function wireFriendsBtns(){
  var sb=$("friendSearchBtn");if(sb)sb.onclick=sendFriendRequest;
  var pb=$("pnameBtn");if(pb)pb.onclick=changePlayerName;
  var pi=$("pnameInput");if(pi)pi.onkeydown=function(e){if(e.key==="Enter")changePlayerName()};
- var inv=document.querySelectorAll("[data-invite]");
- for(var i=0;i<inv.length;i++)(function(b){b.onclick=function(){inviteFriend(b.getAttribute("data-invite"))}})(inv[i]);
+ var dab=$("deleteAcctBtn");if(dab)dab.onclick=function(){acctDelArm=true;openFriends("アカウント削除の最終確認です。内容を読んで、進める場合はユーザーネームを入力してください。")};
+ var ddo=$("delDoBtn");if(ddo)ddo.onclick=deleteAccount;
+ var dca=$("delCancelBtn");if(dca)dca.onclick=function(){acctDelArm=false;openFriends("アカウント削除をやめました。")};
  var ap=document.querySelectorAll("[data-approve]");
  for(var j=0;j<ap.length;j++)(function(b){b.onclick=function(){approveRequest(b.getAttribute("data-approve"))}})(ap[j]);
  var rj=document.querySelectorAll("[data-reject]");
