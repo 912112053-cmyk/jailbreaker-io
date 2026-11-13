@@ -373,6 +373,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["00:01"],tag:"修正・調整",title:"KAIRO 空中J ホバースピンの着地硬直を短縮（0.37秒→0.28秒）",
+  items:["KAIRO 空中J ホバースピン：着地硬直 0.37秒→0.28秒に短縮し、着地後の隙がさらに小さくなりました",
+         "ダメージ 前5／後5 ×最大5・KB 前330／後330・発生 即時・全体0.38秒・後硬直0.49秒・判定68×62は変更なし。技一覧の表示も更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
  {date:"2026/11/13",times:["23:49"],tag:"修正・調整",title:"CPUのキャラ「おまかせ」が本当にランダムになるよう修正",
   items:["CPUのキャラを「おまかせ」にすると、試合開始のたびに全6キャラ（KAIRO／WARDEN／KOJIRO／AXE／SARA／ORCHID）からランダムに選ばれるようになりました",
          "これまでは「おまかせ」が固定の並び順で決まっていたため、CPUが1人だけだと必ず WARDEN になっていました。CPUが複数いる場合は1人ずつ別々に抽選されるので、同じキャラが重なることもあります",
@@ -744,7 +748,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>後ろ+J — バックステップ斬り</b><p>前に薙ぎながら後ろへ跳んで距離を作る間合い調整技。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','64×50'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングアッパー</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','56×74')+mvS('上昇','vy -448'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。相手が乗っている間は移動速度が 0.45倍 に鈍り続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.30秒')+mvS('判定','72×34')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.37秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.37秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.28秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68')+mvS('着地硬直','0.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
@@ -3256,7 +3260,7 @@ function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
    movement chain in stepFighter roots the fighter in place and lets
    ground friction stop it. That full lockout covers the four moves
    that already carried specced landing lag (KAIRO
-   ホバースピン 0.37 / メテオドロップ 0.34, WARDEN 回転警棒 0.33 /
+   ホバースピン 0.28 / メテオドロップ 0.34, WARDEN 回転警棒 0.33 /
    メテオドロップ 0.36 — those values are kept as-is in this table and
    their original landing-block lines still run; max() makes the two
    agree). Chaining several air moves keeps the LONGEST lag; starting
@@ -3266,7 +3270,7 @@ function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
    dedicated rise / flight moves (WARDEN アームキャッチ・ミー, SARA
    飛翔, ORCHID 飛翔) or ults. */
 var LAND_LAG={
- kairo:{airclaw:0.37,taildrop:0.34,diveclaw:0.25,tail:0.30,fspin:0.40,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) landing lag 0.43 -> 0.37; フロストスピン (fspin) landing lag 0.30 -> 0.40 */
+ kairo:{airclaw:0.28,taildrop:0.34,diveclaw:0.25,tail:0.30,fspin:0.40,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) landing lag 0.37 -> 0.28; フロストスピン (fspin) landing lag 0.30 -> 0.40 */
  warden:{airclaw:0.33,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18},
  kojiro:{airslash:0.26,airheavy:0.34,taildrop:0.30,diveclaw:0.44,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{airclaw:0.28,diveclaw:0.32,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40; the axeair / taildrop entries are gone with their deleted moves */
@@ -4328,7 +4332,7 @@ function stepFighter(f,dt,input,foe){
  }
  if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
    if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);f.landLagT=Math.max(f.landLagT||0,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
-   if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.37);f.landLagT=Math.max(f.landLagT||0,0.37)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.37s (user spec, shortened from 0.43s): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
+   if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.28);f.landLagT=Math.max(f.landLagT||0,0.28)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.28s (user spec, shortened from 0.37s): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
       landing — ice spikes / impact ring hit grounded foes on BOTH sides */
    if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?92:(f.char==="warden"?108:96),dvH=f.char==="kairo"?68:(f.char==="warden"?80:58); /* WARDEN ウェーブショット landing box 108x80 (user spec) */
