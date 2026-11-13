@@ -77,6 +77,18 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 #banner .sub{font-family:"DotGothic16";font-size:clamp(15px,2.4vw,22px);color:#f9a8d4;margin-top:2px}
 #centerMsg{position:absolute;inset:0;z-index:9;display:none;place-items:center;text-align:center;pointer-events:none}
 #centerMsg div{font-family:"Bowlby One";font-size:clamp(40px,8vw,92px);color:#fff;text-shadow:0 5px 0 #06283d,0 0 44px rgba(34,211,238,.8);white-space:pre-line;line-height:1.15;padding:0 12px}
+/* final countdown — last 5 seconds of a timed match, shown huge at
+   screen center. A separate overlay from #centerMsg so it never fights
+   the start countdown / TIME UP messages for the same element. */
+#finalCount{position:absolute;inset:0;z-index:9;display:none;place-items:center;text-align:center;pointer-events:none}
+#finalCount .fcWrap{display:flex;flex-direction:column;align-items:center}
+#finalCount .fcLabel{font-family:"DotGothic16","Noto Sans JP",sans-serif;font-size:clamp(15px,2.6vw,24px);letter-spacing:.34em;padding-left:.34em;color:#fecaca;text-shadow:0 2px 0 #450a0a,0 0 18px rgba(239,68,68,.65)}
+#finalCount .fcNum{font-family:"Bowlby One";font-size:clamp(120px,24vw,230px);line-height:.95;color:#fff;-webkit-text-stroke:3px #7f1d1d;text-shadow:0 7px 0 #7f1d1d,0 0 64px rgba(239,68,68,.85),0 20px 46px rgba(0,0,0,.6)}
+#finalCount .fcNum.pop{animation:fcPop .45s ease-out}
+@keyframes fcPop{0%{transform:scale(1.7);opacity:0}45%{transform:scale(.96);opacity:1}100%{transform:scale(1);opacity:1}}
+#timerPill.urgent{color:#fca5a5}
+#timerPill.urgent #timerText{color:#f87171;font-weight:900}
+@media (prefers-reduced-motion: reduce){#finalCount .fcNum.pop{animation:none!important}}
 #endBtns{position:absolute;left:50%;bottom:15%;transform:translateX(-50%);z-index:10;display:none;gap:10px;flex-wrap:wrap;justify-content:center;max-width:94vw}
 #endBtns.on{display:flex}
 /* touch controls — floating joystick (left) + bandit-style boxes (right) */
@@ -264,6 +276,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div id="rotateHint">横画面にするとステージが広く見えます</div>
   <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts">+100 POINTS</div><div class="sub" id="bannerSub"></div></div>
   <div id="centerMsg"><div id="centerText">3</div></div>
+  <div id="finalCount" aria-hidden="true"><div class="fcWrap"><div class="fcLabel">TIME LIMIT</div><div class="fcNum" id="finalNum">5</div></div></div>
   <div id="endBtns"><button class="gbtn primary" id="againBtn" style="font-size:15px;padding:10px 22px">もう一度たたかう</button><button class="gbtn" id="endCharBtn" style="font-size:15px;padding:10px 22px">キャラ変更</button><button class="gbtn" id="endMenuBtn" style="font-size:15px;padding:10px 22px">メニューへ</button></div>
   <div id="charSelect">
     <div class="csTitle brush" id="csTitle">キャラを選んでください</div>
@@ -330,6 +343,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["11:09"],tag:"新機能",title:"試合終了まで残り5秒で大きなカウントダウンを表示",
+  items:["対戦（VS CPU／ONLINE）の制限時間が残り5秒になると、画面中央に残り秒数（5・4・3・2・1）が大きく表示されるようになった。数字が切り替わるたびにポップアニメーションと短いビープ音が鳴る",
+         "残り5秒の間は上部のタイマー表示も赤く変わり、試合終了が近いことがひと目で分かる",
+         "表示は試合タイマーと連動しているため、オンライン対戦でも全員の画面で同じタイミングに出る。トレーニングモード（時間無制限）では表示されない"]},
  {date:"2026/11/13",times:["09:03"],tag:"新機能",title:"全キャラクターの技を見れる「技一覧」システムを実装",
   items:["これまでは選択中のキャラの技しか見られなかったが、タイトル画面の「全キャラの技」ボタン（旧「Kairoの技」）から、全6キャラ（KAIRO／WARDEN／KOJIRO／AXE／SARA／ORCHID）の技を1つの画面で見られるようになった",
          "キャラタブを押すとシートを閉じずにその場で表示が切り替わる。タブには各キャラのテーマカラーが付く",
@@ -714,7 +731,7 @@ function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delet
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[];
 var shake=0,hitstop=0,time=0,wins=0;
-var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="";
+var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
 var audioCtx=null;
 function beep(f,d,type,v){if(typeof rb!=="undefined"&&rb&&rb.resim)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
@@ -782,8 +799,8 @@ function startMatch(m){
    }
    P2=fighters[1];
  }
- projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";running=true;
- buf={};$("endBtns").classList.remove("on");hideBanner();
+ projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
+ buf={};$("endBtns").classList.remove("on");hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;clampCam();
  window.scrollTo(0,0);
@@ -4413,6 +4430,32 @@ function syncHUD(){
  else{$("kbUltCnt").textContent="ULT "+Math.floor(P1.meter)+"%"+(P1.char==="kairo"&&P1.ultChain>0?" · CHAIN "+P1.ultChain+"/5":"");kbu.classList.remove("ultReady");kbu.classList.remove("ultReadyW");kbu.classList.remove("ultReadyK");kbu.classList.remove("ultReadyA")}
  var t=mode==="training"?timer:Math.max(0,timer);
  $("timerText").textContent=mode==="training"?"∞":Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
+ syncFinalCount();
+}
+/* final countdown: while a timed match (VS CPU / ONLINE) has 5 seconds
+   or less left, show the remaining whole seconds huge at screen center
+   (5・4・3・2・1, the same number the HUD clock shows). Driven from
+   syncHUD() — the one render-rate hook every game path (local loop,
+   rollback online, legacy online) calls each frame — so it stays in
+   sync with the match timer everywhere and can never fire during
+   rollback re-simulation. Hidden in training (no time limit), while
+   paused, and the instant the match ends (TIME UP takes over the
+   center via #centerMsg). Each new number pops in with a short beep. */
+function syncFinalCount(){
+ var fc=$("finalCount");if(!fc)return;
+ var n=Math.floor(timer);
+ var show=running&&!matchOver&&!paused&&countdown<=0&&(mode==="versus"||mode==="online")&&n>=1&&n<=5;
+ var txt=show?String(n):"";
+ if(txt!==lastFinalTxt){
+  lastFinalTxt=txt;
+  if(show){
+   var num=$("finalNum");
+   fc.style.display="grid";num.textContent=txt;
+   num.classList.remove("pop");void num.offsetWidth;num.classList.add("pop");
+   beep(txt==="1"?880:620,.09,"square",.05);
+  }else fc.style.display="none";
+ }
+ $("timerPill").classList.toggle("urgent",!!show);
 }
 /* ---- main loop: fixed-step logic at 60fps (the frame rate the
    original bandit.rip is tuned around), whatever the display's
