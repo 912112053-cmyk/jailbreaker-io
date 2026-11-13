@@ -374,6 +374,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+  {date:"2026/11/14",times:["02:35"],tag:"修正・調整",title:"ジャンプ力を少し低く／空中でのジャンプ段数バグを修正",
+   items:["ジャンプの初速を 860→825 に少しだけ下げました（頂点は約188→約172）。重力・落下速度は変更していません。2段ジャンプの初速も同じ比率で 720→691 に下げました（上昇量は約130→約120）。台の段差（最大115）はこれまでどおり1回のジャンプで届き、同段の台同士の間隔（最大321）も飛距離（約330）の範囲内で渡れることを確認済みです",
+          "バグ修正：台の端から歩いて落ちたときや吹き飛ばされて空中に出たときなど、「ジャンプせずに空中へ出た」場合でも、空中での最初のジャンプが2段目として処理されてしまう問題を直しました。ジャンプせずに空中へ出た場合は、空中での最初のジャンプ入力が1段目（通常のジャンプ）として扱われ、その後さらに2段目を1回だけ使えます。地面でジャンプして空中に出た場合はこれまでどおり2段目が1回だけ残り、着地するとジャンプ回数はリセットされます。CPU の挙動にも同じルールを適用しています",
+          "サーバー側の対戦計算にも同じ物理とジャンプのルールを反映し、ローカルの対戦テストは全て合格済みです。本番サーバーへの反映は再デプロイ待ちです"]},
   {date:"2026/11/14",times:["02:21"],tag:"修正・調整",title:"ジャンプ・落下速度を参考動画の実測値に合わせ直し／浮き台を短く",
    items:["前回の「ふわりと高く跳び、遅く落ちる」物理が参考動画と違いすぎたため、動画をフレーム単位で測り直して（HPバーと台の位置関係から算出）作り直しました：ジャンプ初速 640→860、上昇重力 1000→1900（頂点 約188＝約2.7キャラ分・到達 約0.45秒）、2段ジャンプ初速 600→720（上昇 約130＝約1.9キャラ分）、落下重力 450→2000、最大落下速度 380→770、急降下 560→920。頂点から地面までの落下は約0.43秒で、動画の実測（約0.40〜0.47秒）と一致します",
           "固定ジャンプ（W を押す長さで高さが変わらない仕様）と、ORCHID の落下倍率（×1.11）はそのまま維持しています",
@@ -1010,11 +1014,11 @@ window.addEventListener("resize",resize);
    one-way tops; the main floor is a separate SOLID surface and can never
    be dropped through. */
 /* Every step up is <=115u, so EVERY ledge is reachable with a single jump
-   (apex ~188u with the honka physics). No ledge assumes a double jump.
+   (apex ~172u with the current physics). No ledge assumes a double jump.
    Floating ledges were shortened to ~70% width (centres and heights
    unchanged; owner request) — the widest same-tier gap is now 321u,
-   inside the ~343u same-level jump range at full air speed (388u/s x
-   ~0.88s airtime), and any gap can also be crossed via the floor.
+   inside the ~330u same-level jump range at full air speed (388u/s x
+   ~0.85s airtime), and any gap can also be crossed via the floor.
    Highest ledge: 225u above the floor, reached via the 115u step then
    the 110u step. */
 var platforms=[
@@ -1029,8 +1033,8 @@ var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
 /* --- physics constants (units per second) — overall speed pass: 0.8x ---
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
-var GRAV=1900,GRAV_FALL=2000,MAXFALL=770,FASTFALL=920; /* HONKA physics pass v2 (owner request, measured frame-by-frame against the owner's reference video, tracking the HP bar against the ledges): the v90 floaty rebuild (1000 / 450 / 380 / 560) was WRONG — falling was far too slow vs the video. Measured from the video: apex ~190u (~2.8 char heights) reached in ~0.44-0.47s, and the apex-to-ledge fall takes ~0.40-0.47s (~475u/s average). These values are back near the pre-v89 set (1840 / 2050 / 784 / 920). Verified by discrete 60fps simulation of the exact stepFighter integration: apex 187.5u (2.68 char heights), apex reached in 0.450s, apex-to-ground fall 0.433s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier. The match server's sim.js carries the identical numbers. */
-var JUMP_V=860,DJUMP_V=720; /* FIXED-HEIGHT jumps (unchanged from v90): no short hop / long hop — W's press length never changes the height. JUMP_V 860 with rise gravity 1900: the analytic apex is ~195u, and the discrete 60fps sim measures 187.5u (~2.68 char heights) at 0.450s, matching the reference video (~190u / ~0.44-0.47s). Spec starting point was 840/1900 (analytic apex ~186u); fine-tuned to 860 because the semi-implicit integration loses ~7u of apex. DJUMP_V 720 adds ~130u of rise in the discrete sim (~1.86 char heights; video: ~1.8-2.0). Every stage step is <=115u, so every ledge is still reachable with a single jump. */
+var GRAV=1900,GRAV_FALL=2000,MAXFALL=770,FASTFALL=920; /* HONKA physics pass v2 (owner request, measured frame-by-frame against the owner's reference video, tracking the HP bar against the ledges): the v90 floaty rebuild (1000 / 450 / 380 / 560) was WRONG — falling was far too slow vs the video. Measured from the video: apex ~190u (~2.8 char heights) reached in ~0.44-0.47s, and the apex-to-ledge fall takes ~0.40-0.47s (~475u/s average). These values are back near the pre-v89 set (1840 / 2050 / 784 / 920). Verified by discrete 60fps simulation of the exact stepFighter integration: with the original JUMP_V 860 the apex measured 187.5u (2.68 char heights) at 0.450s with a 0.433s apex-to-ground fall; since v93 (JUMP_V 825, gravities unchanged) the same sim measures apex 172.3u, reached in 0.433s, apex-to-ground fall 0.417s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier. The match server's sim.js carries the identical numbers. */
+var JUMP_V=825,DJUMP_V=691; /* FIXED-HEIGHT jumps (unchanged from v90): no short hop / long hop — W's press length never changes the height. v93 (owner request): jump power lowered a touch, initial velocity ONLY (gravities unchanged) — JUMP_V 860 -> 825: the discrete 60fps sim measures apex 172.3u (~2.46 char heights, was 187.5u) reached in 0.433s, total same-height airtime 0.850s, so the widest same-tier gap (321u) stays inside the ~330u jump range at full air speed (388u/s) and every stage step (<=115u) is still reachable with a single jump. DJUMP_V 720 -> 691 (the same ratio) adds ~120u of rise in the discrete sim. */
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
@@ -1065,7 +1069,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1075,7 +1079,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1638,7 +1642,7 @@ $("lobbyLeaveBtn").onclick=function(){
      every screen at once. The server is the only place an attack can
      start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -4073,7 +4077,7 @@ function aiControl(f,foe){
       toward the void, so the player can practise combos on it freely */
    if(f.y>1080||f.x<200||f.x>2400){
      input[f.x<1300?"right":"left"]=true;
-     if(f.vy>-120&&(f.onGround||f.coyote>0||f.jumps>0))input.jump=true;
+     if(f.vy>-120&&(f.onGround||f.coyote>0||f.jumps>0||f.firstJump))input.jump=true;
      else if(!f.onGround&&f.dashCd<=0)tryDash(f,f.x<1300?1:-1);
    }else f.face=(foe.x>=f.x)?1:-1;
    return input;
@@ -4083,7 +4087,7 @@ function aiControl(f,foe){
  var offStage=(f.x<200||f.x>2400);
  if((offStage&&f.y>900)||f.y>1080){
    input[f.x<1300?"right":"left"]=true;
-   if(f.vy>-120&&(f.onGround||f.coyote>0||f.jumps>0))input.jump=true;
+   if(f.vy>-120&&(f.onGround||f.coyote>0||f.jumps>0||f.firstJump))input.jump=true;
    else if(!f.onGround&&f.dashCd<=0)tryDash(f,f.x<1300?1:-1);
    return input;
  }
@@ -4483,7 +4487,8 @@ function stepFighter(f,dt,input,foe){
      if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
    }
    if(input.jump){
-     if(f.onGround||f.coyote>0){f.vy=-JUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
+     if(f.onGround||f.coyote>0){f.vy=-JUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;f.firstJump=false;f.leftByJump=true;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
+     else if(f.firstJump){f.firstJump=false;f.vy=-JUMP_V;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)} /* AIRBORNE FIRST JUMP (v93 bug fix): the fighter is airborne WITHOUT having jumped (walked off a ledge, dropped through, dashed off an edge, was launched) — f.firstJump was armed by the became-airborne check below, so this press is the FIRST jump at full JUMP_V, not the double jump. f.jumps (the double jump) stays available afterwards. */
      else if(f.jumps>0){f.jumps--;f.vy=-DJUMP_V;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="kojiro"?12:9,charFX(f),130);beep(f.isPlayer?700:420,.06,"sine",.035)}
    }
    if(input.down){
@@ -4541,7 +4546,7 @@ function stepFighter(f,dt,input,foe){
      f.y=p.y-f.h;f.vy=0;f.onGround=true;f.groundPlat=p;break;
    }
  }
- if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
+ if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
    if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);f.landLagT=Math.max(f.landLagT||0,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
    if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.28);f.landLagT=Math.max(f.landLagT||0,0.28)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.28s (user spec, shortened from 0.37s): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
@@ -4556,6 +4561,15 @@ function stepFighter(f,dt,input,foe){
      }else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
+ /* BECAME AIRBORNE WITHOUT JUMPING (v93): this step ended airborne after
+    being grounded last step, and the ground/coyote jump branch did not
+    fire (it sets f.leftByJump) — the fighter walked off a ledge, dropped
+    through, dashed off an edge or was launched by knockback. Arm
+    f.firstJump so the first jump press of this airborne stint is the
+    FIRST jump (full JUMP_V); the double jump remains available after it.
+    (Rising moves set onGround=false inside startAttack, BEFORE
+    stepFighter copies wasGround, so they never arm this.) */
+ if(!f.onGround&&f.wasGround&&!f.leftByJump)f.firstJump=true;
  /* ICE PATCHES (from Kairo's ice slide): standing on a foe's frozen floor
     keeps you chilled — movement stays slowed while you stand on it */
  if(f.onGround){for(var ip=0;ip<icePatches.length;ip++){var icp=icePatches[ip];if(icp.owner!==f&&Math.abs(f.x-icp.x)<icp.w/2&&Math.abs((f.y+f.h)-icp.y)<16)f.frozen=Math.max(f.frozen,0.15)}}
