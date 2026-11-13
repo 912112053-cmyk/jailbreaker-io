@@ -676,7 +676,9 @@ $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
 /* ================= GAME ENGINE =================
    Physics & layout measured against real bandit.rip gameplay footage:
    - HP-based arena brawler, kill = +100 score, respawn, out-of-combat regen
-   - big scrolling stage, camera hard-follows the player with a little lag
+   - big scrolling stage, camera follows the player with a dead zone +
+     critically-damped ease and a small smoothed lookahead (updateCamera):
+     precise placement without the sway that causes camera sickness
    - character 70 units tall, view 480 units tall (fighters read big on screen)
    - compact vertical layout: highest ledge is 225u above the floor and
      every step up is <=115u — a single jump (apex ~166u) reaches them all;
@@ -733,6 +735,10 @@ var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],p
 var shake=0,hitstop=0,time=0,wins=0;
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
+/* camera follow state: velocity of the critically-damped follow
+   (camVel) and the smoothed lookahead in world units (camLook).
+   See updateCamera() for why both exist. */
+var camVel={x:0,y:0},camLook=0;
 var audioCtx=null;
 function beep(f,d,type,v){if(typeof rb!=="undefined"&&rb&&rb.resim)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||"square";o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+(d||.08));o.stop(audioCtx.currentTime+(d||.08));}catch(e){}}
 /* per-character base stats. AXE is the heavyweight: far more HP and
@@ -802,7 +808,7 @@ function startMatch(m){
  projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
  buf={};$("endBtns").classList.remove("on");hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
- cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;clampCam();
+ cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;camVel.x=0;camVel.y=0;camLook=0;clampCam();
  window.scrollTo(0,0);
  if(mode==="online")rbReset(net.seed||1);else rb.active=false;
 }
@@ -810,6 +816,67 @@ function clampCam(){
  var mx=WORLD_W-viewW+260,my=WORLD_H-viewH+320;
  cam.x=Math.max(-260,Math.min(Math.max(mx,-260),cam.x));
  cam.y=Math.max(-160,Math.min(Math.max(my,-160),cam.y));
+}
+/* ===== camera follow: precise tracking without the sway =====
+   The old follow aimed at P1 + vx*0.32 under one fast exponential
+   ease on both axes. Raw vx starts and stops almost instantly in
+   this game (huge ground friction, instant dash), so the aim point
+   itself jumped by up to ~±320u on every dash, stop and knockback
+   and the whole view swung after it; the same fast ease on Y also
+   bobbed the view through every single jump. That constant sway —
+   the view forever overshooting the fighter and drifting back —
+   is what made players camera-sick, and it was imprecise too: the
+   fighter rarely sat where the camera was supposedly putting him.
+   This follow keeps the fighter placed more precisely with less
+   total view motion:
+   1) dead zone — the camera does not chase at all while P1 stays
+      inside a small box around the anchor (92u wide x 108u tall),
+      so idle jitter, run start/stop twitches and small hops never
+      move the view; outside the box it follows only the excess.
+   2) lookahead is small, capped and smoothed — it eases toward
+      clamp(vx*0.11, ±52u) through a slow filter instead of snapping
+      to raw vx, so a dash no longer throws the view ahead and back.
+   3) critically-damped smoothing (SmoothDamp) per axis, carrying
+      its own velocity: it settles on the target with no overshoot
+      and no oscillation. Horizontal stays responsive (0.13s);
+      vertical is deliberately calmer (0.27s) and only follows the
+      part of a jump that leaves the dead zone, so ordinary jumps
+      barely lift the view while falls and ledge drops still track.
+   4) teleport snap — if P1 reappears far away (respawn), the
+      camera cuts straight there instead of swooping the stage.
+   Frame-rate independent: driven by real dt, fed with P1's
+   render-interpolated position by the callers, as before. */
+function camSmoothDamp(cur,target,vel,smoothTime,dt){
+ var omega=2/Math.max(0.02,smoothTime),x=omega*dt;
+ var e=1/(1+x+0.48*x*x+0.235*x*x*x);
+ var change=cur-target,temp=(vel+omega*change)*dt;
+ var nv=(vel-omega*temp)*e;
+ var out=target+(change+temp)*e;
+ if((target-cur>0)===(out>target)){out=target;nv=0}
+ return{pos:out,vel:nv};
+}
+function updateCamera(dtms,ipX,ipY){
+ var dt=Math.min(0.05,Math.max(0.001,dtms/1000));
+ var lookT=Math.max(-52,Math.min(52,(P1?P1.vx:0)*0.11));
+ camLook+=(lookT-camLook)*(1-Math.exp(-dt/0.16));
+ var anchorX=viewW/2,anchorY=viewH*0.54;
+ var fx=ipX+camLook,fy=ipY;
+ var dx=fx-(cam.x+anchorX),dy=fy-(cam.y+anchorY);
+ if(dx>460||dx<-460||dy>340||dy<-340){
+  cam.x=fx-anchorX;cam.y=fy-anchorY;camVel.x=0;camVel.y=0;clampCam();return;
+ }
+ var DEAD_X=46,DEAD_Y=54,tx=cam.x,ty=cam.y;
+ if(dx>DEAD_X)tx=cam.x+(dx-DEAD_X);else if(dx<-DEAD_X)tx=cam.x+(dx+DEAD_X);
+ if(dy>DEAD_Y)ty=cam.y+(dy-DEAD_Y);else if(dy<-DEAD_Y)ty=cam.y+(dy+DEAD_Y);
+ var sx=camSmoothDamp(cam.x,tx,camVel.x,0.13,dt);cam.x=sx.pos;camVel.x=sx.vel;
+ /* vertical catch-up: the calmer 0.27s ease only holds while the
+    error is small — a fastfall / dive builds error fast, so the
+    ease tightens with distance and the fighter never leaves the
+    lower screen the way a fixed slow ease would let him. */
+ var stY=Math.abs(dy)>150?0.13:(Math.abs(dy)>100?0.19:0.27);
+ var sy=camSmoothDamp(cam.y,ty,camVel.y,stY,dt);cam.y=sy.pos;camVel.y=sy.vel;
+ var bx=cam.x,by=cam.y;clampCam();
+ if(cam.x!==bx)camVel.x=0;if(cam.y!==by)camVel.y=0;
 }
 /* character select (spawn screen): PLAY / TRAINING first open this big,
    unobstructed picker inside the game screen — this is the only place a
@@ -1708,9 +1775,7 @@ function rbAdvance(dtms){
   drawAlpha=Math.min(1,rb.acc/SIM_STEP);
  }
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
- var tx=ipX+P1.vx*0.32-viewW/2,ty=ipY-viewH*0.54;
- var k=1-Math.pow(0.0001,Math.min(0.05,dtms/1000));
- cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
+ updateCamera(dtms,ipX,ipY);
 }
 /* ================= ACCOUNTS + FRIENDS (Firebase cloud accounts) =================
    Accounts are username + password, kept in the cloud (Firebase Auth):
@@ -4526,13 +4591,12 @@ function loop(ts){
  }
  drawAlpha=Math.min(1,acc/STEP);
  /* camera at RENDER rate (it used to advance inside the logic step):
-    hard follow with a touch of lag + velocity lookahead, aimed at
-    P1's interpolated position so the camera doesn't step at 60Hz on
-    a faster display either. Same easing time constant as before. */
+    updateCamera() aims at P1's interpolated position so the camera
+    doesn't step at 60Hz on a faster display either — see its note
+    for the dead zone / damped-follow / smoothed-lookahead design
+    that keeps the tracking precise without the old sway. */
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
- var tx=ipX+P1.vx*0.32-viewW/2,ty=ipY-viewH*0.54;
- var k=1-Math.pow(0.0001,Math.min(0.05,dtms/1000));
- cam.x+=(tx-cam.x)*k;cam.y+=(ty-cam.y)*k;clampCam();
+ updateCamera(dtms,ipX,ipY);
  /* render shake offset */
  var ox=shake?(Math.random()-.5)*shake:0,oy=shake?(Math.random()-.5)*shake:0;
  ctx.save();ctx.translate(ox,oy);draw();ctx.restore();
