@@ -10,6 +10,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Permanent+Marker&family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js" integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/gh/PlayFab/JavaScriptSDK@master/PlayFabSdk/src/PlayFab/PlayFabClientApi.js"></script>
+<script>
+/* PlayFab SDK bridge: the current JavaScriptSDK exposes the client API
+   as PlayFab.ClientApi and reports through a single (result, error)
+   callback, while the game code below calls PlayFabClientApi.<method>
+   (request, onSuccess, onError). Alias the API under the name the game
+   expects and translate the callback style, so every call site works
+   unchanged. If the SDK failed to load, PlayFabClientApi stays
+   undefined and the game treats accounts/friends as unavailable,
+   exactly as it does when the SDK is missing. */
+var PlayFabClientApi=(typeof PlayFab!=="undefined"&&PlayFab.ClientApi)?PlayFab.ClientApi:undefined;
+if(PlayFabClientApi){
+ ["RegisterPlayFabUser","LoginWithPlayFab","GetAccountInfo","GetFriendsList","AddFriend","RemoveFriend","GetUserData","UpdateUserData"].forEach(function(m){
+  var orig=PlayFabClientApi[m];
+  if(typeof orig!=="function")return;
+  PlayFabClientApi[m]=function(req,onOk,onErr){
+   var p;
+   try{
+    p=orig.call(PlayFabClientApi,req,function(res,err){
+     if(err){if(typeof onErr==="function")onErr(err)}
+     else if(typeof onOk==="function")onOk(res);
+    });
+   }catch(e){if(typeof onErr==="function"){onErr(e);return}throw e}
+   if(p&&typeof p.catch==="function")p.catch(function(){});
+  };
+ });
+}
+</script>
 <style>
 :root{--bg:#04060f;--panel:#0b142e;--panel2:#101d3d;--line:#22345f;--cyan:#22d3ee;--ice:#b9f3ff;--teal:#2dd4bf;--text:#eefaff;--muted:#9db4d6;--danger:#fb7185;--gold:#fbbf24}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans JP",system-ui,sans-serif;overflow-x:hidden}
