@@ -348,6 +348,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["21:50"],tag:"修正・調整",title:"WARDEN ↓+K ショックスイープの地雷をステルス化＋当たり判定を拡大（160×60）",
+  items:["WARDEN ↓+K ショックスイープ（地雷設置）：設置した地雷が設置した本人にしか見えなくなりました。相手側には地雷本体・点滅ライト・待機中の火花・設置時のバーストが一切表示されず、踏んだ瞬間の爆発で初めて存在が分かります（設置者にはこれまで通り金色の地雷が見え、足元には感知範囲を示す薄い楕円が表示されます）",
+         "地雷の当たり判定を拡大しました：横 ±55→±80・縦 46→60（判定 62×40→160×60）。ダメージ20／KB560／全体0.44秒／後硬直0.44秒／フィールドに2つまでは変更なし。技一覧の表示数値も新しい実数値に更新しました"]},
  {date:"2026/11/13",times:["21:47"],tag:"修正・調整",title:"WARDEN 空中↓+J ウェーブショットの強化と見た目変更（本体18ダメージ／巨大弾＋左右衝撃波）",
   items:["WARDEN 空中↓+J ウェーブショット：本体ダメージ 17→18。着地 前12・後12／KB 本体600・着地 前430・後430／発生 即時／全体0.32秒／後硬直0.45秒／判定 本体76×62・着地108×80／着地硬直0.25秒は変更なし",
          "見た目を変更：これまで通常の落下ポーズだったものを、真下へ巨大な銃弾を発射してその弾に乗って落ちるモーションに変更。落下中は足元に真鍮色の巨大弾（尖った弾頭・推進炎・スピード線）が描かれ、発射時には砲撃のバーストと低い轟音が付いた",
@@ -664,7 +667,7 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J+K 同時押し — スタンバッシュ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>警棒で薙いでから盾で殴る</b>2ヒット。モーションも1段目＝警棒、2段目＝盾バッシュに分かれた。大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','360／640')+mvS('発生','即時／2段目 約0.26秒')+mvS('全体','0.52秒')+mvS('後硬直','0.49秒')+mvS('判定','76×64／86×74'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>盾を取り出して突進して攻撃する看守の主力技。判定は約0.18秒後に出る。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中でも同じバッシュが出る。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上600／空中640')+mvS('発生','約0.18秒')+mvS('全体','0.38秒')+mvS('後硬直','0.47秒')+mvS('判定','80×70')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下して攻撃する。判定は約0.32秒後に出て、着地すると<b>着地硬直0.36秒</b>がある。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.32秒')+mvS('全体','0.42秒')+mvS('後硬直','0.47秒')+mvS('判定','76×72')+mvS('着地硬直','0.36秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — ショックスイープ</b> <span style="color:#f59e0b;font-weight:900">地雷設置</span><p>その場に地雷を設置する。相手が踏むと爆発する。この地雷は<b>フィールドに二つまで</b>しか存在できない（3つ目を置くと一番古いものが消える）。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.44秒')+mvS('判定','62×40（地雷の当たり判定）'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — ショックスイープ</b> <span style="color:#f59e0b;font-weight:900">ステルス地雷設置</span><p>その場に地雷を設置する。<b>設置した本人にしか見えないステルス地雷</b>で、相手には地雷本体も点滅ライトも一切見えず、踏んだ瞬間の爆発で初めて存在が分かる（設置者には金色の地雷と、足元の感知範囲を示す薄い楕円が見える）。当たり判定は<b>160×60</b>に拡大された。この地雷は<b>フィールドに二つまで</b>しか存在できない（3つ目を置くと一番古いものが消える）。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.44秒')+mvS('判定','160×60（地雷の当たり判定）')+mvS('視認','設置者のみ'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — アームキャッチ・ミー</b><p>上空から伸びる<b>大型化したアーム</b>が<b>体を掴んで</b>、vy -1020で真上へ一気に吊り上げる復帰・回避技。太い関節アームと大きな爪で掴むのがはっきり分かる。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('上昇','vy -1020')+mvS('再使用','5.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ショックボルト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・4発</span><p>電撃ボルトを撃つ。4発で自動リロード。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.43秒')+mvS('弾速','630')+mvS('射程','約770（1.22秒）')+mvS('リロード','1.15秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — スカイフック・クレーン（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>空からマグネットクレーンを呼び、目の前の相手を磁力で確保して真上へ吊り上げ（0.55秒間、相手はなにもできない）、そのまま地面へ叩き落とす逮捕技。周囲を薙ぐ技ではなく「捕まえて落とす」一点集中の大技。ゲージMAX中は体に金色の電撃オーラがまとわりつく。外すと確保失敗でゲージは消費される。</p>'+mvSpec(mvS('ダメージ','46（スラム時）')+mvS('KB','820')+mvS('発生','確保は即時／ダメージは約0.55秒後')+mvS('全体','0.55秒（確保時）／0.40秒（外し時）')+mvS('後硬直','0.92秒（発動から次の行動まで）')+mvS('確保範囲','前方約500×上下約430'))+'</div></div>'
@@ -2495,16 +2498,22 @@ function startWardenAttack(f,type,foe){
      spawnParticles(f.x,f.y-14,14,"#fde68a",170);spawnParticles(f.x,f.y+f.h*0.4,8,"#fbbf24",130);spawnRing(f.x,f.y-6,"#fde68a",40);
      beep(1250,.1,"square",.05);setTimeout(function(){beep(420,.12,"sawtooth",.045)},70);
    }else if(downHeld&&f.onGround){
-     /* ↓+K: ショックスイープ改 — no longer a sweep: he plants a shock
-        MINE at his feet. A mine is 62x40, deals 20 / KB 560 to whoever
-        steps into it, and each WARDEN can have at most 2 on the field
-        (planting a third removes his oldest). Mines are stepped in the
-        main loop next to fireOrbs / poisonMists */
+     /* ↓+K: ショックスイープ改 — no longer a sweep: he plants a STEALTH
+        shock MINE at his feet. The mine's trigger is 160x60 (±80 across,
+        60 around the feet line — enlarged from ±55 / 46), deals 20 /
+        KB 560 to whoever steps into it, and each WARDEN can have at
+        most 2 on the field (planting a third removes his oldest).
+        STEALTH (user spec): a mine is visible ONLY to the WARDEN who
+        planted it — the draw pass, the idle spark leak and even this
+        planting burst are all gated on the planter being the viewer
+        (P1), so a foe gets no visual hint of where a mine waits; it
+        reveals itself only when it detonates. Mines are stepped in
+        the main loop next to fireOrbs / poisonMists */
      f.state="tailsweep";f.stateT=0.44;f.attackCd=0.37;f.comboWin=0;
      var ownMines=0,oldestMine=-1;for(var mi2=0;mi2<mines.length;mi2++){if(mines[mi2].owner===f){ownMines++;if(oldestMine<0)oldestMine=mi2}}
      if(ownMines>=2&&oldestMine>=0)mines.splice(oldestMine,1);
      mines.push({x:f.x,y:f.y+f.h,owner:f});
-     spawnParticles(f.x,f.y+f.h-8,13,"#fde68a",190);spawnRing(f.x,f.y+f.h-4,"#f59e0b",26);beep(160,.13,"sawtooth",.05);
+     if(f===P1){spawnParticles(f.x,f.y+f.h-8,13,"#fde68a",190);spawnRing(f.x,f.y+f.h-4,"#f59e0b",26)} /* planting burst shown only to the planter (stealth) */beep(160,.13,"sawtooth",.05);
    }else if(downHeld&&!f.onGround){
      f.state="taildrop";f.stateT=0.42;f.attackCd=0.72;f.hitDone=false; /* メテオドロップ (user spec): hit lands 0.32s after the press (stepFighter threshold) and landing costs 0.36s of lag — attackCd raised so 後硬直 stays 0.47 */f.comboWin=0;
      f.vy=Math.max(f.vy,752);f.vx*=0.3;beep(140,.14,"sawtooth",.055);
@@ -4710,8 +4719,13 @@ function draw(){
  icePatches.forEach(function(p){ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
  fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,64*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
- /* WARDEN placed shock mines: a squat gold mine on the floor with a blinking light */
- mines.forEach(function(mn){ctx.fillStyle="#334155";ctx.beginPath();ctx.ellipse(mn.x,mn.y-6,24,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(mn.x-15,mn.y-13,30,5);ctx.fillStyle=(Math.sin(time*7+mn.x)>0?"#ef4444":"#7f1d1d");ctx.beginPath();ctx.arc(mn.x,mn.y-16,3.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(245,158,11,.5)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,31,4,0,0,6.29);ctx.stroke()});
+ /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
+    planted a mine can see it (the viewer is P1), so a foe's mines are
+    skipped entirely here: no body, no blinking light, no range mark.
+    For the owner's own mines, a faint wide ellipse on the floor first
+    marks the enlarged 160-wide trigger, then the squat gold mine with
+    its blinking light is drawn on top */
+ mines.forEach(function(mn){if(mn.owner!==P1)return;ctx.strokeStyle="rgba(245,158,11,.30)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.stroke();ctx.fillStyle="rgba(245,158,11,.07)";ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.fill();ctx.fillStyle="#334155";ctx.beginPath();ctx.ellipse(mn.x,mn.y-6,24,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(mn.x-15,mn.y-13,30,5);ctx.fillStyle=(Math.sin(time*7+mn.x)>0?"#ef4444":"#7f1d1d");ctx.beginPath();ctx.arc(mn.x,mn.y-16,3.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(245,158,11,.5)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,31,4,0,0,6.29);ctx.stroke()});
  /* ORCHID placed poison mist: a low, wide bank of green-purple fog that hangs where she summoned it */
  poisonMists.forEach(function(mb){var pu2=1+Math.sin(time*5+mb.x)*0.05;ctx.globalAlpha=Math.min(0.85,mb.t/1.0);ctx.fillStyle="rgba(101,163,13,.20)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-16,118*pu2,34,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(163,230,53,.16)";ctx.beginPath();ctx.ellipse(mb.x-40+Math.sin(time*3+mb.x)*8,mb.y-10,62,20,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(192,132,252,.15)";ctx.beginPath();ctx.ellipse(mb.x+44+Math.cos(time*2.6+mb.x)*8,mb.y-12,58,18,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(217,249,157,.10)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-30,80,16,0,0,6.29);ctx.fill()});ctx.globalAlpha=1;
  projectiles.forEach(function(pr){
@@ -4913,9 +4927,14 @@ function loop(ts){
    /* SARA placed fire orbs: burn for ~6s; foes within radius 64 keep burning (burn 1.1s) */
    fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
-      into its 62x40 box, then bursts for 20 damage / KB 560 away from the
-      mine. At most 2 per WARDEN (enforced when planted) */
-   mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<55&&Math.abs((mf2.y+mf2.h)-mn.y)<46){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
+      into its enlarged 160x60 trigger (±80 across / 60 around the feet
+      line, up from ±55 / 46), then bursts for 20 damage / KB 560 away
+      from the mine. At most 2 per WARDEN (enforced when planted).
+      STEALTH: the idle spark leak is emitted only for the planter's own
+      mines (owner === P1, the viewer) so a hidden mine betrays nothing;
+      the detonation burst itself stays visible to everyone — that is
+      the moment the mine reveals itself */
+   mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<80&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){mf.hp-=2;mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
