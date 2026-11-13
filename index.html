@@ -374,6 +374,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["02:16"],tag:"修正・調整",title:"プレイヤーネームを1文字から設定できるように変更",
+  items:["プレイヤーネームのルールを3〜20文字から1〜20文字に変更しました。日本語1文字・英字1文字・絵文字1つだけの名前でも設定できます",
+         "変更は FRIENDS 画面のプレイヤーネーム変更から行えます。変更はこれまでどおりクラウド（PlayFab）に保存され、他の端末からログインしても同じ名前になります",
+         "ユーザーネーム（ログイン用）のルールは変更ありません。これまでどおり3〜20文字です"]},
  {date:"2026/11/14",times:["01:57"],tag:"大型更新",title:"ジャンプと落下を本家 bandit.rip の感触に作り直し／オンラインの技数値を現行に同期（サーバー再デプロイ待ち）",
   items:["小ジャンプ／大ジャンプの区別を廃止しました。W を押す長さに関係なく、常に同じ高さの固定ジャンプになります（キーを離すと上昇が止まる仕組みは削除）",
          "ジャンプと落下の物理を、本家のトレーニングモード動画の感触（ゆったりと高く跳び、ふわりと遅く落ちる）に合わせて作り直しました：ジャンプ初速 816→640、上昇重力 1840→1000（頂点まで約0.64秒・高さ約200＝約2.85キャラ分）、2段ジャンプ初速 744→600、落下重力 1845→450、最大落下速度 706→380、急降下 828→560。前回の「落下を約1割遅く」は破棄し、本家基準に置き換えています。台の段差（最大115）は従来どおり1回のジャンプで届きます。ORCHID の落下倍率（×1.11）は新しい基準値に対しても維持されます",
@@ -2603,7 +2607,9 @@ function deleteAccount(){
  }catch(e){finish()}
  setTimeout(finish,4000);
 }
-/* change my player name: validated like a username (3-20 chars),
+/* change my player name: 1-20 chars (unlike the username, which
+   stays 3-20 chars — the player name lives only in PlayFab user
+   data, so the 3-char DisplayName minimum does not apply to it),
    written to my PlayFab user data (jb_pname) where every other
    player can read it, and reflected on this device at once. Rooms
    already joined keep the name they were joined with — the match
@@ -2613,7 +2619,7 @@ function changePlayerName(){
  if(!PF_OK){openFriends("プレイヤーネームの変更にはオンライン環境が必要です。ネットワーク接続を確認してください。");return}
  if(!social.name||!social.loggedIn){openFriends("先にログインしてください。");return}
  var inp=$("pnameInput");var n=cleanName(inp?inp.value:"");
- if(!validDisplayName(n)||Array.from(n).length<3){openFriends("プレイヤーネームは3〜20文字で入力してください。日本語・英数字・記号など、ほとんどの文字が使えます。");return}
+ if(!validDisplayName(n)){openFriends("プレイヤーネームは1〜20文字で入力してください。日本語・英数字・記号・絵文字など、ほとんどの文字が使えます。");return}
  if(n===myDispName()){openFriends("プレイヤーネームは既に「"+n+"」です。");return}
  try{
   PlayFabClientApi.UpdateUserData({Data:{jb_pname:n},Permission:"Public"},function(){
@@ -2684,7 +2690,7 @@ function friendsHTML(msg){
    +'<p style="color:var(--muted)">試合やロビーで表示される「プレイヤーネーム」は、作成した時点ではユーザーネームと同じ名前になり、ログイン後はいつでも別の名前に変更できます。</p>';
  }else{
    rows='<p>あなたのユーザーネーム：<b style="color:#7dd3fc;font-size:16px">'+escHtml(social.name)+'</b>（ログイン中）　<button class="bindKey" id="logoutBtn" style="min-width:96px">ログアウト</button></p>'
-   +'<div class="bindRow"><div><span class="bname">プレイヤーネーム</span><br><span class="bnote">試合・ロビー・結果・フレンド一覧で表示される名前です。ユーザーネーム（ログイン用）とは別に、いつでも変更できます。変更はクラウドに保存され、他の端末からログインしても同じ名前になります（3〜20文字）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="pnameInput" maxlength="20" placeholder="プレイヤーネーム" style="'+FRIEND_INPUT_STYLE+'" value="'+escHtml(myDispName())+'"><button class="bindKey" id="pnameBtn" style="min-width:80px">変更する</button></span></div>'
+   +'<div class="bindRow"><div><span class="bname">プレイヤーネーム</span><br><span class="bnote">試合・ロビー・結果・フレンド一覧で表示される名前です。ユーザーネーム（ログイン用）とは別に、いつでも変更できます。変更はクラウドに保存され、他の端末からログインしても同じ名前になります（1〜20文字・1文字だけでもOK）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="pnameInput" maxlength="20" placeholder="プレイヤーネーム" style="'+FRIEND_INPUT_STYLE+'" value="'+escHtml(myDispName())+'"><button class="bindKey" id="pnameBtn" style="min-width:80px">変更する</button></span></div>'
    +'<div class="bindRow"><div><span class="bname">フレンドを検索して追加</span><br><span class="bnote">相手のユーザーネームを入力して申請を送ります（プレイヤーネームでは検索できません）。申請は相手がゲームを開いた時に届き、相手が承認するとフレンドになります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="friendSearchInput" maxlength="20" placeholder="相手のユーザーネーム" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="friendSearchBtn" style="min-width:80px">申請する</button></span></div>';
    if(social.pendingIn.length){
      rows+='<h3 style="margin:14px 0 2px;color:#fff;font-size:15px">届いているフレンド申請</h3>';
