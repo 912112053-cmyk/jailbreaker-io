@@ -373,6 +373,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["23:45"],tag:"修正・調整",title:"KOJIRO 前+J 疾風突き：3回命中するとその場で0.32秒硬直するように",
+  items:["前+J 疾風突き：命中するたびにカウントされ、3回命中するとその場で0.32秒硬直するようになりました。硬直中は移動・ジャンプができません（踏み込みの勢いもその場で止まります）。カウントは3回目でリセットされ、倒された／復活したときもリセットされます。外した場合はカウントされません",
+         "ダメージ13／KB 620／発生0.12秒／全体0.32秒／後硬直0.35秒／判定94×60は変更なし。技一覧の表示も更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
  {date:"2026/11/13",times:["23:40"],tag:"修正・調整",title:"KAIROの技調整（アイスフット強化／ホバースピン着地硬直短縮／アイスエッジはジャンプも不可に）",
   items:["KAIRO ↓+J アイスフット：KB 450→560、後硬直 0.22秒→0.30秒、被弾硬直 0.2秒→0.26秒に強化（ダメージ8／発生 即時／全体0.12秒／判定72×34は変更なし）",
          "KAIRO 空中J ホバースピン：着地硬直 0.43秒→0.37秒に短縮し、着地後の隙がさらに小さくなりました",
@@ -776,7 +780,7 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','230')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','92×68')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 4段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段（新設）</span><p>3段目に引き続いて横に刀を振り抜いて攻撃する、チェーンの締め。広く重い一薙ぎで吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.40秒')+mvS('判定','96×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。踏み込みはすぐ始まるが、突きの判定が出るのは0.12秒後。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','0.12秒')+mvS('全体','0.32秒')+mvS('後硬直','0.35秒')+mvS('判定','94×60'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。踏み込みはすぐ始まるが、突きの判定が出るのは0.12秒後。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。<b>命中するたびにカウントされ、3回命中するとその場で0.32秒硬直する</b>（硬直中は移動・ジャンプ不可。カウントは3回目でリセットされる）。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','0.12秒')+mvS('全体','0.32秒')+mvS('後硬直','0.35秒')+mvS('判定','94×60')+mvS('3回命中時','その場で0.32秒硬直（移動・ジャンプ不可）'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き斬り</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','310')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','76×58'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り斬り</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.47秒')+mvS('判定','66×88')+mvS('上昇','vy -540'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','480')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.44秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
@@ -1015,7 +1019,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1025,7 +1029,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1530,7 +1534,7 @@ $("lobbyLeaveBtn").onclick=function(){
    out and sounds / banners muted, so a replay pass is invisible.
    Remote fighters: snapshot interpolation over a ~100ms buffer. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -3930,8 +3934,17 @@ function stepFighter(f,dt,input,foe){
  /* KOJIRO 疾風突き (fwd+J): the lunge starts on the press, but the
     thrust itself lands 0.12s later (発生 0.12秒, user spec) —
     stateT 0.32 -> threshold 0.20. Damage 13 / KB 620 / box 94x60
-    are unchanged; only the hit timing moved off the press */
- if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05)} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept) */
+    are unchanged; only the hit timing moved off the press.
+    3-HIT PENALTY (user spec): every landed thrust counts up
+    f.thrustHits (misses do not count; one use counts once even if
+    it clips several foes). On the 3rd hit the count resets and
+    Kojiro himself stiffens ON THE SPOT for 0.32s: the lunge
+    velocity is cut to 0 and the landLagT full lockout (no movement
+    / facing change / jump / fastfall / drop-through / dash /
+    guard / moves — the same lockout 着地硬直 uses) plus attackCd
+    both run 0.32s from the hit, so he can neither move nor jump
+    for exactly that span */
+ if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.landLagT=Math.max(f.landLagT||0,0.32);f.attackCd=Math.max(f.attackCd,0.32);floaters.push({x:f.x,y:f.y-30,txt:"硬直 0.32秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中でその場0.32秒硬直 (user spec) */
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
