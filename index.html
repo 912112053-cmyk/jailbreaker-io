@@ -348,6 +348,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["21:47"],tag:"修正・調整",title:"WARDEN 空中↓+J ウェーブショットの強化と見た目変更（本体18ダメージ／巨大弾＋左右衝撃波）",
+  items:["WARDEN 空中↓+J ウェーブショット：本体ダメージ 17→18。着地 前12・後12／KB 本体600・着地 前430・後430／発生 即時／全体0.32秒／後硬直0.45秒／判定 本体76×62・着地108×80／着地硬直0.25秒は変更なし",
+         "見た目を変更：これまで通常の落下ポーズだったものを、真下へ巨大な銃弾を発射してその弾に乗って落ちるモーションに変更。落下中は足元に真鍮色の巨大弾（尖った弾頭・推進炎・スピード線）が描かれ、発射時には砲撃のバーストと低い轟音が付いた",
+         "着弾時の見た目も変更：弾が弾ける中心のバーストに加え、左右それぞれに衝撃波リング・横向きの火花・土煙・電撃バーストが発生し、衝撃波が左右両方向へ広がるのが見た目でも分かるようになった。技一覧の表示数値も新しい実数値に更新した"]},
  {date:"2026/11/13",times:["21:44"],tag:"修正・調整",title:"KAIRO 空中↓+K メテオドロップの判定を拡大",
   items:["KAIRO 空中↓+K メテオドロップ：判定 88×84→122×84（横幅が広がり、当てやすくなりました）",
          "ダメージ26／KB700／発生 約0.12秒／全体0.40秒／後硬直0.45秒／着地硬直0.34秒は変更なし。技一覧の表示数値も新しい実数値に更新しました"]},
@@ -656,7 +660,7 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↑+J — ライジングバトン</b><p>斬り上げながら跳び上がる対空技（他キャラの上昇Jと違い、当てても2段ジャンプは回復しない）。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','420（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.49秒')+mvS('判定','68×86')+mvS('上昇','vy -430'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — ショックウェーブ</b><p>バトンで地面を叩き、床を走る衝撃波を放つ遠距離技。波は<b>ダメージのみ</b>で、吹っ飛ばしも被弾硬直も一切ない。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.53秒')+mvS('波の速度','480')+mvS('射程','約420（0.875秒）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 回転警棒</b><p>警棒を回転させて多段ヒットの攻撃をする。前後両側へ0.08秒間隔で最大4ヒット。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前4／後4 ×最大4ヒット')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.41秒')+mvS('判定','84×74')+mvS('着地硬直','0.33秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — ウェーブショット</b><p>真下に巨大な銃弾を発射し、そのまま真下へ落下する。着弾と同時に左右に衝撃波を発生させる。</p>'+mvSpec(mvS('ダメージ','本体17／着地12')+mvS('KB','本体600／着地430')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体76×62／着地108×80')+mvS('着地硬直','0.25秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — ウェーブショット</b><p>真下に<b>巨大な銃弾</b>を発射し、その弾に乗って真下へ落下する。落下中は足元に真鍮色の巨大弾（尖った弾頭付き）がはっきり見える。<b>着弾した瞬間に弾が弾け、左右両方向へ衝撃波</b>が地面を走る（リング・火花・電撃バーストで左右対称に広がる）。</p>'+mvSpec(mvS('ダメージ','本体18／着地 前12・後12')+mvS('KB','本体600／着地 前430・後430')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体76×62／着地108×80')+mvS('着地硬直','0.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — スタンバッシュ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>警棒で薙いでから盾で殴る</b>2ヒット。モーションも1段目＝警棒、2段目＝盾バッシュに分かれた。大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','360／640')+mvS('発生','即時／2段目 約0.26秒')+mvS('全体','0.52秒')+mvS('後硬直','0.49秒')+mvS('判定','76×64／86×74'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>盾を取り出して突進して攻撃する看守の主力技。判定は約0.18秒後に出る。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中でも同じバッシュが出る。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上600／空中640')+mvS('発生','約0.18秒')+mvS('全体','0.38秒')+mvS('後硬直','0.47秒')+mvS('判定','80×70')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下して攻撃する。判定は約0.32秒後に出て、着地すると<b>着地硬直0.36秒</b>がある。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.32秒')+mvS('全体','0.42秒')+mvS('後硬直','0.47秒')+mvS('判定','76×72')+mvS('着地硬直','0.36秒'))+'</div></div>'
@@ -2422,10 +2426,18 @@ function startWardenAttack(f,type,foe){
      /* 空中↓+J: ウェーブショット — fires a huge shell STRAIGHT DOWN and
         rides it to the floor; on landing the shared dive shockwave erupts
         on both sides (WARDEN numbers in the landing block: 12 dmg /
-        KB 430 both sides, box 108x80) */
+        KB 430 both sides, box 108x80). 本体ダメージ 17 -> 18 (user spec).
+        見た目 (user spec): the shell itself is drawn under him for the
+        whole dive in drawWarden's diveclaw branch (brass casing + pointed
+        tip + propellant flame), a cannon-boom burst marks the firing
+        here, and the landing block adds left/right shockwave rings,
+        sideways sparks and electric bursts so the impact reads as waves
+        rolling out along the ground on BOTH sides */
      f.state="diveclaw";f.stateT=0.32;f.attackCd=0.38;f.comboWin=0;f.diveArmed=true;
      f.vx=0;f.vy=Math.max(f.vy,640);f.fastfall=false;
-     meleeHit(f,foe,76,62,17,600,f.face,0.85);beep(240,.09,"sawtooth",.05);
+     meleeHit(f,foe,76,62,18,600,f.face,0.85);
+     spawnParticles(f.x,f.y+f.h+8,14,"#fde68a",230);spawnParticles(f.x,f.y+f.h+4,7,"#fb923c",170);spawnRing(f.x,f.y+f.h+10,"#f59e0b",42);spawnFxBurst(FXIMG.elec,f.x,f.y+f.h+14,110,0.26,1.57,1,0.6);
+     beep(240,.09,"sawtooth",.05);beep(85,.16,"sawtooth",.07);
    }else if(!f.onGround){
      /* 空中J: 回転警棒 — spins the baton for up to 4 small hits on BOTH
         sides (4 dmg / KB 330 each; ticks live in stepFighter, state
@@ -3932,7 +3944,7 @@ function stepFighter(f,dt,input,foe){
        spawnParticles(f.x,f.y+f.h-4,18,"#a3e635",230);
      }else if(f.char==="kojiro"){ /* KOJIRO 落下斬り landing (user spec): waves on BOTH sides — 12 dmg / KB 620 front AND back (back was 9 / 340), box 144x58 (dvRg/dvH carry the generic 96x58, so the kojiro box is passed directly) */
        meleeHit(f,foe,144,58,12,620,f.face,-0.28);meleeHit(f,foe,144,58,12,620,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fecaca",230);
-     }else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230)} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
+     }else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
  /* ICE PATCHES (from Kairo's ice slide): standing on a foe's frozen floor
@@ -4430,6 +4442,27 @@ function drawWarden(f){
      重ねる (下の wcatch オーバーレイ) */
   ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(11,24);ctx.lineTo(19,2);ctx.stroke();ctx.beginPath();ctx.moveTo(-9,24);ctx.lineTo(-14,4);ctx.stroke();
   ctx.strokeStyle="rgba(253,230,138,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-8,52);ctx.lineTo(-13,66);ctx.moveTo(8,52);ctx.lineTo(4,66);ctx.stroke();
+ }
+ else if(f.state==="diveclaw"){
+  /* 空中↓+J ウェーブショット (見た目変更): both arms brace DOWNWARD and
+     he rides a HUGE SHELL straight down — a brass casing wider than his
+     body with a banded shell body and a pointed steel tip, propellant
+     flame flickering at its top and speed lines streaming past, so the
+     dive reads as "fired a giant bullet under himself" at a glance
+     (the generic arm pose used before showed no shell at all) */
+  ctx.strokeStyle=flash?"#ff8a7a":"#334155";ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(12,25);ctx.lineTo(9,45);ctx.stroke();ctx.beginPath();ctx.moveTo(-10,25);ctx.lineTo(-7,45);ctx.stroke();
+  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(9,45);ctx.lineTo(14,54);ctx.stroke();ctx.beginPath();ctx.moveTo(-7,45);ctx.lineTo(-13,54);ctx.stroke();
+  var wf2=Math.sin(time*42)*3;
+  ctx.fillStyle="rgba(251,146,60,.9)";ctx.beginPath();ctx.moveTo(-11,57);ctx.lineTo(0,71+wf2);ctx.lineTo(11,57);ctx.closePath();ctx.fill();
+  ctx.fillStyle="rgba(253,230,138,.95)";ctx.beginPath();ctx.moveTo(-5.5,57);ctx.lineTo(0,66+wf2);ctx.lineTo(5.5,57);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#b45309";ctx.fillRect(-15,51,30,9);
+  ctx.fillStyle="#f59e0b";ctx.fillRect(-17,59,34,31);
+  ctx.fillStyle="#fde68a";ctx.fillRect(-17,59,34,5);
+  ctx.fillStyle="#92400e";ctx.fillRect(-17,75,34,4.5);
+  ctx.fillStyle="rgba(255,255,255,.35)";ctx.fillRect(-12,64,3.5,24);
+  ctx.fillStyle="#e2e8f0";ctx.beginPath();ctx.moveTo(-17,90);ctx.lineTo(17,90);ctx.lineTo(0,113);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(0,104,3.6+Math.sin(time*30)*0.8,0,6.29);ctx.fill();
+  ctx.strokeStyle="rgba(253,230,138,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-25,42);ctx.lineTo(-25,18);ctx.moveTo(25,46);ctx.lineTo(25,22);ctx.moveTo(-31,82);ctx.lineTo(-31,58);ctx.moveTo(31,86);ctx.lineTo(31,62);ctx.stroke();
  }
  else if(f.state==="wbash"){
   /* K — shield bash: NO baton swing at all. The arm is tucked with the
