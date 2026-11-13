@@ -348,6 +348,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["21:39"],tag:"修正・調整",title:"着地硬直の強化：硬直中は移動・ジャンプ・技すべて不可に",
+  items:["着地硬直の仕様を変更しました。これまでは着地硬直中に止まるのは「次の技」だけで、移動とジャンプは着地直後から可能でしたが、今回から着地硬直が続いている間は移動・ジャンプ・ダッシュ・ガード・技のすべてができなくなり、その場に縫い止められます",
+         "硬直時間そのものに変更はありません（技ごとの着地硬直の数値はこれまでどおり）。全6キャラ共通の仕様で、CPUのキャラにも同じように適用されます",
+         "技一覧の「数値の読み方」にある着地硬直の説明も、新しい仕様に合わせて更新しました"]},
  {date:"2026/11/13",times:["21:13"],tag:"修正・調整",title:"AXEのバランス調整（Jチェーン2段化／震撃の岩バースト化／空中K・空中↓+K廃止／ウルト1.5秒化）",
   items:["基礎：地上速度 288→300、空中速度 279→270、ダッシュ 800→840。ウルト溜まり 約0.67倍→約0.6倍（少し遅く）。HP360／受けKB ×0.72は変更なし",
          "Jチェーンが3段→2段に：1段目は「壊斧」に変更し ダメージ 17→22・後硬直 0.77秒→0.4秒・被弾硬直0.4秒を追加。2段目は「ヘッドロック」（頭突き）に変更し ダメージ 20→30・KB 480→770。旧3段目「振り下ろし」は消去",
@@ -614,7 +618,7 @@ function openUpdateLog(){
 $("updBtn").onclick=function(){openUpdateLog()};
 $("updMoreBtn").onclick=function(){openUpdateLog()};
 renderUpdPreview();
-var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ 被弾硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから次の技が出せるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。移動・ジャンプは着地直後から可能）。</div>';
+var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ 被弾硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから動けるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。その間は移動・ジャンプ・ダッシュ・ガード・技のすべてができない）。</div>';
 function mvSpec(s){return '<div class="mvSpec">'+s+'</div>'}
 function mvS(k,v){return '<span><i>'+k+'</i>'+v+'</span>'}
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
@@ -906,7 +910,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -916,7 +920,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1420,7 +1424,7 @@ $("lobbyLeaveBtn").onclick=function(){
    out and sounds / banners muted, so a replay pass is invisible.
    Remote fighters: snapshot interpolation over a ~100ms buffer. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -2391,7 +2395,7 @@ function drawFxTex(img,x,y,size,rot,flip,alpha){if(!img||!img.complete||!img.nat
 /* hard cap for attack step-in velocity: J mashing can never stack speed */
 function capVx(f,lim){if(f.vx>lim)f.vx=lim;else if(f.vx<-lim)f.vx=-lim}
 function tryDash(f,dir){
- if(!f||f.dashCd>0||f.hitstun>0||f.dead)return false;
+ if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0)return false; /* 着地硬直中はダッシュも不可 */
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
@@ -2856,9 +2860,13 @@ function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
    STARTED in the air marks its lag on the fighter (f.airLag, via
    applyLandLag below, called from startAttack); when the fighter
    touches down, the landing block in stepFighter raises attackCd to
-   at least the marked lag, so no further move can be fired until it
-   lapses — while movement / jumping stay free, exactly the behaviour
-   of the four moves that already carried specced landing lag (KAIRO
+   at least the marked lag AND starts the f.landLagT lockout for the
+   same span. While landLagT runs the fighter can do NOTHING at all:
+   no moves (startAttack refuses), no dash (tryDash refuses), no
+   guard (attackCd stays positive), and no movement or jump — the
+   movement chain in stepFighter roots the fighter in place and lets
+   ground friction stop it. That full lockout covers the four moves
+   that already carried specced landing lag (KAIRO
    ホバースピン 0.53 / メテオドロップ 0.34, WARDEN 回転警棒 0.33 /
    メテオドロップ 0.36 — those values are kept as-is in this table and
    their original landing-block lines still run; max() makes the two
@@ -3190,7 +3198,7 @@ function startOrchidAttack(f,type,foe){
  }
 }
 function startAttack(f,type){
- if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding)return;
+ if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0)return; /* 着地硬直中はワザも不可 */
  if(f.ultChargeT>0||f.pushBy)return; /* the ult charge is uncontrollable; a pushed victim cannot act */
  if(f.dashT>0&&type!=="j")return; /* only J can dash-cancel */
  var wasAir=!f.onGround; /* 着地硬直: was this move started in the air? (applyLandLag hook on every exit below) */
@@ -3496,7 +3504,7 @@ function stepFighter(f,dt,input,foe){
    f.respawnT-=dt;if(f.respawnT<=0&&!matchOver){var sidx=Math.max(0,fighters.indexOf(f));var s=SPAWNS_ALL[sidx%SPAWNS_ALL.length];resetFighter(f,s.x,s.y)}return}
  f.stateT=Math.max(0,f.stateT-dt);f.attackCd=Math.max(0,f.attackCd-dt);f.dashCd=Math.max(0,f.dashCd-dt);
  f.comboT=Math.max(0,f.comboT-dt);if(f.comboT===0){f.comboHits=0;f.comboDmg=0}
- f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;
+ f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;
  f.flash=Math.max(0,f.flash-dt);
  f.specCd=Math.max(0,(f.specCd||0)-dt);
  f.mistCd=Math.max(0,(f.mistCd||0)-dt); /* ORCHID 毒霧 cooldown (separate from her U) */
@@ -3821,6 +3829,10 @@ function stepFighter(f,dt,input,foe){
      f.vx=f.dashDir*(f.onGround?RMAX*1.2:AMAX*1.25);
    }
    f.trail.push({x:f.x,y:f.y,life:0.2,face:f.face,isPlayer:f.isPlayer});
+ }else if((f.landLagT||0)>0){
+   /* 着地硬直中: その場に縫い止められる。移動入力・向き変更・ジャンプ・
+      急降下・台すり抜けは一切受け付けず、地面の摩擦で止まるだけ */
+   var lgs=Math.sign(f.vx);f.vx-=lgs*RUN_FRICTION*dt;if(Math.sign(f.vx)!==lgs)f.vx=0;
  }else{
    if(f.onGround){
      if(dirIn!==0){
@@ -3905,9 +3917,9 @@ function stepFighter(f,dt,input,foe){
      f.y=p.y-f.h;f.vy=0;f.onGround=true;f.groundPlat=p;break;
    }
  }
- if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out further moves for its lag time from touchdown — the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
-   if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
-   if(f.char==="warden"&&f.state==="taildrop")f.attackCd=Math.max(f.attackCd,0.36); /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed)f.attackCd=Math.max(f.attackCd,0.33); /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop")f.attackCd=Math.max(f.attackCd,0.53);f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.53s (user spec): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
+ if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
+   if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);f.landLagT=Math.max(f.landLagT||0,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
+   if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.53);f.landLagT=Math.max(f.landLagT||0,0.53)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.53s (user spec): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
       landing — ice spikes / impact ring hit grounded foes on BOTH sides */
    if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?92:(f.char==="warden"?108:96),dvH=f.char==="kairo"?68:(f.char==="warden"?80:58); /* WARDEN ウェーブショット landing box 108x80 (user spec) */
