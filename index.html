@@ -378,6 +378,13 @@ var UPDATE_LOG=[
          "技のエフェクトは全キャラとも従来のまま一切変更していません。本体だけをスプライトに置き換え、斬撃・炎・ビーム・衝撃波などの演出は今までどおりの見た目・出方で表示されます",
          "KAIRO は、スプライト化した前回で変わってしまった技のエフェクトを、スプライト化前の状態に戻しました。氷の爪、フロストスピンの周りを回る氷柱、J+K の氷の拳、空中↓+K の大きな氷柱、フロストテイル、ブリンク斬りの氷の爪などが、従来の見た目で出ます（本体のドット絵そのものは変更していません）",
          "見た目だけの変更です。体格・当たり判定（46×70）・モーションのタイミング・バランス・技の性能は一切変更ありません"]},
+ {date:"2026/11/13",times:["23:29"],tag:"修正・調整",title:"KOJIRO のバランス調整（下段斬り／空斬り／疾風突き／昇り斬り／風波）",
+  items:["↓+J 下段斬り：KB 440→480（二連撃の両ヒットとも）。後硬直 0.43秒→0.44秒",
+         "空中J 空斬り：判定を 前84×66→84×92／後60×56→60×76 に拡大し、新しく被弾硬直0.22秒を追加しました（前後両ヒットとも、命中した相手に正確に0.22秒入ります）。ダメージ 前13／後7・KB 前360／後200・発生 即時・全体 0.30秒・後硬直 0.43秒は変更なし",
+         "前+J 疾風突き：発生 即時→0.12秒（踏み込みはすぐ始まりますが、突きの判定は0.12秒後に出ます）。後硬直 0.23秒→0.35秒。ダメージ 13・KB 620・全体 0.32秒・判定 94×60は変更なし",
+         "空中↑+K 昇り斬り：着地硬直 0.2秒→0.28秒",
+         "↓+K 風波：後硬直 0.88秒（動けない）→1.35秒（動けない）。ダメージなし・KB 前後とも820・全体 0.6秒・判定 210×230は変更なし",
+         "技一覧の表示数値もすべて新しい実数値に更新しました。なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
  {date:"2026/11/13",times:["23:09"],tag:"見た目変更",title:"KAIRO の見た目を参考ドット絵そのものに差し替え",
   items:["KAIRO の見た目を、描き替えではなくオーナー指定の参考ドット絵（48×48）そのものに差し替えました。白い背景だけを透過処理した画像をページ内に埋め込み、キャラ選択画面のカードと試合中の本体の両方でそのまま使っています。ドットが潰れないよう、拡大時は補間を切ってドットのまま表示します",
          "試合中の向き・攻撃・移動は、スプライト全体の反転・傾き・移動・回転で表現しています。前回入れたコード描画の新しいデザインと、選択カードのベクター風イラストは、この画像スプライト方式に置き換えました（他のキャラの画風には寄せていません）",
@@ -765,17 +772,17 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','230')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','92×68')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 4段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段（新設）</span><p>3段目に引き続いて横に刀を振り抜いて攻撃する、チェーンの締め。広く重い一薙ぎで吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.40秒')+mvS('判定','96×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.23秒')+mvS('判定','94×60'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。踏み込みはすぐ始まるが、突きの判定が出るのは0.12秒後。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','0.12秒')+mvS('全体','0.32秒')+mvS('後硬直','0.35秒')+mvS('判定','94×60'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き斬り</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','310')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','76×58'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り斬り</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.47秒')+mvS('判定','66×88')+mvS('上昇','vy -540'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','440')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。前後両方に判定がある。</p>'+mvSpec(mvS('ダメージ','前13／後7')+mvS('KB','前360／後200')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','前84×66／後60×56')+mvS('着地硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','480')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.44秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。前後両方に判定がある。各ヒットに被弾硬直0.22秒付き。</p>'+mvSpec(mvS('ダメージ','前13／後7')+mvS('KB','前360／後200')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','前84×92／後60×76')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.44秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体16／着地 前12・後12')+mvS('KB','本体420／着地 前620・後620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体74×62／着地144×58')+mvS('着地硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 三日月斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>三日月型の斬撃の攻撃をする。判定は振りの途中（約0.12秒後）に出る。出は遅いが一撃の威力と吹っ飛ばしは最大級。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','770')+mvS('発生','約0.12秒')+mvS('全体','0.42秒')+mvS('後硬直','0.44秒')+mvS('判定','82×80'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 空中三日月斬り</b><p>空中で三日月型の斬撃の攻撃をする。判定は約0.10秒後に出る。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','740')+mvS('発生','約0.10秒')+mvS('全体','0.36秒')+mvS('後硬直','0.34秒')+mvS('判定','76×76')+mvS('着地硬直','0.34秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','0.88秒（動けない）')+mvS('判定','210×230'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ勢いよく上昇しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。1段目は相手を<b>真上に吹っ飛ばす</b>。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','820（真上）／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('上昇','vy -820')+mvS('再使用','2.2秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.35秒（動けない）')+mvS('判定','210×230'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ勢いよく上昇しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。1段目は相手を<b>真上に吹っ飛ばす</b>。着地すると<b>着地硬直0.28秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','820（真上）／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('上昇','vy -820')+mvS('再使用','2.2秒')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.8秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で約118前進して間合いを一気に詰め、斬り抜ける。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','500')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','102×58')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直は短くなったが、その間は動けない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','66')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.33秒（動けない）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
@@ -2922,20 +2929,24 @@ function startKojiroAttack(f,type,foe){
      f.vx=f.face*290;f.vy=Math.max(f.vy,620);f.fastfall=false;
      meleeHit(f,foe,74,62,16,420,f.face,0.85);spawnFxBurst(FXIMG.wind,f.x,f.y+f.h*0.5,115,0.3,1.57,f.face,0.75);beep(500,.08,"sawtooth",.05); /* 本体 KB 470 -> 420 (user spec). 落下斬り (見た目変更): wind streams off the tip-down plunge */
    }else if(!f.onGround){
-     /* 空斬り: one wide horizontal cut in mid-air, brief hover */
+     /* 空斬り: one wide horizontal cut in mid-air, brief hover.
+        Boxes grew (user spec): front 84x66 -> 84x92, back 60x56 ->
+        60x76, and BOTH hits now carry 被弾硬直 0.22秒 fixed on the
+        hit foe, separate from the KB */
      f.state="airslash";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
      if(f.vy>60)f.vy=60;
-     meleeHit(f,foe,84,66,13,360,f.face,-0.3);meleeHit(f,foe,60,56,7,200,-f.face,-0.15);
+     meleeHit(f,foe,84,92,13,360,f.face,-0.3,0.22);meleeHit(f,foe,60,76,7,200,-f.face,-0.15,0.22);
      spawnParticles(f.x,f.y+f.h*0.45,14,"#fecaca",200);spawnFxBurst(FXIMG.slash,f.x+f.face*26,f.y+f.h*0.45,155,0.3,0,f.face,0.9);spawnFxBurst(FXIMG.slash,f.x-f.face*22,f.y+f.h*0.45,110,0.26,0,-f.face,0.7);beep(1050,.06,"square",.045); /* 空斬り (見た目変更): flashy slash bursts fore AND aft, matching the two-sided hit */
    }else if(downHeld){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
         first cut lands on the press, the second ticks out ~0.14s later
         in stepFighter (state "lowcut", spinHits counts cuts). Each cut
-        is 8 dmg / KB 440, box 82x34, 被弾硬直 0.18秒 fixed on the hit
-        foe, separate from the KB */
-     f.state="lowcut";f.stateT=0.28;f.attackCd=0.36;f.comboWin=0;
+        is 8 dmg / KB 480, box 82x34, 被弾硬直 0.18秒 fixed on the hit
+        foe, separate from the KB. attackCd 0.37 + universal 0.07 tail
+        = 後硬直 0.44 (user spec) */
+     f.state="lowcut";f.stateT=0.28;f.attackCd=0.37;f.comboWin=0;
      f.spinHits=1;f.spinTick=0;
-     meleeHit(f,foe,82,34,8,440,f.face,0.04,0.18); /* 下段斬り: KB 250 -> 440 (user spec) */
+     meleeHit(f,foe,82,34,8,480,f.face,0.04,0.18); /* 下段斬り: KB 440 -> 480 (user spec) */
      spawnParticles(f.x+f.face*24,f.y+f.h-6,8,"#fecaca",150);beep(700,.06,"square",.045);
    }else if(upHeld){
      /* 昇り斬り: rising slash that carries Kojiro up with it (anti-air);
@@ -2952,11 +2963,13 @@ function startKojiroAttack(f,type,foe){
      meleeHit(f,foe,76,58,12,310,f.face,-0.22);beep(880,.06,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
      /* 疾風突き: a real dash-in thrust — a straight-line lunge, no teleport.
-        attackCd 0.16 + universal 0.07 tail = 後硬直 0.23 (user spec, down
-        from 0.63); box widened 86x56 -> 94x60 */
-     f.state="dashthrust";f.stateT=0.32;f.attackCd=0.16;f.comboWin=0;f.dashT=0;
+        The lunge starts on the press, but the hit itself now lands
+        0.12s later (発生 即時 -> 0.12秒, user spec): the meleeHit
+        lives in stepFighter (state "dashthrust", hitDone-gated).
+        attackCd 0.28 + universal 0.07 tail = 後硬直 0.35 (user spec,
+        up from 0.23); box 94x60, damage 13 / KB 620 unchanged */
+     f.state="dashthrust";f.stateT=0.32;f.attackCd=0.28;f.comboWin=0;f.dashT=0;f.hitDone=false;
      f.vx=f.face*560;
-     meleeHit(f,foe,94,60,13,620,f.face,-0.38); /* real knockback (user fix): the thrust now clearly launches the foe — damage (13) and KB (620) unchanged */
      spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);spawnFxBurst(FXIMG.wind,f.x+f.face*24,f.y+f.h*0.45,125,0.3,0,f.face,0.85);spawnParticles(f.x+f.face*10,f.y+f.h*0.45,7,"#a7f3d0",200);beep(1150,.05,"square",.05); /* 疾風突き (見た目変更): a burst of wind wraps the thrust */
    }else{
      /* 四段チェーン (user spec) — four genuinely different motions:
@@ -3003,9 +3016,9 @@ function startKojiroAttack(f,type,foe){
      /* 風波 (user spec): crouches and raises a tornado around himself —
         NO damage at all, pure knockback: KB 820 on BOTH sides out of a
         huge 210x230 box. He is rooted for the whole move (vx pinned in
-        stepFighter) and the total lockout is 0.88s (attackCd 0.81 +
-        the universal 0.07 tail) */
-     f.state="sweep";f.stateT=0.6;f.attackCd=0.81;f.comboWin=0;f.vx=0;
+        stepFighter) and the total lockout is 1.35s (attackCd 1.28 +
+        the universal 0.07 tail; user spec, up from 0.88s) */
+     f.state="sweep";f.stateT=0.6;f.attackCd=1.28;f.comboWin=0;f.vx=0;
      meleeHit(f,foe,210,230,0,820,f.face,-0.35);meleeHit(f,foe,210,230,0,820,-f.face,-0.35);
      spawnParticles(f.x,f.y+f.h*0.5,20,"#a7f3d0",240);spawnParticles(f.x,f.y+f.h*0.3,12,"#fecaca",200);spawnRing(f.x,f.y+f.h*0.5,"#a7f3d0",64);beep(400,.16,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
@@ -3013,8 +3026,8 @@ function startKojiroAttack(f,type,foe){
         the way: the first cut lands on the press (13 dmg / KB 820,
         launched STRAIGHT UP: dir 0, up -1.0), the second is delayed
         into stepFighter (state "krise", fires at stateT 0.22; 13 dmg
-        / KB 540). CD 2.2s on the shared flyCd. Landing lag 0.20
-        (LAND_LAG). attackCd 0.32 + universal 0.07 = 後硬直 0.39
+        / KB 540). CD 2.2s on the shared flyCd. Landing lag 0.28
+        (LAND_LAG; user spec, up from 0.20). attackCd 0.32 + universal 0.07 = 後硬直 0.39
         (user spec) */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.2;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
@@ -3241,7 +3254,7 @@ function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
 var LAND_LAG={
  kairo:{airclaw:0.43,taildrop:0.34,diveclaw:0.25,tail:0.30,fspin:0.40,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) landing lag 0.53 -> 0.43; フロストスピン (fspin) landing lag 0.30 -> 0.40 */
  warden:{airclaw:0.33,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18},
- kojiro:{airslash:0.26,airheavy:0.34,taildrop:0.30,diveclaw:0.44,krise:0.20,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20, 燕返し 0.18 */
+ kojiro:{airslash:0.26,airheavy:0.34,taildrop:0.30,diveclaw:0.44,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{airclaw:0.28,diveclaw:0.32,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40; the axeair / taildrop entries are gone with their deleted moves */
  sara:{sspin:0.30,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25},
  orchid:{ohook:0.28,odive:0.25,oshot:0.24,otackle:0.25,jkcombo:0.25}
@@ -3904,6 +3917,11 @@ function stepFighter(f,dt,input,foe){
     ~0.12s / ~0.10s after it (user spec) */
  if(f.char==="kojiro"&&f.state==="heavy"&&!f.hitDone&&f.stateT<=0.3){f.hitDone=true;meleeHit(f,foe,82,80,24,770,f.face,-0.42);spawnParticles(f.x+f.face*26,f.y+f.h*0.5,14,"#fecaca",220);spawnFxBurst(FXIMG.slash,f.x+f.face*30,f.y+f.h*0.5,150,0.32,0.5,f.face,0.9);beep(150,.13,"sawtooth",.06)} /* 三日月斬り: KB 650 -> 770, box 86x74 -> 82x80 (user spec). 見た目変更: slash burst blooms as the crescent cut lands */
  if(f.char==="kojiro"&&f.state==="airheavy"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,76,76,22,740,f.face,0.9);spawnParticles(f.x,f.y+f.h*0.7,12,"#fecaca",210);spawnFxBurst(FXIMG.slash,f.x+f.face*16,f.y+f.h*0.6,140,0.3,2.2,f.face,0.9);beep(140,.12,"sawtooth",.06)} /* 空中三日月斬り: KB 690 -> 740, box 82x76 -> 76x76 (user spec). 見た目変更: tilted slash burst for the falling crescent */
+ /* KOJIRO 疾風突き (fwd+J): the lunge starts on the press, but the
+    thrust itself lands 0.12s later (発生 0.12秒, user spec) —
+    stateT 0.32 -> threshold 0.20. Damage 13 / KB 620 / box 94x60
+    are unchanged; only the hit timing moved off the press */
+ if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05)} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept) */
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
@@ -3917,7 +3935,7 @@ function stepFighter(f,dt,input,foe){
  }
  if(f.char==="kojiro"&&f.state==="lowcut"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,440,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も KB 440・被弾硬直 0.18秒 (user spec) */
+   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,480,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も KB 480・被弾硬直 0.18秒 (user spec) */
  }
  /* KOJIRO 風波 (down+K): rooted in place while the tornado lasts */
  if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0;if(Math.random()<0.7){spawnParticles(f.x+(Math.random()-0.5)*70,f.y+f.h-6,1,"#a7f3d0",120);spawnParticles(f.x+(Math.random()-0.5)*46,f.y+f.h*0.35,1,"#fecaca",110)}}
