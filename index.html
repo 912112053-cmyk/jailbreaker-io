@@ -373,6 +373,14 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["22:45"],tag:"不具合修正",title:"アカウント作成で「エラーが発生しました（InvalidParams）」になる不具合を修正",
+  items:["アカウント作成でユーザーネームとパスワードを入れて「作成してログイン」を押すと「エラーが発生しました（InvalidParams）。通信環境を確認して、もう一度お試しください。」と表示されて登録できない不具合を修正しました。通信環境の問題ではありませんでした",
+         "原因：PlayFab の表示名は3文字以上が必須なのに対して、ゲーム側が1〜2文字のユーザーネームも受け付けていたため、短い名前での登録がサーバー側で弾かれていました。ユーザーネームのルールを3〜20文字に統一しました（2文字以下の名前では登録できません）",
+         "あわせて、サーバーから返ったエラーの具体的な理由を表示するようにし、入力の問題を「通信環境」のせいにする文言が出ないようにしました"]},
+ {date:"2026/11/13",times:["22:40"],tag:"修正・調整",title:"KOJIRO の KB 調整（Jチェーン／下段斬り／空中↑+K 昇り斬り）",
+  items:["J 1段目 袈裟斬り：KB 250→220。J 2段目 斬り上げ：KB 280→250。J 3段目 三突き：KB 330→230（3ヒットすべて）。↓+J 下段斬り：KB 250→440（二連撃の両ヒットとも）",
+         "空中↑+K 昇り斬り：1段目 KB 240→820に強化し、吹っ飛ばし方向を真上に変更しました（2段目 KB 540は変更なし）。再使用 5.0秒→2.2秒に短縮、上昇 vy -520→-820に強化。着地硬直0.2秒は変更なし",
+         "技一覧の表示数値もすべて新しい実数値に更新しました。なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
  {date:"2026/11/13",times:["22:26"],tag:"修正・調整",title:"KOJIRO ↓+J 下段斬りに被弾硬直0.18秒を追加（指定の被弾硬直を全件反映）",
   items:["KOJIRO ↓+J 下段斬り：これまで付いていなかった被弾硬直0.18秒を追加しました。二連撃の両ヒットとも、命中した相手に正確に0.18秒の硬直が入ります（KBによる吹っ飛ばしはこれまでどおり別に発生します）。技一覧の表示にも「被弾硬直 0.18秒」を追加しました",
          "あわせて、指定された被弾硬直が全件そろっていることを確認しました：KAIRO J 1段目 横払い 0.24秒／J 2段目 返し斬り 0.26秒／↓+J アイスフット 0.2秒、WARDEN J 1段目 横薙ぎ 0.22秒／J 2段目 平返し 0.22秒／前+J・ダッシュ中J 電気警棒 0.44秒、KOJIRO J 1段目 袈裟斬り 0.24秒／J 2段目 斬り上げ 0.26秒／J 3段目 三突き 0.26秒、AXE J 1段目 壊斧 0.4秒",
@@ -723,21 +731,21 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れの剣士。袈裟斬り・斬り上げ・三突き・横薙ぎの<b>四段チェーン</b>に、竜巻の風波、緑の剣気の燕返し、居合と、剣の軌跡も体の動きも踏み込み方も一技ごとに違う、近接特化のキャラ。<b>飛び道具は一切持たない</b>（唯一の例外はウルトの斬撃だけ）。間合いの中で剣を振り分けて戦う。HPは240に下がった代わりに、チェーンの回転とダッシュが速くなった。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','464')+mvS('空中速度','450')+mvS('受けKB','×1.08')+mvS('ダッシュ','1180')+mvS('ウルト溜まり','最速クラス（約1.33倍）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 袈裟斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒</span><p>上から下に刀を振り下ろして攻撃する（旧「突き」から変更）。後硬直が大幅に短くなり、チェーンの起点として振り続けられる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.16秒')+mvS('判定','80×52')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','280（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','92×68')+mvS('被弾硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 袈裟斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒</span><p>上から下に刀を振り下ろして攻撃する（旧「突き」から変更）。後硬直が大幅に短くなり、チェーンの起点として振り続けられる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.16秒')+mvS('判定','80×52')+mvS('被弾硬直','0.24秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','230')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','92×68')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 4段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段（新設）</span><p>3段目に引き続いて横に刀を振り抜いて攻撃する、チェーンの締め。広く重い一薙ぎで吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.40秒')+mvS('判定','96×56'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.23秒')+mvS('判定','94×60'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き斬り</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','310')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','76×58'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り斬り</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.47秒')+mvS('判定','66×88')+mvS('上昇','vy -540'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','440')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。前後両方に判定がある。</p>'+mvSpec(mvS('ダメージ','前13／後7')+mvS('KB','前360／後200')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','前84×66／後60×56')+mvS('着地硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.44秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体16／着地 前12・後12')+mvS('KB','本体420／着地 前620・後620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体74×62／着地144×58')+mvS('着地硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 三日月斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>三日月型の斬撃の攻撃をする。判定は振りの途中（約0.12秒後）に出る。出は遅いが一撃の威力と吹っ飛ばしは最大級。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','770')+mvS('発生','約0.12秒')+mvS('全体','0.42秒')+mvS('後硬直','0.44秒')+mvS('判定','82×80'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 空中三日月斬り</b><p>空中で三日月型の斬撃の攻撃をする。判定は約0.10秒後に出る。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','740')+mvS('発生','約0.10秒')+mvS('全体','0.36秒')+mvS('後硬直','0.34秒')+mvS('判定','76×76')+mvS('着地硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','0.88秒（動けない）')+mvS('判定','210×230'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ瞬時に移動しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','240／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('再使用','5.0秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ勢いよく上昇しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。1段目は相手を<b>真上に吹っ飛ばす</b>。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','820（真上）／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('上昇','vy -820')+mvS('再使用','2.2秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.8秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で約118前進して間合いを一気に詰め、斬り抜ける。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','500')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','102×58')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直は短くなったが、その間は動けない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','66')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.33秒（動けない）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
@@ -1914,6 +1922,18 @@ function pfErrMsg(e){
  if(c==="InvalidPassword")return "パスワードは6文字以上で入力してください。";
  if(c==="InvalidUsername")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
  if(c==="InvalidEmailAddress")return "そのユーザーネームではアカウントを作れませんでした。別の名前でお試しください。";
+ if(c==="InvalidParams"){
+  /* PlayFab rejects the request itself (NOT a connection problem):
+     surface its field-level reason instead of blaming the network.
+     The known case is the DisplayName rule — PlayFab title display
+     names must be 3-25 characters, while this game used to accept
+     1-2 character usernames, which failed here with exactly this
+     error. Registration now enforces 3+ characters up front; this
+     branch remains as the honest fallback for any other bad field. */
+  var det="";try{var ed=e.errorDetails||{};for(var dk in ed){if(ed[dk]&&ed[dk].length){det=String(ed[dk][0]);break}}}catch(x){}
+  if(/DisplayName/i.test(det))return "ユーザーネームは3〜20文字で入力してください。";
+  return "入力内容が受け付けられませんでした"+(det?"（"+det+"）":"")+"。ユーザーネームとパスワードを確認して、もう一度お試しください。";
+ }
  return "エラーが発生しました"+(c?"（"+c+"）":"")+"。通信環境を確認して、もう一度お試しください。";
 }
 /* ---- session persistence: the PlayFab session ticket is kept on this
@@ -2239,7 +2259,8 @@ function registerAccount(){
  var nInp=$("regNameInput"),pInp=$("regPassInput"),p2Inp=$("regPass2Input");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"",pw2=p2Inp?p2Inp.value:"";
- if(!validDisplayName(n)){openFriends("ユーザーネームは1〜20文字で入力してください。日本語・英数字・記号など、ほとんどの文字が使えます。");return}
+ if(!validDisplayName(n)){openFriends("ユーザーネームは3〜20文字で入力してください。日本語・英数字・記号など、ほとんどの文字が使えます。");return}
+ if(Array.from(n).length<3){openFriends("ユーザーネームは3文字以上で入力してください（2文字以下ではアカウントを作れません）。");return}
  if(pw.length<6){openFriends("パスワードは6文字以上で入力してください。");return}
  if(pw.length>64){openFriends("パスワードは64文字以内で入力してください。");return}
  if(pw!==pw2){openFriends("パスワードが確認用と一致しません。もう一度入力してください。");return}
@@ -2258,7 +2279,7 @@ function loginAccount(){
  var nInp=$("loginNameInput"),pInp=$("loginPassInput");
  var n=cleanName(nInp?nInp.value:"");
  var pw=pInp?pInp.value:"";
- if(!validDisplayName(n)){openFriends("ユーザーネームを入力してください（1〜20文字）。");return}
+ if(!validDisplayName(n)||Array.from(n).length<3){openFriends("ユーザーネームを入力してください（3〜20文字）。");return}
  if(!pw){openFriends("パスワードを入力してください。");return}
  openFriends("ログインしています…");
  pfUsernameFor(n,function(un){
@@ -2290,7 +2311,7 @@ function sendFriendRequest(){
  var inp=$("friendSearchInput");var n=cleanName(inp?inp.value:"");
  if(!PF_OK){openFriends("フレンド申請にはオンライン環境が必要です。ネットワーク接続を確認してください。");return}
  if(!social.name||!social.loggedIn){openFriends("先にログインしてください。");return}
- if(!validDisplayName(n)){openFriends("検索するユーザーネームを入力してください（1〜20文字）。");return}
+ if(!validDisplayName(n)){openFriends("検索するユーザーネームを入力してください（3〜20文字）。");return}
  if(nameKey(n)===nameKey(social.name)){openFriends("それは自分のユーザーネームです。");return}
  if(social.friends.some(function(fn){return nameKey(fn)===nameKey(n)})){openFriends(n+" さんとは既にフレンドです。");return}
  if(Object.keys(social.outReq).some(function(id){return nameKey(social.outReq[id].name)===nameKey(n)})){openFriends(n+" さんには既に申請を送っています。相手の承認をお待ちください。");return}
@@ -2341,7 +2362,7 @@ function friendsHTML(msg){
    +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="loginPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="current-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="loginBtn" style="min-width:96px">ログイン</button></span></div>'
    +'<h3 style="margin:16px 0 2px;color:#fff;font-size:15px">アカウント作成</h3>'
-   +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span><br><span class="bnote">日本語・英数字・記号など、ほとんどの文字が使えます（1〜20文字）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
+   +'<div class="bindRow"><div><span class="bname">ユーザーネーム</span><br><span class="bnote">日本語・英数字・記号など、ほとんどの文字が使えます（3〜20文字）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="username" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード</span><br><span class="bnote">6〜64文字。ログインのたびに必要になります</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPassInput" type="password" maxlength="64" placeholder="パスワード" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
    +'<div class="bindRow"><div><span class="bname">パスワード（確認）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="regPass2Input" type="password" maxlength="64" placeholder="もう一度入力" autocomplete="new-password" style="'+FRIEND_INPUT_STYLE+'"><button class="bindKey" id="registerBtn" style="min-width:96px">作成してログイン</button></span></div>'
    +'<p style="color:var(--muted)">アカウントはクラウド（PlayFab）に保存されるので、どの端末からでも同じユーザーネームとパスワードでログインでき、フレンド一覧もそのまま引き継がれます。一度ログインすれば、次回開いた時は自動でログインします（セッションの有効期限が切れた時は、もう一度パスワードでログインしてください）。パスワードを忘れると復旧できないので、忘れないものにしてください。</p>';
@@ -2789,11 +2810,11 @@ function startKojiroAttack(f,type,foe){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
         first cut lands on the press, the second ticks out ~0.14s later
         in stepFighter (state "lowcut", spinHits counts cuts). Each cut
-        is 8 dmg / KB 250, box 82x34, 被弾硬直 0.18秒 fixed on the hit
+        is 8 dmg / KB 440, box 82x34, 被弾硬直 0.18秒 fixed on the hit
         foe, separate from the KB */
      f.state="lowcut";f.stateT=0.28;f.attackCd=0.36;f.comboWin=0;
      f.spinHits=1;f.spinTick=0;
-     meleeHit(f,foe,82,34,8,250,f.face,0.04,0.18);
+     meleeHit(f,foe,82,34,8,440,f.face,0.04,0.18); /* 下段斬り: KB 250 -> 440 (user spec) */
      spawnParticles(f.x+f.face*24,f.y+f.h-6,8,"#fecaca",150);beep(700,.06,"square",.045);
    }else if(upHeld){
      /* 昇り斬り: rising slash that carries Kojiro up with it (anti-air);
@@ -2828,13 +2849,13 @@ function startKojiroAttack(f,type,foe){
        f.comboWin=0.8;
        f.state="chop";f.stateT=0.26;f.attackCd=0.09; /* 袈裟斬り: overhead kesa cut (was the 突き thrust) */
        f.vx+=f.face*55;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,80,52,10,250,f.face,-0.18,0.24); /* 被弾硬直 0.24秒: hit foe is stunned exactly 0.24s, separate from the KB (user spec) */
+       meleeHit(f,foe,80,52,10,220,f.face,-0.18,0.24); /* 袈裟斬り: KB 250 -> 220 (user spec). 被弾硬直 0.24秒: hit foe is stunned exactly 0.24s, separate from the KB (user spec) */
        spawnParticles(f.x+f.face*20,f.y+f.h*0.4,8,"#fecaca",170);
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.8;
        f.state="rise";f.stateT=0.26;f.attackCd=0.11;
-       meleeHit(f,foe,68,84,12,280,f.face,-1.0,0.26); /* 斬り上げ: KB 340 -> 280 (still a strong upward launch), 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
+       meleeHit(f,foe,68,84,12,250,f.face,-1.0,0.26); /* 斬り上げ: KB 340 -> 280 -> 250 (still a strong upward launch), 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
        spawnParticles(f.x+f.face*16,f.y+f.h*0.3,7,"#fecaca",150);
        beep(800,.06,"square",.045);
      }else if(f.comboStep===2){
@@ -2844,7 +2865,7 @@ function startKojiroAttack(f,type,foe){
        f.state="thrust3";f.stateT=0.36;f.attackCd=0.13;
        f.spinHits=1;f.spinTick=0;
        f.vx+=f.face*80;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,92,68,5,330,f.face,-0.18,0.26); /* 三突き: 18 -> 5 x max 3 hits, KB 540 -> 330, box 82x72 -> 92x68, 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
+       meleeHit(f,foe,92,68,5,230,f.face,-0.18,0.26); /* 三突き: 18 -> 5 x max 3 hits, KB 540 -> 330 -> 230, box 82x72 -> 92x68, 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
        spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fecaca",180);
        beep(1100,.05,"square",.045);
      }else{
@@ -2867,16 +2888,17 @@ function startKojiroAttack(f,type,foe){
      meleeHit(f,foe,210,230,0,820,f.face,-0.35);meleeHit(f,foe,210,230,0,820,-f.face,-0.35);
      spawnParticles(f.x,f.y+f.h*0.5,20,"#a7f3d0",240);spawnParticles(f.x,f.y+f.h*0.3,12,"#fecaca",200);spawnRing(f.x,f.y+f.h*0.5,"#a7f3d0",64);beep(400,.16,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
-     /* 空中↑+K: 昇り斬り — teleports straight up at vy -520, cutting
-        upward TWICE on the way: the first cut lands on the press
-        (13 dmg / KB 240), the second is delayed into stepFighter
-        (state "krise", fires at stateT 0.22; 13 dmg / KB 540).
-        CD 5.0s on the shared flyCd. Landing lag 0.20 (LAND_LAG).
-        attackCd 0.32 + universal 0.07 = 後硬直 0.39 (user spec) */
+     /* 空中↑+K: 昇り斬り — rises at vy -820, cutting upward TWICE on
+        the way: the first cut lands on the press (13 dmg / KB 820,
+        launched STRAIGHT UP: dir 0, up -1.0), the second is delayed
+        into stepFighter (state "krise", fires at stateT 0.22; 13 dmg
+        / KB 540). CD 2.2s on the shared flyCd. Landing lag 0.20
+        (LAND_LAG). attackCd 0.32 + universal 0.07 = 後硬直 0.39
+        (user spec) */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=5.0;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
-     f.vy=-520;f.vx=0;f.onGround=false;f.fastfall=false;
-     meleeHit(f,foe,76,86,13,240,f.face,-1.05); /* 1段目 KB 420 -> 240 (user spec) */
+     f.flyCd=2.2;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
+     f.vy=-820;f.vx=0;f.onGround=false;f.fastfall=false;
+     meleeHit(f,foe,76,86,13,820,0,-1.0); /* 1段目 KB 240 -> 820・真上吹き (user spec) */
      spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#fecaca",170);beep(980,.07,"square",.05);
    }else if(!f.onGround){
      /* 空中三日月斬り: crescent cut in the air (delayed hit in
@@ -3770,11 +3792,11 @@ function stepFighter(f,dt,input,foe){
     follow-up hits tick out on spinTick while the state lasts */
  if(f.char==="kojiro"&&f.state==="thrust3"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,92,68,5,330,f.face,-0.18,0.26);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,7,"#fecaca",170);beep(1100,.05,"square",.04)}
+   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,92,68,5,230,f.face,-0.18,0.26);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,7,"#fecaca",170);beep(1100,.05,"square",.04)} /* 三突き 2・3発目も KB 230 (user spec) */
  }
  if(f.char==="kojiro"&&f.state==="lowcut"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,250,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も被弾硬直 0.18秒 (user spec) */
+   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,440,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も KB 440・被弾硬直 0.18秒 (user spec) */
  }
  /* KOJIRO 風波 (down+K): rooted in place while the tornado lasts */
  if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0;if(Math.random()<0.7){spawnParticles(f.x+(Math.random()-0.5)*70,f.y+f.h-6,1,"#a7f3d0",120);spawnParticles(f.x+(Math.random()-0.5)*46,f.y+f.h*0.35,1,"#fecaca",110)}}
