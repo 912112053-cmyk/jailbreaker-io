@@ -348,6 +348,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["21:07"],tag:"修正・調整",title:"KAIRO／WARDENの技調整と見た目改善（フロストスピン全体・上昇時間の見直し／ブリンク斬り・フロストテイルの氷の見た目／アーム大型化）",
+  items:["KAIRO 空中↑+K フロストスピン：全体 0.35秒→0.55秒、上昇が続く時間 1.2秒→0.55秒（ヒット間隔も 0.06秒→0.11秒に戻し、0.55秒の中で最大5ヒット）。ダメージ 前6／後6・KB 前180／後180・発生 即時・後硬直0.69秒・判定68×62・上昇 vy -550・再使用5.0秒は変更なし",
+         "KAIRO 前+J ブリンク斬り：見た目を氷の爪でひっかく攻撃に変更。瞬間移動の到達と同時に大きな氷の爪が3本の爪痕を刻み、氷片が飛び散るようになった（ダメージ・KB・全体・後硬直・判定は変更なし）",
+         "KAIRO K フロストテイル：見た目を氷まみれの尻尾で攻撃するものに変更。凍り付いた太い尻尾に氷のトゲと結晶をまとわせ、振り回す軌跡にも氷片が残るようになった（ダメージ・KB・全体・後硬直・判定は変更なし）",
+         "WARDEN 空中↑+K アームキャッチ・ミー：全体 0.38秒→0.55秒。吊り上げアームのサイズを大幅に大型化し、太い関節アームと大きな爪で体を掴むのがはっきり分かるようになった（ダメージなし・発生 即時・後硬直0.55秒・上昇 vy -1020・再使用5.0秒は変更なし）。技一覧の表示数値もすべて新しい実数値に更新した"]},
  {date:"2026/11/13",times:["20:57"],tag:"修正・調整",title:"KOJIROのバランス調整（四段チェーン化／↓+Kが風波に変化／空中↓+K廃止／三日月斬り強化）",
   items:["基礎：HP 250→240、受けKB ×1.02→×1.08（吹っ飛びやすく）。ダッシュ速度 1080→1180・再使用 2.4秒→2.0秒。ウルト溜まり 約1.41倍→約1.33倍（やや遅く）。地上速度464／空中速度450は変更なし",
          "Jチェーンが4段に：1段目は「突き」から「袈裟斬り」に変更し 後硬直 0.45秒→0.16秒・被弾硬直0.24秒を追加。2段目 斬り上げ：KB 340→280・後硬直 0.40秒→0.18秒・被弾硬直0.26秒を追加。3段目は「振り下ろし」から「三突き」に変更：ダメージ 18→5×最大3ヒット・KB 540→330・判定 82×72→92×68・後硬直 0.59秒→0.20秒・被弾硬直0.26秒を追加。新設の4段目「横薙ぎ」：ダメージ20・KB560・判定96×56・後硬直0.40秒",
@@ -609,17 +614,17 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','270')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','530')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ瞬間移動し、斬撃。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.8秒')+mvS('判定','80×62'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ瞬間移動し、<b>大きな氷の爪でひっかく</b>。到達と同時に3本の氷の爪が爪痕を刻み、氷片が飛び散る。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.8秒')+mvS('判定','80×62'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックステップ斬り</b><p>前に薙ぎながら後ろへ跳んで距離を作る間合い調整技。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','64×50'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングアッパー</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','56×74')+mvS('上昇','vy -448'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。相手が乗っている間は移動速度が 0.45倍 に鈍り続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','450')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.22秒')+mvS('判定','72×34')+mvS('被弾硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.53秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.53秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68')+mvS('着地硬直','0.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>凍った尻尾を大きく振り回す。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
++'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は移動速度0.45倍に鈍る）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','88×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず、全体の拘束も長い大技。</p>'+mvSpec(mvS('ダメージ','一段目34／二段目28／三段目14')+mvS('KB','一段目600（真上へ）／二段目460（真上へ）／三段目600')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒')+mvS('後硬直','0.62秒')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>1.2秒間上昇し続ける</b>。0.06秒間隔で前後両側へ最大5ヒット。全体が短くなり、より素早く回り切る。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.35秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（1.2秒間）')+mvS('再使用','5.0秒')+mvS('着地硬直','0.30秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','5.0秒')+mvS('着地硬直','0.30秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発撃つと自動リロード。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','940')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p>'+mvSpec(mvS('速度','1100')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
@@ -640,7 +645,7 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>K — シールドバッシュ</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>盾を取り出して突進して攻撃する看守の主力技。判定は約0.18秒後に出る。斬撃の弧ではなく四角い衝撃波のバーストが出るので、J系とは形で見分けられる。空中でも同じバッシュが出る。</p>'+mvSpec(mvS('ダメージ','地上24／空中22')+mvS('KB','地上600／空中640')+mvS('発生','約0.18秒')+mvS('全体','0.38秒')+mvS('後硬直','0.47秒')+mvS('判定','80×70')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p>急降下して攻撃する。判定は約0.32秒後に出て、着地すると<b>着地硬直0.36秒</b>がある。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.32秒')+mvS('全体','0.42秒')+mvS('後硬直','0.47秒')+mvS('判定','76×72')+mvS('着地硬直','0.36秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ショックスイープ</b> <span style="color:#f59e0b;font-weight:900">地雷設置</span><p>その場に地雷を設置する。相手が踏むと爆発する。この地雷は<b>フィールドに二つまで</b>しか存在できない（3つ目を置くと一番古いものが消える）。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.44秒')+mvS('判定','62×40（地雷の当たり判定）'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — アームキャッチ・ミー</b><p>上空から伸びるアームが<b>体を掴んで</b>、vy -1020で真上へ一気に吊り上げる復帰・回避技。上昇がさらに速くなった。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('上昇','vy -1020')+mvS('再使用','5.0秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — アームキャッチ・ミー</b><p>上空から伸びる<b>大型化したアーム</b>が<b>体を掴んで</b>、vy -1020で真上へ一気に吊り上げる復帰・回避技。太い関節アームと大きな爪で掴むのがはっきり分かる。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('上昇','vy -1020')+mvS('再使用','5.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ショックボルト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・4発</span><p>電撃ボルトを撃つ。4発で自動リロード。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.43秒')+mvS('弾速','630')+mvS('射程','約770（1.22秒）')+mvS('リロード','1.15秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — スカイフック・クレーン（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>空からマグネットクレーンを呼び、目の前の相手を磁力で確保して真上へ吊り上げ（0.55秒間、相手はなにもできない）、そのまま地面へ叩き落とす逮捕技。周囲を薙ぐ技ではなく「捕まえて落とす」一点集中の大技。ゲージMAX中は体に金色の電撃オーラがまとわりつく。外すと確保失敗でゲージは消費される。</p>'+mvSpec(mvS('ダメージ','46（スラム時）')+mvS('KB','820')+mvS('発生','確保は即時／ダメージは約0.55秒後')+mvS('全体','0.55秒（確保時）／0.40秒（外し時）')+mvS('後硬直','0.92秒（発動から次の行動まで）')+mvS('確保範囲','前方約500×上下約430'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','920')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -2459,7 +2464,7 @@ function startWardenAttack(f,type,foe){
         vy -1020. Pure recovery / escape mobility: NO hitbox at all.
         CD 5.0s on the shared flyCd (same slot SARA / ORCHID use) */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=5.0;f.state="wcatch";f.stateT=0.38;f.attackCd=0.48;f.comboWin=0;
+     f.flyCd=5.0;f.state="wcatch";f.stateT=0.55;f.attackCd=0.48;f.comboWin=0; /* アームキャッチ・ミー 全体 0.38秒 -> 0.55秒 (user spec): 後硬直は attackCd 0.48 + 共通0.07 = 0.55秒のまま */
      f.vy=-1020;f.vx=0;f.onGround=false;f.fastfall=false; /* 上昇 vy -820 -> -1020 (user spec) */
      floaters.push({x:f.x,y:f.y-30,txt:"アームキャッチ・ミー！",life:.85,col:"#fde68a"});
      spawnParticles(f.x,f.y-14,14,"#fde68a",170);spawnParticles(f.x,f.y+f.h*0.4,8,"#fbbf24",130);spawnRing(f.x,f.y-6,"#fde68a",40);
@@ -3221,7 +3226,7 @@ function startAttack(f,type){
      f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
      meleeHit(f,foe,80,62,14,440,f.face,-0.3);
-     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);
+     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30); /* 氷の爪でひっかく見た目: 到達点に氷片と爪痕のリングを追加 (数値は変更なし) */
      beep(1350,.06,"square",.05);
    }else{
      /* ground J = a 3-stage CHAIN (user spec, restored): stage 1 is a plain
@@ -3259,12 +3264,12 @@ function startAttack(f,type){
    var kUp=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
    if(!f.onGround&&kUp){
      /* 空中↑+K: フロストスピン — rises straight up at vy -550 for
-        1.2s while spinning in ice: the spin ticks out small hits on
+        0.55s while spinning in ice: the spin ticks out small hits on
         BOTH sides in stepFighter (state "fspin", up to 5 ticks).
         CD 5.0s on the shared flyCd */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=5.0;f.state="fspin";f.stateT=0.35;f.attackCd=0.62;f.comboWin=0; /* フロストスピン 全体 0.55秒 -> 0.35秒 (user spec): 後硬直は attackCd 0.62 + 共通0.07 = 0.69秒のまま。0.35秒の中に最大5ヒットを収めるため、stepFighter 側のヒット間隔も 0.11秒 -> 0.06秒に詰めた */
-     f.vy=-550;f.vx=0;f.onGround=false;f.fastfall=false;f.flyDur=1.2; /* rise held at vy -550 for 1.2s (user spec): flyDur counts it down in stepFighter and the gravity step holds the rise; landing clears it */
+     f.flyCd=5.0;f.state="fspin";f.stateT=0.55;f.attackCd=0.62;f.comboWin=0; /* フロストスピン 全体 0.35秒 -> 0.55秒 / 上昇秒数 1.2秒 -> 0.55秒 (user spec): 後硬直は attackCd 0.62 + 共通0.07 = 0.69秒のまま。0.55秒の中に最大5ヒットを収めるため、stepFighter 側のヒット間隔も 0.06秒 -> 0.11秒に戻した */
+     f.vy=-550;f.vx=0;f.onGround=false;f.fastfall=false;f.flyDur=0.55; /* rise held at vy -550 for 0.55s (user spec): flyDur counts it down in stepFighter and the gravity step holds the rise; landing clears it */
      f.spinHits=0;f.spinTick=0.05;
      spawnParticles(f.x,f.y+f.h*0.45,14,"#67e8f9",200);spawnRing(f.x,f.y+f.h*0.45,"#a5f3fc",42);
      beep(1500,.08,"square",.05);
@@ -3470,7 +3475,7 @@ function stepFighter(f,dt,input,foe){
    if(Math.floor(before/50)!==Math.floor(f.hp/50))floaters.push({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
  }
  var frozenFactor=1;if(f.frozen>0){f.frozen-=dt;frozenFactor=0.45}
- if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?80:74,f.char==="kairo"?64:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?660:620):(airT?620:580),f.face,airT?0.95:-0.5);beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64, dmg 33 ground / 32 air, KB 620 ground / 660 air; other chars keep their values */
+ if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?80:74,f.char==="kairo"?64:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?660:620):(airT?620:580),f.face,airT?0.95:-0.5);if(f.char==="kairo"){spawnParticles(f.x+f.face*40,f.y+f.h*0.5,10,"#a5f3fc",210);spawnParticles(f.x+f.face*34,f.y+f.h*0.42,5,"#e0f2fe",150);spawnRing(f.x+f.face*38,f.y+f.h*0.48,"#7dd3fc",30)} /* KAIRO フロストテイル: 氷まみれの尻尾のヒット時に氷片バーストを追加 (数値は変更なし) */beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64, dmg 33 ground / 32 air, KB 620 ground / 660 air; other chars keep their values */
  /* WARDEN shield bash delayed hit (user spec): lands 0.18s after the
     press (stateT 0.38 -> threshold 0.20), box 80x70, dmg 24 / air 22,
     KB 600 / air 640. Presentation: a dull square shockwave burst on
@@ -3525,13 +3530,12 @@ function stepFighter(f,dt,input,foe){
  }
  /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
     them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
-    vy -550 through them: flyDur (1.2s from the press) counts down
-    here and the gravity step holds vy at -550 while it lasts, even
-    after the 0.55s spin state itself has ended */
+    vy -550 through them: flyDur (0.55s from the press) counts down
+    here and the gravity step holds vy at -550 while it lasts */
  if(f.char==="kairo"&&(f.flyDur||0)>0){f.flyDur-=dt;if(f.flyDur<=0)f.flyDur=0}
  if(f.state==="fspin"&&f.char==="kairo"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.06&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,180,f.face,-0.3);meleeHit(f,foe,68,62,6,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,7,"#67e8f9",180);spawnParticles(f.x,f.y+f.h*0.45,3,"#e0f2fe",140)} /* ヒット間隔 0.11秒 -> 0.06秒 (user spec): 全体 0.35秒の中でも最大5ヒットすべてが出る */
+   if(f.spinTick>=0.11&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,6,180,f.face,-0.3);meleeHit(f,foe,68,62,6,180,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,7,"#67e8f9",180);spawnParticles(f.x,f.y+f.h*0.45,3,"#e0f2fe",140)} /* ヒット間隔 0.06秒 -> 0.11秒 (user spec): 全体 0.55秒の中に最大5ヒットを均等に収める */
  }
  /* アイスエッジ (Kairo ground down+K): rooted in place while three
     waves of ice spikes erupt on BOTH sides — 0.2s / 0.3s / 0.4s after
@@ -3805,7 +3809,7 @@ function stepFighter(f,dt,input,foe){
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
  else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
  else if(f.char==="orchid"&&(f.flyDur||0)>0){f.vy=-120} /* ORCHID 飛翔: a steady vy -120 rise for the whole 5s (user spec) */
- else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 1.2s (user spec) */
+ else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 0.55s (user spec) */
  else f.vy+=g*dt;
  var cap=f.fastfall?FASTFALL:MAXFALL;if(f.vy>0)cap*=(f.fallMul||1);if(f.vy>cap)f.vy=cap;
  if(f.char==="sara"&&f.flameMode===2&&f.flameT>0&&f.vy>20)f.vy=20; /* SARA flame breath: fall speed held at 20 while breathing */
@@ -4022,7 +4026,16 @@ function drawKairo(f){
  else if(f.state==="clawrev"){ctx.beginPath();ctx.moveTo(10,30);ctx.lineTo(34,38);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s7=0;s7<3;s7++){ctx.beginPath();ctx.moveTo(36,42-s7*5);ctx.lineTo(50,36-s7*5);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(4,34,36,0.3,1.25);ctx.stroke()}
  else if(f.state==="clawup"){ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(24,2);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s2=0;s2<3;s2++){ctx.beginPath();ctx.moveTo(20+s2*5,-2);ctx.lineTo(24+s2*5,-14);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(8,22,30,-1.25,-0.35);ctx.stroke()}
  else if(f.state==="clawspin"||f.state==="airclaw"||f.state==="fspin"){var sp3=time*26;ctx.save();ctx.translate(0,27);ctx.rotate(sp3);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=4.5;for(var b2=0;b2<3;b2++){ctx.save();ctx.rotate(b2*2.09);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore();ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(24,14);ctx.stroke()}
- else if(f.state==="dashclaw"){ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(46,24);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3.5;for(var s3=0;s3<3;s3++){ctx.beginPath();ctx.moveTo(48,17+s3*7);ctx.lineTo(64,14+s3*7);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-14,20);ctx.lineTo(-34,20);ctx.moveTo(-12,32);ctx.lineTo(-30,32);ctx.stroke()}
+ else if(f.state==="dashclaw"){
+  /* 前+J ブリンク斬り (見た目変更): 斬撃ではなく氷の爪でひっかく。到達した
+     腕の先に大きな氷の爪(3本の鋭い氷刃)が生え、その先に3本の爪痕の弧と
+     飛び散る氷片を描く。後方の風切り線はブリンクの残像として残す */
+  ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(40,22);ctx.stroke();
+  ctx.fillStyle="rgba(165,243,252,.96)";for(var bc=0;bc<3;bc++){var by=14+bc*9;ctx.beginPath();ctx.moveTo(38,by);ctx.lineTo(72-bc*4,by+3);ctx.lineTo(40,by+8);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(255,255,255,.9)";ctx.beginPath();ctx.moveTo(42,by+1.5);ctx.lineTo(62-bc*4,by+3);ctx.lineTo(42,by+5);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(165,243,252,.96)"}
+  ctx.strokeStyle="rgba(103,232,249,.5)";ctx.lineWidth=5.5;for(var bs3=0;bs3<3;bs3++){ctx.beginPath();ctx.moveTo(48,9+bs3*11);ctx.quadraticCurveTo(70,15+bs3*11,65,29+bs3*9);ctx.stroke()}
+  ctx.strokeStyle="rgba(224,242,254,.95)";ctx.lineWidth=3;for(var bs2=0;bs2<3;bs2++){ctx.beginPath();ctx.moveTo(50,8+bs2*11);ctx.quadraticCurveTo(74,14+bs2*11,68,30+bs2*9);ctx.stroke()}
+  ctx.fillStyle="#e0f2fe";for(var bd=0;bd<4;bd++){ctx.save();ctx.translate(58+bd*6,10+bd*9);ctx.rotate(.78+bd);ctx.fillRect(-2.4,-2.4,4.8,4.8);ctx.restore()}
+  ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-14,20);ctx.lineTo(-36,20);ctx.moveTo(-12,32);ctx.lineTo(-32,32);ctx.moveTo(-10,14);ctx.lineTo(-24,14);ctx.stroke()}
  else if(f.state==="diveclaw"){ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(30,46);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s4=0;s4<3;s4++){ctx.beginPath();ctx.moveTo(26+s4*5,44);ctx.lineTo(32+s4*5,56);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-6,6);ctx.lineTo(-14,-8);ctx.moveTo(6,4);ctx.lineTo(0,-10);ctx.stroke()}
  else if(f.state==="lowclaw"){ctx.beginPath();ctx.moveTo(10,38);ctx.lineTo(38,44);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s5=0;s5<3;s5++){ctx.beginPath();ctx.moveTo(40,38+s5*5);ctx.lineTo(54,36+s5*5);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,50);ctx.lineTo(-32,50);ctx.moveTo(-10,42);ctx.lineTo(-26,42);ctx.stroke()}
  else if(f.state==="jkcombo"){
@@ -4046,7 +4059,18 @@ function drawKairo(f){
  else if(f.state==="shard"){ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(32,23);ctx.stroke();ctx.fillStyle="#bae6fd";ctx.save();ctx.translate(38,22);ctx.rotate(.78);ctx.fillRect(-5,-5,10,10);ctx.restore()}
  else if(f.state==="ult"){var sp=time*22;ctx.save();ctx.translate(0,26);ctx.rotate(sp);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=5;for(var b=0;b<4;b++){ctx.save();ctx.rotate(b*1.57);ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(40,0);ctx.stroke();ctx.fillStyle="#e0f7ff";ctx.save();ctx.translate(44,0);ctx.rotate(.78);ctx.fillRect(-4.5,-4.5,9,9);ctx.restore();ctx.restore()}ctx.restore();ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(26,12);ctx.moveTo(-10,27);ctx.lineTo(-22,12);ctx.stroke()}
  else{ctx.beginPath();ctx.moveTo(10,27);ctx.lineTo(20,38+(run?Math.sin(f.runPhase)*2.5:0));ctx.stroke()}
- if(f.state==="tail"){ctx.strokeStyle="#7dd3fc";ctx.lineWidth=8;ctx.beginPath();ctx.arc(5,29,42,-.5,1.15);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(5,29,48,-.3,.9);ctx.stroke()} /* 尻尾の弧は通常Kだけ: taildrop は氷柱騎乗、jkcombo は氷の拳に変わったので弧は出さない */
+ if(f.state==="tail"){
+  /* K フロストテイル (見た目変更): 氷まみれの尻尾で攻撃する。凍り付いた太い
+     尻尾の弧に氷のトゲをびっしり生やし、先端に大きな氷結晶を付け、軌跡に
+     氷片を散らす。尻尾の弧は通常Kだけ: taildrop は氷柱騎乗、jkcombo は
+     氷の拳に変わったので弧は出さない */
+  ctx.strokeStyle="rgba(103,232,249,.32)";ctx.lineWidth=20;ctx.beginPath();ctx.arc(5,29,44,-.55,1.2);ctx.stroke();
+  ctx.strokeStyle="#7dd3fc";ctx.lineWidth=12;ctx.beginPath();ctx.arc(5,29,44,-.55,1.2);ctx.stroke();
+  ctx.strokeStyle="#e0f2fe";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(5,29,44,-.45,1.05);ctx.stroke();
+  ctx.fillStyle="rgba(165,243,252,.95)";for(var tk=0;tk<6;tk++){var ta=-.45+tk*.3,txk=5+Math.cos(ta)*53,tyk=29+Math.sin(ta)*53;ctx.beginPath();ctx.moveTo(txk-4.5,tyk);ctx.lineTo(5+Math.cos(ta)*68,29+Math.sin(ta)*68);ctx.lineTo(txk+4.5,tyk+3);ctx.closePath();ctx.fill()}
+  ctx.save();ctx.translate(5+Math.cos(1.15)*53,29+Math.sin(1.15)*53);ctx.rotate(.78);ctx.fillStyle="#bae6fd";ctx.fillRect(-6.5,-6.5,13,13);ctx.fillStyle="#fff";ctx.fillRect(-6.5,-6.5,13,4.5);ctx.restore();
+  ctx.fillStyle="#e0f2fe";for(var td=0;td<4;td++){ctx.save();ctx.translate(5+Math.cos(.1+td*.3)*62,29+Math.sin(.1+td*.3)*62);ctx.rotate(td*1.3);ctx.fillRect(-2.2,-2.2,4.4,4.4);ctx.restore()}
+ }
  if(f.state==="tailsweep"){ctx.strokeStyle="#7dd3fc";ctx.lineWidth=8;ctx.beginPath();ctx.arc(0,48,44,.15,2.6);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,48,50,.4,2.3);ctx.stroke()}
  if(f.state==="iceedge"){ctx.fillStyle="rgba(165,243,252,.85)";var ieO2=[40,95,150],ieH2=[140,120,90];for(var is2=0;is2<(f.spinHits||0);is2++){for(var isd2=-1;isd2<=1;isd2+=2){var sx2=isd2*ieO2[is2];ctx.beginPath();ctx.moveTo(sx2-13,68);ctx.lineTo(sx2,68-ieH2[is2]);ctx.lineTo(sx2+13,68);ctx.closePath();ctx.fill()}}ctx.strokeStyle="#7dd3fc";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(10,38);ctx.lineTo(34,52);ctx.stroke()} /* アイスエッジ: erupted spike waves stay drawn for the rest of the move */
  ctx.fillStyle=darkC;ctx.beginPath();ctx.moveTo(-14,4);ctx.lineTo(-20,-30);ctx.lineTo(-3,1);ctx.closePath();ctx.fill();
@@ -4344,15 +4368,17 @@ function drawWarden(f){
  ctx.strokeStyle="#0f172a";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(wAtk?35:22,wAtk?21:34);ctx.lineTo(wAtk?42:26,wAtk?10:45);ctx.stroke()}
  if(f.state==="ultgrab"){ctx.strokeStyle="#fde68a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(6,-2);ctx.lineTo(2,-30);ctx.stroke();ctx.fillStyle="#f59e0b";ctx.fillRect(-5,-44,14,15);ctx.fillStyle="#fde68a";ctx.fillRect(-9,-29,5,8);ctx.fillRect(8,-29,5,8)}
  if(f.state==="wcatch"){
-  /* アームキャッチ・ミーのアーム本体: 画面上から伸びる関節アーム＋ケーブルが
-     頭の両脇を爪で掴み、そのまま吊り上げる。ウルトのクレーンより細く速い
-     救助アームとして描き分ける */
-  ctx.strokeStyle="#94a3b8";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(0,-52);ctx.stroke();
-  ctx.strokeStyle="#475569";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(0,-52);ctx.lineTo(10,-72);ctx.stroke();
-  ctx.fillStyle="#f59e0b";ctx.fillRect(2,-84,17,13);ctx.fillStyle="#0f172a";ctx.fillRect(2,-84,17,3);
-  ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(10,-77,2.6,0,6.29);ctx.fill();
-  ctx.strokeStyle="#fde68a";ctx.lineWidth=3.5;ctx.beginPath();ctx.moveTo(-4,-16);ctx.lineTo(-13,-4);ctx.lineTo(-11,8);ctx.stroke();ctx.beginPath();ctx.moveTo(4,-16);ctx.lineTo(13,-4);ctx.lineTo(11,8);ctx.stroke();
-  ctx.strokeStyle="rgba(253,230,138,.7)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-7,-30);ctx.lineTo(-11,-44);ctx.moveTo(7,-34);ctx.lineTo(11,-48);ctx.stroke();
+  /* アームキャッチ・ミーのアーム本体 (大型化): 画面上から伸びる太い関節
+     アーム＋ケーブルが、大きな爪で頭の両脇を掴んで吊り上げる。以前より
+     ケーブル・関節・ハウジング・爪のすべてを大幅に大きく描く */
+  ctx.strokeStyle="#94a3b8";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(0,-14);ctx.lineTo(0,-68);ctx.stroke();
+  ctx.strokeStyle="#475569";ctx.lineWidth=13;ctx.beginPath();ctx.moveTo(0,-68);ctx.lineTo(14,-98);ctx.stroke();
+  ctx.fillStyle="#334155";ctx.beginPath();ctx.arc(0,-68,9.5,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(0,-68,4.2,0,6.29);ctx.fill();
+  ctx.fillStyle="#334155";ctx.beginPath();ctx.arc(14,-98,8,0,6.29);ctx.fill();ctx.fillStyle="#94a3b8";ctx.beginPath();ctx.arc(14,-98,3.4,0,6.29);ctx.fill();
+  ctx.fillStyle="#f59e0b";ctx.fillRect(-4,-126,38,25);ctx.fillStyle="#0f172a";ctx.fillRect(-4,-126,38,5);ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(15,-113,4.8,0,6.29);ctx.fill();
+  ctx.strokeStyle="#fde68a";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-5,-16);ctx.lineTo(-24,-3);ctx.lineTo(-20,16);ctx.stroke();ctx.beginPath();ctx.moveTo(5,-16);ctx.lineTo(24,-3);ctx.lineTo(20,16);ctx.stroke();
+  ctx.strokeStyle="#fbbf24";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-19);ctx.lineTo(0,-5);ctx.stroke();
+  ctx.strokeStyle="rgba(253,230,138,.7)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-9,-34);ctx.lineTo(-16,-58);ctx.moveTo(9,-40);ctx.lineTo(16,-64);ctx.stroke();
  }
  if(f.state==="shard"){ctx.fillStyle="#f9a8d4";ctx.beginPath();ctx.arc(33,23,5.5,0,6.29);ctx.fill()}
  ctx.fillStyle=flash?"#ffd9d4":"#cbd5e1";ctx.beginPath();ctx.arc(0,8,16,0,6.29);ctx.fill();
