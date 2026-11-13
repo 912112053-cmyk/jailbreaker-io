@@ -167,6 +167,11 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 .sheet h2{margin:0 0 6px}.sheet p,.sheet li{color:#cbd5e1;font-weight:700;line-height:1.65;font-size:14px}
 .moveRow{display:flex;gap:12px;border-top:1px solid var(--line);padding:11px 0}
 .moveRow b{color:#fff}.moveRow p{margin:2px 0 0}
+.mvTabs{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 2px}
+.mvTab{background:#1e293b;border:1.5px solid #475569;color:#fff;border-radius:12px;padding:7px 13px;font-weight:900;font-size:13px;min-height:38px;font-family:inherit;cursor:pointer}
+.mvTab:hover{border-color:var(--cyan)}
+.mvCount{color:var(--muted);font-weight:700;font-size:12.5px;margin:2px 0 6px}
+.mvGroupHead{color:#fff;font-weight:900;font-size:15px;border-left:4px solid #fff;padding:2px 0 2px 10px;margin:16px 0 2px}
 kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-radius:6px;padding:1px 7px;font-family:inherit;font-weight:900;color:#fff;font-size:11px}
 /* key-binding settings */
 .bindRow{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding:10px 0;flex-wrap:wrap}
@@ -220,7 +225,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="skyline" aria-hidden="true"><div class="bldg" style="height:55%"></div><div class="bldg" style="height:78%"></div><div class="bldg" style="height:42%"></div><div class="bldg" style="height:88%"></div><div class="bldg" style="height:60%"></div><div class="bldg" style="height:96%"></div><div class="bldg" style="height:48%"></div><div class="bldg" style="height:72%"></div></div>
   <div class="topbar">
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="lbBtn">Leaderboards</button><span class="pill" style="border-color:#67e8f9">◉ VS CPU / TRAINING</span></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="updBtn">アップデート履歴</button><button class="pill" id="howBtn">遊び方</button><button class="pill" id="movesBtnTop">Kairoの技</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill" id="updBtn">アップデート履歴</button><button class="pill" id="howBtn">遊び方</button><button class="pill" id="movesBtnTop">全キャラの技</button></div>
   </div>
   <div class="logoWrap">
     <div class="super">SUPER</div>
@@ -276,7 +281,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
       <div id="cpuCharOpts"></div>
       <div style="font-size:11.5px;color:#9db4d6;font-weight:700">試合は最大8人まで（あなた＋CPU最大7人）</div>
     </div>
-    <div class="csBtns"><button class="gbtn primary" id="csStart">▶ バトル開始</button><button class="gbtn" id="csBack">← メニューへ</button></div>
+    <div class="csBtns"><button class="gbtn primary" id="csStart">▶ バトル開始</button><button class="gbtn" id="csMoves">📖 全キャラの技を見る</button><button class="gbtn" id="csBack">← メニューへ</button></div>
   </div>
   <div id="lobbyScreen">
     <div class="csTitle brush">ルームロビー</div>
@@ -325,6 +330,13 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["09:03"],tag:"新機能",title:"全キャラクターの技を見れる「技一覧」システムを実装",
+  items:["これまでは選択中のキャラの技しか見られなかったが、タイトル画面の「全キャラの技」ボタン（旧「Kairoの技」）から、全6キャラ（KAIRO／WARDEN／KOJIRO／AXE／SARA／ORCHID）の技を1つの画面で見られるようになった",
+         "キャラタブを押すとシートを閉じずにその場で表示が切り替わる。タブには各キャラのテーマカラーが付く",
+         "検索は全キャラ横断：キーワードを入れると、全キャラの技名・説明文から一致した技だけをキャラごとにまとめて表示する（例：「毒」「飛び道具」「回復」）",
+         "表示中のキャラは「選択キャラにする」ボタンでそのまま使用キャラに設定できる（キャラ選択画面から開いた場合は選択カードにも反映される）",
+         "キャラ選択画面にも「全キャラの技を見る」ボタンを追加。試合前に全キャラの技を比べてから選べる",
+         "技の表示内容・数値は従来の各キャラ技一覧そのまま。キー表示は現在のキー配置への読み替えにも対応"]},
  {date:"2026/11/13",times:["08:49"],tag:"修正・調整",title:"4キャラに空中↑+Kの上昇技を追加／AXEのウルトにフィニッシュ追加",
   items:["KAIROの空中↑+K＝フロストスピンを追加：vy -450で真上へ上昇しながら氷を纏って回転攻撃する（回転ヒットは最大4回、クールタイム5.0秒）。復帰にも追撃にも使える空中上昇技",
          "WARDENの空中↑+K＝アームキャッチ・ミーを追加：上空から伸びるアームに自分をキャッチさせ、vy -680で真上へ一気に上昇する（クールタイム5.0秒）。攻撃判定はなく、復帰・回避用の上昇技",
@@ -564,14 +576,81 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":(c==="orchid"?"ORCHID":"KAIRO"))))}
 var playerChar="kairo";
 function currentMovesHTML(){return bindingSummaryHTML()+relabelMoves(playerChar==="warden"?wardenMovesHTML:(playerChar==="kojiro"?kojiroMovesHTML:(playerChar==="axe"?axeMovesHTML:(playerChar==="sara"?saraMovesHTML:(playerChar==="orchid"?orchidMovesHTML:movesHTML)))))}
+/* ================= 全キャラクター技一覧システム =================
+   全6キャラの技を1つの画面で見られるブラウザ。
+   ・キャラタブで切替（シートを閉じずにその場で表示が変わる）
+   ・検索は全キャラ横断：技名・説明文から技の行単位で拾い、キャラごとにまとめて表示
+   ・表示中のキャラは「選択キャラにする」ボタンでそのまま使用キャラに設定できる */
+var CHAR_LIST=[
+ {id:"kairo",label:"KAIRO",icon:"❄",color:"#22d3ee"},
+ {id:"warden",label:"WARDEN",icon:"🛡",color:"#facc15"},
+ {id:"kojiro",label:"KOJIRO",icon:"⚔",color:"#f87171"},
+ {id:"axe",label:"AXE",icon:"🪓",color:"#fb923c"},
+ {id:"sara",label:"SARA",icon:"🐉",color:"#fb7185"},
+ {id:"orchid",label:"ORCHID",icon:"🌿",color:"#84cc16"}
+];
+function movesHTMLFor(c){return c==="warden"?wardenMovesHTML:(c==="kojiro"?kojiroMovesHTML:(c==="axe"?axeMovesHTML:(c==="sara"?saraMovesHTML:(c==="orchid"?orchidMovesHTML:movesHTML))))}
+function charMeta(c){for(var i=0;i<CHAR_LIST.length;i++){if(CHAR_LIST[i].id===c)return CHAR_LIST[i]}return CHAR_LIST[0]}
+var mvTab="kairo",mvQuery="";
+function openAllMoves(startChar){
+ mvTab=startChar||playerChar;mvQuery="";
+ var tabs="";
+ for(var i=0;i<CHAR_LIST.length;i++){var m=CHAR_LIST[i];tabs+='<button class="mvTab" data-mvchar="'+m.id+'">'+m.icon+" "+m.label+"</button>"}
+ openSheet('<h2>📖 全キャラクター 技一覧</h2><p>全6キャラの技をここで確認できます。上のタブでキャラを切り替えられます。検索すると<b>全キャラの技から横断検索</b>できます。表示されるキーは現在のキー配置に合わせて読み替えています。</p>'
+  +bindingSummaryHTML()
+  +'<div class="mvTabs">'+tabs+'</div>'
+  +'<input class="updSearch" id="mvSearch" type="search" placeholder="技を検索（例：毒、吹っ飛ばし、飛び道具、回復）" autocomplete="off">'
+  +'<p class="mvCount" id="mvCount"></p><div id="mvBody"></div>');
+ var tels=document.querySelectorAll(".mvTab");
+ for(var j=0;j<tels.length;j++){tels[j].onclick=function(){mvTab=this.getAttribute("data-mvchar");mvQuery="";var s=$("mvSearch");if(s)s.value="";renderMvBody();beep(600,.05)}}
+ var s=$("mvSearch");
+ if(s){s.addEventListener("input",function(){mvQuery=this.value;renderMvBody()})}
+ renderMvBody();
+}
+function renderMvBody(){
+ var body=$("mvBody");if(!body)return;
+ var tels=document.querySelectorAll(".mvTab");
+ for(var i=0;i<tels.length;i++){
+   var m=charMeta(tels[i].getAttribute("data-mvchar")),on=(m.id===mvTab);
+   tels[i].style.borderColor=on?m.color:"#475569";
+   tels[i].style.background=on?"rgba(255,255,255,.10)":"#1e293b";
+   tels[i].style.boxShadow=on?("inset 0 -3px 0 "+m.color):"none";
+ }
+ var cnt=$("mvCount");
+ var q=mvQuery.replace(/\s+/g,"").toLowerCase();
+ if(!q){
+   var sel=(mvTab===playerChar);
+   body.innerHTML=relabelMoves(movesHTMLFor(mvTab))
+     +'<button class="gbtn primary" id="mvUseBtn" style="margin-top:12px">'+(sel?("✓ "+cname(mvTab)+" を選択中"):("このキャラ（"+cname(mvTab)+"）を選択キャラにする"))+"</button>";
+   if(cnt)cnt.textContent=charMeta(mvTab).label+" の技を表示中（全6キャラは上のタブで切替）";
+   var ub=$("mvUseBtn");
+   if(ub)ub.onclick=function(){if(mvTab!==playerChar){selectChar(mvTab);if(typeof refreshCsCards==="function")refreshCsCards()}renderMvBody()};
+   return;
+ }
+ var total=0,h="";
+ for(var ci=0;ci<CHAR_LIST.length;ci++){
+   var cm=CHAR_LIST[ci];
+   var tmp=document.createElement("div");
+   tmp.innerHTML=relabelMoves(movesHTMLFor(cm.id));
+   var rows=tmp.querySelectorAll(".moveRow"),matched="";
+   for(var r=0;r<rows.length;r++){
+     var hay=rows[r].textContent.replace(/\s+/g,"").toLowerCase();
+     if(hay.indexOf(q)>=0){matched+=rows[r].outerHTML;total++}
+   }
+   if(matched)h+='<div class="mvGroupHead" style="border-color:'+cm.color+'">'+cm.icon+" "+cm.label+"</div>"+matched;
+ }
+ var esc=mvQuery.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ body.innerHTML=h||('<div class="updEmpty">「'+esc+'」に合う技が見つかりませんでした。<br>別のキーワードで試してみてください。</div>');
+ if(cnt)cnt.textContent="全キャラから "+total+" 件の技がヒットしました（キャラ切り替えは検索を消すと戻ります）";
+}
 function selectChar(c){
  playerChar=c;
  $("charBtn").textContent=cname(c);
- $("movesBtnTop").textContent=(c==="kairo"?"Kairoの技":cname(c)+"の技");
+ $("movesBtnTop").textContent="全キャラの技";
  beep(c==="warden"?300:(c==="kojiro"?440:(c==="axe"?210:(c==="sara"?560:(c==="orchid"?500:660)))),.06);
 }
-$("movesBtnTop").onclick=function(){openSheet(currentMovesHTML())};
-$("charBtn").onclick=function(){openSheet(currentMovesHTML())};
+$("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
+$("charBtn").onclick=function(){openAllMoves(playerChar)};
 $("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。全員の端末が同じ試合を60fpsで計算し、フレームごとの入力だけを送り合う「ロールバック方式」です。自分のキャラはほぼ遅延なく動き、相手の入力が遅れた場合は巻き戻して計算し直すことで吸収します。ホストは部屋の管理役で、対戦そのものは全員対等です。通信はP2P（PeerJSの無料シグナリング経由）で、アカウント登録やAPIキーは不要。ネットワーク環境によっては接続できない場合があり、ホストが閉じると対戦は終了します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
@@ -816,6 +895,7 @@ $("csStart").onclick=function(){
  $("charSelect").classList.remove("on");beep(700,.07);startMatch(pendingMode)
 };
 $("csBack").onclick=function(){$("charSelect").classList.remove("on");toMenu()};
+$("csMoves").onclick=function(){openAllMoves(playerChar)};
 $("playBtn").onclick=function(){beep(660,.07);tryFullscreen();openCharSelect("versus")};
 $("trainingBtn").onclick=function(){beep(520,.07);tryFullscreen();openCharSelect("training")};
 function toMenu(){cleanupNet();running=false;$("gameScreen").classList.remove("on");$("menu").style.display="block";if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){})}
