@@ -374,6 +374,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["01:57"],tag:"大型更新",title:"ジャンプと落下を本家 bandit.rip の感触に作り直し／オンラインの技数値を現行に同期（サーバー再デプロイ待ち）",
+  items:["小ジャンプ／大ジャンプの区別を廃止しました。W を押す長さに関係なく、常に同じ高さの固定ジャンプになります（キーを離すと上昇が止まる仕組みは削除）",
+         "ジャンプと落下の物理を、本家のトレーニングモード動画の感触（ゆったりと高く跳び、ふわりと遅く落ちる）に合わせて作り直しました：ジャンプ初速 816→640、上昇重力 1840→1000（頂点まで約0.64秒・高さ約200＝約2.85キャラ分）、2段ジャンプ初速 744→600、落下重力 1845→450、最大落下速度 706→380、急降下 828→560。前回の「落下を約1割遅く」は破棄し、本家基準に置き換えています。台の段差（最大115）は従来どおり1回のジャンプで届きます。ORCHID の落下倍率（×1.11）は新しい基準値に対しても維持されます",
+         "オンライン対戦で「技の数値が全員共通（サーバー側の古い値）」だった問題への対応として、サーバー側の対戦計算を、現在の技数値・硬直・着地硬直・カウンター等の仕様と今回の新しい物理に合わせて作り直しました。ただし本番サーバーへの反映には再デプロイが必要で、その際に Cloudflare のトークンがもう一度必要になるため、現時点では「再デプロイ待ち」です。再デプロイが完了するまでは、オンライン対戦の数値は従来のままです"]},
  {date:"2026/11/14",times:["01:45"],tag:"大型更新",title:"オンライン対戦の同期を作り直し／アカウント削除を追加／落下速度を少し遅く",
   items:["オンライン対戦が「動けない／技が無限に打てるように見える／キャラが荒ぶる／同期しない」問題を修正。原因は、手元の先行予測がサーバー側の計算（旧バージョンのまま）と技の硬直・クールタイムで食い違い、ぶつかるたびに位置とクールタイムが巻き戻っていたことと、入力の送信で同じフレームを二重に送ったり送り漏らしたりしていたことです",
          "オンライン対戦の表示を、全キャラ（自分含む）ともサーバーの計算結果を補間して表示する方式に統一しました。全員の画面で同じ位置・同じ状態になり、技はサーバー側のクールタイムで管理されるため無限には打てません。入力は60fpsで記録し、順番どおり・漏れなくサーバーへ送るようにしました",
@@ -997,8 +1001,9 @@ window.addEventListener("resize",resize);
    one-way tops; the main floor is a separate SOLID surface and can never
    be dropped through. */
 /* Every step up is <=115u, so EVERY ledge is reachable with a single jump
-   (apex ~166u). No ledge assumes a double jump. Highest ledge: 225u above
-   the floor, reached via the 115u step then the 110u step. */
+   (apex ~200u with the honka physics). No ledge assumes a double jump.
+   Highest ledge: 225u above the floor, reached via the 115u step then
+   the 110u step. */
 var platforms=[
  {x:120, y:1020,w:2360,h:92,main:true},
  {x:300, y:905, w:560, h:34},
@@ -1011,8 +1016,8 @@ var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
 /* --- physics constants (units per second) — overall speed pass: 0.8x ---
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
-var GRAV=1840,GRAV_FALL=1845,MAXFALL=706,FASTFALL=828; /* falling eased ~10% overall (owner tuning): GRAV_FALL 2050 -> 1845, MAXFALL 784 -> 706, FASTFALL 920 -> 828, all scaled by the same 0.9 ratio so the fastfall-vs-normal gap and the rise/fall balance are unchanged. Rise gravity (GRAV) and jump velocity are untouched; per-character fallMul (e.g. ORCHID x1.11) still multiplies these values. The match server's sim.js carries the identical numbers. */
-var JUMP_V=816,DJUMP_V=744,JUMP_CUT=288;
+var GRAV=1000,GRAV_FALL=450,MAXFALL=380,FASTFALL=560; /* HONKA (bandit.rip) physics pass (owner request, tuned against the owner's training-mode video): the v89 "falling eased ~10%" values (1845 / 706 / 828) are DISCARDED and the whole jump/fall model is rebuilt floaty — rise gravity 1840 -> 1000, fall gravity 1845 -> 450, max fall 706 -> 380, fastfall 828 -> 560. Falling one stage tier (115u) from rest now takes ~0.72s and a full apex-to-ground fall ~0.95s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier on these new base values. The match server's sim.js carries the identical numbers. */
+var JUMP_V=640,DJUMP_V=600; /* FIXED-HEIGHT jumps (owner request): there is no short hop / long hop — the jump cut is gone entirely, so W's press length never changes the height. JUMP_V 816 -> 640 with the lower rise gravity gives apex ~200u (about 2.85 character heights) reached in ~0.64s; the double jump (744 -> 600) adds ~180u of rise. Every stage step is <=115u, so every ledge is still reachable with a single jump, as before. */
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
@@ -1658,14 +1663,15 @@ function rbPendBits(f,F){
 }
 /* the deterministic input applier, identical to the server's copy:
    same buffer windows expressed in frames (350ms -> 21f, the J+K
-   simultaneity window 90ms -> 5f, the lone-press grace 55ms -> 3f),
-   the same jump cut and the same guard-eats-presses rule */
+   simultaneity window 90ms -> 5f, the lone-press grace 55ms -> 3f)
+   and the same guard-eats-presses rule. There is NO jump cut:
+   jumps are fixed-height, so releasing W mid-rise changes nothing
+   (rbPrevJ is still tracked for state compatibility only) */
 function rbApplyInput(f,bits,F){
  f.hDown=!!(bits&4);f.hUp=!!(bits&8);
  f.hFwd=(f.face===1&&!!(bits&2))||(f.face===-1&&!!(bits&1));
  f.hBack=(f.face===1&&!!(bits&1))||(f.face===-1&&!!(bits&2));
  var inp={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:false};
- if(f.rbPrevJ&&!(bits&8)&&!f.onGround&&f.vy<-JUMP_CUT&&f.hitstun<=0)f.vy=-JUMP_CUT;
  f.rbPrevJ=!!(bits&8);
  if(bits&16)inp.jump=true;
  if(bits&(512|1024|2048)){var dd=(bits&512)?-1:((bits&1024)?1:(inp.right?1:(inp.left?-1:f.face)));tryDash(f,dd)}
@@ -2893,7 +2899,7 @@ window.addEventListener("keydown",function(e){
    }
  }
 });
-window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false;if(k==="jump"&&P1&&!P1.onGround&&P1.vy<-JUMP_CUT&&P1.hitstun<=0&&!(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"))P1.vy=-JUMP_CUT}});
+window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false}}); /* no jump cut on key release: jumps are fixed-height (honka physics) — releasing W never shortens a jump */
 window.addEventListener("blur",function(){keys={}});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
@@ -4486,10 +4492,11 @@ function stepFighter(f,dt,input,foe){
    else if(!f.onGround&&f.vy>260&&f.char==="kojiro")spawnParticles(f.x,f.y+f.h*0.4,1,"#fecaca",70);
    else if(!f.onGround&&f.char==="kairo"&&Math.random()<0.3)spawnParticles(f.x,f.y+f.h*0.5,1,"#67e8f9",60);
  }
- /* gravity (heavier while falling, like the original's snappy arcs).
-    ORCHID falls 11% faster: her fallMul scales the FALLING gravity and
-    the fall-speed cap only — rise gravity and jump velocity are
-    untouched, and every other character keeps fallMul 1 */
+ /* gravity (honka physics: the fall is LIGHTER than the rise — floaty
+    descents like bandit.rip). ORCHID falls 11% faster: her fallMul
+    scales the FALLING gravity and the fall-speed cap only — rise
+    gravity and jump velocity are untouched, and every other character
+    keeps fallMul 1 */
  var g=(f.vy>0?GRAV_FALL*(f.fallMul||1):GRAV);
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
  else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
