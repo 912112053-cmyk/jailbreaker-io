@@ -346,6 +346,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["22:26"],tag:"修正・調整",title:"KOJIRO ↓+J 下段斬りに被弾硬直0.18秒を追加（指定の被弾硬直を全件反映）",
+  items:["KOJIRO ↓+J 下段斬り：これまで付いていなかった被弾硬直0.18秒を追加しました。二連撃の両ヒットとも、命中した相手に正確に0.18秒の硬直が入ります（KBによる吹っ飛ばしはこれまでどおり別に発生します）。技一覧の表示にも「被弾硬直 0.18秒」を追加しました",
+         "あわせて、指定された被弾硬直が全件そろっていることを確認しました：KAIRO J 1段目 横払い 0.24秒／J 2段目 返し斬り 0.26秒／↓+J アイスフット 0.2秒、WARDEN J 1段目 横薙ぎ 0.22秒／J 2段目 平返し 0.22秒／前+J・ダッシュ中J 電気警棒 0.44秒、KOJIRO J 1段目 袈裟斬り 0.24秒／J 2段目 斬り上げ 0.26秒／J 3段目 三突き 0.26秒、AXE J 1段目 壊斧 0.4秒",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算にはまだ含まれていません"]},
  {date:"2026/11/13",times:["22:13"],tag:"修正・調整",title:"被弾硬直の仕様変更：技に書かれた秒数がそのまま相手に入るように",
   items:["被弾硬直は、その技が命中した相手に付与される硬直で、効果時間は技ごとに決まっています。これまでは技に書かれた秒数は「下限」の扱いで、相手の残りHPが少ないときは KB 由来の硬直の方が長くなり、表示の秒数を超えてしまうことがありました。今回から、被弾硬直の数値が書かれている技は、その秒数がそのまま正確に適用されます（ノックバックの吹っ飛ばしは、これまでどおり別に発生します）",
          "対象は被弾硬直を持つ技だけです。例：KOJIRO J 1段目 袈裟斬り 0.24秒／J 2段目 斬り上げ 0.26秒／J 3段目 三突き 0.26秒（ほか KAIRO の J 1・2段目とアイスフット、WARDEN の J 1・2段目と電気警棒、AXE の壊斧も同じ仕様です）",
@@ -699,7 +703,7 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.23秒')+mvS('判定','94×60'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き斬り</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','310')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','76×58'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り斬り</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.47秒')+mvS('判定','66×88')+mvS('上昇','vy -540'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','82×34'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。前後両方に判定がある。</p>'+mvSpec(mvS('ダメージ','前13／後7')+mvS('KB','前360／後200')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','前84×66／後60×56')+mvS('着地硬直','0.26秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.44秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体16／着地 前12・後12')+mvS('KB','本体420／着地 前620・後620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体74×62／着地144×58')+mvS('着地硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
@@ -2758,10 +2762,11 @@ function startKojiroAttack(f,type,foe){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
         first cut lands on the press, the second ticks out ~0.14s later
         in stepFighter (state "lowcut", spinHits counts cuts). Each cut
-        is 8 dmg / KB 250, box 82x34 */
+        is 8 dmg / KB 250, box 82x34, 被弾硬直 0.18秒 fixed on the hit
+        foe, separate from the KB */
      f.state="lowcut";f.stateT=0.28;f.attackCd=0.36;f.comboWin=0;
      f.spinHits=1;f.spinTick=0;
-     meleeHit(f,foe,82,34,8,250,f.face,0.04);
+     meleeHit(f,foe,82,34,8,250,f.face,0.04,0.18);
      spawnParticles(f.x+f.face*24,f.y+f.h-6,8,"#fecaca",150);beep(700,.06,"square",.045);
    }else if(upHeld){
      /* 昇り斬り: rising slash that carries Kojiro up with it (anti-air);
@@ -3742,7 +3747,7 @@ function stepFighter(f,dt,input,foe){
  }
  if(f.char==="kojiro"&&f.state==="lowcut"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,250,f.face,0.04);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)}
+   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,250,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も被弾硬直 0.18秒 (user spec) */
  }
  /* KOJIRO 風波 (down+K): rooted in place while the tornado lasts */
  if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0;if(Math.random()<0.7){spawnParticles(f.x+(Math.random()-0.5)*70,f.y+f.h-6,1,"#a7f3d0",120);spawnParticles(f.x+(Math.random()-0.5)*46,f.y+f.h*0.35,1,"#fecaca",110)}}
