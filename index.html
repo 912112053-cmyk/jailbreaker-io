@@ -373,6 +373,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/13",times:["23:49"],tag:"修正・調整",title:"CPUのキャラ「おまかせ」が本当にランダムになるよう修正",
+  items:["CPUのキャラを「おまかせ」にすると、試合開始のたびに全6キャラ（KAIRO／WARDEN／KOJIRO／AXE／SARA／ORCHID）からランダムに選ばれるようになりました",
+         "これまでは「おまかせ」が固定の並び順で決まっていたため、CPUが1人だけだと必ず WARDEN になっていました。CPUが複数いる場合は1人ずつ別々に抽選されるので、同じキャラが重なることもあります",
+         "キャラを直接指定した場合の挙動は変更ありません"]},
  {date:"2026/11/13",times:["23:45"],tag:"修正・調整",title:"KOJIRO 前+J 疾風突き：3回命中するとその場で0.32秒硬直するように",
   items:["前+J 疾風突き：命中するたびにカウントされ、3回命中するとその場で0.32秒硬直するようになりました。硬直中は移動・ジャンプができません（踏み込みの勢いもその場で止まります）。カウントは3回目でリセットされ、倒された／復活したときもリセットされます。外した場合はカウントされません",
          "ダメージ13／KB 620／発生0.12秒／全体0.32秒／後硬直0.35秒／判定94×60は変更なし。技一覧の表示も更新しました",
@@ -1058,11 +1062,13 @@ function startMatch(m){
    P1=fighters[net.myIdx]||fighters[0];
    P2=fighters[(net.myIdx+1)%fighters.length]||P1;forceP2Char=null;
  }else{
-   var mixCycle=["warden","kojiro","kairo","axe","sara","orchid"];
+   var mixPool=["kairo","warden","kojiro","axe","sara","orchid"];
    var nCpu=Math.max(1,Math.min(7,cpuCount));
    for(var ci=0;ci<nCpu;ci++){
      var sel=(cpuChars&&cpuChars[ci])?cpuChars[ci]:"mix";
-     var cc=sel==="mix"?mixCycle[ci%mixCycle.length]:sel;
+     /* 「おまかせ」は試合開始のたびに全6キャラからランダムに選ぶ
+        （以前は固定の並び順だったため、CPUが1人だと必ず WARDEN になっていた） */
+     var cc=sel==="mix"?mixPool[Math.floor(rnd()*mixPool.length)]:sel;
      var cf=Fighter(cc,false,SPAWNS_ALL[(ci+1)%SPAWNS_ALL.length].x,SPAWNS_ALL[(ci+1)%SPAWNS_ALL.length].y);
      cf.face=cf.x<1300?1:-1;fighters.push(cf);
    }
