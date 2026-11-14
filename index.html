@@ -425,6 +425,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["01:38"],tag:"修正",title:"試合中にフレンド画面が勝手に開く問題を修正",
+  items:["VS CPU・トレーニング・オンライン対戦の試合中に、フレンド画面が勝手に開いて操作の邪魔になることがあった問題を修正しました。原因は、フレンド画面を一度開いて閉じた後も、閉じたはずの画面が内部に残ったままになっていて、フレンドのオンライン状態の変化や定期更新のたびに「開いている」と誤判定して再表示していたことです",
+         "試合中は、フレンド申請の受信・オンライン状態の変化・接続の再試行など裏側のイベントでは、フレンド画面が自動で開かないようにしました。申請や招待の受信自体はこれまで通り行われ、試合が終わってから FRIENDS を開けば届いた内容をそのまま確認・参加できます（申請件数のバッジ表示もこれまで通り更新されます）",
+         "タイトル画面などで FRIENDS ボタンを自分で押して開く操作はこれまで通り使えます。技・数値・その他の機能への変更はありません"]},
  {date:"2026/11/15",times:["01:34"],tag:"修正",title:"ONLINE VS の描画遅延を60fps配信に合わせて短縮（下限 約34ms・上限 120ms）",
   items:["サーバー側のスナップショット配信が 30fps→60fps（間隔 約33ms→約16.7ms）になったのに合わせ、オンライン対戦の描画遅延の自動調整を見直しました：安定時の下限を 約44ms→約34ms（≒2スナップショット分）に下げ、上限も 150ms→120ms にしました",
          "回線が不安定な時は、これまでどおり到着の揺れに合わせて自動で遅延が広がり、滑らかさを保ちます。調整は到着間隔をもとに行うため、サーバーが30fps配信の間でもこれまで通り動作します",
@@ -513,11 +517,7 @@ var UPDATE_LOG=[
  {date:"2026/11/14",times:["20:36"],tag:"修正・調整",title:"MIMI&SHADE：ウルト弾が実際に貫通するように",
   items:["MIMI&SHADEのウルト「大好きだよSHADE／大好きだよMIMI」の光と闇の巨大弾が、敵に当たっても消えずにそのまま飛び続けるようになりました（技一覧の「貫通」表記どおりの挙動です）",
          "同じ敵には1回だけ当たります（1体につき46ダメージ／KB880を1回）。複数の敵が並んでいれば、全員に当たります",
-         "弾の寿命・射程・速度、ダメージ／KBの数値はこれまで通りです。対象はこのウルト弾だけで、他のキャラの飛び道具は従来どおり当たったら消えます"]},
- {date:"2026/11/14",times:["20:34"],tag:"修正・調整",title:"技発動時の技名表示を全キャラで廃止",
-  items:["技を発動した時にキャラの頭上に出ていた技名の表示（「火炎放射！」「猪突猛進！」「サンフラワー！」「Berserker！」「♪ シング・タイム ♪」「アームキャッチ・ミー！」「確保！／確保失敗…」「いってらっしゃいSHADE！」「助けてSHADE！！」「大好きだよSHADE！」など）を、全キャラ共通で出ないようにしました",
-         "消したのは技名の表示だけです：ダメージ数字・GUARD表示・KO回復の「+○○ HP」・カウントダウンなど他の表示はこれまで通り出ます。「モードカオス」は効果情報（与ダメ+30%・13秒）だけ、「栄養補給」は回復量（+○○ HP）だけが残る形にしました",
-         "オンライン対戦でも技名は出ません（オンラインはサーバー側の計算結果を再生する方式ですが、技名の表示はこのページ側の表示処理から取り除いたため、サーバーから送られるエフェクト再生でも技名は表示されません）。技の数値・判定・挙動に変更はありません"]}
+         "弾の寿命・射程・速度、ダメージ／KBの数値はこれまで通りです。対象はこのウルト弾だけで、他のキャラの飛び道具は従来どおり当たったら消えます"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -2563,7 +2563,7 @@ function resolveFriendPnames(){
         account disappears from BOTH sides' friend lists */
      if(d.jb_deleted&&d.jb_deleted.Value==="1"){pfPurgeDeletedFriend(id);return}
      var v=(d.jb_pname&&typeof d.jb_pname.Value==="string"&&validDisplayName(d.jb_pname.Value))?d.jb_pname.Value:"";
-     if(social.friendPnames[id]!==v){social.friendPnames[id]=v;if($("friendsSheet"))openFriends(social.lastMsg)}
+     if(social.friendPnames[id]!==v){social.friendPnames[id]=v;if(friendsSheetVisible())openFriends(social.lastMsg)}
    },function(){})}catch(e){}
  });
 }
@@ -2578,7 +2578,7 @@ function pfPurgeDeletedFriend(id){
  if(PF_OK){try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:id},function(){},function(){})}catch(e){}}
  pfSaveMyData();rebuildFriendArrays();
  friendsSay(nm+" さんのアカウントが削除されたため、フレンド一覧から除去しました");
- if($("friendsSheet"))openFriends(social.lastMsg);
+ if(friendsSheetVisible())openFriends(social.lastMsg);
 }
 /* the name shown for another player anywhere in the UI: their player
    name when they have set one, their username otherwise */
@@ -2667,14 +2667,14 @@ function onSocialData(from,m){
      social.inbox[fid]={name:fname,ts:Date.now()};
      pfSaveMyData();rebuildFriendArrays();
      (function(fn2,fid2){showSocialToast("<b>"+escHtml(fn2)+"</b> さんからフレンド申請が届きました",[{label:"承認する",fn:function(){approveRequest(fid2)}},{label:"断る",fn:function(){rejectRequest(fid2)}}])})(fname,fid);
-     if($("friendsSheet"))openFriends(social.lastMsg);
+     if(friendsSheetVisible())openFriends(social.lastMsg);
    }else if(m.t==="facc"||m.t==="fest"){
      if(social.outReq[fid]){
        social.est[fid]=social.outReq[fid].name||fname;
        delete social.outReq[fid];
        pfSaveMyData();rebuildFriendArrays();refreshPfFriends();
        if(m.t==="facc")showSocialToast("フレンド申請が承認され、フレンドになりました",[]);
-       if($("friendsSheet"))openFriends(social.lastMsg);
+       if(friendsSheetVisible())openFriends(social.lastMsg);
      }else if(!social.est[fid]&&m.t==="fest"){
        /* they consider us friends (e.g. my acceptance signal reached
           them on a device where my out-record was already gone):
@@ -2775,7 +2775,7 @@ function refreshPfFriends(){
    if(changed){pfSaveMyData();rebuildFriendArrays()}
    resolveFriendPnames();
    social.friends.forEach(function(fn){friendConnect(fn)});
-   if($("friendsSheet"))openFriends(social.lastMsg);
+   if(friendsSheetVisible())openFriends(social.lastMsg);
   },function(){});
  }catch(e){}
 }
@@ -2817,7 +2817,7 @@ function cancelRequest(toId){
  try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:toId},function(){},function(){})}catch(e){}
  pfSaveMyData();rebuildFriendArrays();
  friendsSay("フレンド申請を取り消しました");
- if($("friendsSheet"))openFriends(social.lastMsg);
+ if(friendsSheetVisible())openFriends(social.lastMsg);
 }
 function removeFriendById(fid){
  if(!PF_OK||!fid||!social.est[fid])return;
@@ -2826,7 +2826,7 @@ function removeFriendById(fid){
  try{PlayFabClientApi.RemoveFriend({FriendPlayFabId:fid},function(){},function(){})}catch(e){}
  pfSaveMyData();rebuildFriendArrays();
  friendsSay(nm+" さんをフレンドから削除しました");
- if($("friendsSheet"))openFriends(social.lastMsg);
+ if(friendsSheetVisible())openFriends(social.lastMsg);
 }
 /* ---- session handling ---- */
 function startPfSession(uid,displayName,silent){
@@ -2862,13 +2862,13 @@ function startPfSession(uid,displayName,silent){
    var waiting=social.pendingIn.slice();
    waiting.forEach(function(r){social.reqSeen[r.from]=1});
    if(waiting.length===1){
-     (function(w){showSocialToast("<b>"+escHtml(w.fromName)+"</b> さんからフレンド申請が届いています",[{label:"承認する",fn:function(){approveRequest(w.from)}},{label:"断る",fn:function(){rejectRequest(w.from)}},{label:"確認する",fn:function(){openFriends()}}])})(waiting[0]);
+     (function(w){showSocialToast("<b>"+escHtml(w.fromName)+"</b> さんからフレンド申請が届いています",[{label:"承認する",fn:function(){approveRequest(w.from)}},{label:"断る",fn:function(){rejectRequest(w.from)}},{label:"確認する",fn:function(){openFriends(undefined,true)}}])})(waiting[0]);
    }else if(waiting.length>1){
-     showSocialToast("フレンド申請が <b>"+waiting.length+" 件</b> 届いています",[{label:"確認する",fn:function(){openFriends()}}]);
+     showSocialToast("フレンド申請が <b>"+waiting.length+" 件</b> 届いています",[{label:"確認する",fn:function(){openFriends(undefined,true)}}]);
    }
    refreshPfFriends();
    Object.keys(social.outReq).forEach(function(id){queueSocialSend(social.outReq[id].name,{t:"freq",from:social.name,fromId:social.uid})});
-   if($("friendsSheet"))openFriends(social.lastMsg);
+   if(friendsSheetVisible())openFriends(social.lastMsg);
  });
  social.pfPoll=setInterval(function(){
    if(!social.loggedIn)return;
@@ -3114,7 +3114,7 @@ function sendFriendRequest(){
      pfSaveMyData();rebuildFriendArrays();
      queueSocialSend(toName,{t:"freq",from:social.name,fromId:social.uid});
      friendsSay(n+" さんにフレンド申請を送りました。相手がゲームを開いた時に届き、承認されるとフレンドになります。");
-     if($("friendsSheet"))openFriends(social.lastMsg);
+     if(friendsSheetVisible())openFriends(social.lastMsg);
     },function(e){friendsSay("申請の送信に失敗しました。"+pfErrMsg(e))});
    }catch(e){friendsSay("申請の送信に失敗しました。"+pfErrMsg(e))}
   },function(e){
@@ -3214,9 +3214,30 @@ function wireFriendsBtns(){
  var lp=$("loginPassInput");if(lp)lp.onkeydown=function(e){if(e.key==="Enter")loginAccount()};
  var rp=$("regPass2Input");if(rp)rp.onkeydown=function(e){if(e.key==="Enter")registerAccount()};
 }
-function openFriends(msg){if(msg!==undefined)social.lastMsg=msg;if(social.loggedIn&&social.name&&!social.peer)connectSocialPeer(social.name);openSheet(friendsHTML(social.lastMsg));wireFriendsBtns();if(social.loggedIn&&social.name)social.friends.forEach(function(fn){friendConnect(fn)})}
-function friendsSay(msg){if(msg)social.lastMsg=msg;if($("friendsSheet"))openFriends(social.lastMsg)}
-$("friendsBtn").onclick=function(){beep(600,.07);openFriends()};
+/* Is the FRIENDS sheet actually on screen right now? Closing the modal
+   only removes its .on class — the sheet HTML stays inside #sheet —
+   so a bare $("friendsSheet") test stays true forever after the first
+   open, and every background friend event (PeerJS presence churn, the
+   45s cloud poll, a player-name refresh) then re-opened the sheet,
+   including in the middle of a VS CPU match. Every "refresh if open"
+   path must go through this real visibility test instead. */
+function friendsSheetVisible(){var m=$("modal");return !!(m&&m.classList.contains("on")&&$("friendsSheet"))}
+function openFriends(msg,userAction){
+ if(msg!==undefined)social.lastMsg=msg;
+ /* While a match is running (VS CPU / TRAINING / ONLINE alike) the
+    FRIENDS sheet never opens on its own: background events (friend
+    requests and invites arriving, presence changes, reconnect retries,
+    the session poll) only update social.lastMsg and the FRIENDS badge,
+    and the player reads the message the next time they open FRIENDS
+    themselves — nothing received is lost, only the popup is deferred.
+    Explicit taps still open it (the FRIENDS button and a toast's
+    確認する pass userAction), and a sheet that is already on
+    screen keeps re-rendering exactly as before. */
+ if(running&&!userAction&&!friendsSheetVisible())return;
+ if(social.loggedIn&&social.name&&!social.peer)connectSocialPeer(social.name);openSheet(friendsHTML(social.lastMsg));wireFriendsBtns();if(social.loggedIn&&social.name)social.friends.forEach(function(fn){friendConnect(fn)})
+}
+function friendsSay(msg){if(msg)social.lastMsg=msg;if(friendsSheetVisible())openFriends(social.lastMsg)}
+$("friendsBtn").onclick=function(){beep(600,.07);openFriends(undefined,true)};
 /* The old on-device account store (localStorage) is retired: accounts
    and friends now live in the cloud. Drop the stale keys so nothing on
    this device keeps using them. */
