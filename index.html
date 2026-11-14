@@ -392,6 +392,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["18:27"],tag:"修正・調整",title:"【燃焼】の継続ダメージから吹っ飛ばしを削除（KB 110→なし）",
+  items:["【燃焼】の効果時間中に与える継続ダメージ（0.5秒ごとに3ダメージ）の吹っ飛ばしを KB 110 → なし に修正しました。毒・出血と同じく、ダメージのみで吹っ飛ばし・被弾硬直は入りません",
+         "燃焼のダメージ（3／0.5秒）・効果時間・付与する技（ハンドフレア／火炎放射／ファイアジャヴェリン／フレイムブレスなど）は変更なし。技一覧の燃焼説明も「3ダメージ（KBなし）」に更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["18:24"],tag:"修正・調整",title:"TRAVIS ウルトの溜まりを×0.45に下方修正",
   items:["TRAVISのウルトゲージの溜まり（与ダメージで増える量）を ×0.66 → ×0.45 に下方修正しました。ウルト「ワールドツアー」そのもの（34ダメージ×3・KB660・弾速740）は変更なし",
          "技一覧のステータス表示も「ウルト溜まり 遅め（×0.45）」に更新しました",
@@ -1090,7 +1094,7 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進中は<b>近くの相手を斧のほうへ引き寄せる吸引</b>が発生するので、端に逃げても吸い戻されやすい。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','240'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。巨体ゆえ他のキャラよりダッシュ自体も少し遅い。</p>'+mvSpec(mvS('速度','840')+mvS('持続','0.18秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
-var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.7</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ＋KB110</b>を受け続ける。</p>'
+var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.7</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ（KBなし）</b>を受け続ける。</p>'
 +mvSpec(mvS('HP','270')+mvS('地上速度','420')+mvS('空中速度','400')+mvS('受けKB','×0.89')+mvS('ダッシュ','980')+mvS('ウルト溜まり','0.7倍'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — 爪ひっかき（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.85秒・全4段</span><p>小ダメージの素早い一爪。<b>被弾硬直0.26秒</b>付き。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.22秒')+mvS('判定','62×52')+mvS('被弾硬直','0.26秒'))+'</div></div>'
@@ -5554,13 +5558,15 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    }
  }
  /* BURN (SARA's fire DoT): while burnT lasts, the victim takes a small
-    3-damage tick with KB 110 every 0.5s (user spec) credited to
-    whoever lit them. Set by the javelin orb, ハンドフレア, 火炎放射,
-    空中上J breath and direct javelin hits. */
+    3-damage tick with NO knockback every 0.5s (user spec: KB 110 -> none)
+    credited to whoever lit them. Ticks route through applyHit with
+    noKb like poison / bleed, and hitstop / shake are restored
+    afterwards so the tick deals damage only. Set by the javelin orb,
+    ハンドフレア, 火炎放射, 空中上J breath and direct javelin hits. */
  if(f.burnT>0){
    f.burnT-=dt;f.burnTick-=dt;
    if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*26,f.y+f.h*0.45,1,Math.random()<0.5?"#fb923c":"#ef4444",80);
-   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0)applyHit(bb,f,3,110,bb.x<=f.x?1:-1,-0.12,false,f.x,f.y+f.h*0.5,false) /* 燃焼 (user spec): 0.5秒ごとに 4 -> 3ダメージ + KB 110 */}
+   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB} /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
  }
  /* POISON (ORCHID's toxin DoT): while poisonT lasts, the victim takes
     2 damage every 0.2s — NO knockback, NO hitstun (spec). The tick
