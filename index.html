@@ -393,6 +393,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["20:59"],tag:"修正・調整",title:"全キャラの足裏を台の上面にぴったり合わせた＋メインの床を薄い板に戻した",
+  items:["キャラのドット絵の足が地面や台にめり込んで描画されていた問題を修正しました：全キャラ（MIMI含む）について、スプライトの足の底が台の上面にちょうど乗るよう、描画位置（アンカー）をキャラごとに実測して合わせました。めり込み量はキャラごとに違い、最も大きかった SMILEY と TRAVIS は約33px分めり込んでいました",
+         "歩行中のフレームでも接地している足が台に触れ続けるよう、歩行フレームごとに位置を合わせています。あわせて、待機中に体全体が上下に揺れて足裏が浮いたり沈んだりしていた動きはなくしました（待機モーション自体はドット絵側の差分フレームでこれまで通り動きます）",
+         "直したのは描画位置だけです：当たり判定・物理・キャラの論理位置や技の数値には一切変更ありません",
+         "あわせて、前回の更新で入れた「メインの床の下を地面として敷き詰める」描画を取り消し、元の薄い板の見た目に戻しました"]},
  {date:"2026/11/14",times:["20:52"],tag:"修正・調整",title:"ステージ：メインの床の下を地面として敷き詰め",
   items:["ステージのメインの床が薄い板のように見えていたのを直しました：床の下面からワールドの下端までを地面として埋めて描画し、地層のような質感（アイス寄りのネイビー×シアン×ティールの色合い）で「地面」らしく見えるようにしました",
          "埋めた範囲はメインの床の幅ぴったりです。左右の落下スペースは今まで通り開いています",
@@ -6339,31 +6344,60 @@ function spriteFrameIdx(f,key){
  var ph=0;for(var i=0;i<key.length;i++)ph+=key.charCodeAt(i)*0.37;
  return (Math.floor(time*2.2+ph)%2===0)?0:1;
 }
+/* ---- 足裏アンカー (v137, owner report): スプライトの足の底が台の上面に
+   ぴったり乗るよう、キャラごと・フレームごとに実測した「足裏のピクセル行」
+   から描画 DY を決める。従来は全キャラ共通 DY=-22 で、足裏の行はキャラに
+   よって違い (シート 240 行中 191 行目までしか描かれていない組と、239 行目
+   まで描かれている SMILEY / TRAVIS では約 27.7 単位 = 約 33 world px)、
+   その差の分だけ全員が地面にめり込んでいた。s = シート待機フレームの足裏行、
+   p = 静止画の足裏行、w = 歩行フレーム 2〜5 の足裏行の待機からの差分
+   (歩行中も接地足が台に触れ続けるようフレーム単位で合わせる)。あわせて
+   各 draw 関数の待機ボブ (sin 波の上下移動) は足裏の接地点を動かすため
+   接地待機分を 0 にした (待機モーションはシート側の差分フレームが担う)。
+   変更は描画位置のみ: 当たり判定・物理・論理位置には一切触れていない */
+var SPR_FOOT={
+ kairo:{s:44,p:44,w:[0,-1,0,0]},
+ warden:{s:191,p:191,w:[3,1,5,2]},
+ kojiro:{s:187,p:187,w:[3,1,3,1]},
+ axe:{s:191,p:191,w:[5,2,6,2]},
+ sara:{s:191,p:191,w:[3,1,4,2]},
+ orchid:{s:191,p:191,w:[3,1,6,2]},
+ travis:{s:239,p:191,w:[-10,0,-10,0]},
+ smiley:{s:239,p:191,w:[-10,0,-10,0]},
+ smileyAwk:{s:239,p:191,w:[-10,0,-10,0]}
+};
+function spriteDY(key,frame,sheetOn,bh){
+ var t=SPR_FOOT[key];if(!t||!(bh>0))return -22;
+ var row=sheetOn?t.s:t.p;
+ if(sheetOn&&frame>=2&&frame<=5)row+=t.w[frame-2];
+ return 70/CHAR_SCALE-(row+1)*86.4/bh;
+}
 function drawCharSprite(f,key,fallback){
  var ent=CHAR_SPRITE_IMG[key];if(!ent)return;
- var aent=CHAR_ANIM_IMG[key];
- if(key==="smiley"&&(f.awakenT||0)>0){var ake=CHAR_ANIM_IMG.smileyAwk;if(ake&&ake.img.complete&&ake.img.naturalWidth)aent=ake} /* SMILEY 覚醒: dark-red warped mask + bloodied suit sheet */
+ var aent=CHAR_ANIM_IMG[key],skey=key;
+ if(key==="smiley"&&(f.awakenT||0)>0){var ake=CHAR_ANIM_IMG.smileyAwk;if(ake&&ake.img.complete&&ake.img.naturalWidth){aent=ake;skey="smileyAwk"}} /* SMILEY 覚醒: dark-red warped mask + bloodied suit sheet */
  var sheet=(aent&&aent.img.complete&&aent.img.naturalWidth)?aent.img:null;
  if(f.flash>0&&sheet){var sfv=charFlashVariant(aent);if(sfv)sheet=sfv}
  ctx.imageSmoothingEnabled=false;
- var DX=-40.5,DY=-22,S=86.4;
+ var DX=-40.5,S=86.4,fi=spriteFrameIdx(f,key);
  if(sheet){
   var fw=sheet.naturalWidth/ANIM_FRAMES,fh=sheet.naturalHeight;
   var bw=ent.img.naturalWidth||fw,bh=ent.img.naturalHeight||fh;
-  ctx.drawImage(sheet,spriteFrameIdx(f,key)*fw,0,fw,fh,DX,DY,S*fw/bw,S*fh/bh);
+  ctx.drawImage(sheet,fi*fw,0,fw,fh,DX,spriteDY(skey,fi,true,bh),S*fw/bw,S*fh/bh);
  }
  else{
   var im=ent.img;
   if(f.flash>0){var fv=charFlashVariant(ent);if(fv)im=fv}
   if(im===ent.img&&!(im.complete&&im.naturalWidth)){ctx.fillStyle=fallback;ctx.fillRect(-16,6,32,44)}
-  else ctx.drawImage(im,DX,DY,S,S);
+  else ctx.drawImage(im,DX,spriteDY(key,0,false,im.naturalHeight||ent.img.naturalHeight||0),S,S);
  }
  ctx.imageSmoothingEnabled=true;
 }
 function drawSpriteTrail(f,key){
- var ent=CHAR_SPRITE_IMG[key];if(key==="smiley"&&(f.awakenT||0)>0&&CHAR_SPRITE_IMG.smileyAwk)ent=CHAR_SPRITE_IMG.smileyAwk;if(!ent||!(ent.img.complete&&ent.img.naturalWidth))return;
- f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(ent.img,-40.5,-22,86.4,86.4);ctx.restore()});
-} /* sprite art was authored for a 58u body; fighters are 70u now */
+ var ent=CHAR_SPRITE_IMG[key],tkey=key;if(key==="smiley"&&(f.awakenT||0)>0&&CHAR_SPRITE_IMG.smileyAwk){ent=CHAR_SPRITE_IMG.smileyAwk;tkey="smileyAwk"}if(!ent||!(ent.img.complete&&ent.img.naturalWidth))return;
+ var tdy=spriteDY(tkey,0,false,ent.img.naturalHeight);
+ f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(ent.img,-40.5,tdy,86.4,86.4);ctx.restore()});
+} /* 残像も本体と同じ足裏アンカー (spriteDY) で描く */
 var bgStars=[];
 for(var si=0;si<70;si++)bgStars.push({x:Math.random()*WORLD_W,y:Math.random()*900,s:2+Math.random()*3});
 function drawBG(){
@@ -6395,28 +6429,7 @@ function drawBG(){
    for(var x=p.x+46;x<p.x+p.w-8;x+=46)ctx.fillRect(x,p.y+3,3,Math.min(20,p.h-4));
    if(p.main){ctx.fillStyle="rgba(2,8,18,.5)";ctx.fillRect(p.x,p.y+34,p.w,p.h-34);
      ctx.fillStyle="rgba(103,232,249,.3)";ctx.font="14px 'DotGothic16'";ctx.fillText("— ROOFTOP / PRISON YARD 07 —",p.x+22,p.y+62);
-     /* v136 (owner request): the main floor is GROUND, not a floating slab —
-        fill from the slab's underside down past the world bottom with
-        layered icy strata (navy deepening downward, teal seams), exactly
-        the floor's width so the fall gaps on both sides stay open. The
-        fill runs a little below WORLD_H so the camera's lowest pan
-        (WORLD_H + 320 overshoot) never shows a seam. Purely visual:
-        no platform / collision / physics data changes. */
-     var gy=p.y+p.h,gb=WORLD_H+360;
-     var gg=ctx.createLinearGradient(0,gy,0,WORLD_H);
-     gg.addColorStop(0,"#0b2a44");gg.addColorStop(.5,"#072038");gg.addColorStop(1,"#020814");
-     ctx.fillStyle=gg;ctx.fillRect(p.x,gy,p.w,gb-gy);
-     /* strata: alternating tinted layers split by dark seams (fixed pattern) */
-     var sy=gy,bi=0;
-     while(sy<gb){var bh=24+((bi*53)%26);if(bi%2===0){ctx.fillStyle="rgba(21,94,117,.16)";ctx.fillRect(p.x,sy,p.w,Math.min(bh,gb-sy))}ctx.fillStyle="rgba(1,5,12,.55)";ctx.fillRect(p.x,sy,p.w,2);sy+=bh;bi++}
-     /* embedded frost flecks and darker rock speckle (fixed pattern) */
-     ctx.fillStyle="rgba(103,232,249,.10)";
-     for(var fi=0;fi<110;fi++)ctx.fillRect(p.x+((fi*197)%(p.w-30))+8,gy+((fi*89)%(WORLD_H-gy-14))+6,3+(fi%3)*2,2);
-     ctx.fillStyle="rgba(2,6,14,.35)";
-     for(var ri=0;ri<70;ri++)ctx.fillRect(p.x+((ri*281)%(p.w-40))+12,gy+((ri*131)%(WORLD_H-gy-16))+8,10+(ri%4)*6,3);
-     /* cliff-face light along both edges, facing the open fall gaps */
-     var eg=ctx.createLinearGradient(p.x,0,p.x+26,0);eg.addColorStop(0,"rgba(165,243,252,.14)");eg.addColorStop(1,"rgba(165,243,252,0)");ctx.fillStyle=eg;ctx.fillRect(p.x,gy,26,gb-gy);
-     var eg2=ctx.createLinearGradient(p.x+p.w,0,p.x+p.w-26,0);eg2.addColorStop(0,"rgba(165,243,252,.14)");eg2.addColorStop(1,"rgba(165,243,252,0)");ctx.fillStyle=eg2;ctx.fillRect(p.x+p.w-26,gy,26,gb-gy)}
+}
  });
 }
 function hpBar(f){
@@ -6475,13 +6488,13 @@ function drawKairo(f){
     J+K の氷の拳・メテオドロップの氷柱・フロストテイルなど。
     本体部分 (体・耳・髪・尻尾そのもの) だけはスプライトが担う */
  if(f.meter>=100&&!f.dead)drawUltAura(f,56,189,248);
- f.trail.forEach(function(t){if(KAIRO_IMG.complete&&KAIRO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(KAIRO_IMG,-40.5,-22,86.4,86.4);ctx.restore()}});
+ f.trail.forEach(function(t){if(KAIRO_IMG.complete&&KAIRO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(KAIRO_IMG,-40.5,spriteDY("kairo",0,false,48),86.4,86.4);ctx.restore()}});
  f.trail.forEach(function(t){drawFxTex(FXIMG.ice,t.x,t.y+30,88,0,t.face,t.life/0.2*.5)});
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
  var isGuardK=!!f.guarding||f.state==="guard";
- var bob=isGuardK?6:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*7)*1.2:0);
+ var bob=isGuardK?6:0;
  var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardK;
  var air=!f.onGround&&!isGuardK;
  ctx.translate(0,bob);
@@ -6580,7 +6593,7 @@ function drawSara(f){
  var flash=f.flash>0;
  var accC=flash?"#ffd9d4":"#f97316",hairC=flash?"#e04536":"#b91c1c";
  var isGuardS=!!f.guarding||f.state==="guard";
- var bob=isGuardS?8:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*7)*1.6:0);
+ var bob=isGuardS?8:0;
  var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardS;
  var air=!f.onGround&&!isGuardS;
  ctx.translate(0,bob);
@@ -6624,7 +6637,7 @@ function drawOrchid(f){
  var flash=f.flash>0;
  var leafC=flash?"#e04536":"#65a30d",leafL=flash?"#ff8a7a":"#84cc16",purpC=flash?"#e9b8ff":"#a855f7";
  var isGuardO=!!f.guarding||f.state==="guard";
- var bob=isGuardO?8:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*7)*1.6:0);
+ var bob=isGuardO?8:0;
  var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardO;
  var air=!f.onGround&&!isGuardO;
  ctx.translate(0,bob);
@@ -6682,7 +6695,7 @@ function drawTravis(f){
  var flash=f.flash>0;
  var goldC=flash?"#ffd9d4":"#fcd34d",purpC=flash?"#e9b8ff":"#c084fc";
  var isGuardT=!!f.guarding||f.state==="guard";
- var bob=isGuardT?8:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*7)*1.6:0);
+ var bob=isGuardT?8:0;
  var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardT;
  var air=!f.onGround&&!isGuardT;
  ctx.translate(0,bob);
@@ -6948,7 +6961,7 @@ function drawSmiley(f){
  var flash=f.flash>0;
  var paleC=flash?"#ffd9d4":"#fef9c3",yellC=flash?"#ffb3a6":"#fde047";
  var isGuardY=!!f.guarding||f.state==="guard";
- var bob=isGuardY?8:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*8)*1.6:0);
+ var bob=isGuardY?8:0;
  var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardY;
  var air=!f.onGround&&!isGuardY;
  ctx.translate(0,bob);
@@ -7156,12 +7169,13 @@ function drawMimi(f){
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)}
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
+ ctx.translate(0,-1/6); /* v137 足裏アンカー: MIMI の靴底はローカル y=58.5 (PXU グリッド) に描かれており、足裏ライン 70/CHAR_SCALE=58.333 へ寄せて台の上面に一致させる */
  if(f.state==="mwarp")ctx.globalAlpha=0.55+0.3*Math.sin(time*40);
  PXU=1.5;
  var flash=f.flash>0;
  var hairC=flash?"#ffd9d4":"#f9a8d4",hairD=flash?"#fda4af":"#f472b6",hairO=flash?"#e879a0":"#b02a5e",dressC=flash?"#ffe4e0":"#f8fafc",dressD=flash?"#fecdd3":"#dbe4ee",skinC=flash?"#ffc9bd":"#ffe9e1";
  var isGuardM=!!f.guarding||f.state==="guard";
- var bob=isGuardM?3:(f.onGround&&Math.abs(f.vx)<30?Math.sin(time*7)*1.1:0);
+ var bob=isGuardM?3:0;
  ctx.translate(0,bob);
  if(f.state==="mairspin"){ctx.translate(0,29);ctx.rotate(time*21);ctx.translate(0,-29)}
  if(f.state==="mdive")ctx.rotate(0.42);
