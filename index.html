@@ -167,6 +167,27 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 #ultBtn.axeReady{border-color:#fdba74;color:#ffedd5;background:rgba(67,20,7,.82);box-shadow:0 0 22px rgba(249,115,22,.9)}
 #ultBtn.travisReady{border-color:#c084fc;color:#f5d0fe;background:rgba(59,7,100,.82);box-shadow:0 0 22px rgba(192,132,252,.9)}
 #ultBtn.smileyReady{border-color:#fde047;color:#fef9c3;background:rgba(66,32,6,.82);box-shadow:0 0 22px rgba(253,224,71,.9)}
+/* online chat — bottom-left overlay, online rooms only (bandit.rip
+   layout: log lines, a "Press T to chat" box and a MUTE button beside
+   it). Sits above the left stick zone on touch devices and the log
+   itself never eats touches, so the stick stays fully usable. */
+#chatUI{position:absolute;left:10px;bottom:10px;z-index:9;width:min(372px,60vw);display:none;flex-direction:column;gap:5px;font-family:"DotGothic16","Noto Sans JP",sans-serif}
+#chatUI.on{display:flex}
+#chatLog{display:flex;flex-direction:column;justify-content:flex-end;gap:1px;background:rgba(2,8,20,.55);border:1px solid rgba(103,232,249,.22);border-radius:8px;padding:6px 9px;min-height:26px;max-height:172px;overflow:hidden;pointer-events:none}
+#chatLog:empty{display:none}
+.chatLine{font-size:13.5px;line-height:1.45;color:#e2f3ff;word-break:break-word;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.chatLine .chatName{font-weight:700;margin-right:2px}
+.chatLine.sys{color:#94a7bd;font-size:12.5px}
+#chatBar{display:flex;gap:6px;align-items:stretch}
+#chatHint{flex:1;background:rgba(2,8,20,.62);border:1.5px solid rgba(103,232,249,.35);border-radius:7px;color:#8fb8cc;font-size:13.5px;padding:6px 10px;line-height:1.3}
+#chatInput{flex:1;display:none;background:rgba(2,8,20,.88);border:1.5px solid var(--cyan);border-radius:7px;color:#fff;font-family:inherit;font-size:14px;padding:6px 10px;outline:none;min-width:0}
+#chatUI.typing #chatInput{display:block}
+#chatUI.typing #chatHint{display:none}
+.chatSideBtn{background:rgba(2,8,20,.72);border:1.5px solid rgba(103,232,249,.4);border-radius:7px;color:#cffafe;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.08em;padding:5px 10px;min-height:32px;white-space:nowrap}
+.chatSideBtn:hover{border-color:var(--cyan);color:#fff}
+#chatOpenBtn{display:none}
+#chatUI.muted #chatLog,#chatUI.muted #chatHint{display:none}
+@media(pointer:coarse){#chatUI{bottom:178px;width:min(320px,54vw)}#chatOpenBtn{display:block}#chatLog{max-height:150px}}
 /* character select — shown after PLAY / TRAINING is pressed (spawn screen),
    so picking a fighter never fights the menu layout for taps */
 #charSelect{position:absolute;inset:0;z-index:12;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(700px 340px at 50% 28%,rgba(34,211,238,.16),transparent 70%),rgba(2,6,17,.9);padding:14px;overflow:auto}
@@ -374,6 +395,15 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
     <div class="kbox"><span class="key" id="kbUKey">U</span><div class="cnt" id="kbAmmo">3 / 3</div></div>
     <div class="kbox" id="kbUlt"><span class="key" id="kbUltKey">L</span><div class="cnt" id="kbUltCnt">ULT 0%</div></div>
   </div>
+  <div id="chatUI" aria-label="チャット">
+    <div id="chatLog"></div>
+    <div id="chatBar">
+      <div id="chatHint">Press T to chat</div>
+      <input id="chatInput" type="text" maxlength="200" placeholder="メッセージを入力…" autocomplete="off"/>
+      <button class="chatSideBtn" id="chatOpenBtn" type="button">CHAT</button>
+      <button class="chatSideBtn" id="chatMuteBtn" type="button">MUTE</button>
+    </div>
+  </div>
 </section>
 
 <!-- modal -->
@@ -393,6 +423,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["23:21"],tag:"新機能",title:"オンライン対戦にチャットを追加（左下・Tキー／ボタンで入力、ミュート可）",
+  items:["オンライン対戦（ルーム接続中）のときだけ、画面左下にチャットが出るようになりました。ロビー・試合中・リザルト画面のどこでも使えます。直近の会話がログに残り、入退室のお知らせは色を変えて表示されます",
+         "Tキーで入力欄を開いて Enter で送信、Esc でキャンセルです。入力しているあいだは移動・ワザ・ダッシュなどのゲーム操作は一切入りません。スマホ・タブレットでは CHAT ボタンから入力でき、左下のスティックに被らない位置に置いてあります（スティック操作はそのまま使えます）",
+         "MUTEボタンでチャットの表示／非表示を切り替えられます（ミュート中はログと入力ヒントが隠れます）",
+         "チャットは表示と通信だけの追加です：対戦の計算（このページ内蔵の計算・オンライン対戦のサーバー側計算）や技の数値に変更はありません。オフライン（VS CPU・TRAINING）では表示されません"]},
  {date:"2026/11/14",times:["22:20"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけロ」のSHADE側KBを320→520に強化し、吹き飛ばし方向を真上に変更",
   items:["↓+J「こけちゃうよ／こけロ」のSHADE側のKBを320→520に強化し、吹き飛ばし方向を横方向から真上に変更しました（当たった相手はその場から真上へ吹き飛びます）",
          "その他の数値は変更ありません：SHADE ダメージ12／発生0.16秒／判定92×40、MIMI側 ダメージ6／KB680、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／520（真上）」に合わせました",
@@ -1856,10 +1891,115 @@ function cleanupNet(){
  net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];
+ chatReset();
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
 }
 function svSend(o){if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}}
+/* ================= ONLINE CHAT (bottom-left, bandit.rip style) =====
+   Room chat rides the same match-server WebSocket as everything
+   else: the client sends {t:"chat", text} and the server broadcasts
+   {t:"chat", name, text} (or {t:"chat", sys:1, text} for join/leave
+   notices) to everyone in the room — handled in svOnMsg below. The
+   UI lives inside #gameScreen, so it is present on the lobby, in
+   matches and on the results screen, and it only ever shows while
+   a room connection is live (chatSyncVis, polled from the main
+   loop); offline modes never see it. Names and message bodies are
+   rendered with textContent only — never innerHTML. */
+var chatMsgs=[]; /* {name, text, sys} — newest last, capped at 50 */
+var chatMuted=false;
+var chatTyping=false;
+var CHAT_COLORS=["#4ade80","#7dd3fc","#fbbf24","#f472b6","#a78bfa","#34d399","#fb923c","#f87171","#22d3ee","#a3e635"];
+function chatNameColor(name){
+ var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))|0;
+ return CHAT_COLORS[Math.abs(h)%CHAT_COLORS.length];
+}
+function chatRender(){
+ var log=$("chatLog");if(!log)return;
+ log.textContent="";
+ var from=Math.max(0,chatMsgs.length-9);
+ for(var i=from;i<chatMsgs.length;i++){
+   var m=chatMsgs[i],line=document.createElement("div");
+   if(m.sys){
+     line.className="chatLine sys";line.textContent=m.text;
+   }else{
+     line.className="chatLine";
+     var nm=document.createElement("span");nm.className="chatName";nm.style.color=chatNameColor(m.name);nm.textContent=m.name+":";
+     line.appendChild(nm);line.appendChild(document.createTextNode(" "+m.text));
+   }
+   log.appendChild(line);
+ }
+}
+function chatAdd(name,text,sys){
+ text=String(text==null?"":text);if(!text)return;
+ chatMsgs.push({name:sys?"":String(name||"プレイヤー"),text:text,sys:!!sys});
+ if(chatMsgs.length>50)chatMsgs.splice(0,chatMsgs.length-50);
+ chatRender();
+}
+function chatVisible(){
+ return !!($("gameScreen").classList.contains("on")&&net.ws&&net.myId);
+}
+function chatSyncVis(){
+ var ui=$("chatUI");if(!ui)return;
+ var on=chatVisible();
+ ui.classList.toggle("on",on);
+ if(!on&&chatTyping)chatCloseInput(false);
+}
+function chatOpenInput(){
+ if(!chatVisible())return;
+ var ui=$("chatUI"),inp=$("chatInput");if(!ui||!inp)return;
+ chatTyping=true;ui.classList.add("typing");
+ /* opening the chat must never leave a held movement key driving
+    the fighter: drop every held key / touch button / queued press */
+ keys={};touchHeld.j=touchHeld.k=touchHeld.l=touchHeld.ult=false;svPressQ.length=0;
+ inp.value="";inp.focus();
+}
+function chatCloseInput(refocus){
+ chatTyping=false;
+ var ui=$("chatUI"),inp=$("chatInput");if(!ui||!inp)return;
+ ui.classList.remove("typing");inp.value="";
+ if(document.activeElement===inp)inp.blur();
+ keys={};
+}
+function chatSendCurrent(){
+ var inp=$("chatInput");if(!inp)return;
+ var text=inp.value.slice(0,200).trim();
+ if(text)svSend({t:"chat",text:text});
+ chatCloseInput(false);
+}
+function chatReset(){
+ chatMsgs.length=0;chatTyping=false;
+ var ui=$("chatUI");if(ui){ui.classList.remove("typing");ui.classList.remove("on");chatRender()}
+}
+/* T opens the chat (when a room is live); while the input is open
+   the field owns the keyboard — the game key handlers already bail
+   on text fields via typingInField, and chatTyping additionally
+   zeroes the sampled online input in svSampleLocal, so no move /
+   dash / attack can fire while typing. This listener runs in the
+   capture phase so T never falls through to anything else, and
+   Enter / Esc are handled by the input's own keydown below. */
+window.addEventListener("keydown",function(e){
+ if(e.code!=="KeyT"||e.repeat)return;
+ if(typingInField(e)||capturingFor)return;
+ if($("modal").classList.contains("on"))return;
+ if(!chatVisible())return;
+ e.preventDefault();chatOpenInput();
+},true);
+$("chatInput").addEventListener("keydown",function(e){
+ e.stopPropagation();
+ if(e.key==="Enter"){e.preventDefault();chatSendCurrent()}
+ else if(e.key==="Escape"){e.preventDefault();chatCloseInput(false)}
+});
+$("chatInput").addEventListener("blur",function(){if(chatTyping)chatCloseInput(false)});
+$("chatMuteBtn").addEventListener("click",function(){
+ chatMuted=!chatMuted;
+ $("chatUI").classList.toggle("muted",chatMuted);
+ this.textContent=chatMuted?"UNMUTE":"MUTE";
+});
+$("chatOpenBtn").addEventListener("click",function(){chatOpenInput()});
+/* visibility follows the room connection (covers lobby / char
+   select / match / results / disconnect without hooking each one) */
+setInterval(chatSyncVis,400);
 function svConnect(){
  var url=jbServerBase().replace(/\/+$/,"")+"/room/"+encodeURIComponent(net.code||"");
  var ws=null;
@@ -1955,6 +2095,7 @@ function svOnMsg(m){
    return;
  }
  if(m.t==="snap"){svOnSnap(m);return}
+ if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
  if(m.t==="ev"){svOnEv(m.ev);return} /* server FX events: the sim records every effect spawn (particles / rings / sparks / bursts / floaters / shake) and the Room forwards them — svOnEv replays them through the same spawn helpers the local sim uses, so online matches show the exact effects offline matches do. "banner" events inside are still skipped: the client renders KO banners itself from snapshot death transitions (svOnDeathFx), so they are not double-shown */
  if(m.t==="cpu"){
    if(running&&mode==="online")showCenter((m.name||"プレイヤー")+" さんが退出しました\nCPUが引き継ぎます",2600);
@@ -2104,6 +2245,7 @@ var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
  var bits=0;
+ if(chatTyping)return 0; /* chat input is open: sample a neutral frame so no movement / attack / dash input reaches the server while typing */
  if(keys.left||stick.dx<-0.28)bits|=1;
  if(keys.right||stick.dx>0.28)bits|=2;
  if(keys.down||stick.dy>0.55)bits|=4;
