@@ -393,6 +393,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["20:34"],tag:"修正・調整",title:"技発動時の技名表示を全キャラで廃止",
+  items:["技を発動した時にキャラの頭上に出ていた技名の表示（「火炎放射！」「猪突猛進！」「サンフラワー！」「Berserker！」「♪ シング・タイム ♪」「アームキャッチ・ミー！」「確保！／確保失敗…」「いってらっしゃいSHADE！」「助けてSHADE！！」「大好きだよSHADE！」など）を、全キャラ共通で出ないようにしました",
+         "消したのは技名の表示だけです：ダメージ数字・GUARD表示・KO回復の「+○○ HP」・カウントダウンなど他の表示はこれまで通り出ます。「モードカオス」は効果情報（与ダメ+30%・13秒）だけ、「栄養補給」は回復量（+○○ HP）だけが残る形にしました",
+         "オンライン対戦でも技名は出ません（オンラインはサーバー側の計算結果を再生する方式ですが、技名の表示はこのページ側の表示処理から取り除いたため、サーバーから送られるエフェクト再生でも技名は表示されません）。技の数値・判定・挙動に変更はありません"]},
  {date:"2026/11/14",times:["20:23"],tag:"修正・調整",title:"MIMI&SHADE：見た目を他キャラと同じドット絵テイストに",
   items:["MIMI&SHADEの見た目を、他の8キャラのスプライトと同じドット絵の描き方に統一しました：輪郭のあるフラットなドット描画で、キャラ選択カード・試合中のMIMIとSHADE・全モーション・闇フィールド・ウルトの弾まで全てドット絵タッチになりました",
          "デザインはそのままです（ピンク髪＋白ワンピースのMIMI、巨大な黒い両手のSHADE、シルエットや色使い、SHADEの手の大きさも現行のまま）。変えたのは描き方だけで、技の数値・判定・挙動に変更はありません"]},
@@ -2284,6 +2288,21 @@ function svOnDeathFx(i,preDead){
    execution code spawns — per-move bursts, damage numbers, KO heal
    sparkles, mine detonations… — simply never appeared online. */
 var SVFX_COUNT=null; /* debug: set to {} to count replayed spawns by kind */
+/* 技名フローターの再生ガード (user request): move-name floaters were
+   removed from the shared sim, but a server still running the older
+   sim keeps sending them as "fl" events — drop the pure move-name
+   callouts here too, and strip just the name off the two composite
+   ones so their effect info (与ダメ+30% / +HP) still shows, exactly
+   like local play. Damage numbers, GUARD, heal amounts and every
+   other floater pass through untouched. */
+var SV_MOVENAME_FLOATERS={"アームキャッチ・ミー！":1,"確保！":1,"確保失敗…":1,"猪突猛進！":1,"火炎放射！":1,"サンフラワー！":1,"♪ シング・タイム ♪":1,"Berserker！":1,"いってらっしゃいSHADE！":1,"助けてSHADE！！":1,"大好きだよSHADE！":1};
+function svFloaterTxt(t){
+ if(typeof t!=="string")return t;
+ if(SV_MOVENAME_FLOATERS[t])return null;
+ if(t.indexOf("モードカオス！ ")===0)return t.slice("モードカオス！ ".length);
+ if(t.indexOf("栄養補給！ ")===0)return t.slice("栄養補給！ ".length);
+ return t;
+}
 function svOnEv(evs){
  if(!evs||!sv.active||mode!=="online")return;
  for(var i=0;i<evs.length;i++){var e=evs[i];if(!e||!e.k)continue;
@@ -2293,7 +2312,7 @@ function svOnEv(evs){
   else if(e.k==="s")spawnSparks(e.x,e.y,e.d,e.c,e.n);
   else if(e.k==="b"){var bim=FXIMG[e.i];if(bim)spawnFxBurst(bim,e.x,e.y,e.z,e.l,e.r,e.f,e.a)}
   else if(e.k==="v")spawnVecBurst(e.kd,e.x,e.y,e.z,e.l,e.r,e.f,e.a);
-  else if(e.k==="fl")floaters.push({x:e.x,y:e.y,txt:e.t,life:e.l,col:e.c});
+  else if(e.k==="fl"){var flt=svFloaterTxt(e.t);if(flt!==null)floaters.push({x:e.x,y:e.y,txt:flt,life:e.l,col:e.c})}
   else if(e.k==="pt"){var pp={x:e.x,y:e.y,vx:e.vx,vy:e.vy,life:e.l,col:e.c,size:e.s};if(e.st)pp.streak=1;if(e.amb)pp.amb=1;particles.push(pp)}
   else if(e.k==="shk")shake=Math.max(shake,e.v||0);
   /* "banner" events are not replayed: the client renders the same KO
@@ -3707,7 +3726,7 @@ function startWardenAttack(f,type,foe){
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=5.0;f.state="wcatch";f.stateT=0.55;f.attackCd=0.48;f.comboWin=0; /* アームキャッチ・ミー 全体 0.38秒 -> 0.55秒 (user spec): 後硬直は attackCd 0.48 + 共通0.07 = 0.55秒のまま */
      f.vy=-1020;f.vx=0;f.onGround=false;f.fastfall=false; /* 上昇 vy -820 -> -1020 (user spec) */
-     floaters.push({x:f.x,y:f.y-30,txt:"アームキャッチ・ミー！",life:.85,col:"#fde68a"});
+     /* 技名フローターは全キャラで廃止 (user request): 発動時の技名表示のみ消し、ダメージ数字・GUARD・回復量などの表示は残す */
      spawnParticles(f.x,f.y-14,14,"#fde68a",170);spawnParticles(f.x,f.y+f.h*0.4,8,"#fbbf24",130);spawnRing(f.x,f.y-6,"#fde68a",40);
      beep(1250,.1,"square",.05);setTimeout(function(){beep(420,.12,"sawtooth",.045)},70);
    }else if(downHeld&&f.onGround){
@@ -3758,12 +3777,10 @@ function startWardenAttack(f,type,foe){
    if(gd<500&&gdy<430&&!foe.dead&&foe.invuln<=0&&!acrossMainFloor(f,foe)){ /* grab reach (user spec): forward ~520 -> ~500, vertical ~320 -> ~430. The hoist lerps the foe through the air ignoring collision, so a grab across the solid main floor could pull a foe who is underneath it up through the slab — the acrossMainFloor guard refuses exactly that pairing */
      f.state="ultgrab";f.stateT=0.55;
      foe.grabT=0.55;foe.grabBy=f;foe.dashT=0;foe.fastfall=false;foe.hitstun=Math.max(foe.hitstun,0.2);
-     floaters.push({x:foe.x,y:foe.y-36,txt:"確保！",life:.95,col:"#fde68a"});
      spawnParticles(foe.x,foe.y+foe.h*0.5,22,"#fde68a",230);
      beep(1200,.12,"square",.06);setTimeout(function(){beep(300,.18,"sawtooth",.06)},140);
    }else{
      f.state="ult";f.stateT=0.4;
-     floaters.push({x:f.x,y:f.y-30,txt:"確保失敗…",life:.9,col:"#fda4af"});
      spawnParticles(f.x+f.face*30,f.y-10,10,"#94a3b8",130);
      beep(170,.16,"sawtooth",.05);
    }
@@ -4114,7 +4131,6 @@ function startAxeAttack(f,type,foe){
       (the push logic lives in stepFighter under ultChargeT) */
    if(f.meter<100)return;f.meter=0;f.ultDir=f.face;f.ultChargeT=1.5;f.invuln=1.5;f.state="ultcharge";f.stateT=1.5;f.attackCd=2.53;shake=10; /* charge / invincibility 1.0s -> 1.5s, recovery after the charge 0.72s -> 1.1s: attackCd 2.53 + 0.07 - 1.5 charge = 1.1 (user spec) */
    spawnParticles(f.x,f.y+f.h*0.45,26,"#fb923c",260);spawnParticles(f.x,f.y+f.h-4,14,"#a8a29e",180);
-   floaters.push({x:f.x,y:f.y-30,txt:"猪突猛進！",life:1.0,col:"#fdba74"});
    beep(70,.35,"sawtooth",.09);setTimeout(function(){beep(160,.25,"sawtooth",.07)},90);
  }
 }
@@ -4290,7 +4306,7 @@ function startSaraAttack(f,type,foe){
      var cut=Math.floor(f.hp*0.3); /* コスト: 現在HPの1/3 -> 30% (user spec) */if(f.hp-cut<1)cut=f.hp-1;
      f.hp-=cut;if(f.hpGhost>f.hp)f.hpGhost=f.hp;f.lastHurt=time;f.flash=0.22;
      f.state="schaos";f.stateT=0.5;f.attackCd=0.25;f.comboWin=0;applyFullLock(f); /* 後硬直 0.67 -> 0.32秒（完全硬直） (user spec) */
-     floaters.push({x:f.x,y:f.y-32,txt:"モードカオス！ 与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"});
+     floaters.push({x:f.x,y:f.y-32,txt:"与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"}); /* 技名部分のみ削除し、効果情報の表示は残す (user request) */
      floaters.push({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
      spawnParticles(f.x,f.y+f.h*0.45,30,"#ef4444",250);spawnParticles(f.x,f.y+f.h*0.45,18,"#fb923c",210);spawnRing(f.x,f.y+f.h*0.45,"#ef4444",64);
      shake=Math.max(shake,5);beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
@@ -4335,7 +4351,6 @@ function startSaraAttack(f,type,foe){
    if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.8;f.attackCd=1.90;f.comboWin=0; /* 火炎放射 (user spec): 全体 1.91 -> 1.8秒 */
    f.flameDelay=0;f.flameT=1.75;f.flameMode=1;f.flameTick=0;
  for(var ufi=0;ufi<fighters.length;ufi++){fighters[ufi].flameExp=0;fighters[ufi].flameExpBy=null} /* fresh exposure tally for this jet */
-   floaters.push({x:f.x,y:f.y-30,txt:"火炎放射！",life:1.0,col:"#fdba74"});
    spawnParticles(f.x+f.face*20,f.y+f.h*0.4,20,"#fb923c",230);
    beep(110,.4,"sawtooth",.08);setTimeout(function(){beep(240,.3,"sawtooth",.06)},80);
  }
@@ -4468,7 +4483,7 @@ function startOrchidAttack(f,type,foe){
    f.specCd=14;f.state="onutri";f.stateT=0.6;f.attackCd=0.75;f.comboWin=0;
    var healed=Math.min(40,(f.maxHp||MAXHP)-f.hp);if(healed<0)healed=0;
    f.hp+=healed;f.buffT=8;f.venom=true;f.hitstun=Math.max(f.hitstun,0.6);
-   floaters.push({x:f.x,y:f.y-30,txt:"栄養補給！ +"+healed+" HP",life:1.05,col:"#4ade80"});
+   floaters.push({x:f.x,y:f.y-30,txt:"+"+healed+" HP",life:1.05,col:"#4ade80"}); /* 技名部分のみ削除し、回復量の表示は残す (user request) */
    floaters.push({x:f.x,y:f.y-12,txt:"全攻撃に毒付与",life:1.05,col:"#d9f99d"});
    spawnParticles(f.x,f.y+f.h*0.5,22,"#4ade80",170);spawnParticles(f.x,f.y+f.h-4,10,"#a3e635",120);spawnRing(f.x,f.y+f.h*0.5,"#4ade80",52);
    beep(520,.18,"sine",.05);setTimeout(function(){beep(780,.14,"sine",.04)},80);
@@ -4481,7 +4496,6 @@ function startOrchidAttack(f,type,foe){
       via flameMode 3. */
    if(f.meter<100)return;f.meter=0;f.state="osun";f.stateT=1.5;f.attackCd=1.6;f.comboWin=0;
    f.flameDelay=0;f.flameT=1.45;f.flameMode=3;f.flameTick=0;
-   floaters.push({x:f.x,y:f.y-30,txt:"サンフラワー！",life:1.0,col:"#fde047"});
    spawnParticles(f.x+f.face*20,f.y+f.h*0.35,22,"#fde047",230);spawnParticles(f.x,f.y-6,12,"#a3e635",170);
    beep(120,.4,"sawtooth",.07);setTimeout(function(){beep(660,.25,"sine",.05)},90);
  }
@@ -4634,7 +4648,6 @@ function startTravisAttack(f,type,foe){
         moment the song ends, so he cannot move, jump, dash or act
         for the whole 2.5s (the SARA ハンドフレア pattern) */
      f.state="tsing";f.stateT=3.6;f.attackCd=6.03;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
-     floaters.push({x:f.x,y:f.y-30,txt:"♪ シング・タイム ♪",life:1.1,col:"#e9d5ff"});
      spawnParticles(f.x,f.y+f.h*0.4,14,"#c084fc",190);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",40);
      beep(520,.18,"sine",.05);setTimeout(function(){beep(660,.18,"sine",.05)},140);setTimeout(function(){beep(780,.22,"sine",.05)},280);
    }else if(upHeld){
@@ -4880,7 +4893,6 @@ function startSmileyAttack(f,type,foe){
    if(f.meter<100)return;f.meter=0;f.awakenT=10;f.attackCd=0.35;f.comboWin=0;shake=7;
    spawnVecBurst("smiley",f.x,f.y+f.h*0.45,165,2.4,0.5,1,1.15);
    spawnParticles(f.x,f.y+f.h/2,26,"#dc2626",260);spawnParticles(f.x,f.y+f.h/2,16,"#7f1d1d",200);
-   floaters.push({x:f.x,y:f.y-36,txt:"Berserker！",life:1.15,col:"#f87171"});
    beep(110,.4,"sawtooth",.085);setTimeout(function(){beep(880,.3,"square",.05)},90);
  }
 }
@@ -5048,13 +5060,11 @@ function startMimiAttack(f,type,foe){
      if(!f.shAway&&Math.abs(f.shX-f.x)<150&&Math.abs(f.shY-(f.y+f.h))<110){
        f.shAway=true;f.shX+=f.face*300;if(f.shX<60)f.shX=60;if(f.shX>WORLD_W-60)f.shX=WORLD_W-60;
        f.shState="ssend";f.shStateT=0.4;
-       floaters.push({x:f.x,y:f.y-30,txt:"いってらっしゃいSHADE！",life:1.0,col:"#f9a8d4"});
        shadeBurst(f,10);
        beep(700,.09,"sine",.05);
      }else{
        f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;
        f.shState="ssend";f.shStateT=0.4;
-       floaters.push({x:f.x,y:f.y-30,txt:"助けてSHADE！！",life:1.0,col:"#f9a8d4"});
        shadeBurst(f,10);
        beep(880,.09,"sine",.05);
      }
@@ -5079,7 +5089,6 @@ function startMimiAttack(f,type,foe){
    f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="sult";f.shStateT=0.8;
    projectiles.push({x:f.x+f.face*42,y:f.y+f.h*0.42,vx:f.face*620,vy:0,owner:f,life:1.5,kind:"mimiball"});
    spawnParticles(f.x,f.y+f.h/2,34,"#f9a8d4",290);spawnParticles(f.x,f.y+f.h/2,22,"#7e22ce",230);spawnRing(f.x+f.face*30,f.y+f.h*0.42,"#fde68a",46);
-   floaters.push({x:f.x,y:f.y-34,txt:"大好きだよSHADE！",life:1.15,col:"#fbcfe8"});
    beep(90,.35,"sawtooth",.08);setTimeout(function(){beep(1320,.25,"sine",.05)},80);
  }
 }
