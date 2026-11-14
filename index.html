@@ -116,6 +116,19 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 @media (prefers-reduced-motion: reduce){#finalCount .fcNum.pop{animation:none!important}}
 #endBtns{position:absolute;left:50%;bottom:15%;transform:translateX(-50%);z-index:10;display:none;gap:10px;flex-wrap:wrap;justify-content:center;max-width:94vw}
 #endBtns.on{display:flex}
+/* results panel — post-match ranking table (SCORE desc). No map/mode
+   voting here by design: just the standings and the end buttons. */
+#resultsPanel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:11;display:none;background:rgba(2,6,17,.9);border:1.5px solid rgba(103,232,249,.4);border-radius:16px;padding:16px 20px 14px;min-width:min(560px,94vw);max-width:94vw;max-height:72svh;overflow:auto}
+#resultsPanel.on{display:block}
+#resultsPanel .resTitle{font-family:"Bowlby One";font-size:22px;letter-spacing:.24em;color:#cffafe;text-align:center;margin-bottom:8px}
+.resTable{width:100%;border-collapse:collapse;font-family:"DotGothic16","Noto Sans JP",sans-serif;font-size:15.5px;color:#e2e8f0}
+.resTable th{font-size:12px;letter-spacing:.14em;color:#9db4d6;text-align:right;padding:4px 8px;border-bottom:1.5px solid rgba(103,232,249,.35)}
+.resTable th:first-child{text-align:left}
+.resTable td{padding:5px 8px;text-align:right;border-bottom:1px solid rgba(34,211,238,.12);white-space:nowrap}
+.resTable td:first-child{text-align:left;font-weight:700;color:#fff;white-space:normal}
+.resTable tr.me td{background:rgba(74,222,128,.16);color:#bbf7d0}
+.resTable tr.me td:first-child{color:#bbf7d0}
+#resWin{display:none;text-align:center;font-family:"Bowlby One";font-size:clamp(17px,3vw,24px);color:#fde047;text-shadow:0 2px 0 #713f12,0 0 22px rgba(251,191,36,.55);margin-top:11px}
 /* touch controls — floating joystick (left) + bandit-style boxes (right) */
 #stickZone{position:absolute;left:0;bottom:0;width:46%;height:78%;z-index:8;display:none;touch-action:none}
 #stickBase{position:absolute;width:118px;height:118px;border-radius:50%;background:rgba(165,243,252,.18);border:2px solid rgba(255,255,255,.28);display:none;pointer-events:none}
@@ -286,8 +299,8 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>キルで +100 ポイントのスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ロールバック方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
-    <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 40% of max HP, shown on screen</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
+    <span>与えたダメージがそのままスコアになるスコア制バトル（キル・アシスト共通）<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ロールバック方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
 
@@ -304,10 +317,11 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span></div>
   <div class="cornerBtns"><button class="gbtn" id="pauseBtn">⏸ ポーズ</button><button class="gbtn" id="resetBtn">↺ リセット</button><button class="gbtn primary" id="backBtn">← メニュー</button></div>
   <div id="rotateHint">横画面にするとステージが広く見えます</div>
-  <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts">+100 POINTS</div><div class="sub" id="bannerSub"></div></div>
+  <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts"></div><div class="sub" id="bannerSub"></div></div>
   <div id="centerMsg"><div id="centerText">3</div></div>
   <div id="finalCount" aria-hidden="true"><div class="fcWrap"><div class="fcLabel">TIME LIMIT</div><div class="fcNum" id="finalNum">5</div></div></div>
   <div id="endBtns"><button class="gbtn primary" id="againBtn" style="font-size:15px;padding:10px 22px">もう一度たたかう</button><button class="gbtn" id="endCharBtn" style="font-size:15px;padding:10px 22px">キャラ変更</button><button class="gbtn" id="endMenuBtn" style="font-size:15px;padding:10px 22px">メニューへ</button></div>
+  <div id="resultsPanel"><div class="resTitle">RESULTS</div><table class="resTable"><thead><tr><th>NAME</th><th>SCORE</th><th>ASSISTS</th><th>KILLS</th><th>DEATHS</th></tr></thead><tbody id="resRows"></tbody></table><div id="resWin">🏆 YOU WON! CONGRATULATIONS!</div></div>
   <div id="charSelect">
     <div class="csTitle brush" id="csTitle">キャラを選んでください</div>
     <div id="csNote" style="display:none;color:#fda4af;font-weight:900;font-size:14px;text-align:center">倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）</div>
@@ -374,6 +388,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["12:47"],tag:"大型更新",title:"スコア・キル回復を bandit.rip 式に刷新／リザルト画面を追加",
+  items:["スコアの固定 +100 を廃止しました。敵1体を倒すと、その敵にダメージを与えた全員が「その敵に与えたダメージの合計」と同点の SCORE を獲得します（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルール）。ガードで軽減された分や、残りHPを超えた過剰分は数えません",
+         "キル回復を変更しました。回復するのは倒した本人だけで、回復量は「その敵に自分が与えたダメージの20%」（上限は自分の最大HPの30%）です。ダメージを与えていない落下キルでは回復しません。SARA のモードカオス中の回復-35%は従来どおり適用されます",
+         "試合終了後にリザルト画面を表示します。SCORE 順のランキング表（NAME／SCORE／ASSISTS／KILLS／DEATHS）で、自分の行がハイライトされ、1位の時だけ「🏆 YOU WON! CONGRATULATIONS!」が出ます。マップ選択・モード投票のボタンはありません",
+         "オンライン対戦のサーバー側計算にも同じスコア・キル回復・リザルトの仕様を同時同期しました"]},
+ {date:"2026/11/14",times:["12:47"],tag:"修正・調整",title:"1段目ジャンプを「小ジャンプ／通常ジャンプ」の2種類に（Wの押し方で切替）",
+  items:["1段目のジャンプが、Wキーを押す長さで2種類に分かれるようになりました。短くタップすると小ジャンプ（頂点 約96）、0.12秒以上押し続けると通常ジャンプ（頂点 約172＝従来どおり）になります。どちらの高さも毎回一定で、途中でキーを離しても伸び縮みしません",
+         "小ジャンプは台の段差（最大115）には届かない低さです。高く跳びたい時・台に登りたい時はWを押し続けてください。2段ジャンプは従来どおり（上昇 約120）で変更ありません",
+         "スマホのスティックも同じ判定です（素早く上に倒すと小ジャンプ、倒し続けると通常ジャンプ）。CPU は従来どおり通常ジャンプの高さで跳びます"]},
  {date:"2026/11/14",times:["12:03"],tag:"修正・調整",title:"KAIRO／KOJIROの調整（ホバースピン着地硬直短縮／KOJIROウルト溜まり低下・空中技の着地硬直短縮）",
   items:["KAIRO 空中J ホバースピン：着地硬直 0.28秒→0.2秒に短縮しました",
          "KOJIRO：ウルト溜まり 約1.33倍→約0.9倍に低下しました",
@@ -1012,14 +1035,14 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>相手のHPを削って倒すと <b style="color:#fde047">+100 ポイント</b>。落下死でも、直前に攻撃していればキル扱い。倒すと自分のHPが少し回復（REGEN）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。キーを離すと低く跳ぶ）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。自分のキャラは手元で先行して動くので操作は即反応し、相手のキャラはサーバーからの情報を補間して滑らかに表示します。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。自分のキャラは手元で先行して動くので操作は即反応し、相手のキャラはサーバーからの情報を補間して滑らかに表示します。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
 
 /* ================= GAME ENGINE =================
    Physics & layout measured against real bandit.rip gameplay footage:
-   - HP-based arena brawler, kill = +100 score, respawn, out-of-combat regen
+   - HP-based arena brawler, score = damage dealt (settled per KO, kill and assists alike), respawn, out-of-combat regen
    - big scrolling stage, camera follows the player with a dead zone +
      critically-damped ease and a small smoothed lookahead (updateCamera):
      precise placement without the sway that causes camera sickness
@@ -1069,7 +1092,28 @@ var SPAWNS=[{x:700,y:950},{x:1900,y:950}];
    Ground friction is deliberately huge: letting go of the stick stops the
    fighter almost immediately. The ground does not slide. */
 var GRAV=1900,GRAV_FALL=2000,MAXFALL=770,FASTFALL=920; /* HONKA physics pass v2 (owner request, measured frame-by-frame against the owner's reference video, tracking the HP bar against the ledges): the v90 floaty rebuild (1000 / 450 / 380 / 560) was WRONG — falling was far too slow vs the video. Measured from the video: apex ~190u (~2.8 char heights) reached in ~0.44-0.47s, and the apex-to-ledge fall takes ~0.40-0.47s (~475u/s average). These values are back near the pre-v89 set (1840 / 2050 / 784 / 920). Verified by discrete 60fps simulation of the exact stepFighter integration: with the original JUMP_V 860 the apex measured 187.5u (2.68 char heights) at 0.450s with a 0.433s apex-to-ground fall; since v93 (JUMP_V 825, gravities unchanged) the same sim measures apex 172.3u, reached in 0.433s, apex-to-ground fall 0.417s. Per-character fallMul (ORCHID x1.11) still multiplies the FALLING gravity and the fall cap only, as a relative multiplier. The match server's sim.js carries the identical numbers. */
-var JUMP_V=825,DJUMP_V=691; /* FIXED-HEIGHT jumps (unchanged from v90): no short hop / long hop — W's press length never changes the height. v93 (owner request): jump power lowered a touch, initial velocity ONLY (gravities unchanged) — JUMP_V 860 -> 825: the discrete 60fps sim measures apex 172.3u (~2.46 char heights, was 187.5u) reached in 0.433s, total same-height airtime 0.850s, so the widest same-tier gap (321u) stays inside the ~330u jump range at full air speed (388u/s) and every stage step (<=115u) is still reachable with a single jump. DJUMP_V 720 -> 691 (the same ratio) adds ~120u of rise in the discrete sim. */
+var JUMP_V=825,DJUMP_V=691; /* v93 (owner request): jump power lowered a touch, initial velocity ONLY (gravities unchanged) — JUMP_V 860 -> 825: the discrete 60fps sim measures apex 172.3u (~2.46 char heights, was 187.5u) reached in 0.433s, total same-height airtime 0.850s, so the widest same-tier gap (321u) stays inside the ~330u jump range at full air speed (388u/s) and every stage step (<=115u) is still reachable with a single jump. DJUMP_V 720 -> 691 (the same ratio) adds ~120u of rise in the discrete sim. */
+/* --- TWO-HEIGHT first jump (owner spec 2026-11-14): the FIRST jump of an
+   airborne stint (ground / coyote jump, and the airborne first jump after
+   walking off a ledge) comes in exactly two FIXED heights, chosen by how
+   long W is held — never anything in between:
+     tap  (released within JUMP_HOLD_S) -> SHORT hop at SJUMP_V
+     hold (still held when JUMP_HOLD_S elapses) -> NORMAL jump, apex
+          exactly FULL_JUMP_APEX (the old fixed jump, 172.3u)
+   The jump STARTS at SJUMP_V so it fires on the press frame with zero
+   added input delay; if W is still held when the window closes,
+   stepFighter rewrites vy to the exact velocity whose remaining rise
+   tops out at FULL_JUMP_APEX (jumpBoostV solves the discrete 60fps
+   integration below, so the apex is the same no matter which step the
+   boost lands on). Releasing W after the window changes nothing, and
+   releasing it inside the window simply leaves the short hop — there is
+   no analog jump cut. The DOUBLE jump is untouched (DJUMP_V as before).
+   SJUMP_V 620 measures apex 96.1u in the discrete sim (~1.37 char
+   heights, airtime ~0.63s): deliberately BELOW the 115u stage steps, so
+   a short hop cannot climb — hold W for the normal jump to climb. */
+var SJUMP_V=620,JUMP_HOLD_S=0.12,FULL_JUMP_APEX=172.3;
+function jumpRiseFrom(v,dt){var vy=-v,rise=0,n=0;while(n++<300){var g=vy>0?GRAV_FALL:GRAV;vy+=g*dt;if(vy<0)rise+=-vy*dt;else break}return rise}
+function jumpBoostV(remaining,dt){if(remaining<=0)return 0;var lo=0,hi=1600;for(var i=0;i<24;i++){var mid=(lo+hi)/2;if(jumpRiseFrom(mid,dt)<remaining)lo=mid;else hi=mid}return hi}
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
@@ -1104,7 +1148,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1114,7 +1158,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1156,7 +1200,7 @@ function startMatch(m){
    P2=fighters[1];
  }
  projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];mines=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
- buf={};$("endBtns").classList.remove("on");hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
+ buf={};$("endBtns").classList.remove("on");hideResults();hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;camVel.x=0;camVel.y=0;camLook=0;clampCam();
  window.scrollTo(0,0);
@@ -1284,14 +1328,14 @@ function refreshCsCards(){
 }
 function openRespawnSelect(){
  csMode="respawn";pendingMode=mode;paused=true;
- $("endBtns").classList.remove("on");hideBanner();showCenter("",0);
+ $("endBtns").classList.remove("on");hideResults();hideBanner();showCenter("",0);
  resize();refreshCsCards();$("charSelect").classList.add("on");
 }
 function openCharSelect(m){
  csMode="start";
  pendingMode=m||"versus";
  $("menu").style.display="none";$("gameScreen").classList.add("on");$("modal").classList.remove("on");
- $("endBtns").classList.remove("on");hideBanner();showCenter("",0);
+ $("endBtns").classList.remove("on");hideResults();hideBanner();showCenter("",0);
  resize();refreshCsCards();$("charSelect").classList.add("on");
  window.scrollTo(0,0);
 }
@@ -1333,7 +1377,7 @@ $("againBtn").onclick=function(){
  if(mode==="online"){
    /* the server returns EVERYONE to the lobby on any player's
       rematch (characters stay picked; anyone may re-pick first) */
-   $("endBtns").classList.remove("on");
+   $("endBtns").classList.remove("on");hideResults();
    svSend({t:"rematch"});
    showCenter("再戦をリクエストしました\nホストの開始を待っています…",99999);
    return;
@@ -1349,7 +1393,7 @@ $("againBtn").onclick=function(){
 $("endCharBtn").onclick=function(){
  beep(600,.06);
  if(mode==="online"){
-   $("endBtns").classList.remove("on");
+   $("endBtns").classList.remove("on");hideResults();
    svSend({t:"rematch"});
    showCenter("キャラ変更をリクエストしました\nホストの開始を待っています…",99999);
    return;
@@ -1542,7 +1586,7 @@ function svOnMsg(m){
  if(m.t==="end"){sv.endResults=m.results||null;matchOver=true;return}
  if(m.t==="tolobby"){
    net.started=false;sv.active=false;sv.endResults=null;
-   $("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();showCenter("",0);
+   $("lobbyScreen").classList.remove("on");$("endBtns").classList.remove("on");hideResults();hideBanner();showCenter("",0);
    openCharSelect(net.isHost?"online-host":"online-guest");
    return;
  }
@@ -1559,7 +1603,7 @@ function svOnMsg(m){
 }
 /* ================= LOBBY UI ================= */
 function enterLobby(){
- $("modal").classList.remove("on");$("charSelect").classList.remove("on");$("endBtns").classList.remove("on");hideBanner();
+ $("modal").classList.remove("on");$("charSelect").classList.remove("on");$("endBtns").classList.remove("on");hideResults();hideBanner();
  $("menu").style.display="none";$("gameScreen").classList.add("on");resize();
  $("lobbyScreen").classList.add("on");renderLobby();
  window.scrollTo(0,0);
@@ -1677,7 +1721,7 @@ $("lobbyLeaveBtn").onclick=function(){
      every screen at once. The server is the only place an attack can
      start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -1716,14 +1760,16 @@ function rbPendBits(f,F){
 /* the deterministic input applier, identical to the server's copy:
    same buffer windows expressed in frames (350ms -> 21f, the J+K
    simultaneity window 90ms -> 5f, the lone-press grace 55ms -> 3f)
-   and the same guard-eats-presses rule. There is NO jump cut:
-   jumps are fixed-height, so releasing W mid-rise changes nothing
-   (rbPrevJ is still tracked for state compatibility only) */
+   and the same guard-eats-presses rule. The held-jump bit (bits&8)
+   rides through as inp.upHeld: the first jump's two fixed heights are
+   decided by it inside stepFighter (tap = short hop, hold = normal
+   jump boost) — there is still no analog jump cut (rbPrevJ is tracked
+   for state compatibility only) */
 function rbApplyInput(f,bits,F){
  f.hDown=!!(bits&4);f.hUp=!!(bits&8);
  f.hFwd=(f.face===1&&!!(bits&2))||(f.face===-1&&!!(bits&1));
  f.hBack=(f.face===1&&!!(bits&1))||(f.face===-1&&!!(bits&2));
- var inp={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:false};
+ var inp={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:false,upHeld:!!(bits&8)};
  f.rbPrevJ=!!(bits&8);
  if(bits&16)inp.jump=true;
  if(bits&(512|1024|2048)){var dd=(bits&512)?-1:((bits&1024)?1:(inp.right?1:(inp.left?-1:f.face)));tryDash(f,dd)}
@@ -1749,6 +1795,7 @@ function svSaveP1(){
  if(!f)return o;
  for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
  o.la=f.lastAttacker;o.gb=f.grabBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;
+ o.dmgBy=null;if(f.dmgBy){o.dmgBy={};for(var dmk in f.dmgBy)o.dmgBy[dmk]=f.dmgBy[dmk]} /* per-life damage ledger: copied by value so a prediction rollback really restores it (a shared reference would keep the settled / re-accumulated state) */
  o.trail=f.trail?f.trail.slice():[];
  return o;
 }
@@ -1756,6 +1803,7 @@ function svRestoreP1(o){
  var f=P1;if(!f||!o)return;
  for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
  f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;
+ f.dmgBy={};if(o.dmgBy)for(var dmk2 in o.dmgBy)f.dmgBy[dmk2]=o.dmgBy[dmk2];
  f.trail=o.trail?o.trail.slice():[];
  hitstop=o.hs||0;
 }
@@ -1871,8 +1919,9 @@ function svOnDeathFx(i,preDead){
  spawnFxBurst(charFxImg(f.char),f.x,f.y+f.h/2,225,0.55,Math.random()*6.28,1,0.85);
  shake=Math.max(shake,12);
  var killer=(sv.lastScorer&&(performance.now()-sv.lastScorer.at)<500)?fighters[sv.lastScorer.i]:null;
- if(i===net.myIdx)showBanner("DOWN…",killer?cname(killer.char)+" +100":"","");
- else if(killer&&killer!==P1)showBanner("DOWN…",cname(killer.char)+" +100","");
+ var gainTxt=(killer&&typeof sv.lastScorer.gain==="number")?(" +"+sv.lastScorer.gain):""; /* unknown gain (no score diff seen): show the name with NO points rather than a wrong number */
+ if(i===net.myIdx)showBanner("DOWN…",killer?cname(killer.char)+gainTxt:"","");
+ else if(killer&&killer!==P1)showBanner("DOWN…",cname(killer.char)+gainTxt,"");
 }
 function svOnSnap(m){
  if(!sv.active||!m||!m.fs)return;
@@ -1892,7 +1941,7 @@ function svOnSnap(m){
  for(var i=0;i<m.fs.length;i++){
    var sf=m.fs[i],f=fighters[i];if(!f||!sf)continue;
    var preDead=f.dead;
-   if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now};
+   if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now,gain:sf.sc-f._svScore}; /* v99: the snapshot score DIFF is the real gain (damage-proportional), shown on the death banner instead of the old fixed +100 */
    if(true){ /* snapshot-derived effects + authoritative apply run for EVERY fighter now, our own included */
      if(f._svHp!==undefined&&sf.hp<f._svHp-0.01){f.flash=0.15;spawnParticles(f.x,f.y+f.h*0.45,6,charFX(f),170)}
      if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2){f.dashT=0.15;f.dashDir=sf.fc}
@@ -1926,6 +1975,33 @@ function svReset(){
  }
  svPressQ.length=0;
 }
+/* ---- v99 RESULTS panel: post-match ranking table, SCORE desc
+   (ties: more KILLS, then more current HP). Columns NAME / SCORE /
+   ASSISTS / KILLS / DEATHS; the local player's row is highlighted and
+   the 🏆 line shows under the table only when they finished 1st.
+   There is deliberately NO map / mode voting control here. ---- */
+function fighterDispName(f){
+ if(mode==="online"){
+   var mm=(net.match&&typeof f.netIdx==="number")?net.match[f.netIdx]:null;
+   if(mm&&mm.name)return mm.name;
+   if(f.isPlayer)return myDispName()||"YOU";
+   return cname(f.char);
+ }
+ if(f.isPlayer)return myDispName()||"YOU";
+ return cname(f.char);
+}
+function showResults(rows){
+ var sorted=rows.slice().sort(function(a,b){return (b.score-a.score)||(b.kills-a.kills)||(b.hp-a.hp)});
+ var html="";
+ sorted.forEach(function(r,ri){html+="<tr"+(r.me?" class=\"me\"":"")+"><td>"+(ri+1)+". "+escHtml(r.name)+"</td><td>"+r.score+"</td><td>"+r.assists+"</td><td>"+r.kills+"</td><td>"+r.deaths+"</td></tr>"});
+ $("resRows").innerHTML=html;
+ $("resWin").style.display=(sorted.length&&sorted[0].me)?"block":"none";
+ $("resultsPanel").classList.add("on");
+}
+function hideResults(){var p=$("resultsPanel");if(p)p.classList.remove("on")}
+function showLocalResults(){
+ showResults(fighters.map(function(f){return{name:fighterDispName(f),score:f.score||0,assists:f.assists||0,kills:f.kills||0,deaths:f.deaths||0,hp:Math.max(0,Math.round(f.hp)),me:f===P1}}));
+}
 function svShowEnd(){
  var top=(sv.endResults&&sv.endResults[0])||null;
  var topF=null;
@@ -1935,6 +2011,15 @@ function svShowEnd(){
  var tw=(topF===P1);
  showCenter(tw?"🏆 TIME UP\n"+cname(P1.char)+" WIN":"TIME UP\n"+cname(topF.char)+" WIN",99999);
  $("endBtns").classList.add("on");
+ /* results table: the server's end results when they arrived (names
+    and K/A/D are the server's), otherwise built from the local
+    fighters as a fallback */
+ if(sv.endResults&&sv.endResults.length){
+   showResults(sv.endResults.map(function(r,ri2){
+     var idx=(typeof r.i==="number")?r.i:ri2,f=fighters[idx]||null;
+     return{name:(r.name||(f?fighterDispName(f):"PLAYER")),score:(typeof r.score==="number"?r.score:(typeof r.sc==="number"?r.sc:0)),assists:(typeof r.assists==="number"?r.assists:(typeof r.as==="number"?r.as:0)),kills:(typeof r.kills==="number"?r.kills:(typeof r.kl==="number"?r.kl:0)),deaths:(typeof r.deaths==="number"?r.deaths:(typeof r.dt==="number"?r.dt:0)),hp:f?Math.max(0,Math.round(f.hp)):0,me:idx===net.myIdx};
+   }));
+ }else showLocalResults();
 }
 function svRenderWorld(now){
  /* bracket the ~80ms-delayed render time with two snapshots and
@@ -2953,7 +3038,7 @@ window.addEventListener("keydown",function(e){
    }
  }
 });
-window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false}}); /* no jump cut on key release: jumps are fixed-height (honka physics) — releasing W never shortens a jump */
+window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false}}); /* W's release timing picks the first jump's height (tap within 0.12s = short hop, held = normal jump) — both heights are fixed; there is no analog jump cut after the decision */
 window.addEventListener("blur",function(){keys={}});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
@@ -3018,6 +3103,7 @@ function tryDash(f,dir){
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
+ f.jBoostT=0; /* a dash cancels a pending first-jump height decision: the burst holds vy at 0, so no boost may fire after it */
  f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:DASH_CD);f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec) */
  if(!f.onGround)f.airDashed=true;
  spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnFxBurst(charFxImg(f.char),f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5);beep(f.isPlayer?880:440,.06,"sawtooth",.03);
@@ -3876,6 +3962,7 @@ function startOrchidAttack(f,type,foe){
  }
 }
 function startAttack(f,type){
+ f.jBoostT=0; /* any move (risers included) replaces the jump trajectory: a pending first-jump height decision must not fire on top of it */
  if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0||(f.recLockT||0)>0)return; /* 着地硬直中・完全硬直中はワザも不可 */
  if(f.ultChargeT>0||f.pushBy)return; /* the ult charge is uncontrollable; a pushed victim cannot act */
  if(f.dashT>0&&type!=="j")return; /* only J can dash-cancel */
@@ -4073,6 +4160,21 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce){
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
 function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.6:(att.char==="orchid"?0.88:1))))/1.5;if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x1.60 (user spec). ORCHID: x0.88 (user spec) */
+/* v99 damage ledger (bandit.rip-style scoring): every point of HP a
+   fighter actually LOSES is credited to whoever dealt it, per life, on
+   the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
+   HP decrease — measured as hp-before minus max(0, hp-after) — so guard
+   reduction is already reflected and overkill past 0 HP never counts.
+   At KO, killFighter pays every contributor SCORE equal to their total
+   (kill and assist alike), counts ASSISTS, and heals only the killer by
+   20% of their own total. Self-damage (SARA's chaos cost) never passes
+   through here and is never recorded. */
+function recordDmg(att,def,amount){
+ if(!att||att===def||!(amount>0))return;
+ var idx=fighters.indexOf(att);if(idx<0)return;
+ if(!def.dmgBy)def.dmgBy={};
+ def.dmgBy[idx]=(def.dmgBy[idx]||0)+amount;
+}
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.dead||def.invuln>0)return false;
  /* SARA モードカオス: while her chaos mode is on (12s max), EVERY
@@ -4092,7 +4194,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
    var gSide=(att&&att!==def)?(att.x>=def.x?1:-1):(dir<0?1:-1);
    if(gSide===(def.guardDir||def.face)){
      var gd=Math.max(1,Math.round(dmg*0.1));
-     def.hp-=gd;def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;def.flash=0.08;
+     var hpBeforeG=def.hp;def.hp-=gd;recordDmg(att,def,hpBeforeG-Math.max(0,def.hp));def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;def.flash=0.08;
      def.vx=noKb?0:dir*22;def.vy=def.onGround?0:def.vy; /* a few mm of pushback only, no launch, no hitstun — and damage-only hits (noKb) do not even push */
      hitstop=0.012;shake=Math.min(shake+1.5,4);
      spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
@@ -4104,7 +4206,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
      return true;
    }
  }
- def.hp-=dmg;def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;def.flash=0.14;
+ var hpBeforeH=def.hp;def.hp-=dmg;recordDmg(att,def,hpBeforeH-Math.max(0,def.hp));def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;def.flash=0.14;
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*(def.kbMul||1); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
@@ -4131,15 +4233,33 @@ function killFighter(def,att){
  spawnRing(def.x,def.y+def.h/2,"#fda4af",124);spawnSparks(def.x,def.y+def.h/2,0,"#fda4af",12);
  spawnFxBurst(FXIMG.hit,def.x,def.y+def.h/2,265,0.5,Math.random()*0.8-0.4,1,1);spawnFxBurst(charFxImg(att&&att!==def?att.char:def.char),def.x,def.y+def.h/2,225,0.55,Math.random()*6.28,1,0.85);
  beep(90,.35,"sawtooth",.08);
+ /* v99 settlement (bandit.rip-style): DEATHS +1 for the victim; every
+    attacker who damaged this life gains SCORE equal to their recorded
+    total (floored) — the killer and assists under the SAME rule — and
+    everyone except the killer who dealt >=1 counts an ASSIST. The
+    record then resets for the next life. */
+ def.deaths=(def.deaths||0)+1;
+ var dmgRec=def.dmgBy||{};def.dmgBy={};
+ var killerGain=0;
+ for(var dk in dmgRec){var contrib=fighters[+dk];if(!contrib)continue;var gain=Math.floor(dmgRec[dk]);if(gain>0){contrib.score+=gain;if(contrib===att)killerGain=gain;else contrib.assists=(contrib.assists||0)+1}}
  if(att&&att!==def){
-   var killHealBase=Math.round((att.maxHp||MAXHP)*0.4); /* kill heal = 40% of the KILLER's own max HP (user spec): 250 HP -> 100, SARA 270 -> 108, AXE 360 -> 144 */
-   var killHeal=att.chaos?Math.round(killHealBase*0.65):killHealBase; /* SARA in モードカオス heals 35% less on top of the 40% base */
-   att.score+=100;att.hp=Math.min(att.maxHp||MAXHP,att.hp+killHeal); /* kill heal: flat 60 -> 40% of max HP (user spec) */
-   /* kill reward heal, made visible so the player can see it land */
-   floaters.push({x:att.x,y:att.y-24,txt:"+"+killHeal+" HP",life:.95,col:"#4ade80"});
-   spawnParticles(att.x,att.y+att.h*0.4,12,"#4ade80",150);
-   if(att.isPlayer)showBanner("KNOCKOUT!","+100 POINTS","REGEN +"+killHeal+"HP");
-   else showBanner("DOWN…",cname(att.char)+" +100","");
+   att.kills=(att.kills||0)+1; /* the finishing blow — including an attributed knockback fall kill with 0 damage dealt */
+   /* KO heal (v99, replaces the flat / 40%-of-max rules): ONLY the
+      killer heals, by 20% of the damage THEY dealt to this victim this
+      life, capped at 30% of the killer's own max HP, rounded. A pure
+      knockback fall kill (0 damage) heals nothing. SARA's モードカオス
+      -35% healing applies on top, as before. */
+   var myDmg=dmgRec[fighters.indexOf(att)]||0;
+   var killHealBase=Math.round(Math.min(myDmg*0.20,(att.maxHp||MAXHP)*0.30));
+   var killHeal=att.chaos?Math.round(killHealBase*0.65):killHealBase;
+   if(killHeal>0){
+     att.hp=Math.min(att.maxHp||MAXHP,att.hp+killHeal);
+     /* kill reward heal, made visible so the player can see it land */
+     floaters.push({x:att.x,y:att.y-24,txt:"+"+killHeal+" HP",life:.95,col:"#4ade80"});
+     spawnParticles(att.x,att.y+att.h*0.4,12,"#4ade80",150);
+   }
+   if(att.isPlayer)showBanner("KNOCKOUT!","+"+killerGain+" POINTS",killHeal>0?("REGEN +"+killHeal+"HP"):"");
+   else showBanner("DOWN…",cname(att.char)+" +"+killerGain,"");
  }else if(def.isPlayer){showBanner("DOWN…","","")}
 }
 /* ---- AI (WARDEN) ---- */
@@ -4191,6 +4311,7 @@ function stepFighter(f,dt,input,foe){
  f.stateT=Math.max(0,f.stateT-dt);f.attackCd=Math.max(0,f.attackCd-dt);f.dashCd=Math.max(0,f.dashCd-dt);
  f.comboT=Math.max(0,f.comboT-dt);if(f.comboT===0){f.comboHits=0;f.comboDmg=0}
  f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.recLockT=Math.max(0,(f.recLockT||0)-dt); /* 完全硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・急降下・台すり抜けが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;
+ if(f.hitstun>0)f.jBoostT=0; /* being launched cancels a pending first-jump height decision: knockback owns vy now, no boost may fire on the recovery */
  f.flash=Math.max(0,f.flash-dt);
  f.specCd=Math.max(0,(f.specCd||0)-dt);
  f.mistCd=Math.max(0,(f.mistCd||0)-dt); /* ORCHID 毒霧 cooldown (separate from her U) */
@@ -4476,7 +4597,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.onGround)f.vy=0;
      if(Math.random()<0.4)spawnParticles(f.x-f.pushBy.ultDir*20,f.y+f.h*0.6,1,"#fdba74",90);
      f.pushDmgT=(f.pushDmgT||0)+dt;
-     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */f.hp-=pd;f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);floaters.push({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;if(f.hp<=0)killFighter(f,pa)}
+     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);floaters.push({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;if(f.hp<=0)killFighter(f,pa)}
    }
  }
  /* AXE ULT — the charge itself: full invincibility for exactly 1.5s,
@@ -4578,9 +4699,22 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
    }
    if(input.jump){
-     if(f.onGround||f.coyote>0){f.vy=-JUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;f.firstJump=false;f.leftByJump=true;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
-     else if(f.firstJump){f.firstJump=false;f.vy=-JUMP_V;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)} /* AIRBORNE FIRST JUMP (v93 bug fix): the fighter is airborne WITHOUT having jumped (walked off a ledge, dropped through, dashed off an edge, was launched) — f.firstJump was armed by the became-airborne check below, so this press is the FIRST jump at full JUMP_V, not the double jump. f.jumps (the double jump) stays available afterwards. */
-     else if(f.jumps>0){f.jumps--;f.vy=-DJUMP_V;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="kojiro"?12:9,charFX(f),130);beep(f.isPlayer?700:420,.06,"sine",.035)}
+     if(f.onGround||f.coyote>0){f.vy=-SJUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;f.firstJump=false;f.leftByJump=true;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
+     else if(f.firstJump){f.firstJump=false;f.vy=-SJUMP_V;f.fastfall=false;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)} /* AIRBORNE FIRST JUMP (v93 bug fix): the fighter is airborne WITHOUT having jumped (walked off a ledge, dropped through, dashed off an edge, was launched) — f.firstJump was armed by the became-airborne check below, so this press is the FIRST jump of the stint, not the double jump. f.jumps (the double jump) stays available afterwards. It follows the same two-height rule as the ground jump: it starts at SJUMP_V and arms the same hold window (f.jBoostT / f.jBaseY). */
+     else if(f.jumps>0){f.jumps--;f.vy=-DJUMP_V;f.jBoostT=0;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="kojiro"?12:9,charFX(f),130);beep(f.isPlayer?700:420,.06,"sine",.035)} /* DOUBLE jump: original spec, untouched — fixed DJUMP_V, no hold decision, and it cancels any still-pending first-jump window */
+   }
+   /* FIRST-JUMP HEIGHT DECISION (two fixed heights, see the SJUMP_V
+      note at the physics constants): while the window is open,
+      releasing W (or stopping rising for any reason) settles the jump
+      as the SHORT hop; still holding W when the window closes boosts
+      vy to the exact velocity whose remaining rise tops out at
+      FULL_JUMP_APEX, making it the NORMAL jump. CPU fighters pass no
+      upHeld and default to held, so their jumps keep the classic full
+      height and their ledge climbing is unchanged. */
+   if(f.jBoostT>0){
+     var upNow=(input.upHeld!==undefined)?!!input.upHeld:((f.isPlayer&&!!keys.jump)||(f.remote&&!!f.hUp)||(!f.isPlayer&&!f.remote));
+     if(!upNow||f.vy>=0)f.jBoostT=0;
+     else{f.jBoostT-=dt;if(f.jBoostT<=0){f.jBoostT=0;var risen=f.jBaseY-(f.y+f.h);var need=FULL_JUMP_APEX-risen;if(need>0)f.vy=-jumpBoostV(need,dt)}}
    }
    if(input.down){
      if(!f.onGround){f.fastfall=true;f.vy=Math.max(f.vy,FASTFALL*0.9)}
@@ -4637,7 +4771,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      f.y=p.y-f.h;f.vy=0;f.onGround=true;f.groundPlat=p;break;
    }
  }
- if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
+ if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.jBoostT=0;f.firstJump=false;f.leftByJump=false;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
    if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);f.landLagT=Math.max(f.landLagT||0,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
    if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.2);f.landLagT=Math.max(f.landLagT||0,0.2)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.2s (user spec, shortened from 0.28s): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
@@ -4673,7 +4807,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
 }
 /* ---- player input assembly: buffered presses, consumed once ---- */
 function gatherPlayerInput(){
- var inp={left:!!keys.left||stick.dx<-0.28,right:!!keys.right||stick.dx>0.28,down:!!keys.down||stick.dy>0.55,jump:false};
+ var inp={left:!!keys.left||stick.dx<-0.28,right:!!keys.right||stick.dx>0.28,down:!!keys.down||stick.dy>0.55,jump:false,upHeld:!!keys.jump||stick.dy<-0.55};
  if(consume("jump"))inp.jump=true;
  if(stick.dy<-0.55&&!keys.jump){/* stick jump handled on flick via press */}
  if(consume("dash")){var d=inp.right?1:(inp.left?-1:P1.face);tryDash(P1,d)}
@@ -5520,7 +5654,7 @@ function loop(ts){
      var ctxt=countdown>0.28?String(Math.min(3,Math.ceil(countdown/0.5))):"FIGHT!";
      if(ctxt!==lastCountTxt){lastCountTxt=ctxt;showCenter(ctxt,ctxt==="FIGHT!"?550:1500)}
    }else{
-     if(!matchOver&&(mode==="versus"||mode==="online")){timer-=STEP;if(timer<=0){timer=0;matchOver=true;var topF=fighters.slice().sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)})[0];var tw=(topF===P1);if(tw&&mode==="versus")wins++;showCenter(tw?"🏆 TIME UP\n"+cname(P1.char)+" WIN":"TIME UP\n"+cname(topF.char)+" WIN",99999);$("endBtns").classList.add("on")}}
+     if(!matchOver&&(mode==="versus"||mode==="online")){timer-=STEP;if(timer<=0){timer=0;matchOver=true;var topF=fighters.slice().sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)})[0];var tw=(topF===P1);if(tw&&mode==="versus")wins++;showCenter(tw?"🏆 TIME UP\n"+cname(P1.char)+" WIN":"TIME UP\n"+cname(topF.char)+" WIN",99999);$("endBtns").classList.add("on");showLocalResults()}}
      if(!matchOver){
        var pInp=gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
@@ -5557,7 +5691,7 @@ function loop(ts){
       the moment the mine reveals itself */
    mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<80&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
-   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){mf.hp-=2;mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
+   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
