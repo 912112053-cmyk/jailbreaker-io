@@ -392,6 +392,21 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["16:10"],tag:"修正・調整",title:"TRAVISを上方・下方調整（新技メテオソング／シング・タイム追加、3技を削除・置き換え）",
+  items:["基礎性能：HP 255→260・受けKB ×1.02→×1.06・ウルト溜まり ×1.0→0.66倍（ダッシュ 1120・0.15秒・再使用2.4秒は変更なし）",
+         "J マイクスイング：1段目 ダメージ 9→10／2段目（返し）10→12／3段目（フィニッシュ）ダメージ 14→18・KB 520→660",
+         "前+J コードウィップ：ダメージ 11→14・KB 380→660・全体 0.30→0.40秒・発生0.18秒（押してから判定が出るまで）を追加・判定 88×62→156×66",
+         "↓+J サウンドスライド：KB 420→580",
+         "空中J エアスピンマイクを削除し、新技「空中コードウィップ」に置き換え：ダメージ14・KB540・全体0.42秒・発生0.22秒・後硬直0.55秒・着地硬直0.22秒（判定は地上のコードウィップと同じ156×66）",
+         "空中↓+J ダイブマイク：本体 ダメージ 14→28・KB 600→980・判定 62×52→78×56／着地 ダメージ 前・後10→14・判定 96×58→96×86・着地硬直 0.30→0.44秒（KBは着地分も980に統一）",
+         "J+K マイク＆パンチ：ダメージ 8→16＋8→11・KB 300／400→770（両段とも）・着地硬直 0.25→0.33秒",
+         "K ボディブロー：ダメージ 9→15・KB 300→680・判定 62×56→102×66",
+         "空中K エアドロップキック：ダメージ 12→28・KB 480→1020・発生 即時→0.38秒・判定 70×60→102×66・着地硬直0.54秒を追加",
+         "空中↓+K メテオマイクを削除し、新技「メテオソング」に置き換え：真下へ音の弾を発射（弾速1020）。本体 ダメージ40・KB800・判定96×66。地面に触れた瞬間に爆発し、爆発は ダメージ22・KB1100・判定 左右102×102。発射の反動で小ジャンプする。全体0.55秒・後硬直0.88秒",
+         "↓+K グラウンドウェーブを削除し、新技「シング・タイム」に置き換え：その場に立ち止まって3.6秒歌い続け、左右210×102の範囲に 5ダメージ×最大12ヒット・KB300（発生0.32秒・後硬直1.3秒、歌っている間は移動不可）",
+         "U ソニックブラスト：ダメージ 12→9・KB 300→220・弾速 700→800・装填数 3→6発・リロード 1.25→2.5秒",
+         "L ワールドツアー：ダメージ 17→34（×3連射）・KB 520→660・弾速 620→740",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["15:49"],tag:"修正・調整",title:"リロード開始の改善／床のすり抜け修正／長押しで次段・次発",
   items:["飛び道具のリロードが、全部撃ち切らなくても始まるようになりました：残弾が最大未満の間はリロードが進み、その技のリロード時間ごとに1発ずつ回復します（SARAのジャベリンと同じ方式）。対象はアイスシャード／ショックボルト／ソニックブラスト／スローイングナイフで、リロード時間そのものは今までどおりです",
          "床の下からすり抜けて床の上に立ってしまうバグを修正：下の地面は下側からも通り抜けられなくなりました。浮いた台は今までどおり下から登れて、S2回押しのすり抜けもそのまま。台の配置・大きさ・高さは変更していません",
@@ -1032,25 +1047,25 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>L — サンフラワー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、頭上の大輪の花から光のブレスを前方へ放射し続ける。<b>ノックバックは一切なし</b>、発動中は<b>ほぼ移動速度0</b>。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体にライム色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','9／tick（0.16秒間隔）')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','1.50秒')+mvS('後硬直','約0.22秒（放射後）')+mvS('判定','前方6〜670'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1200')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
-var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>ラッパー。マイクと音波がテーマの<b>中量級オールラウンダー</b>。HPは255。コードごとマイクを振る3段チェーン、地面を伝う音波、撃ち合いもできる飛び道具と、間合いを選ばず戦える技が揃っている。ウルトは前方への巨大音波3連射。</p>'
-+mvSpec(mvS('HP','255')+mvS('地上速度','432')+mvS('空中速度','407')+mvS('受けKB','×1.02')+mvS('ダッシュ','1120')+mvS('ウルト溜まり','標準（×1.0）'))
+var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>ラッパー。マイクと音波がテーマの<b>中量級オールラウンダー</b>。HPは260。コードごとマイクを振る3段チェーン、その場で歌って周囲を制圧する「シング・タイム」、真下へ撃ち落として爆発する「メテオソング」、6発装填の飛び道具と、間合いを選ばず戦える技が揃っている。ウルトは前方への巨大音波3連射。</p>'
++mvSpec(mvS('HP','260')+mvS('地上速度','432')+mvS('空中速度','407')+mvS('受けKB','×1.06')+mvS('ダッシュ','1120')+mvS('ウルト溜まり','遅め（×0.66）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — マイクスイング</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>マイクをコードごと横に振る。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — マイクスイング（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返すようにマイクを振る。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — マイクスイング（フィニッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進付きのフィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','520')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — コードウィップ</b><p>マイクのコードをムチのように前方へ振る。わずかに前進しながら、チェーンより遠くまで届く。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','380')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.73秒')+mvS('判定','88×62'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — マイクスイング</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>マイクをコードごと横に振る。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — マイクスイング（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返すようにマイクを振る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — マイクスイング（フィニッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進付きのフィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — コードウィップ</b><p>マイクのコードをムチのように前方へ振る。わずかに前進しながら、チェーンより遠くまで届く。押してから0.18秒で判定が出る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','660')+mvS('発生','0.18秒')+mvS('全体','0.40秒')+mvS('後硬直','0.73秒')+mvS('判定','156×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — ステップバック・ドロップ</b><p>後ずさりしながらマイクを振り下ろす。前に判定を出しつつ距離を作る間合い調整技。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','340')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','64×50'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングシャウト</b><p>叫びながら上昇アッパー。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','560（真上）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','56×74')+mvS('上昇','vy -448'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — サウンドスライド</b><p>音波をまといながら滑る低姿勢キック。出が速く、低い姿勢で前方へ滑り込む。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','420')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.35秒')+mvS('判定','74×36')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — エアスピンマイク</b><p>滞空しながらコードごとマイクを回転させる。前後両側へ<b>最大3ヒット</b>（各5ダメージ）。着地すると<b>着地硬直0.24秒</b>がある。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — ダイブマイク</b><p>斜め急降下でマイクを叩き込み、<b>着地時に音波の衝撃波</b>が両側に出る。着地すると<b>着地硬直0.30秒</b>がある。</p>'+mvSpec(mvS('ダメージ','本体14／着地 前10・後10')+mvS('KB','本体600／着地 430')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地96×58')+mvS('着地硬直','0.30秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — マイク＆パンチ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。マイクの一振り→拳の打ち込みの2連打で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','8＋8')+mvS('KB','300／400')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','66×58／78×68')+mvS('着地硬直','空中で出した場合0.25秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — ボディブロー</b><p>素早い腹パン。出が速く、牽制と割り込みに使える。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','62×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>空中からの落下気味の蹴り。斜め下の相手にも届きやすい。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','480')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','70×60'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオマイク</b><p>真下に急降下してマイクを叩き込む。判定は<b>左右両側</b>に出る。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','660')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.57秒')+mvS('判定','左右100×80')+mvS('着地硬直','0.34秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — グラウンドウェーブ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・地面を伝う</span><p>足を踏み鳴らし、前方の地面を伝う低い音波を放つ。飛び道具扱いで、速度は低め。ジャンプでかわされやすい代わりに、地上の相手を低く追い続ける。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','380')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.53秒')+mvS('波の速度','340')+mvS('射程','約610'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>音波の塊を撃つ。3発まで撃てて、撃った分は1.25秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','700')+mvS('射程','約900（1.29秒）')+mvS('リロード','1.25秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','17×3連射')+mvS('KB','520')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','620'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — サウンドスライド</b><p>音波をまといながら滑る低姿勢キック。出が速く、低い姿勢で前方へ滑り込む。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.35秒')+mvS('判定','74×36')+mvS('被弾硬直','0.24秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 空中コードウィップ</b><p>空中でマイクのコードを前方へ振る。押してから0.22秒で判定が出る。着地すると<b>着地硬直0.22秒</b>がある。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','540')+mvS('発生','0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.55秒')+mvS('判定','156×66')+mvS('着地硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — ダイブマイク</b><p>斜め急降下でマイクを叩き込み、<b>着地時に音波の衝撃波</b>が両側に出る。着地すると<b>着地硬直0.44秒</b>がある。</p>'+mvSpec(mvS('ダメージ','本体28／着地 前14・後14')+mvS('KB','980')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体78×56／着地96×86')+mvS('着地硬直','0.44秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — マイク＆パンチ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。マイクの一振り→拳の打ち込みの2連打で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','16＋11')+mvS('KB','770')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','66×58／78×68')+mvS('着地硬直','空中で出した場合0.33秒'))+'</div></div>'
++'<div class="moveRow"><div><b>K — ボディブロー</b><p>素早い腹パン。出が速く、牽制と割り込みに使える。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','680')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','102×66'))+'</div></div>'
++'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>空中からの落下気味の蹴り。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>真下へ音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に爆発</b>して周囲を巻き込む。発射の反動で小さく跳ねる。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続ける（最大12ヒット）。歌っている間は移動できない。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','左右210×102'))+'</div></div>'
++'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
++'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1120')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>黄色いスマイリーのお面にスーツ、武器は血の付いた大きな包丁。<b>最速クラスの軽量スピードファイター</b>。HPは235と低く吹っ飛ばされやすい代わりに、地上速度456・ダッシュ1200と足が速く、斬撃の出も全体も短い。速い投げ包丁で牽制し、一気に詰めて斬り刻むキャラ。</p>'
@@ -1267,7 +1282,7 @@ function charStats(c){
  if(c==="kojiro")return{hp:240,spd:1.16,kb:1.08,dash:1180}; /* KOJIRO (user spec): HP 250 -> 240, knockback taken x1.02 -> x1.08, dash 1080 -> 1180; ground 464 (400x1.16) / air 450 (388x1.16) unchanged */
  if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:980}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 980 (nerfed from 1080), HP 270 (user spec) */
  if(c==="orchid")return{hp:250,spd:0.975,air:1.108,kb:1.08,dash:1200,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250, ground 390 (400x0.975), air 430 (388x1.108), dash 1200, knockback taken x1.08, falls 11% faster (fall) */
- if(c==="travis")return{hp:255,spd:1.08,air:1.05,kb:1.02,dash:1120}; /* TRAVIS (v102 spec): rapper — HP 255, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02, dash 1120 (CD 2.4s, the shared default in tryDash), ult gain standard x1.0 */
+ if(c==="travis")return{hp:260,spd:1.08,air:1.05,kb:1.06,dash:1120}; /* TRAVIS (user spec): rapper — HP 255 -> 260, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02 -> x1.06, dash 1120 (duration 0.15s / CD 2.4s, the shared defaults in tryDash), ult gain x1.0 -> x0.66 (meterGainFor) */
  if(c==="smiley")return{hp:235,spd:1.14,air:1.10,kb:1.08,dash:1200}; /* SMILEY (v102 spec): masked speedster — HP 235, ground 456 (400x1.14), air 427 (388x1.10), knockback taken x1.08, dash 1200 (CD 2.2s in tryDash), ult gain x1.1 (meterGainFor) */
  return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
@@ -1276,7 +1291,7 @@ function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.
 /* per-shot reload interval for the four U guns = each gun's ORIGINAL
    full-magazine reload time, unchanged (owner rule: one shot comes
    back per interval while the magazine is below full) */
-function reloadInterval(f){return f.char==="warden"?1.15:(f.char==="smiley"?1.1:1.25)} /* warden bolt 1.15 / smiley knife 1.1 / kairo shard + travis blast 1.25 */
+function reloadInterval(f){return f.char==="warden"?1.15:(f.char==="smiley"?1.1:(f.char==="travis"?2.5:1.25))} /* warden bolt 1.15 / smiley knife 1.1 / kairo shard 1.25 / travis blast 1.25 -> 2.5 (user spec) */
 /* HOLD-TO-CONTINUE gates (owner request): holding a button may only
    ever CONTINUE a multi-stage / multi-shot move, never start one and
    never auto-repeat a single move. The U gate covers exactly the
@@ -1306,7 +1321,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:3)),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1316,7 +1331,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:3));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -4011,7 +4026,7 @@ var LAND_LAG={
  axe:{airclaw:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
  orchid:{ohook:0.28,odive:0.25,oshot:0.24,otackle:0.25,jkcombo:0.25},
- travis:{airclaw:0.24,diveclaw:0.30,taildrop:0.34,jkcombo:0.25}, /* TRAVIS (v102 spec): エアスピンマイク (airclaw) 0.24 / ダイブマイク (diveclaw) 0.30 / メテオマイク (taildrop) 0.34 / マイク&パンチ (jkcombo) 0.25 — the existing jkcombo landing lag */
+ travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33. エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,taildrop:0.30,jkcombo:0.18} /* SMILEY (v102 spec): エアスラッシュ (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / ダイブスタブ (taildrop) 0.30 / 連続斬り (jkcombo) 0.18 */
 };
 function landLagFor(ch,st){var t=LAND_LAG[ch];return t?(t[st]||0):0}
@@ -4330,49 +4345,57 @@ function startOrchidAttack(f,type,foe){
  }
 }
 function startTravisAttack(f,type,foe){
- /* TRAVIS — rapper (v102 spec). Mic + sound waves, a midweight
-    all-rounder: a 3-stage mic-swing chain, a ground-travelling sound
-    wave (down+K), an ammo-based sonic blast (U) and a triple big-wave
-    ult with NO chain recharge. State names follow the house pattern;
-    the delayed / ticking parts (air spin ticks, jkcombo 2nd hit,
-    meteor hit, ult follow-up shots) live in stepFighter. */
+ /* TRAVIS — rapper. Mic + sound waves, a midweight all-rounder:
+    a 3-stage mic-swing chain, a 3.6s rooted song (down+K シング・
+    タイム), a downward exploding sound shot (air down+K メテオ
+    ソング), a 6-shot sonic blast (U) and a triple big-wave ult
+    with NO chain recharge. State names follow the house pattern;
+    the delayed / ticking parts (whip and kick delayed hits,
+    jkcombo 2nd hit, song ticks, ult follow-up shots) live in
+    stepFighter. */
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
  var fwdHeld=f.isPlayer?((f.face===1&&(!!keys.right||stick.dx>0.28))||(f.face===-1&&(!!keys.left||stick.dx<-0.28))):(f.remote?f.hFwd:Math.abs(f.vx)>200);
  var backHeld=f.isPlayer?((f.face===1&&(!!keys.left||stick.dx<-0.28))||(f.face===-1&&(!!keys.right||stick.dx>0.28))):(f.remote?f.hBack:false);
  if(type==="jk"){
-   /* マイク&パンチ: mic swing into a punch — 2 hits (8+8). The second
-      hit lands ~0.22s later in stepFighter (state "jkcombo": 8 dmg /
-      KB 400). attackCd 0.55 + the universal 0.07 tail = 後硬直 0.62 */
+   /* マイク&パンチ: mic swing into a punch — 2 hits (16+11). The second
+      hit lands ~0.22s later in stepFighter (state "jkcombo": 11 dmg /
+      KB 770). The single new KB 770 applies to BOTH hits (spec:
+      KB 300・400 -> 770). attackCd 0.55 + the universal 0.07 tail =
+      後硬直 0.62 (unchanged). Landing lag 0.25 -> 0.33 (LAND_LAG) */
    f.state="jkcombo";f.stateT=0.48;f.attackCd=0.55;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*150;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,66,58,8,300,f.face,-0.3);
+   meleeHit(f,foe,66,58,16,770,f.face,-0.3);
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,10,"#fcd34d",190);
    beep(900,.06,"square",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
      /* ダイブマイク: diagonal dive, mic first — reaching the floor
-        erupts the sound shockwave (diveArmed; landing block: 10/10
-        dmg, KB 430, box 96x58) and pays 0.30s landing lag (LAND_LAG) */
+        erupts the sound shockwave (diveArmed; landing block: 14/14
+        dmg, KB 980, box 96x86) and pays 0.44s landing lag (LAND_LAG).
+        Buffed (user spec): body 14 -> 28 dmg, KB 600 -> 980, box
+        62x52 -> 78x56; the single new KB 980 also covers the landing
+        shockwave (spec: KB 600・430 -> 980) */
      f.state="diveclaw";f.stateT=0.3;f.attackCd=0.48;f.comboWin=0;f.diveArmed=true;
      f.vx=f.face*312;f.vy=Math.max(f.vy,608);f.fastfall=false;
-     meleeHit(f,foe,62,52,14,600,f.face,0.85);
+     meleeHit(f,foe,78,56,28,980,f.face,0.85);
      spawnParticles(f.x+f.face*20,f.y+f.h*0.6,8,"#fcd34d",170);
      beep(620,.09,"square",.05);
    }else if(!f.onGround){
-     /* エアスピンマイク: hangs spinning the mic on its cord — ticks
-        out up to 3 hits of 5 dmg on BOTH sides in stepFighter (state
-        "airclaw"). Landing lag 0.24 (LAND_LAG) */
-     f.state="airclaw";f.stateT=0.38;f.attackCd=0.42;f.comboWin=0;
-     f.spinHits=0;f.spinTick=0.1; /* first tick lands almost immediately */
-     if(f.vy>30)f.vy=30;
-     spawnParticles(f.x,f.y+f.h*0.45,10,"#c084fc",190);
-     beep(1500,.07,"square",.045);
+     /* 空中コードウィップ (NEW — replaces the deleted エアスピンマイク):
+        the mic-cord whip in mid-air. The hit lands 0.22s after the
+        press in stepFighter (state "tairwhip": 14 dmg / KB 540). No
+        hitbox size was specced for the air version, so it shares the
+        ground コードウィップ's box (156x66). attackCd 0.48 + 0.07
+        tail = 後硬直 0.55. Landing lag 0.22 (LAND_LAG) */
+     f.state="tairwhip";f.stateT=0.42;f.attackCd=0.48;f.comboWin=0;f.hitDone=false;
+     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fcd34d",180);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#c084fc",30);
+     beep(1350,.06,"square",.05);
    }else if(downHeld){
      /* サウンドスライド: a low sliding kick wrapped in a sound wave */
      f.state="tslide";f.stateT=0.16;f.attackCd=0.28;f.comboWin=0;
      f.vx=f.face*430;
-     meleeHit(f,foe,74,36,10,420,f.face,0.06,0.24);
+     meleeHit(f,foe,74,36,10,580,f.face,0.06,0.24); /* サウンドスライド KB 420 -> 580 (user spec) */
      spawnParticles(f.x+f.face*22,f.y+f.h-6,9,"#fcd34d",150);
      beep(760,.07,"square",.045);
    }else if(upHeld){
@@ -4391,12 +4414,14 @@ function startTravisAttack(f,type,foe){
      spawnParticles(f.x-f.face*18,f.y+f.h*0.5,8,"#fcd34d",150);
      beep(1100,.06,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
-     /* コードウィップ: whips the mic cord forward, stepping in a little */
-     f.state="twhip";f.stateT=0.3;f.attackCd=0.66;f.comboWin=0;f.dashT=0;
+     /* コードウィップ: whips the mic cord forward, stepping in a little.
+        Buffed (user spec): 11 -> 14 dmg, KB 380 -> 660, box 88x62 ->
+        156x66, 全体 0.30 -> 0.40 — and the hit now lands 0.18s after
+        the press (発生 0.18秒) in stepFighter, not on the press */
+     f.state="twhip";f.stateT=0.4;f.attackCd=0.66;f.comboWin=0;f.dashT=0;f.hitDone=false;
      f.x+=f.face*35;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
-     meleeHit(f,foe,88,62,11,380,f.face,-0.3);
-     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fcd34d",180);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#c084fc",30);
+     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fcd34d",180);
      beep(1350,.06,"square",.05);
    }else{
      /* マイクスイング: a 3-stage chain — plain swing, return swing,
@@ -4408,12 +4433,12 @@ function startTravisAttack(f,type,foe){
      if(f.comboStep===0){
        f.comboWin=0.9;
        f.state="tmike1";f.stateT=0.22;f.attackCd=0.13;
-       meleeHit(f,foe,64,58,9,300,f.face,-0.24,0.24);
+       meleeHit(f,foe,64,58,10,300,f.face,-0.24,0.24); /* J1 マイクスイング ダメージ 9 -> 10 (user spec) */
        beep(1200,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.9;
        f.state="tmike2";f.stateT=0.26;f.attackCd=0.15;
-       meleeHit(f,foe,66,60,10,320,f.face,-0.3,0.26);
+       meleeHit(f,foe,66,60,12,320,f.face,-0.3,0.26); /* J2 返し ダメージ 10 -> 12 (user spec) */
        spawnParticles(f.x+f.face*18,f.y+f.h*0.4,7,"#fcd34d",150);
        beep(1350,.06,"square",.045);
      }else{
@@ -4421,58 +4446,76 @@ function startTravisAttack(f,type,foe){
        f.state="tmike3";f.stateT=0.4;f.attackCd=0.58;
        f.x+=f.face*52;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
        f.vx+=f.face*84;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,80,68,14,520,f.face,-0.42);
+       meleeHit(f,foe,80,68,18,660,f.face,-0.42); /* J3 フィニッシュ ダメージ 14 -> 18 / KB 520 -> 660 (user spec) */
        spawnParticles(f.x,f.y+f.h*0.45,12,"#c084fc",210);
        beep(1700,.09,"square",.05);setTimeout(function(){beep(500,.08,"sawtooth",.04)},60);
      }
    }
  }else if(type==="k"){
    if(!f.onGround&&downHeld){
-     /* メテオマイク (air down+K): plunges straight down and slams the
-        mic in — the hit itself lands in stepFighter (state "taildrop":
-        22 dmg / KB 660 on BOTH sides, box 100x80). Landing lag 0.34 */
-     f.state="taildrop";f.stateT=0.4;f.attackCd=0.5;f.hitDone=false;f.comboWin=0;
-     f.vy=Math.max(f.vy,752);f.vx*=0.3;
-     beep(190,.14,"sawtooth",.055);
+     /* メテオソング (air down+K, NEW — replaces the deleted メテオマイク):
+        fires a ball of sound straight DOWN at 1020 (an "msong"
+        projectile, resolved at the projectile filter: direct hit
+        40 dmg / KB 800 in a 96x66 box; the moment it touches the
+        ground it explodes — 22 dmg / KB 1100 in a 102x102 box on
+        both sides, explodeMsong). The recoil pops him into a small
+        hop (no hop height was specced; vy -380 is a modest bounce,
+        well under a jump). 全体 0.55 / attackCd 0.81 + 0.07 tail =
+        後硬直 0.88 */
+     f.state="tmsong";f.stateT=0.55;f.attackCd=0.81;f.comboWin=0;
+     projectiles.push({x:f.x,y:f.y+f.h*0.62,vx:0,vy:1020,owner:f,life:1.6,kind:"msong"});
+     f.vy=-380;f.fastfall=false;
+     spawnParticles(f.x,f.y+f.h*0.6,10,"#c084fc",180);spawnRing(f.x,f.y+f.h*0.55,"#fcd34d",30);
+     beep(300,.16,"sawtooth",.06);setTimeout(function(){beep(900,.12,"sine",.05)},60);
    }else if(downHeld&&f.onGround){
-     /* グラウンドウェーブ (down+K): stomps and sends a low sound wave
-        rolling along the ground — a slow "gwave" projectile (12 dmg /
-        KB 380 at the projectile filter) */
-     f.state="twave";f.stateT=0.34;f.attackCd=0.46;f.comboWin=0;
-     projectiles.push({x:f.x+f.face*42,y:f.y+f.h-14,vx:f.face*340,vy:0,owner:f,life:1.8,kind:"gwave"});
-     spawnParticles(f.x+f.face*20,f.y+f.h-4,10,"#fcd34d",170);spawnRing(f.x,f.y+f.h-2,"#c084fc",36);
-     beep(150,.12,"sawtooth",.05);
+     /* シング・タイム (down+K, NEW — replaces the deleted グラウンド
+        ウェーブ): plants his feet and SINGS for 3.6s — the voice
+        rolls out on BOTH sides, up to 12 ticks of 5 dmg / KB 300 in
+        a 左右210x102 box (ticks in stepFighter, state "tsing": first
+        tick at 発生 0.32s, then every 0.27s). He is rooted while
+        the state lasts (vx forced to 0 in stepFighter). attackCd
+        4.83 + 0.07 tail = 全体 3.6 + 後硬直 1.3 */
+     f.state="tsing";f.stateT=3.6;f.attackCd=4.83;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
+     floaters.push({x:f.x,y:f.y-30,txt:"♪ シング・タイム ♪",life:1.1,col:"#e9d5ff"});
+     spawnParticles(f.x,f.y+f.h*0.4,14,"#c084fc",190);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",40);
+     beep(520,.18,"sine",.05);setTimeout(function(){beep(660,.18,"sine",.05)},140);setTimeout(function(){beep(780,.22,"sine",.05)},280);
    }else if(!f.onGround){
-     /* エアドロップキック (air K) */
-     f.state="tkick";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
-     meleeHit(f,foe,70,60,12,480,f.face,0.5);
+     /* エアドロップキック (air K): buffed (user spec) — 12 -> 28 dmg,
+        KB 480 -> 1020, box 70x60 -> 102x66, and the kick now lands
+        0.38s after the press (発生 0.38秒) in stepFighter instead
+        of on the press. Landing lag 0.54 (LAND_LAG) */
+     f.state="tkick";f.stateT=0.44;f.attackCd=0.47;f.comboWin=0;f.hitDone=false;
      spawnParticles(f.x+f.face*24,f.y+f.h*0.55,8,"#fcd34d",170);
      beep(700,.07,"square",.045);
    }else{
-     /* ボディブロー: a quick body blow */
+     /* ボディブロー: a quick body blow — 9 -> 15 dmg, KB 300 -> 680,
+        box 62x56 -> 102x66 (user spec) */
      f.state="tpunch";f.stateT=0.24;f.attackCd=0.3;f.comboWin=0;
-     meleeHit(f,foe,62,56,9,300,f.face,-0.25);
+     meleeHit(f,foe,102,66,15,680,f.face,-0.25);
      spawnParticles(f.x+f.face*22,f.y+f.h*0.45,7,"#fcd34d",150);
      beep(500,.06,"square",.045);
    }
  }else if(type==="l"){
    /* ソニックブラスト (U): a lump of sound — the shared ammo gun
-      shape (3 shots, auto reload 1.25s). 12 dmg / KB 300, speed 700,
-      range ~900 (life 1.29s) at the projectile filter ("blast") */
+      shape, rebalanced (user spec): 6 shots, auto reload 2.5s,
+      9 dmg / KB 220, speed 800, range ~900 (life 1.13s) at the
+      projectile filter ("blast") */
    if(f.ammo<=0){beep(200,.08);return}
    f.ammo--;f.state="tblast";f.stateT=0.22;f.attackCd=0.32;
-   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*700,vy:0,owner:f,life:1.29,kind:"blast"});
+   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*800,vy:0,owner:f,life:1.13,kind:"blast"});
    beep(1600,.07,"sine",.05);
-   if(f.reloadT<=0)f.reloadT=1.25; /* リロード: per-shot trickle starts on the first spent shot (see stepFighter) */
+   if(f.reloadT<=0)f.reloadT=2.5; /* リロード: per-shot trickle starts on the first spent shot (see stepFighter) */
  }else if(type==="ult"){
    /* ワールドツアー (L ult): raises the mic and shouts THREE giant
       sound waves forward (~0.28s apart; the first fires on the press,
       the follow-ups tick out in stepFighter, state "tworld"). Each is
-      17 dmg / KB 520 in a 150x110 box ("sonic" projectiles). NO chain
-      recharge — a spent gauge stays spent */
+      34 dmg / KB 660 in a 150x110 box ("sonic" projectiles, speed
+      740 — buffed from 17 / 520 / 620, user spec). NO chain recharge
+      — a spent gauge stays spent. 全体 0.9 / attackCd 0.95 + 0.07
+      tail = 後硬直 1.02 (both unchanged) */
    if(f.meter<100)return;f.meter=0;f.state="tworld";f.stateT=0.9;f.attackCd=0.95;f.comboWin=0;shake=10;
    f.spinHits=1;f.spinTick=0;
-   projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*620,vy:0,owner:f,life:1.2,kind:"sonic"});
+   projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*740,vy:0,owner:f,life:1.2,kind:"sonic"});
    spawnParticles(f.x,f.y+f.h/2,40,"#c084fc",300);spawnParticles(f.x,f.y+f.h/2,24,"#fcd34d",220);spawnRing(f.x+f.face*30,f.y+f.h*0.42,"#fcd34d",52);
    beep(90,.35,"sawtooth",.08);setTimeout(function(){beep(1200,.25,"sine",.05)},80);
  }
@@ -4828,7 +4871,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn){
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:1)))))/1.5; /* TRAVIS ult gain is the standard x1.0 (the plain default); SMILEY x1.1 (v102 spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:(att.char==="travis"?0.99:1))))))/1.5; /* SMILEY x1.1 (v102 spec); TRAVIS ult gain x1.0 -> x0.66 total (base 0.99 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -5016,7 +5059,7 @@ function stepFighter(f,dt,input,foe){
     reloadT, and her magazine (2) is excluded here. Non-gun fighters
     sit at full ammo forever, so this never runs for them. */
  if(f.char!=="sara"){
-   var maxAmmoF=(f.char==="warden"?4:3);
+   var maxAmmoF=(f.char==="warden"?4:(f.char==="travis"?6:3)); /* TRAVIS blast magazine 3 -> 6 (user spec) */
    if(f.ammo<maxAmmoF&&f.reloadT<=0)f.reloadT=reloadInterval(f);
    if(f.reloadT>0){f.reloadT-=dt;if(f.reloadT<=0){if(f.ammo<maxAmmoF)f.ammo++;f.reloadT=(f.ammo<maxAmmoF)?reloadInterval(f):0}}
  }
@@ -5036,8 +5079,8 @@ function stepFighter(f,dt,input,foe){
     connect, never a slash arc */
  if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,80,70,airB?22:24,airB?640:600,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
 if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /* AXE メテオドロップ: 空中で静止 — he hangs in the air until the hit fires at 0.34s (threshold below), then plunges */
- if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:(f.char==="axe"?0.24:(f.char==="smiley"?0.30:0.28)))){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else if(f.char==="travis"){meleeHit(f,foe,100,80,22,660,f.face,1.05);meleeHit(f,foe,100,80,22,660,-f.face,1.05)} /* TRAVIS メテオマイク (v102 spec): 22 dmg / KB 660 on BOTH sides, box 100x80 — fires 0.12s after the press like the shared timing */else if(f.char==="smiley"){meleeHit(f,foe,84,76,20,640,f.face,1.05)} /* SMILEY ダイブスタブ (v102 spec): 20 dmg / KB 640, box 84x76 — fires 0.12s after the press (stateT 0.42 -> threshold 0.30) */else if(f.char==="axe"){f.meteorArm=true;f.vy=Math.max(f.vy,880);spawnParticles(f.x,f.y+f.h*0.8,12,"#fdba74",210)} /* AXE メテオドロップ (okaki rework): NO hit in mid-air any more — the plunge just arms the slam (meteorArm) and the damage (左右102x72・32 dmg / KB 700) lands on TOUCHDOWN in the landing block, butt-first */else{meleeHit(f,foe,76,72,26,700,f.face,1.05)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?8:(f.char==="smiley"?7:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?400:(f.char==="smiley"?380:(f.char==="sara"?820:560)))))),f.face,-0.52,0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (v102 spec): 8 dmg / KB 400, box 78x68. SMILEY 連続斬り 2段目 (v102 spec): 7 dmg / KB 380, box 74x60. SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:(f.char==="axe"?0.24:(f.char==="smiley"?0.30:0.28)))){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else if(f.char==="smiley"){meleeHit(f,foe,84,76,20,640,f.face,1.05)} /* SMILEY ダイブスタブ (v102 spec): 20 dmg / KB 640, box 84x76 — fires 0.12s after the press (stateT 0.42 -> threshold 0.30) */else if(f.char==="axe"){f.meteorArm=true;f.vy=Math.max(f.vy,880);spawnParticles(f.x,f.y+f.h*0.8,12,"#fdba74",210)} /* AXE メテオドロップ (okaki rework): NO hit in mid-air any more — the plunge just arms the slam (meteorArm) and the damage (左右102x72・32 dmg / KB 700) lands on TOUCHDOWN in the landing block, butt-first */else{meleeHit(f,foe,76,72,26,700,f.face,1.05)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?7:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?380:(f.char==="sara"?820:560)))))),f.face,-0.52,0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (v102 spec): 7 dmg / KB 380, box 74x60. SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */beep(420,.1,"sawtooth",.05)}
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
  if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,148,58,7,320,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)}
@@ -5132,22 +5175,39 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h+2,2,"#fb923c",120);spawnParticles(f.x+(Math.random()-0.5)*36,f.y+f.h-4,1,"#a8a29e",150);
    if(Math.random()<0.3)spawnFxBurst(FXIMG.fire,f.x,f.y+f.h+6,74,0.22,Math.random()*6.28,1,0.5);
  }
- /* TRAVIS エアスピンマイク (air J): while the spin state lasts, the
-    fall is nearly cancelled and the spinning mic ticks out up to 3
-    hits of 5 dmg on BOTH sides (tick interval 0.12s inside the 0.38s
-    spin). Landing lag 0.24 lives in LAND_LAG (state "airclaw") */
- if(f.state==="airclaw"&&f.char==="travis"){
-   if(f.vy>30)f.vy=30;
+ /* TRAVIS コードウィップ (fwd+J): the whip cracks 0.18s after the
+    press (発生 0.18秒; stateT 0.40 -> threshold 0.22) — 14 dmg /
+    KB 660 in the widened 156x66 box */
+ if(f.char==="travis"&&f.state==="twhip"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,156,66,14,660,f.face,-0.3);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,9,"#fcd34d",190);spawnRing(f.x+f.face*52,f.y+f.h*0.42,"#c084fc",34);beep(1500,.06,"square",.05)}
+ /* TRAVIS 空中コードウィップ (air J): the same whip in mid-air —
+    lands 0.22s after the press (stateT 0.42 -> threshold 0.20):
+    14 dmg / KB 540, box 156x66 (shared with the ground whip — no
+    air hitbox size was specced) */
+ if(f.char==="travis"&&f.state==="tairwhip"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;meleeHit(f,foe,156,66,14,540,f.face,-0.3);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,9,"#fcd34d",190);spawnRing(f.x+f.face*52,f.y+f.h*0.42,"#c084fc",34);beep(1500,.06,"square",.05)}
+ /* TRAVIS エアドロップキック (air K): the kick lands 0.38s after
+    the press (発生 0.38秒; stateT 0.44 -> threshold 0.06) —
+    28 dmg / KB 1020, box 102x66 */
+ if(f.char==="travis"&&f.state==="tkick"&&!f.hitDone&&f.stateT<=0.06){f.hitDone=true;meleeHit(f,foe,102,66,28,1020,f.face,0.5);spawnParticles(f.x+f.face*30,f.y+f.h*0.55,10,"#fcd34d",200);beep(760,.08,"square",.05)}
+ /* TRAVIS シング・タイム (down+K): rooted in place for the whole
+    3.6s song (vx forced to 0, like AXE's rooted states); the voice
+    rolls out on BOTH sides — first tick 0.32s after the press
+    (spinTick started at -0.05 in startTravisAttack), then every
+    0.27s, up to 12 ticks of 5 dmg / KB 300 in the 左右210x102 box.
+    The spec does not say what being hit does to the song, so it
+    simply runs its course, like the other rooted channel states */
+ if(f.char==="travis"&&f.state==="tsing"){
+   f.vx=0;
    f.spinTick+=dt;
-   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,5,300,f.face,-0.3);meleeHit(f,foe,68,62,5,300,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,6,"#fcd34d",170);spawnRing(f.x,f.y+f.h*0.45,"#c084fc",26)}
+   if(f.spinTick>=0.27&&f.spinHits<12){f.spinTick=0;f.spinHits++;meleeHit(f,foe,210,102,5,300,f.face,-0.2);meleeHit(f,foe,210,102,5,300,-f.face,-0.2);spawnRing(f.x,f.y+f.h*0.42,"#c084fc",44+f.spinHits*3);spawnParticles(f.x+(Math.random()-0.5)*60,f.y+f.h*0.3,3,"#e9d5ff",120);beep(620+f.spinHits*40,.07,"sine",.04)}
+   else if(Math.random()<0.3)spawnParticles(f.x+(Math.random()-0.5)*36,f.y+f.h*0.35,1,"#e9d5ff",90);
  }
  /* TRAVIS ult ワールドツアー: shots 2 and 3 of the giant sound waves
     fire ~0.28s apart while the state lasts (shot 1 left on the press
-    in startTravisAttack). "sonic" projectiles: 17 dmg / KB 520,
-    box 150x110 at the projectile filter */
+    in startTravisAttack). "sonic" projectiles: 34 dmg / KB 660,
+    box 150x110 at the projectile filter, speed 740 */
  if(f.char==="travis"&&f.state==="tworld"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.28&&f.spinHits<3){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*620,vy:0,owner:f,life:1.2,kind:"sonic"});spawnParticles(f.x+f.face*30,f.y+f.h*0.42,12,"#c084fc",200);spawnRing(f.x+f.face*34,f.y+f.h*0.42,"#fcd34d",44);beep(300,.14,"sawtooth",.05)}
+   if(f.spinTick>=0.28&&f.spinHits<3){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*740,vy:0,owner:f,life:1.2,kind:"sonic"});spawnParticles(f.x+f.face*30,f.y+f.h*0.42,12,"#c084fc",200);spawnRing(f.x+f.face*34,f.y+f.h*0.42,"#fcd34d",44);beep(300,.14,"sawtooth",.05)}
  }
  /* SMILEY's ult is the 覚醒 transformation now (see startSmileyAttack):
     no rush state remains — the awakened timer ticks down near the top
@@ -5558,8 +5618,8 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        spawnParticles(f.x,f.y+f.h-4,18,"#a3e635",230);
      }else if(f.char==="kojiro"){ /* KOJIRO 落下斬り landing (user spec): waves on BOTH sides — 12 dmg / KB 620 front AND back (back was 9 / 340), box 144x58 (dvRg/dvH carry the generic 96x58, so the kojiro box is passed directly) */
        meleeHit(f,foe,144,58,12,620,f.face,-0.28);meleeHit(f,foe,144,58,12,620,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fecaca",230);var klY=f.y+f.h-5;spawnRing(f.x-58,klY,"#f87171",54);spawnRing(f.x+58,klY,"#f87171",54);spawnFxBurst(FXIMG.slash,f.x-60,klY-12,125,0.3,0,-1,0.85);spawnFxBurst(FXIMG.slash,f.x+60,klY-12,125,0.3,0,1,0.85);spawnSparks(f.x,klY,1,"#fecaca",7);spawnSparks(f.x,klY,-1,"#fecaca",7); /* 落下斬り着地 (見た目変更): slash bursts tear out to BOTH sides of the touchdown point, mirroring the 12/12 shockwave hits */
-     }else if(f.char==="travis"){ /* TRAVIS ダイブマイク landing (v102 spec): the sound shockwave rolls out on BOTH sides — 10 dmg / KB 430 in the generic 96x58 dive box */
-       meleeHit(f,foe,dvRg,dvH,10,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,10,430,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);
+     }else if(f.char==="travis"){ /* TRAVIS ダイブマイク landing (user spec): the sound shockwave rolls out on BOTH sides — 14 dmg / KB 980 in a 96x86 box (was 10 / 430 in the generic 96x58). The single new KB 980 covers the landing hits too (spec: KB 600・430 -> 980) */
+       meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
        meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
      }else if(f.char==="axe"){meleeHit(f,foe,dvRg,dvH,24,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,18,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fdba74",230);spawnParticles(f.x,f.y+f.h-6,10,"#a8a29e",200);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",42)} /* AXE 下斧 landing (user spec): shockwave front 24 / back 18 in the generic 96x58 dive box */else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
@@ -6031,7 +6091,7 @@ function drawTravis(f){
  var air=!f.onGround&&!isGuardT;
  ctx.translate(0,bob);
  if(f.state==="diveclaw")ctx.rotate(0.3); /* dive: whole body pitches down-forward */
- if(f.state==="taildrop")ctx.rotate(0.12);
+ if(f.state==="taildrop"||f.state==="tmsong")ctx.rotate(0.12);
  if(isGuardT)ctx.translate(0,3);
  if(run)ctx.rotate(0.07);
  if((f.dashT||0)>0)ctx.rotate(0.10);
@@ -6046,17 +6106,16 @@ function drawTravis(f){
  if(f.state==="tmike1"){ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(14,24,32,-1.2,0.5);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(40,12,4.5,0,6.29);ctx.fill()}
  else if(f.state==="tmike2"){ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(14,28,34,-0.4,1.3);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(42,40,4.5,0,6.29);ctx.fill()}
  else if(f.state==="tmike3"){ctx.strokeStyle=purpC;ctx.lineWidth=4;ctx.beginPath();ctx.arc(16,26,40,-1.3,0.9);ctx.stroke();sndRing(46,24,10+Math.sin(time*30)*1.5,0.8)}
- else if(f.state==="twhip"){ctx.strokeStyle="#1f2937";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(20,26);ctx.quadraticCurveTo(46,14+Math.sin(time*30)*3,66,26);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(68,26,4.5,0,6.29);ctx.fill();sndRing(66,26,8,0.7)}
+ else if(f.state==="twhip"||f.state==="tairwhip"){ctx.strokeStyle="#1f2937";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(20,26);ctx.quadraticCurveTo(56,12+Math.sin(time*30)*3,84,26);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(86,26,4.5,0,6.29);ctx.fill();sndRing(84,26,8,0.7)} /* コードウィップ: the cord arc stretches further out now (判定 156x66) — ground and air share the drawing */
  else if(f.state==="tback"){ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(6,18,30,0.3,1.6);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(22,44,4.5,0,6.29);ctx.fill()}
  else if(f.state==="trise"){sndRing(16,6,12+Math.sin(time*26)*2,0.85);ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(24,34);ctx.lineTo(28,8);ctx.stroke()}
  else if(f.state==="tslide"){sndRing(-6,50,16,0.6);ctx.fillStyle="rgba(252,211,77,.5)";ctx.beginPath();ctx.ellipse(16,52,26,5,0,0,6.29);ctx.fill()}
- else if(f.state==="airclaw"){var spT=time*24;ctx.save();ctx.translate(0,27);ctx.rotate(spT);ctx.strokeStyle=goldC;ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(12,0);ctx.lineTo(34,0);ctx.stroke();ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(38,0,4.6,0,6.29);ctx.fill();ctx.restore();sndRing(0,27,40+Math.sin(time*20)*2,0.5)}
+ else if(f.state==="tmsong"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(10,44,4.6,0,6.29);ctx.fill();sndRing(10,54,13+Math.sin(time*26)*2,0.85);sndRing(10,54,22+Math.cos(time*20)*2,0.5)} /* メテオソング: mic swung down, the sound ball already away below him */
+ else if(f.state==="tsing"){sndRing(6,26,20+Math.sin(time*10)*3,0.85);sndRing(6,26,34+Math.cos(time*8)*4,0.55);ctx.fillStyle="#e9d5ff";ctx.font="700 13px 'DotGothic16'";ctx.fillText("♪",18+Math.sin(time*3)*3,-4+Math.sin(time*5)*2);ctx.fillText("♫",-18,6+Math.cos(time*4)*2)} /* シング・タイム: mic at his mouth, rings and notes rolling out while he sings */
  else if(f.state==="diveclaw"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(26,52,4.6,0,6.29);ctx.fill();sndRing(24,54,9,0.8)}
  else if(f.state==="jkcombo"){ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(14,22,30,-1.2,0.4);ctx.stroke();ctx.fillStyle=flash?"#ffd9d4":"#fbbf24";ctx.beginPath();ctx.arc(38,30,5,0,6.29);ctx.fill()}
  else if(f.state==="tpunch"){ctx.fillStyle=flash?"#ffd9d4":"#fbbf24";ctx.beginPath();ctx.arc(36,30,5.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(252,211,77,.6)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(14,30);ctx.lineTo(30,30);ctx.stroke()}
  else if(f.state==="tkick"){ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(16,34);ctx.lineTo(40,46);ctx.stroke()}
- else if(f.state==="taildrop"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(4,56,5,0,6.29);ctx.fill();sndRing(4,50,13,0.7)}
- else if(f.state==="twave"){sndRing(24,52,18+Math.sin(time*24)*2,0.8);ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.ellipse(26,54,22,5,0,0,6.29);ctx.fill()}
  else if(f.state==="tblast"){ctx.fillStyle=purpC;ctx.beginPath();ctx.arc(40,24,6+Math.sin(time*30)*1.4,0,6.29);ctx.fill();ctx.fillStyle=goldC;ctx.beginPath();ctx.arc(40,24,3,0,6.29);ctx.fill()}
  else if(f.state==="tworld"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(18,-6,5,0,6.29);ctx.fill();sndRing(30,2,16+Math.sin(time*18)*3,0.9);sndRing(30,2,26+Math.cos(time*15)*3,0.55)}
  if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.5)";ctx.fillRect(-21,-6,42,62)}
@@ -6399,7 +6458,7 @@ function draw(){
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
    else if(pr.kind==="blast"){ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.arc(0,0,13+Math.sin(time*30)*1.5,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,5,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,2.4,0,6.29);ctx.fill()} /* TRAVIS ソニックブラスト: a pulsing purple-gold lump of sound */
-   else if(pr.kind==="gwave"){ctx.fillStyle="#c084fc";ctx.beginPath();ctx.ellipse(0,8,22,11,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.ellipse(0,8,13,6.5,0,Math.PI,0);ctx.fill();ctx.strokeStyle="rgba(255,247,237,.85)";ctx.lineWidth=1.8;ctx.beginPath();for(var gw=0;gw<=8;gw++){var gwx=-20+gw*5,gwy=2+Math.sin(gw*1.6+time*24)*3.4;if(gw===0)ctx.moveTo(gwx,gwy);else ctx.lineTo(gwx,gwy)}ctx.stroke();ctx.strokeStyle="rgba(192,132,252,.8)";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(0,6,26+Math.sin(time*18)*1.6,Math.PI*1.08,Math.PI*1.92);ctx.stroke()} /* TRAVIS グラウンドウェーブ: a low purple-gold dome rolling on the ground, a live waveform line riding its crest and a sound ring trailing over the top — his own art, not the shared wave look */
+   else if(pr.kind==="msong"){ctx.fillStyle="rgba(192,132,252,.45)";ctx.beginPath();ctx.arc(0,0,17+Math.sin(time*30)*2,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,12,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,7,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,3.2,0,6.29);ctx.fill();ctx.strokeStyle="rgba(252,211,77,.75)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-8,-26);ctx.lineTo(-8,-16);ctx.moveTo(0,-30);ctx.lineTo(0,-18);ctx.moveTo(8,-26);ctx.lineTo(8,-16);ctx.stroke()} /* TRAVIS メテオソング: a bigger lump of sound plummeting straight down, speed streaks trailing above it (the deleted グラウンドウェーブ's "gwave" art went with its move) */
    else if(pr.kind==="knife"){var ksgn=pr.vx>0?1:-1;ctx.save();ctx.scale(ksgn,1);ctx.rotate(pr.x*0.085); /* the thrown weapon is a HOCHO (包丁): a long, slim gyuto-style blade — spine runs straight, then curves down to a rounded point; the cutting edge bellies gently up to meet it; dark handle — tumbling end-over-end */
    ctx.fillStyle="#26221f";ctx.fillRect(-19,-2.6,14,5.2);ctx.fillStyle="#4a4238";ctx.fillRect(-19,-2.6,3,5.2); /* dark wooden handle + bolster */
    ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(-5,-7);ctx.lineTo(14,-7);ctx.quadraticCurveTo(26,-6.4,31,1);ctx.quadraticCurveTo(25,5.6,12,6.6);ctx.lineTo(-5,7);ctx.closePath();ctx.fill(); /* long slim blade face: flat spine sweeping down to the tip, belly edge rising to meet it — no rectangle */
@@ -6509,7 +6568,7 @@ function syncHUD(){
  var lbHtml="";sorted.forEach(function(f,ri){lbHtml+='<div class="lbRow"><span>'+(ri+1)+'. <b style="color:'+FIGHTER_COLORS[fighters.indexOf(f)%FIGHTER_COLORS.length]+'">'+cname(f.char)+(f.isPlayer?" (YOU)":"")+'</b></span><b>'+f.score+'</b></div>'});
  var lbEl=$("lbRows");if(lbEl)lbEl.innerHTML=lbHtml;
  $("scoreText").textContent=P1.score;
- $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
+ $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 6"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
  $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
@@ -6523,7 +6582,7 @@ function syncHUD(){
  var chainTxt=P1.char==="warden"?"BATON":(P1.char==="kojiro"?"KEN":(P1.char==="axe"?"AXE":(P1.char==="sara"?"RUSH":(P1.char==="orchid"?"VINE":(P1.char==="travis"?"MIC":(P1.char==="smiley"?"KNIFE":"CLAW"))))));
  $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"ROCK":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"SHOT":(P1.char==="travis"?"BLOW":(P1.char==="smiley"?"STAB":"TAIL"))))));
- $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
+ $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 6"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
  var kbd=$("kbDash");
  if(P1.dashCd>0){$("kbDashCnt").textContent="DASH "+P1.dashCd.toFixed(1);kbd.classList.add("cooling")}
  else{$("kbDashCnt").textContent="DASH";kbd.classList.remove("cooling")}
@@ -6570,6 +6629,16 @@ function syncFinalCount(){
    scaled by STEP inside the step, so the 120Hz -> 60Hz change does
    not alter any balance number. ---- */
 var lastTs=0,acc=0,fpsEMA=60,fpsTick=0,drawAlpha=1;
+/* TRAVIS メテオソング explosion (user spec): the falling sound ball
+   bursts for 爆発 22 dmg / KB 1100 in a 102x102 box on BOTH sides of
+   the impact point. Fired from the projectile step on ground contact
+   (接地と同時に爆発) and on a direct hit alike */
+function explodeMsong(pr){
+ for(var ei=0;ei<fighters.length;ei++){var et=fighters[ei];if(et===pr.owner||et.dead||et.invuln>0)continue;
+   if(Math.abs(et.x-pr.x)<51+et.w/2&&Math.abs((et.y+et.h/2)-pr.y)<51+et.h/2)applyHit(pr.owner,et,22,1100,et.x>=pr.x?1:-1,-0.55,false,pr.x,pr.y)}
+ spawnParticles(pr.x,pr.y,18,"#c084fc",260);spawnParticles(pr.x,pr.y,12,"#fcd34d",210);spawnRing(pr.x,pr.y,"#fcd34d",52);spawnCharBurst("travis",pr.x,pr.y,120,0.3,0,1,0.9);
+ shake=Math.max(shake,6);beep(110,.18,"sawtooth",.07);
+}
 function loop(ts){
  requestAnimationFrame(loop);
  if(!running||!P1||!P2)return;
@@ -6604,7 +6673,7 @@ function loop(ts){
      }
    }
    /* projectiles */
-   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="gwave")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic / gwave) fly flat too */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)particles.push({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)particles.push({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))){foe=qf;break}}
+   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)particles.push({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)particles.push({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48 */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))){foe=qf;break}}
      if(foe){
        if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
@@ -6612,12 +6681,13 @@ function loop(ts){
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
        else if(pr.kind==="rock"){applyHit(pr.owner,foe,26,660,pr.vx>0?1:-1,-0.32,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#a8a29e",210);spawnParticles(pr.x,pr.y,6,"#78716c",160);shake=Math.max(shake,4)} /* AXE 投岩: 26 dmg / KB 660 (user spec) */
        else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,720,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.5);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin (user spec): direct hit KB 300 -> 720, burn 2.0 -> 2.5s */
-       else if(pr.kind==="blast"){applyHit(pr.owner,foe,12,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y)} /* TRAVIS ソニックブラスト (v102 spec): 12 dmg / KB 300 */
-       else if(pr.kind==="gwave"){applyHit(pr.owner,foe,12,380,pr.vx>0?1:-1,-0.1,false,pr.x,pr.y)} /* TRAVIS グラウンドウェーブ (v102 spec): 12 dmg / KB 380 — slow, ground-travelling */
+       else if(pr.kind==="blast"){applyHit(pr.owner,foe,9,220,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y)} /* TRAVIS ソニックブラスト (user spec): 12 -> 9 dmg / KB 300 -> 220 */
+       else if(pr.kind==="msong"){applyHit(pr.owner,foe,40,800,foe.x>=pr.x?1:-1,-0.3,false,pr.x,pr.y);explodeMsong(pr)} /* TRAVIS メテオソング (user spec): direct hit 本体 40 dmg / KB 800 (box 96x66 via the hit test above) — and the impact sets the explosion off on the spot */
        else if(pr.kind==="knife"){applyHit(pr.owner,foe,10,240,pr.vx>0?1:-1,-0.14,false,pr.x,pr.y)} /* SMILEY スローイングナイフ (v102 spec): 10 dmg / KB 240 — fast (900) and light */
-       else if(pr.kind==="sonic"){applyHit(pr.owner,foe,17,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y)} /* TRAVIS ult ワールドツアー (v102 spec): each giant wave = 17 dmg / KB 520, box 150x110 via the hit test above */
+       else if(pr.kind==="sonic"){applyHit(pr.owner,foe,34,660,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y)} /* TRAVIS ult ワールドツアー (user spec): each giant wave = 34 dmg / KB 660 (was 17 / 520), box 150x110 via the hit test above */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,0.85)} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s (movement x0.45) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        return false}
+     if(pr.kind==="msong"){var msGrounded=false;for(var gi=0;gi<platforms.length;gi++){var gp=platforms[gi];if(pr.x>gp.x-4&&pr.x<gp.x+gp.w+4&&pr.y+30>=gp.y&&pr.y<gp.y+26){msGrounded=true;break}}if(msGrounded){explodeMsong(pr);return false}} /* メテオソング: explodes the moment it touches the ground (接地と同時に爆発) — a swept band instead of the generic 10px test, since at 1020 speed it crosses ~17px per step and could tunnel */
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
