@@ -393,6 +393,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["22:20"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけロ」のSHADE側KBを320→520に強化し、吹き飛ばし方向を真上に変更",
+  items:["↓+J「こけちゃうよ／こけロ」のSHADE側のKBを320→520に強化し、吹き飛ばし方向を横方向から真上に変更しました（当たった相手はその場から真上へ吹き飛びます）",
+         "その他の数値は変更ありません：SHADE ダメージ12／発生0.16秒／判定92×40、MIMI側 ダメージ6／KB680、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／520（真上）」に合わせました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["22:17"],tag:"修正・調整",title:"MIMI&SHADE：Kの全体・後硬直を元の速さに戻し、後硬直に完全硬直を適用",
   items:["K「いってらっしゃいSHADE＆助けてSHADE！！」：前回の調整で長くなっていた全体を0.6秒→0.3秒に、後硬直を0.82秒→0.52秒に戻しました",
          "後硬直は完全硬直です：動けるようになるまで、移動・ジャンプ・ダッシュ・他のワザは一切できません（SHADEの送り出し／呼び戻し自体は押した瞬間にこれまで通り発生します）",
@@ -1263,7 +1267,7 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、少し遅れてSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 13')+mvS('KB','800／770')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.52秒')+mvS('後硬直','0.58秒')+mvS('判定','MIMI 80×62／SHADE 134×98')+mvS('被弾硬直','0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／320')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。SHADEの手は当たった相手を<b>真上</b>へ吹き飛ばす。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／520（真上）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落ちちゃう！／たすけるヨ！</b><p>MIMIはお尻から急降下し、着地で衝撃波が<b>2段</b>発生する：1段目 <b>12ダメージ</b>（判定96×80／KB640）に続いて、2段目の波 <b>10ダメージ</b>（判定120×58／KB560）が左右に広がり、<b>片側の合計は22ダメージ</b>になる。同時にSHADEは<b>MIMIの足元に闇フィールド</b>を展開する：4秒間残り、中にいる相手に0.5秒ごとに4ダメージ（MIMIはダメージを受けない。KB・硬直なし）。</p>'+mvSpec(mvS('ダメージ','MIMI 本体16／着地 12＋10＝22（片側・2段）／闇フィールド 4×最大8')+mvS('KB','560／着地 640・2段目560')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地 左右96×80＋2段目 120×58／フィールド 幅190')+mvS('着地硬直','0.3秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
@@ -5022,7 +5026,7 @@ function startMimiAttack(f,type,foe){
         (user balance spec: 6 dmg / KB 680, box 68x34, move now lasts
         0.32s, foe stun 0.32s); SHADE slides a hand in along the
         ground at its own feet — its hit is DELAYED 0.16s (shHitKind
-        "low"): 12 dmg / KB 320, box 92x40, stun 0.32s */
+        "low"): 12 dmg / KB 520 straight up, box 92x40, stun 0.32s */
      f.state="mlowj";f.stateT=0.32;f.attackCd=0.23;f.comboWin=0;
      f.vx=f.face*300;
      meleeHit(f,foe,68,34,6,680,f.face,0.06,0.32);
@@ -5628,7 +5632,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      else if(shk==="upper1"){shadeHit(f,f.shX+f.shFace*60,f.shY-58,120,94,14,320,f.shFace,-1.0,0.34);shadeBurst(f,9);beep(1350,.06,"square",.045)} /* J2 upper: 14 dmg / KB 320, box 120x94, stun 0.34s */
      else if(shk==="fist"){shadeHit(f,f.shX+f.shFace*68,f.shY-52,136,88,20,1000,f.shFace,-0.35);shadeBurst(f,12);shake=Math.max(shake,4);beep(240,.1,"sawtooth",.05)} /* J3 fist: 20 dmg / KB 1000, box 136x88 */
      else if(shk==="sweep"){shadeHit(f,f.shX+f.shFace*67,f.shY-52,134,98,13,770,f.shFace,-0.25,0.22);shadeBurst(f,9);beep(1100,.06,"square",.05)} /* fwd+J sweep: 13 dmg / KB 770, box 134x98, stun 0.22s */
-     else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,320,f.shFace,0.05,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 320, box 92x40, stun 0.32s */
+     else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,520,0,-1.0,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 520 straight up (dir 0, up -1.0), box 92x40, stun 0.32s — KB 320 -> 520 and launch direction changed to 真上 (user spec) */
    }}
    /* 回るよ！ ticks: a hit on both sides every 0.11s, up to 3 — a
       shared hitList per tick so one foe is never double-hit.
