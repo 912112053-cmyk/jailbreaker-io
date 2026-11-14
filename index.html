@@ -393,6 +393,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["21:33"],tag:"修正・調整",title:"MIMI&SHADE：バランス調整（MIMI側を弱く・SHADE側を遅く大きく）",
+  items:["基本性能：受けKB ×1.05→×1.12、ウルト溜まり ×0.6→×0.44に下方修正（HP240／地上400／空中388／ダッシュ1080は変更なし）",
+         "Jチェーン：MIMIのダメージとKBを全体的に下げ（1段目 8→5／KB280→180、2段目 9→6／KB320→220、3段目 13→10／KB620→320）、判定は拡大（68×62／68×62／86×72）。被弾硬直は1段目0.32秒・2段目0.34秒に延長し、技全体の時間も長く（0.4秒／0.42秒／0.6秒）なりました",
+         "SHADE側のJチェーンは発生が付きました（即時→1段目0.18秒／2段目0.16秒／3段目0.2秒遅れて発動）。その代わりダメージと判定は拡大（12／KB300・116×74、14／KB320・120×94、20／KB1000・136×88）",
+         "前+J：MIMI 14→10ダメージ／KB700→800、後硬直0.5秒→0.58秒、被弾硬直0.22秒を追加。SHADEは発生0.18秒が付き、KB640→770・判定110×72→134×98（ダメージ13は変更なし）。技全体は0.34秒→0.52秒",
+         "↓+J：MIMI 7→6ダメージ／KB480→68・判定68×34、全体0.16秒→0.32秒、被弾硬直0.24秒→0.32秒。SHADEは発生0.16秒が付き、9→12ダメージ／KB520→320・判定96×40→92×40",
+         "空中J：MIMI 5→4ダメージ×最大3ヒット／KB260→300・判定 周囲78・被弾硬直0.22秒。SHADEの掴み範囲は周囲110→周囲124に拡大",
+         "J+K：MIMIの光の魔法は三連撃（6＋6＋8）から単発（9ダメージ／KB720・判定70×62）に変更し、空中で出した場合の着地硬直は0.18秒→0.22秒。SHADEのアッパーは24→28ダメージ／KB1050→1130・発生0.3秒→0.28秒・判定 周囲102",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["20:59"],tag:"修正・調整",title:"全キャラの足裏を台の上面にぴったり合わせた＋メインの床を薄い板に戻した",
   items:["キャラのドット絵の足が地面や台にめり込んで描画されていた問題を修正しました：全キャラ（MIMI含む）について、スプライトの足の底が台の上面にちょうど乗るよう、描画位置（アンカー）をキャラごとに実測して合わせました。めり込み量はキャラごとに違い、最も大きかった SMILEY と TRAVIS は約33px分めり込んでいました",
          "歩行中のフレームでも接地している足が台に触れ続けるよう、歩行フレームごとに位置を合わせています。あわせて、待機中に体全体が上下に揺れて足裏が浮いたり沈んだりしていた動きはなくしました（待機モーション自体はドット絵側の差分フレームでこれまで通り動きます）",
@@ -1225,16 +1234,16 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1300')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
-+mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.05')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','やや遅め（×0.6）'))
++mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.12')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','遅め（×0.44）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、同時にSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 8／SHADE 10')+mvS('KB','280／300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 62×56／SHADE 84×70')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、同時にSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 11')+mvS('KB','320／380（真上寄り）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 64×58／SHADE 84×76')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、同時にSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 13／SHADE 16')+mvS('KB','620／980')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 76×62／SHADE 92×76'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、同時にSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 14／SHADE 13')+mvS('KB','700／640')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.5秒')+mvS('判定','MIMI 80×62／SHADE 110×72'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、同時にSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。</p>'+mvSpec(mvS('ダメージ','MIMI 7／SHADE 9')+mvS('KB','480／520')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 72×34／SHADE 96×40')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 5×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 260／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲／SHADE 周囲110')+mvS('着地硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、少し遅れてSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 5／SHADE 12')+mvS('KB','180／300')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.4秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 68×62／SHADE 116×74')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、少し遅れてSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 13')+mvS('KB','800／770')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.52秒')+mvS('後硬直','0.58秒')+mvS('判定','MIMI 80×62／SHADE 134×98')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','68／320')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落ちちゃう！／たすけるヨ！</b><p>MIMIはお尻から急降下し、着地で衝撃波。同時にSHADEは<b>MIMIの足元に闇フィールド</b>を展開する：4秒間残り、中にいる相手に0.5秒ごとに4ダメージ（MIMIはダメージを受けない。KB・硬直なし）。</p>'+mvSpec(mvS('ダメージ','MIMI 本体16／着地12／闇フィールド 4×最大8')+mvS('KB','560／着地640')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地 左右96×80／フィールド 幅190')+mvS('着地硬直','0.3秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 3連撃＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を三連撃。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（約0.3秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 6＋6＋8／SHADE 24')+mvS('KB','300／300／520・SHADE 1050（真上）')+mvS('発生','即時／SHADE 約0.3秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 66×58／SHADE 96×96')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.52秒')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — これならできるよ！／つぶしてやル</b><p>MIMIは<b>相手の足元に光の魔法</b>を撃つ（約0.25秒後、相手のいる場所に光の柱。当たらなければ空振り）。同時にSHADEは上から腕を出して<b>相手を踏み潰す</b>（約0.22秒後、SHADEの位置の真下へ腕が落ちる）。</p>'+mvSpec(mvS('ダメージ','MIMI 14／SHADE 18')+mvS('KB','620（真上寄り）／820')+mvS('発生','約0.25秒／約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.6秒')+mvS('判定','MIMI 相手の足元 84×90／SHADE 120×110')+mvS('射程','MIMI 約460以内'))+'</div></div>'
@@ -1437,7 +1446,7 @@ function charStats(c){
  if(c==="orchid")return{hp:250,spd:0.975,air:1.108,kb:1.08,dash:1200,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250, ground 390 (400x0.975), air 430 (388x1.108), dash 1200, knockback taken x1.08, falls 11% faster (fall) */
  if(c==="travis")return{hp:260,spd:1.08,air:1.05,kb:1.06,dash:1120}; /* TRAVIS (user spec): rapper — HP 255 -> 260, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02 -> x1.06, dash 1120 (duration 0.15s / CD 2.4s, the shared defaults in tryDash), ult gain x0.45 (meterGainFor) */
  if(c==="smiley")return{hp:230,spd:1.14,air:1.10,kb:1.12,dash:1300}; /* SMILEY (user spec): masked speedster — HP 235 -> 230, ground 456 (400x1.14), air 427 (388x1.10), knockback taken x1.08 -> x1.12, dash 1200 -> 1300 (CD 1.8s in tryDash), ult gain x0.5 total (meterGainFor) */
- if(c==="mimi")return{hp:240,spd:1.0,air:1.0,kb:1.05,dash:1080}; /* MIMI&SHADE (okaki spec, numbers provisional by requester approval): the girl is standard-footed (ground 400 / air 388) and a little light (HP 240, knockback taken x1.05); the second body (SHADE) is what her kit is built on. Ult gain x0.6 total (meterGainFor) */
+ if(c==="mimi")return{hp:240,spd:1.0,air:1.0,kb:1.12,dash:1080}; /* MIMI&SHADE: the girl is standard-footed (ground 400 / air 388, dash 1080) and light (HP 240, knockback taken x1.05 -> x1.12, user balance spec); the second body (SHADE) is what her kit is built on. Ult gain x0.44 total (meterGainFor) */
  return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
 function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":(f.char==="orchid"?"#a3e635":(f.char==="travis"?"#fcd34d":(f.char==="smiley"?"#fef08a":(f.char==="mimi"?"#f9a8d4":"#a5f3fc")))))))}
@@ -4198,7 +4207,7 @@ var LAND_LAG={
  orchid:{ohook:0.28,odive:0.25,oshot:0.24,otackle:0.25,jkcombo:0.25},
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,jkcombo:0.18,sjail:0.33}, /* SMILEY: 回転ダガー (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / 連続斬り (jkcombo) 0.18 / チェーンジェイル (sjail) 着地硬直 0.33 (the move also marks the same airLag directly at the press, so ground starts pay it too). ダイブスタブ (taildrop) は削除されたため項目も削除； 連続エアナイフ (sairknife) は後硬直0.5秒が完全硬直 (recLockT) のため着地硬直なし */
- mimi:{mdive:0.3,mairspin:0.2,mlight:0.18,mswing:0.3} /* MIMI&SHADE: 落ちちゃう！ (mdive) 0.3 / 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too) */
+ mimi:{mdive:0.3,mairspin:0.2,mlight:0.22,mswing:0.3} /* MIMI&SHADE: 落ちちゃう！ (mdive) 0.3 / 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too) */
 };
 function landLagFor(ch,st){var t=LAND_LAG[ch];return t?(t[st]||0):0}
 function applyLandLag(f,wasAir){
@@ -4943,15 +4952,16 @@ function startMimiAttack(f,type,foe){
  var fwdHeld=f.isPlayer?((f.face===1&&(!!keys.right||stick.dx>0.28))||(f.face===-1&&(!!keys.left||stick.dx<-0.28))):(f.remote?f.hFwd:Math.abs(f.vx)>200);
  var scy=f.shY-52; /* SHADE's body centre height for its hit boxes */
  if(type==="jk"){
-   /* 一人でもやれるもん！／ソラまでふきとべ！: MIMI fires a 3-hit light
-      barrage from her hand (first bolt on the press, the other two
-      tick out in stepFighter, state "mlight"); at the same moment
-      SHADE winds up its slow, huge upper — it lands ~0.30s later via
-      shHitT (state "supper2" for the drawing) */
-   f.state="mlight";f.stateT=0.48;f.attackCd=0.55;f.comboWin=0;f.spinHits=0;f.spinTick=0;
+   /* 一人でもやれるもん！／ソラまでふきとべ！: MIMI fires ONE light
+      blast from her hand (user balance spec: the old 6+6+8 barrage
+      becomes a single 9 dmg / KB 720 hit, box 70x62, air landing lag
+      0.22 — no follow-up ticks); at the same moment SHADE winds up
+      its slow, huge upper — it lands 0.28s later via shHitT (state
+      "supper2" for the drawing), 28 dmg / KB 1130 straight up */
+   f.state="mlight";f.stateT=0.48;f.attackCd=0.55;f.comboWin=0;f.spinHits=2;f.spinTick=0;
    f.vx+=f.face*120;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,66,58,6,300,f.face,-0.3);
-   f.shState="supper2";f.shStateT=0.55;f.shHitT=0.30;f.shHitKind="supper";
+   meleeHit(f,foe,70,62,9,720,f.face,-0.3);
+   f.shState="supper2";f.shStateT=0.55;f.shHitT=0.28;f.shHitKind="supper";
    spawnParticles(f.x+f.face*26,f.y+f.h*0.4,10,"#fef9c3",180);spawnRing(f.x+f.face*30,f.y+f.h*0.4,"#fde68a",26);
    beep(1500,.06,"sine",.05);
  }else if(type==="j"){
@@ -4980,29 +4990,34 @@ function startMimiAttack(f,type,foe){
      if(f.vy>30)f.vy=30;
      f.shState="sgrab";f.shStateT=0.4;
      var grabbed=false;
-     for(var gi=0;gi<fighters.length;gi++){var gt=fighters[gi];if(gt===f||gt.dead||gt.invuln>0)continue;if(Math.abs(gt.x-f.shX)<110&&Math.abs((gt.y+gt.h/2)-scy)<95){applyHit(f,gt,12,760,f.x>=gt.x?1:-1,-0.5,false,f.shX,scy);grabbed=true}}
+     for(var gi=0;gi<fighters.length;gi++){var gt=fighters[gi];if(gt===f||gt.dead||gt.invuln>0)continue;if(Math.abs(gt.x-f.shX)<124&&Math.abs((gt.y+gt.h/2)-scy)<107){applyHit(f,gt,12,760,f.x>=gt.x?1:-1,-0.5,false,f.shX,scy);grabbed=true}} /* SHADE grab reach 周囲110 -> 周囲124 (user balance spec; vertical scaled to match) */
      if(grabbed){shadeBurst(f,10);shake=Math.max(shake,3)}
      spawnParticles(f.x,f.y+f.h*0.45,10,"#f9a8d4",180);
      beep(1350,.07,"square",.045);
    }else if(downHeld){
-     /* こけちゃうよ／こけロ: MIMI sweeps the bunny doll at the feet;
-        SHADE slides a hand in along the ground at its own feet */
-     f.state="mlowj";f.stateT=0.16;f.attackCd=0.23;f.comboWin=0;
+     /* こけちゃうよ／こけロ: MIMI sweeps the bunny doll at the feet
+        (user balance spec: 6 dmg / KB 68, box 68x34, move now lasts
+        0.32s, foe stun 0.32s); SHADE slides a hand in along the
+        ground at its own feet — its hit is DELAYED 0.16s (shHitKind
+        "low"): 12 dmg / KB 320, box 92x40, stun 0.32s */
+     f.state="mlowj";f.stateT=0.32;f.attackCd=0.23;f.comboWin=0;
      f.vx=f.face*300;
-     meleeHit(f,foe,72,34,7,480,f.face,0.06,0.24);
-     f.shState="slow";f.shStateT=0.3;
-     shadeHit(f,f.shX+f.shFace*48,f.shY-14,96,40,9,520,f.shFace,0.05,0.24);
+     meleeHit(f,foe,68,34,6,68,f.face,0.06,0.32);
+     f.shState="slow";f.shStateT=0.32;f.shHitT=0.16;f.shHitKind="low";
      spawnParticles(f.x+f.face*22,f.y+f.h-6,8,"#fbcfe8",140);
      beep(760,.07,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
      /* あっちいって！！／ちかづくナ！: MIMI steps in and shoves with
-        both hands; SHADE sweeps an arm across at its own position */
-     f.state="mfpush";f.stateT=0.34;f.attackCd=0.43;f.comboWin=0;f.dashT=0;
+        both hands (user balance spec: 10 dmg / KB 800, foe stun
+        0.22s added, recovery 0.5s -> 0.58s, move lasts 0.52s);
+        SHADE sweeps an arm across at its own position — its hit is
+        DELAYED 0.18s (shHitKind "sweep"): 13 dmg / KB 770, box
+        134x98, stun 0.22s */
+     f.state="mfpush";f.stateT=0.52;f.attackCd=0.51;f.comboWin=0;f.dashT=0;
      f.x+=f.face*40;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
-     meleeHit(f,foe,80,62,14,700,f.face,-0.3);
-     f.shState="ssweep";f.shStateT=0.36;
-     shadeHit(f,f.shX+f.shFace*55,scy,110,72,13,640,f.shFace,-0.25);
+     meleeHit(f,foe,80,62,10,800,f.face,-0.3,0.22);
+     f.shState="ssweep";f.shStateT=0.52;f.shHitT=0.18;f.shHitKind="sweep";
      spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fbcfe8",170);
      beep(1100,.06,"square",.05);
    }else{
@@ -5013,29 +5028,35 @@ function startMimiAttack(f,type,foe){
         cooldown (the standard chain shape) */
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;
      if(f.comboStep===0){
+       /* J1 (user balance spec): MIMI 5 dmg / KB 180, box 68x62,
+          stun 0.32s, move lasts 0.40s; SHADE's claw is DELAYED
+          0.18s (shHitKind "claw"): 12 dmg / KB 300, box 116x74 */
        f.comboWin=0.9;
-       f.state="mbun1";f.stateT=0.22;f.attackCd=0.13;
-       meleeHit(f,foe,62,56,8,280,f.face,-0.24,0.24);
-       f.shState="sclaw";f.shStateT=0.3;
-       shadeHit(f,f.shX+f.shFace*44,scy,84,70,10,300,f.shFace,-0.24,0.24);
+       f.state="mbun1";f.stateT=0.40;f.attackCd=0.13;
+       meleeHit(f,foe,68,62,5,180,f.face,-0.24,0.32);
+       f.shState="sclaw";f.shStateT=0.40;f.shHitT=0.18;f.shHitKind="claw";
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
+       /* J2 (user balance spec): MIMI 6 dmg / KB 220, box 68x62,
+          stun 0.34s, move lasts 0.42s; SHADE's upper is DELAYED
+          0.16s (shHitKind "upper1"): 14 dmg / KB 320, box 120x94 */
        f.comboWin=0.9;
-       f.state="mbun2";f.stateT=0.26;f.attackCd=0.15;
-       meleeHit(f,foe,64,58,9,320,f.face,-0.3,0.26);
-       f.shState="supper";f.shStateT=0.34;
-       shadeHit(f,f.shX+f.shFace*40,f.shY-58,84,76,11,380,f.shFace,-1.0,0.26);
+       f.state="mbun2";f.stateT=0.42;f.attackCd=0.15;
+       meleeHit(f,foe,68,62,6,220,f.face,-0.3,0.34);
+       f.shState="supper";f.shStateT=0.42;f.shHitT=0.16;f.shHitKind="upper1";
        spawnParticles(f.x+f.face*18,f.y+f.h*0.4,7,"#fbcfe8",150);
        beep(1350,.06,"square",.045);
      }else{
+       /* J3 (user balance spec): MIMI 10 dmg / KB 320, box 86x72,
+          move lasts 0.6s; SHADE's fist is DELAYED 0.2s (shHitKind
+          "fist"): 20 dmg / KB 1000, box 136x88 */
        f.comboWin=0;f.comboStep=0;
-       f.state="mpush3";f.stateT=0.4;f.attackCd=0.58;
+       f.state="mpush3";f.stateT=0.6;f.attackCd=0.58;
        f.x+=f.face*40;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
        f.vx+=f.face*84;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,76,62,13,620,f.face,-0.42);
-       f.shState="sfist";f.shStateT=0.42;
-       shadeHit(f,f.shX+f.shFace*50,scy,92,76,16,980,f.shFace,-0.35);
-       spawnParticles(f.x,f.y+f.h*0.45,12,"#f9a8d4",200);shadeBurst(f,10);shake=Math.max(shake,4);
+       meleeHit(f,foe,86,72,10,320,f.face,-0.42);
+       f.shState="sfist";f.shStateT=0.6;f.shHitT=0.2;f.shHitKind="fist";
+       spawnParticles(f.x,f.y+f.h*0.45,12,"#f9a8d4",200);
        beep(900,.09,"square",.05);setTimeout(function(){beep(240,.1,"sawtooth",.05)},60);
      }
    }
@@ -5310,7 +5331,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList){
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.9:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 total (base 0.9 / 1.5, provisional): two bodies land hits often, so the gauge fills a little slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -5561,23 +5582,32 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(Math.random()<0.06)particles.push({x:f.shX+(Math.random()-0.5)*36,y:f.shY-6,vx:(Math.random()-0.5)*20,vy:-20-Math.random()*24,life:.45,col:"#3b0764",size:3+Math.random()*3});
    }
    f._shPX=f.x;f._shPY=f.y+f.h;
-   /* SHADE delayed hits: the J+K sky upper (0.30s) and the down+K
-      overhead crush (0.22s) */
+   /* SHADE delayed hits: the J+K sky upper (0.28s), the down+K
+      overhead crush (0.22s), and — since the balance pass gave
+      SHADE's J-chain / push / low hits their own startup — the
+      claw (J1, 0.18s), chain upper (J2, 0.16s), fist (J3, 0.2s),
+      arm sweep (fwd+J, 0.18s) and low slide (down+J, 0.16s). Each
+      fires from wherever SHADE stands when the timer expires */
    if(f.shHitT>0){f.shHitT-=dt;if(f.shHitT<=0){var shk=f.shHitKind;f.shHitKind="";
-     if(shk==="supper"){shadeHit(f,f.shX+f.shFace*42,f.shY-60,96,96,24,1050,f.shFace,-1.25);shadeBurst(f,12);spawnRing(f.shX+f.shFace*42,f.shY-70,"#a855f7",40);shake=Math.max(shake,4);beep(300,.12,"sawtooth",.055)}
+     if(shk==="supper"){shadeHit(f,f.shX+f.shFace*42,f.shY-60,102,102,28,1130,f.shFace,-1.25);shadeBurst(f,12);spawnRing(f.shX+f.shFace*42,f.shY-70,"#a855f7",40);shake=Math.max(shake,4);beep(300,.12,"sawtooth",.055)} /* J+K upper (user balance spec): 24 -> 28 dmg / KB 1050 -> 1130, box 96x96 -> 周囲102 */
      else if(shk==="sslam"){shadeHit(f,f.shX,f.shY-40,120,110,18,820,f.shFace,0.3);shadeBurst(f,12);spawnRing(f.shX,f.shY-4,"#a855f7",44);shake=Math.max(shake,5);beep(150,.13,"sawtooth",.06)}
+     else if(shk==="claw"){shadeHit(f,f.shX+f.shFace*58,f.shY-52,116,74,12,300,f.shFace,-0.24,0.32);shadeBurst(f,8);beep(1250,.05,"square",.04)} /* J1 claw: 12 dmg / KB 300, box 116x74, stun 0.32s */
+     else if(shk==="upper1"){shadeHit(f,f.shX+f.shFace*60,f.shY-58,120,94,14,320,f.shFace,-1.0,0.34);shadeBurst(f,9);beep(1350,.06,"square",.045)} /* J2 upper: 14 dmg / KB 320, box 120x94, stun 0.34s */
+     else if(shk==="fist"){shadeHit(f,f.shX+f.shFace*68,f.shY-52,136,88,20,1000,f.shFace,-0.35);shadeBurst(f,12);shake=Math.max(shake,4);beep(240,.1,"sawtooth",.05)} /* J3 fist: 20 dmg / KB 1000, box 136x88 */
+     else if(shk==="sweep"){shadeHit(f,f.shX+f.shFace*67,f.shY-52,134,98,13,770,f.shFace,-0.25,0.22);shadeBurst(f,9);beep(1100,.06,"square",.05)} /* fwd+J sweep: 13 dmg / KB 770, box 134x98, stun 0.22s */
+     else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,320,f.shFace,0.05,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 320, box 92x40, stun 0.32s */
    }}
    /* 回るよ！ ticks: a hit on both sides every 0.11s, up to 3 — a
-      shared hitList per tick so one foe is never double-hit */
+      shared hitList per tick so one foe is never double-hit.
+      (user balance spec: 5 -> 4 dmg per hit, KB 260 -> 300, box
+      周囲78, foe stun 0.22s on every tick) */
    if(f.state==="mairspin"){
      f.spinTick+=dt;
-     if(f.spinTick>=0.11&&f.spinHits<3){f.spinTick=0;f.spinHits++;var mhl=[];meleeHit(f,foe,58,62,5,260,f.face,-0.2,0,false,false,mhl);meleeHit(f,foe,58,62,5,260,-f.face,-0.2,0,false,false,mhl);spawnParticles(f.x,f.y+f.h*0.45,5,"#f9a8d4",150);beep(1500,.04,"square",.035)}
+     if(f.spinTick>=0.11&&f.spinHits<3){f.spinTick=0;f.spinHits++;var mhl=[];meleeHit(f,foe,78,78,4,300,f.face,-0.2,0.22,false,false,mhl);meleeHit(f,foe,78,78,4,300,-f.face,-0.2,0.22,false,false,mhl);spawnParticles(f.x,f.y+f.h*0.45,5,"#f9a8d4",150);beep(1500,.04,"square",.035)}
    }
-   /* 一人でもやれるもん！ ticks: bolts 2 and 3 of the light barrage */
-   if(f.state==="mlight"){
-     f.spinTick+=dt;
-     if(f.spinTick>=0.16&&f.spinHits<2){var mLast=f.spinHits===1;f.spinTick=0;f.spinHits++;meleeHit(f,foe,66,58,mLast?8:6,mLast?520:300,f.face,-0.3);spawnParticles(f.x+f.face*28,f.y+f.h*0.4,8,"#fef9c3",170);spawnRing(f.x+f.face*32,f.y+f.h*0.4,"#fde68a",24);beep(1560,.05,"sine",.045)}
-   }
+   /* 一人でもやれるもん！ is a SINGLE blast since the balance pass
+      (9 dmg / KB 720 on the press in startMimiAttack) — state
+      "mlight" no longer ticks out any follow-up bolts */
    /* これならできるよ！: the light pillar erupts at the foe's feet
       0.25s after the press, aimed at where the foe stands NOW
       (reach ~460 — beyond that the light fizzles where it falls) */
