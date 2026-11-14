@@ -426,6 +426,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["08:10"],tag:"修正",title:"直接接続（P2P）：ゲストの遅延が約3秒まで膨らむ問題を修正",
+  items:["P2P対戦でゲスト（2人目以降）の画面が約3秒遅れる問題を修正しました。原因は配信の「詰まり」でした：ホストが毎フレーム状態を送り続ける一方、接続の送信待ち行列は順番厳守で古いデータを一切捨てないため、回線の処理が少しでも追いつかないと、古い状態が秒単位で溜まってゲストに届いていました。ゲストは数秒前の世界を見続け、自分のキャラも古い状態に引き戻されていたため、遅延がどんどん大きく感じられました",
+         "ホスト側の配信を「最新だけ送る」方式に変えました。ゲスト宛の送信待ちが一定量を超えている間は、その回の状態送信を見送り、次に送れるタイミングでその時点の最新状態を送ります。状態は毎回まるごと送る形式なので、見送っても情報は失われず、待ち行列が秒単位に膨らむこと自体が起きなくなりました。エフェクトの通知も、詰まっている間は捨てずに保持し、流れが戻ってから送ります",
+         "ゲスト側にも「遅れの検知と追いつき」を入れました。届いた状態の古さをフレーム番号から推定し、約0.3秒以上遅れていたら、古い分の補間を捨てて最新の状態へ即座に追いつきます。あわせて、自分のキャラの予測表示との照合も「状態が作られた時刻」で行うようになり、古い状態が届いても自分のキャラが数秒前の位置へ引き戻されなくなりました",
+         "画面右上の遅延表示（ms）にも、この「届くまでの古さ」を含めるようにしました。詰まりが起きれば数字に出て、解消されれば低い数字に戻ります",
+         "変更は直接接続（P2P）のときだけです。サーバー経由の対戦、技・数値・物理には変更はありません"]},
  {date:"2026/11/15",times:["07:57"],tag:"修正",title:"直接接続（P2P）：2人目（ゲスト）の操作が重く感じる問題を軽減",
   items:["P2P対戦で、ホスト（1人目）は自分の端末でそのまま遊べるのに、ゲスト（2人目）だけ操作の反映が遅く「重い」と感じる問題に対応しました。原因は、ゲストの入力が試合に反映されるまでの段取りと、ホストからの状態配信の間隔にありました",
          "ホストからゲストへの状態配信を 30/s → 60/s（毎フレーム）に増やしました。ゲスト側の表示が細かく・新しくなり、補間の待ち時間も短くなります",
@@ -515,11 +521,6 @@ var UPDATE_LOG=[
   items:["TRAVISとSMILEYは、ドット絵シートの中で体が他キャラより大きく描かれていたため（待機ポーズの体の高さで TRAVIS 約1.15倍／SMILEY 約1.2倍）、試合中の表示を縮小して、WARDENやSARAなど他キャラと同じ背丈に揃えました。SMILEYの覚醒（Berserker）時の姿も同じ大きさに揃えています",
          "縮小は足の裏を中心に行っているので、地面や台への接地位置はこれまで通りぴったり合っています",
          "見た目だけの変更です：当たり判定・移動や技の数値・エフェクトには変更はありません"]},
- {date:"2026/11/14",times:["23:21"],tag:"新機能",title:"オンライン対戦にチャットを追加（左下・Tキー／ボタンで入力、ミュート可）",
-  items:["オンライン対戦（ルーム接続中）のときだけ、画面左下にチャットが出るようになりました。ロビー・試合中・リザルト画面のどこでも使えます。直近の会話がログに残り、入退室のお知らせは色を変えて表示されます",
-         "Tキーで入力欄を開いて Enter で送信、Esc でキャンセルです。入力しているあいだは移動・ワザ・ダッシュなどのゲーム操作は一切入りません。スマホ・タブレットでは CHAT ボタンから入力でき、左下のスティックに被らない位置に置いてあります（スティック操作はそのまま使えます）",
-         "MUTEボタンでチャットの表示／非表示を切り替えられます（ミュート中はログと入力ヒントが隠れます）",
-         "チャットは表示と通信だけの追加です：対戦の計算（このページ内蔵の計算・オンライン対戦のサーバー側計算）や技の数値に変更はありません。オフライン（VS CPU・TRAINING）では表示されません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1487,7 +1488,7 @@ function cleanupNet(){
  if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
  net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
- sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
+ sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
  chatReset();
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
@@ -1607,6 +1608,35 @@ function p2pDeliver(player,msg){
  if(player.loopback){p2pLoopback(msg);return}
  if(player.conn&&player.conn.open){try{player.conn.send(msg)}catch(e){}}
 }
+/* how many bytes are already queued for this guest, undelivered:
+   the RTCDataChannel's own send buffer (bufferedAmount) plus
+   PeerJS's JS-side FIFO (bufferSize messages, converted at a rough
+   1.5KB each — it only fills once the channel buffer passes
+   PeerJS's own 8MB ceiling, but count it so a queue is a queue).
+   Both layers deliver strictly in order and NEVER drop, so once a
+   queue forms, every new snapshot lands BEHIND all the stale ones
+   ahead of it: at 60 snapshots a second, a link that falls even
+   slightly behind builds up whole seconds of backlog, and the
+   guest ends up watching (and being reconciled against) a world
+   that is seconds old — the reported ~3s guest delay, which no
+   amount of render-delay tuning on the guest can fix, because the
+   data itself arrives old. Snapshots are full-state and
+   superseding, so the pump below treats them as latest-only: a
+   guest whose queue is over the cap is SKIPPED for that snapshot
+   and simply receives the next pump's fresh one, which carries
+   the complete current state. The queue can then never grow past
+   the cap, and a draining link fast-forwards the guest to the
+   present instead of replaying the backlog frame by frame. */
+function p2pQueueBytes(player){
+ if(!player||player.loopback||!player.conn)return 0;
+ var q=0,c=player.conn;
+ try{
+  if(c.dataChannel&&typeof c.dataChannel.bufferedAmount==="number")q+=c.dataChannel.bufferedAmount;
+  if(typeof c.bufferSize==="number")q+=c.bufferSize*1536;
+ }catch(e){}
+ return q;
+}
+var P2P_QUEUE_CAP=16384; /* ~16KB in flight: on a healthy link the queue hovers near zero (each snapshot is ~1-2KB and drains at link speed), so this only ever bites when delivery has genuinely fallen behind — beyond it, sending more would add delay, not data */
 function p2pBroadcastRoom(room,msg){
  for(var i=0;i<room.players.length;i++)p2pDeliver(room.players[i],msg);
 }
@@ -1980,6 +2010,7 @@ function p2pSyncMines(room){
    var mn=mines.filter(function(m){return m.owner===f}).map(function(m){return{x:p2pR2(m.x),y:p2pR2(m.y)}});
    var j=JSON.stringify(mn);
    if(p.mnJson===j)continue;
+   if(p2pQueueBytes(p)>P2P_QUEUE_CAP)continue; /* queue backed up: do NOT mark this list as sent — it is retried on a later pump once the guest's queue drains (see p2pQueueBytes) */
    p.mnJson=j;
    p2pDeliver(p,{t:"mymines",mn:mn});
  }
@@ -1998,7 +2029,19 @@ function p2pSyncMines(room){
    mines, and — once, when the local match ends — send the results
    and close the match phase. The host's own results screen is the
    local flow's (TIME UP banner + showLocalResults), not this
-   message. */
+   message.
+   BACKPRESSURE (guest ~3s delay fix): snapshots are delivered
+   per guest through the queue check in p2pQueueBytes — a guest
+   whose undelivered queue is already over P2P_QUEUE_CAP is
+   skipped for this snapshot (the next pump's snapshot carries
+   the full current state, so skipping loses nothing but
+   staleness), and the FX flush is held while any guest's queue
+   is far over the cap, so effect bytes can neither pile ahead
+   of the state stream nor be dropped: they simply go out a
+   little later, once the queue has drained. Without this, the
+   ordered, never-dropping PeerJS / WebRTC channel turned any
+   shortfall of delivery under the 60/s production rate into a
+   FIFO backlog that guests experienced as seconds of delay. */
 function p2pPump(){
  if(!p2pHostLive||!p2pRoom)return;
  var room=p2pRoom;
@@ -2008,11 +2051,21 @@ function p2pPump(){
  if(room.frame!==room.lastSnapF){
    room.lastSnapF=room.frame;
    var snap=p2pBuildSnap(room);snap.t="snap";
-   p2pSendGuests(room,snap);
+   for(var sgi=0;sgi<room.players.length;sgi++){var sp=room.players[sgi];
+     if(sp.loopback)continue;
+     if(p2pQueueBytes(sp)>P2P_QUEUE_CAP)continue; /* latest-only: never queue a fresh snapshot behind seconds of stale ones — this guest gets the next pump's instead */
+     p2pDeliver(sp,snap);
+   }
  }
  if(room.evQ.length){
-   var evs=room.evQ.splice(0,room.evQ.length);
-   p2pSendGuests(room,{t:"ev",ev:evs});
+   var evBlocked=false;
+   for(var ebi=0;ebi<room.players.length;ebi++){var ep=room.players[ebi];
+     if(!ep.loopback&&ep.conn&&ep.conn.open&&p2pQueueBytes(ep)>P2P_QUEUE_CAP){evBlocked=true;break}
+   }
+   if(!evBlocked){
+     var evs=room.evQ.splice(0,room.evQ.length);
+     p2pSendGuests(room,{t:"ev",ev:evs});
+   } /* else: hold the events in evQ until the queues drain — they are neither sent into the backlog nor discarded */
  }
  p2pSyncMines(room);
  if(matchOver&&!room.endSent){
@@ -2359,12 +2412,13 @@ $("lobbyLeaveBtn").onclick=function(){
  cleanupNet();toMenu();
 };
 /* ================= SERVER-CLIENT MATCH ENGINE =================
-   NOTE (2026-11-15): client-side prediction is TEMPORARILY OFF —
-   see SV_PREDICTION_ENABLED below (next to svPredOn). Every
-   fighter, our own included, is currently rendered by snapshot
-   interpolation only, exactly as described for "everyone ELSE"
-   in the note below. The prediction description below is kept
-   for when the switch is flipped back on.
+   NOTE (2026-11-15): client-side prediction is ON — see
+   SV_PREDICTION_ENABLED below (next to svPredOn). It was off
+   briefly as an A/B comparison; with it off, EVERY participant
+   in a server-relayed match felt the full round trip on their
+   own fighter (nobody has a local sim in server mode, unlike
+   the P2P host), which is exactly the "everyone lags" report
+   that turned it back on.
    Server-authoritative match with CLIENT-SIDE PREDICTION for your
    own fighter only (owner request):
    - inputs are sampled at a fixed 60fps into a numbered queue and
@@ -2405,7 +2459,7 @@ $("lobbyLeaveBtn").onclick=function(){
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
-var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false};
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0};
 var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
@@ -2525,21 +2579,22 @@ function svCdEstAt(j){
  if(sv.lastSnap)return Math.max(0,sv.lastSnap.cd-(performance.now()-sv.lastArrival)/1000);
  return Math.max(0,1.5-(performance.now()-sv.startAt)/1000);
 }
-/* PREDICTION MASTER SWITCH — TEMPORARILY OFF (owner request,
-   2026-11-15: "一旦予測表示を切って、元のスナップショット補間
-   だけに戻してみる"). While this is false, svPredOn() always
-   returns false, so our own fighter is never stepped locally:
-   svStepP1 never runs, no predicted projectiles are spawned, no
-   reconciliation / correction blend runs, and P1 is rendered
-   exactly like every other fighter — purely by interpolating
-   between server snapshots in svRenderWorld (state applied
-   verbatim via svApplySnapRemote, position from the snapshot
-   timeline). Input sampling / sending (60fps, numbered, immediate
-   press flush) is unchanged: inputs still go to the server the
-   same way, only the local ahead-of-server rendering is off.
-   The prediction code itself is kept intact below; flip this
-   back to true to re-enable it. */
-var SV_PREDICTION_ENABLED=false;
+/* PREDICTION MASTER SWITCH — ON (owner request, 2026-11-15:
+   the off-period A/B ended with "サーバー経由は参加者全員が
+   遅延ある" — in server mode every player's own fighter waited
+   for the input -> server sim -> snapshot -> render round trip,
+   so everyone played with the full network delay on their own
+   inputs). While this is true, svPredOn() lets svSampleStep step
+   our own fighter locally the moment each input is sampled
+   (svStepP1), predicted projectiles spawn, and every snapshot
+   reconciles the prediction (svReconcileP1: small errors eased
+   in, large ones hard-resynced with the ~150ms correction
+   glide). Input sampling / sending (60fps, numbered, immediate
+   press + held-change flush) is the same either way; only the
+   local ahead-of-server rendering of our own fighter changes.
+   Set this back to false to return everyone to pure snapshot
+   interpolation (P1 applied verbatim via svApplySnapRemote). */
+var SV_PREDICTION_ENABLED=true;
 /* is local prediction of our own fighter in effect right now?
    Falls back to plain snapshot rendering (the pre-prediction
    behaviour) whenever prediction cannot apply: no live server
@@ -2547,8 +2602,7 @@ var SV_PREDICTION_ENABLED=false;
    the corpse + respawn), the server handed our fighter to the CPU
    (sv.predOff), or there is no playing local fighter at all
    (spectating). Touch input feeds the same sampled bit stream as
-   the keyboard (svSampleLocal), so prediction covers mobile too.
-   NOTE: currently always false — see SV_PREDICTION_ENABLED above. */
+   the keyboard (svSampleLocal), so prediction covers mobile too. */
 function svPredOn(){
  if(!SV_PREDICTION_ENABLED)return false;
  if(!sv.active||mode!=="online"||matchOver||sv.predOff)return false;
@@ -2657,8 +2711,16 @@ function svSampleStep(){
  if(svPredOn()){
    svStepP1(sv.sampleFrame,bits,false);
    if(P1)sv.predHist.push({t:performance.now(),x:P1.x-sv.corrX,y:P1.y-sv.corrY});
-   while(sv.predHist.length>2&&sv.predHist[0].t<performance.now()-700)sv.predHist.shift();
-   if(sv.predHist.length>90)sv.predHist.shift();
+   /* retention is 4.5s (was 700ms): on the P2P transport a snapshot
+      can be older than 700ms when it finally arrives (see the
+      stream-age estimate in svOnSnap), and reconciliation compares
+      against the predicted position at the snapshot's TRUE time —
+      with the old window that entry was already gone, the compare
+      fell back to the oldest survivor, and a merely-old (not
+      wrong) snapshot read as a huge divergence and dragged the
+      guest's fighter back to where it was seconds ago */
+   while(sv.predHist.length>2&&sv.predHist[0].t<performance.now()-4500)sv.predHist.shift();
+   if(sv.predHist.length>300)sv.predHist.shift();
  }
  sv.sampleFrame++;
  sv.predFrame=sv.sampleFrame;
@@ -2750,7 +2812,15 @@ function svReconcileP1(s,snap){
  else if((s.hs||0)>0.03&&(f.hitstun||0)<=0.03)hard=true; /* a knockback the prediction never saw */
  else if((s.fr||0)>0.03&&(f.frozen||0)<=0.03)hard=true;
  else if(s.st==="ultcharge"&&f.state!=="ultcharge")hard=true;
- var targetT=(snap&&snap.at?snap.at:performance.now())-sv.renderDelay;
+ /* the snapshot's effective time is its arrival time minus the
+    render delay AND minus the stream age svOnSnap measured for it
+    (P2P only; always 0 on the server transport): a snapshot that
+    spent time queued in the channel describes the world as of
+    (arrival - age), and the prediction must be compared at THAT
+    moment — comparing at arrival time instead made every queued
+    snapshot look like a seconds-large prediction error and
+    hard-resynced the guest's own fighter backwards */
+ var targetT=(snap&&snap.at?snap.at:performance.now())-sv.renderDelay-(sv.snapAgeMs||0);
  var hist=null;
  for(var hi=sv.predHist.length-1;hi>=0;hi--){if(sv.predHist[hi].t<=targetT){hist=sv.predHist[hi];break}}
  if(!hist&&sv.predHist.length)hist=sv.predHist[0];
@@ -2905,7 +2975,7 @@ function svOnSnap(m){
     snapshot instead. */
  if(sv.lastArrival){
   var gap=now-sv.lastArrival;
-  if(gap>400){sv.snaps.length=0;sv.intervalEMA=33.3}
+  if(gap>400){sv.snaps.length=0;sv.intervalEMA=33.3;sv.anchorF=null;sv.snapAgeMs=0} /* a stall also voids the P2P stream-age anchor below: the host's frame clock paused with the stream, so the next snapshot re-anchors instead of reading as seconds stale */
   else if(gap>0){
    sv.intervalEMA+=(gap-sv.intervalEMA)*0.2;
    var dev=Math.abs(gap-sv.intervalEMA);
@@ -2933,6 +3003,38 @@ function svOnSnap(m){
    var target=sv.intervalEMA+sv.jitterEMA*0.8+9;
    if(target<34)target=34;else if(target>56)target=56;
    sv.renderDelay+=(target-sv.renderDelay)*(target<sv.renderDelay?0.6:0.2);
+  }
+ }
+ /* --- P2P stream age + fast-forward (guest ~3s delay fix) ---
+    The host's frame counter advances at a fixed 60fps in real
+    time, so anchoring the first received frame to its arrival
+    time predicts every later frame's arrival: expected =
+    anchorF + elapsed x 0.06. A snapshot whose frame lags that
+    expectation spent the difference QUEUED inside the ordered,
+    never-dropping PeerJS / WebRTC channel (the host now also
+    skips sending into a backed-up queue — see p2pQueueBytes —
+    but a guest must still recover from whatever backlog a bad
+    stretch of link already created). Past ~300ms of lag:
+    (1) the measured age is kept in sv.snapAgeMs — reconciliation
+    compares the prediction at the snapshot's true time instead
+    of dragging our fighter back to a seconds-old position, and
+    the HUD delay readout includes it; (2) the buffered bracket
+    is dropped outright and the anchor re-based on this newest
+    snapshot, so rendering fast-forwards to the present instead
+    of interpolating through the backlog. On-time snapshots
+    (lag under a frame or two, the healthy case) only refresh
+    the age estimate and change nothing. The server transport
+    never enters here: its snapshots carry no such queue (and
+    its frame clock is the server's own). */
+ if(net.transport==="p2p"&&typeof m.f==="number"){
+  if(sv.anchorF===null||sv.anchorF===undefined){sv.anchorF=m.f;sv.anchorAt=now;sv.snapAgeMs=0}
+  else{
+   var lagF=sv.anchorF+(now-sv.anchorAt)*0.06-m.f;
+   if(lagF>18){
+    sv.snapAgeMs=Math.min(4500,Math.round(lagF*1000/60));
+    sv.snaps.length=0;
+    sv.anchorF=m.f;sv.anchorAt=now;
+   }else sv.snapAgeMs=lagF>0?Math.round(lagF*1000/60):0;
   }
  }
  sv.lastArrival=now;
@@ -2976,7 +3078,7 @@ function svOnSnap(m){
 }
 function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
- sv.renderDelay=66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;
+ sv.renderDelay=66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
@@ -8556,7 +8658,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!p2pHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!p2pHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the P2P stream age svOnSnap measured (0 on the server transport and whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
