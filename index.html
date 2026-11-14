@@ -392,6 +392,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["17:38"],tag:"修正・調整",title:"TRAVIS シング・タイム中はジャンプ・ダッシュ不可に／1ヒットごとに被弾硬直0.2秒を追加",
+  items:["↓+K シング・タイム：歌っている間（3.6秒）はジャンプもダッシュもできなくなりました（今までは歌いながらジャンプやダッシュで移動できてしまいました）",
+         "↓+K シング・タイム：1ヒットごとに被弾硬直0.2秒が入るようになりました（ダメージ5・KB300・判定480×240・最大12ヒットは変更なし）",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["17:32"],tag:"修正・調整",title:"TRAVIS メテオソング／シング・タイムを調整",
   items:["空中↓+K メテオソング：発動した瞬間に空中に0.8秒間静止して音を溜めてから、真下へ音の弾を撃ち落とすように変更（発生 即時→0.8秒・全体 0.55→1.35秒。弾のダメージ・KB・弾速・爆発・発射後の後硬直0.88秒は変更なし）",
          "↓+K シング・タイム：判定を 左右210×102 → 480×240 に拡大。あわせて歌のフィールドの見た目を判定（480×240）ぴったりの大きさに変更し、スピーカーもフィールドの左右の端へ移動（ダメージ・KB・ヒット数・全体・後硬直は変更なし）",
@@ -1100,7 +1104,7 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動した瞬間、<b>空中に0.8秒間静止</b>して音を溜め、それから真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。発射の反動で小さく跳ねる。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','0.8秒（空中で静止）')+mvS('全体','1.35秒')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>判定（480×240）ぴったりの歌のフィールド</b>が展開してダメージ判定の範囲が目に見える。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続ける（最大12ヒット）。歌っている間は移動できない。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','480×240'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>判定（480×240）ぴったりの歌のフィールド</b>が展開してダメージ判定の範囲が目に見える。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできない</b>。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','480×240'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1120')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -3513,7 +3517,7 @@ function drawCharFxOverlay(f,x,y,size,rot,flip,alpha){
 /* hard cap for attack step-in velocity: J mashing can never stack speed */
 function capVx(f,lim){if(f.vx>lim)f.vx=lim;else if(f.vx<-lim)f.vx=-lim}
 function tryDash(f,dir){
- if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0||(f.recLockT||0)>0)return false; /* 着地硬直中・完全硬直中はダッシュも不可 */
+ if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0||(f.recLockT||0)>0||(f.char==="travis"&&f.state==="tsing"))return false; /* 着地硬直中・完全硬直中はダッシュも不可。TRAVIS シング・タイム中もダッシュ不可 (user spec): tryDash is the single gate every dash input passes through (dash key / touch button / double-tap / CPU / rollback input bits), so this one refusal locks them all for the whole song */
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
@@ -4514,7 +4518,11 @@ function startTravisAttack(f,type,foe){
         tick at 発生 0.32s, then every 0.27s; widened from 左右210x102,
         user spec — the drawn song field in drawTravis matches the
         480x240 box exactly). He is rooted while the state lasts
-        (vx forced to 0 in stepFighter). attackCd 4.83 + 0.07 tail
+        (vx forced to 0 in stepFighter), and for the whole song he
+        can neither jump nor dash (user spec — the stepFighter jump
+        gate and tryDash both refuse while state is "tsing"); every
+        tick inflicts 被弾硬直 0.2s (the hs argument on the tick
+        hits in stepFighter). attackCd 4.83 + 0.07 tail
         = 全体 3.6 + 後硬直 1.3 */
      f.state="tsing";f.stateT=3.6;f.attackCd=4.83;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
      floaters.push({x:f.x,y:f.y-30,txt:"♪ シング・タイム ♪",life:1.1,col:"#e9d5ff"});
@@ -5318,9 +5326,14 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     rolls out on BOTH sides — first tick 0.32s after the press
     (spinTick started at -0.05 in startTravisAttack), then every
     0.27s, up to 12 ticks of 5 dmg / KB 300 in the 480x240 box
-    (widened from 左右210x102, user spec). The spec does not say
-    what being hit does to the song, so it simply runs its course,
-    like the other rooted channel states */
+    (widened from 左右210x102, user spec), and EVERY tick inflicts
+    被弾硬直 0.2s on the foe it catches (user spec — the hs
+    argument on the tick hits below). For the whole song Travis
+    himself can neither JUMP (the jump gate in the movement chain
+    refuses while state is "tsing") nor DASH (tryDash refuses) —
+    user spec. The spec does not say what being hit does to the
+    song, so it simply runs its course, like the other rooted
+    channel states */
  /* TRAVIS シングソングジャンプ (up+K): during the 0.8s startup he
     hangs STATIONARY in the air （空中で静止） — velocity is zeroed
     here every step while he is not in hitstun (gravity, applied
@@ -5339,7 +5352,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.char==="travis"&&f.state==="tsing"){
    f.vx=0;
    f.spinTick+=dt;
-   if(f.spinTick>=0.27&&f.spinHits<12){f.spinTick=0;f.spinHits++;meleeHit(f,foe,480,240,5,300,f.face,-0.2);meleeHit(f,foe,480,240,5,300,-f.face,-0.2);spawnRing(f.x,f.y+f.h*0.42,"#c084fc",44+f.spinHits*3);spawnParticles(f.x+(Math.random()-0.5)*400,f.y+f.h*0.3,3,"#e9d5ff",120);beep(620+f.spinHits*40,.07,"sine",.04)}
+   if(f.spinTick>=0.27&&f.spinHits<12){f.spinTick=0;f.spinHits++;meleeHit(f,foe,480,240,5,300,f.face,-0.2,0.2);meleeHit(f,foe,480,240,5,300,-f.face,-0.2,0.2); /* 被弾硬直 0.2秒 (user spec): EVERY tick of the song stuns the foe it catches for exactly 0.2s — the hs argument on both side hits, same fixed-stun mechanism as SMILEY's flurry */spawnRing(f.x,f.y+f.h*0.42,"#c084fc",44+f.spinHits*3);spawnParticles(f.x+(Math.random()-0.5)*400,f.y+f.h*0.3,3,"#e9d5ff",120);beep(620+f.spinHits*40,.07,"sine",.04)}
    else if(Math.random()<0.3)spawnParticles(f.x+(Math.random()-0.5)*320,f.y+f.h*0.35,1,"#e9d5ff",90);
  }
  /* TRAVIS ult ワールドツアー: shots 2 and 3 of the giant sound waves
@@ -5646,7 +5659,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      /* bleed any speed above air max back down — no endless post-dash glide */
      if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
    }
-   if(input.jump){
+   if(input.jump&&!(f.char==="travis"&&f.state==="tsing")){ /* TRAVIS シング・タイム中はジャンプ不可 (user spec): the song roots him for its whole 3.6s — ground jump, coyote jump, the airborne first jump and the double jump all pass through this one gate, so none of them can fire while state "tsing" lasts (dash is locked in tryDash) */
      if(f.onGround||f.coyote>0){f.vy=-SJUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;f.firstJump=false;f.leftByJump=true;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
      else if(f.firstJump){f.firstJump=false;f.vy=-SJUMP_V;f.fastfall=false;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)} /* AIRBORNE FIRST JUMP (v93 bug fix): the fighter is airborne WITHOUT having jumped (walked off a ledge, dropped through, dashed off an edge, was launched) — f.firstJump was armed by the became-airborne check below, so this press is the FIRST jump of the stint, not the double jump. f.jumps (the double jump) stays available afterwards. It follows the same two-height rule as the ground jump: it starts at SJUMP_V and arms the same hold window (f.jBoostT / f.jBaseY). */
      else if(f.jumps>0){f.jumps--;f.vy=-DJUMP_V;f.jBoostT=0;f.fastfall=false;spawnParticles(f.x,f.y+f.h,f.char==="kojiro"?12:9,charFX(f),130);beep(f.isPlayer?700:420,.06,"sine",.035)} /* DOUBLE jump: original spec, untouched — fixed DJUMP_V, no hold decision, and it cancels any still-pending first-jump window */
