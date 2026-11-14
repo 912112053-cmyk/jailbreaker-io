@@ -393,6 +393,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["22:17"],tag:"修正・調整",title:"MIMI&SHADE：Kの全体・後硬直を元の速さに戻し、後硬直に完全硬直を適用",
+  items:["K「いってらっしゃいSHADE＆助けてSHADE！！」：前回の調整で長くなっていた全体を0.6秒→0.3秒に、後硬直を0.82秒→0.52秒に戻しました",
+         "後硬直は完全硬直です：動けるようになるまで、移動・ジャンプ・ダッシュ・他のワザは一切できません（SHADEの送り出し／呼び戻し自体は押した瞬間にこれまで通り発生します）",
+         "技一覧のKの行も、新しい数値（全体0.3秒／後硬直0.52秒（完全硬直））に合わせて更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["21:59"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけちゃうよ」のMIMI側KBを修正（68→680）",
   items:["↓+J「こけちゃうよ／こけロ」のMIMI側のKBが、前回のバランス調整（21:33）で誤って68になっていたのを、正しい680に修正しました（約10倍の吹き飛ばしになります）",
          "その他の数値は前回の調整どおりで変更ありません：MIMI ダメージ6／判定68×34、SHADE ダメージ12／KB320／発生0.16秒／判定92×40、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／320」に合わせました",
@@ -1262,7 +1267,7 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落ちちゃう！／たすけるヨ！</b><p>MIMIはお尻から急降下し、着地で衝撃波が<b>2段</b>発生する：1段目 <b>12ダメージ</b>（判定96×80／KB640）に続いて、2段目の波 <b>10ダメージ</b>（判定120×58／KB560）が左右に広がり、<b>片側の合計は22ダメージ</b>になる。同時にSHADEは<b>MIMIの足元に闇フィールド</b>を展開する：4秒間残り、中にいる相手に0.5秒ごとに4ダメージ（MIMIはダメージを受けない。KB・硬直なし）。</p>'+mvSpec(mvS('ダメージ','MIMI 本体16／着地 12＋10＝22（片側・2段）／闇フィールド 4×最大8')+mvS('KB','560／着地 640・2段目560')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地 左右96×80＋2段目 120×58／フィールド 幅190')+mvS('着地硬直','0.3秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・完全硬直</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。技のあいだは<b>完全硬直</b>：終わるまで移動・ジャンプ・ダッシュ・他のワザは一切できない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
++'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・完全硬直</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。後硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュ・他のワザは一切できない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.52秒（完全硬直）')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒・ジャンプ回復</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。使うと<b>ジャンプ回復</b>：二段ジャンプが回復する。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — これならできるよ！／つぶしてやル</b><p>MIMIは<b>相手の足元に光の魔法</b>を撃つ（約0.25秒後、相手のいる場所に光の柱。当たらなければ空振り）。同時にSHADEは上から腕を出して<b>相手を踏み潰す</b>（約0.22秒後、SHADEの位置の真下へ腕が落ちる）。</p>'+mvSpec(mvS('ダメージ','MIMI 14／SHADE 18')+mvS('KB','620（真上寄り）／820')+mvS('発生','約0.25秒／約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.6秒')+mvS('判定','MIMI 相手の足元 84×90／SHADE 120×110')+mvS('射程','MIMI 約460以内'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 助けて！／おいでMIMI</b> <span style="color:#38bdf8;font-weight:900">ワープ・ダメージなし・クールタイム1.0秒・完全硬直</span><p>MIMIが<b>SHADEの位置へワープ</b>する。SHADEを前方へ送り出しておけば、一瞬でそこまで逃げたり攻め込んだりできる。ワープ後の硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュはできない。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.25秒')+mvS('後硬直','0.62秒（完全硬直）')+mvS('再使用','1.0秒'))+'</div></div>'
@@ -5110,11 +5115,11 @@ function startMimiAttack(f,type,foe){
         SHADE is NEAR MIMI it dashes ~300 forward and stays there
         (shAway; it keeps mirroring moves from that ground); if
         SHADE is AWAY it returns to MIMI's side at once. No damage.
-        Balance (requester spec): the move now takes +0.3s longer
-        (全体 0.3s -> 0.6s, attackCd 0.45 -> 0.75 so the whole span
-        grows with it) and the ENTIRE span is 完全硬直 (applyFullLock:
-        no movement / jump / dash / moves until it fully ends) */
-     f.state="mswap";f.stateT=0.6;f.attackCd=0.75;f.comboWin=0;applyFullLock(f);
+        Balance (requester spec): the durations are back to the
+        original values (全体 0.3s, attackCd 0.45 so the listed
+        後硬直 is 0.52s) and the 後硬直 is 完全硬直 (applyFullLock:
+        no movement / jump / dash / moves until she can act again) */
+     f.state="mswap";f.stateT=0.3;f.attackCd=0.45;f.comboWin=0;applyFullLock(f);
      if(!f.shAway&&Math.abs(f.shX-f.x)<150&&Math.abs(f.shY-(f.y+f.h))<110){
        f.shAway=true;f.shX+=f.face*300;if(f.shX<60)f.shX=60;if(f.shX>WORLD_W-60)f.shX=WORLD_W-60;
        f.shState="ssend";f.shStateT=0.4;
