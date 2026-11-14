@@ -425,6 +425,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["02:00"],tag:"修正",title:"ONLINE VS：再戦後にロビーが閉じなくなる問題を修正",
+  items:["オンライン対戦で再戦したあと、ロビー画面が閉じなくなることがある問題を修正しました。原因は、再戦では前回のキャラ選択が引き継がれて全員が最初から「準備OK」になるため、まだキャラを選び直している途中の人がいてもホストが試合を開始できてしまうことでした。その状態で試合が始まると、選び直し中の人の画面ではキャラ選択が試合の上に残ったままになり、そのボタンを押すとロビーが試合の上に開いて、二度と閉じなくなっていました",
+         "試合開始の合図を受け取った時に、ロビーだけでなくキャラ選択画面も必ず閉じるようにしました。あわせて、すでに試合が始まっている時にキャラ選択のボタンを押しても、ロビーが開かないようにしました",
+         "再戦でキャラを引き継ぐ仕様（選び直さなくてもそのまま開始できる）や、通常のロビー→開始の流れはこれまで通りです。技・数値への変更はありません"]},
+ {date:"2026/11/15",times:["01:57"],tag:"修正",title:"ONLINE VS：相手キャラの表示から「外挿（速度による先読み）」を廃止しました",
+  items:["オンライン対戦の相手キャラの表示から「外挿」をやめました。これまでは、最新のスナップショットより先の時刻を描く場面で、キャラの速度から先の位置を推測して描いていましたが、今後は最新の実位置でそのまま止めて描き、次のスナップショットが届いたら補間で滑らかに繋ぎます。相手の表示は予測ではなく、実際の遅延を詰める方針に統一しました",
+         "スナップショット同士の補間そのものと、描画遅延の自動調整（約34〜120ms）はこれまで通りです。60fps配信・東京配置とあわせて、相手の動きは「実在する位置だけ」で表示されます",
+         "自分のキャラの予測表示（入力した瞬間に手元で先行して動く方式）はこれまで通り維持しています。あれは自分の入力が分かっている自分のキャラ専用の仕組みで、今回外した相手向けの外挿とは別物です",
+         "技・数値・その他の機能への変更はありません"]},
  {date:"2026/11/15",times:["01:51"],tag:"修正",title:"ONLINE VS：自分のキャラを予測表示にして操作の遅延をほぼ無くしました",
   items:["オンライン対戦で、自分のキャラだけを「予測表示」にしました：入力した瞬間に、自分のキャラが手元の計算（VS CPUと同じシミュレーション）で先行して動き出すので、サーバーの結果が返ってくるのを待つ分の遅延がほぼ無くなります。キーボードでもスマホのタッチ操作でも同じ予測が働きます",
          "サーバーが正であることは変わりません：HP・当たり判定・KO・スコアはサーバーの結果が絶対で、自分のキャラの状態が届くたびに予測と照合します。ズレが小さい間は少しずつ滑らかに寄せ、被弾の吹き飛ばし・KO・リスポーンなど大きくズレた時だけ、短いブレンドでサーバーの状態へ合わせ直すので、ワープしたような見え方にはなりにくくなっています",
@@ -510,15 +519,7 @@ var UPDATE_LOG=[
          "空中J：MIMI 5→4ダメージ×最大3ヒット／KB260→300・判定 周囲78・被弾硬直0.22秒。SHADEの掴み範囲は周囲110→周囲124に拡大",
          "J+K：MIMIの光の魔法は三連撃（6＋6＋8）から単発（9ダメージ／KB720・判定70×62）に変更し、空中で出した場合の着地硬直は0.18秒→0.22秒。SHADEのアッパーは24→28ダメージ／KB1050→1130・発生0.3秒→0.28秒・判定 周囲102",
          "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
- {date:"2026/11/14",times:["20:59"],tag:"修正・調整",title:"全キャラの足裏を台の上面にぴったり合わせた＋メインの床を薄い板に戻した",
-  items:["キャラのドット絵の足が地面や台にめり込んで描画されていた問題を修正しました：全キャラ（MIMI含む）について、スプライトの足の底が台の上面にちょうど乗るよう、描画位置（アンカー）をキャラごとに実測して合わせました。めり込み量はキャラごとに違い、最も大きかった SMILEY と TRAVIS は約33px分めり込んでいました",
-         "歩行中のフレームでも接地している足が台に触れ続けるよう、歩行フレームごとに位置を合わせています。あわせて、待機中に体全体が上下に揺れて足裏が浮いたり沈んだりしていた動きはなくしました（待機モーション自体はドット絵側の差分フレームでこれまで通り動きます）",
-         "直したのは描画位置だけです：当たり判定・物理・キャラの論理位置や技の数値には一切変更ありません",
-         "あわせて、前回の更新で入れた「メインの床の下を地面として敷き詰める」描画を取り消し、元の薄い板の見た目に戻しました"]},
- {date:"2026/11/14",times:["20:52"],tag:"修正・調整",title:"ステージ：メインの床の下を地面として敷き詰め",
-  items:["ステージのメインの床が薄い板のように見えていたのを直しました：床の下面からワールドの下端までを地面として埋めて描画し、地層のような質感（アイス寄りのネイビー×シアン×ティールの色合い）で「地面」らしく見えるようにしました",
-         "埋めた範囲はメインの床の幅ぴったりです。左右の落下スペースは今まで通り開いています",
-         "見た目だけの変更です：当たり判定（床の上面・下面・側面、浮き台の配置）や物理に変更はありません"]}
+
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1271,6 +1272,13 @@ $("csStart").onclick=function(){
    return;
  }
  if(pendingMode==="online-host"||pendingMode==="online-guest"){
+   /* if the start broadcast already arrived while this select was
+      open (rematch: the host can start on the strength of the
+      characters carried over from the previous match, before this
+      player re-picked), the match is already running — just close
+      the select. Entering the lobby here would open it over the
+      live match, where it could never be closed again. */
+   if(net.started){$("charSelect").classList.remove("on");beep(700,.07);return}
    /* picking a character no longer starts the match: the pick is
       reported to the server, whose roster broadcast keeps every
       lobby in sync; the host starts the match from the lobby once
@@ -1374,9 +1382,10 @@ function hideBanner(){$("banner").style.display="none"}
    - everyone else (and projectiles) is rendered by interpolating
      between the two snapshots that bracket an ADAPTIVE render delay
      (lag fix: measured from the snapshot stream's own arrival jitter,
-     ~44ms on a clean connection up to ~150ms on a jittery one, with
-     velocity extrapolation when the buffer starves and a ~42ms
-     shorter delay for your own fighter — see svOnSnap / svRenderWorld).
+     ~44ms on a clean connection up to ~150ms on a jittery one; when
+     the buffer starves, fighters hold at the newest snapshot's real
+     position — no velocity extrapolation — and your own fighter uses
+     a ~42ms shorter delay — see svOnSnap / svRenderWorld).
    - effects for remote fighters are derived from the snapshot stream
      (state changes, HP drops, dash cooldown jumps, deaths), the same
      information the old guest rendering ultimately displayed.
@@ -1640,7 +1649,18 @@ function svOnMsg(m){
    net.seed=m.seed|0;net.started=true;
    hostChar=(net.match[0]&&net.match[0].char)||null;
    forceP2Char=(net.match[1]&&net.match[1].char)||hostChar;
-   $("lobbyScreen").classList.remove("on");showCenter("",0);
+   /* close the character select too, not just the lobby: after a
+      rematch everyone's previous character stays picked on the
+      server, so the whole roster reads "ready" and the host can
+      start while a guest is still sitting in the re-pick select.
+      If that guest's select stayed open over the running match,
+      tapping its start button ran csStart's lobby branch and opened
+      the LOBBY over the live match — which nothing ever closed
+      again (the reported "rematch leaves the lobby stuck" bug).
+      In the first lobby this could not happen: unpicked players
+      have no character yet, so the start is blocked until everyone
+      has actually picked and entered the lobby. */
+   $("lobbyScreen").classList.remove("on");$("charSelect").classList.remove("on");showCenter("",0);
    startMatch("online");
    return;
  }
@@ -1794,9 +1814,11 @@ $("lobbyLeaveBtn").onclick=function(){
      restores the server state outright and glides the rendered
      body from its old spot to the corrected one over a short blend
      (sv.corrX / sv.corrY) instead of teleporting it.
-   - everyone ELSE is rendered exactly as before: interpolating
-     between the two snapshots bracketing the adaptive render
-     delay, with velocity extrapolation when the buffer starves.
+   - everyone ELSE is rendered by interpolating between the two
+     snapshots bracketing the adaptive render delay; when the
+     render time runs past the newest snapshot they hold at its
+     real position — velocity extrapolation was removed (real
+     latency cuts over prediction for opponents).
    - prediction falls back to that same snapshot rendering
      whenever it cannot apply: your fighter is dead (the server
      owns the corpse and the respawn), the match is over, the
@@ -2407,8 +2429,9 @@ function svShowEnd(){
 }
 /* bracket a snapshot pair for render time rt. When rt runs past the
    newest snapshot (buffer starved by jitter), report how far past it
-   is via .extra (seconds, capped by the caller) so positions can be
-   dead-reckoned from velocity instead of freezing in place. */
+   is via .extra (seconds, capped by the caller). Fighters ignore it:
+   they hold at the newest snapshot's real position rather than being
+   dead-reckoned from velocity. Only projectiles still use it. */
 function svBracket(rt){
  var n=sv.snaps.length;if(!n)return null;
  var newest=sv.snaps[n-1];
@@ -2430,10 +2453,11 @@ function svRenderWorld(now){
     snapshot timelines below drive it only in the fallback cases
     (dead / match over / CPU takeover / spectating), where it uses
     the timeline ~42ms AHEAD of everyone else's (20ms floor). When
-    either timeline runs past the newest snapshot, positions are
-    extrapolated from the snapshot velocities (capped at 120ms, never
-    through a death) — a brief, smooth overshoot the next snapshot
-    corrects, instead of a visible freeze-frame. */
+    either timeline runs past the newest snapshot, the fighter holds
+    at that snapshot's real position until the next one arrives —
+    snapshot-rendered fighters are never extrapolated from velocity
+    (the direction chosen for opponents: cut real latency instead of
+    predicting; only our own locally predicted fighter runs ahead). */
  var brR=svBracket(now-sv.renderDelay);
  if(!brR)return;
  var brL=svBracket(now-Math.max(20,sv.renderDelay-42));
@@ -2454,8 +2478,7 @@ function svRenderWorld(now){
    var br=(f===P1&&brL)?brL:brR,A=br.A,B=br.B,sa=A.fs[fi];if(!sa)continue;
    var sb=B?B.fs[fi]:null;
    if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*br.t;f.y=sa.y+(sb.y-sa.y)*br.t}
-   else if(br.extra>0&&!sa.dead){f.x=sa.x+(sa.vx||0)*br.extra;f.y=sa.y+(sa.vy||0)*br.extra}
-   else{f.x=sa.x;f.y=sa.y}
+   else{f.x=sa.x;f.y=sa.y} /* rt ran past the newest snapshot: hold the newest real position until the next snapshot arrives and interpolation resumes — snapshot-rendered fighters are never extrapolated from velocity (only our own predicted fighter may run ahead, and it never comes through this path) */
    f.px=f.x;f.py=f.y;
  }
  var A2=brR.A,B2=brR.B,t2=brR.t,ex2=brR.extra,pa=A2.pr||[],pb=B2?(B2.pr||[]):null;
