@@ -392,6 +392,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["18:24"],tag:"修正・調整",title:"TRAVIS ウルトの溜まりを×0.45に下方修正",
+  items:["TRAVISのウルトゲージの溜まり（与ダメージで増える量）を ×0.66 → ×0.45 に下方修正しました。ウルト「ワールドツアー」そのもの（34ダメージ×3・KB660・弾速740）は変更なし",
+         "技一覧のステータス表示も「ウルト溜まり 遅め（×0.45）」に更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["18:22"],tag:"修正・調整",title:"TRAVIS ↓+K シング・タイム中は台すり抜け不可に",
   items:["↓+K シング・タイム：歌っている間（3.6秒）は、浮いた台の上でも S の2回押しによる台すり抜けができなくなりました（歌唱中に押した分は歌い終わった直後のすり抜け予約にもなりません）",
          "歌唱そのもの（5ダメージ×最大12ヒット・KB300・判定 左右210×102・被弾硬直0.2秒）と、歌っている間の移動・ジャンプ・ダッシュ不可、歌い終わった後の後硬直2.5秒（完全硬直）は変更なし",
@@ -1128,7 +1132,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1200')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>ラッパー。マイクと音波がテーマの<b>中量級オールラウンダー</b>。HPは260。マイクの突き出し→振り上げ→音波パンチの3段チェーン、その場で歌って周囲を制圧する「シング・タイム」、真下へ撃ち落として爆発する「メテオソング」、6発装填の飛び道具と、間合いを選ばず戦える技が揃っている。ウルトは前方への巨大音波3連射。</p>'
-+mvSpec(mvS('HP','260')+mvS('地上速度','432')+mvS('空中速度','407')+mvS('受けKB','×1.06')+mvS('ダッシュ','1120')+mvS('ウルト溜まり','遅め（×0.66）'))
++mvSpec(mvS('HP','260')+mvS('地上速度','432')+mvS('空中速度','407')+mvS('受けKB','×1.06')+mvS('ダッシュ','1120')+mvS('ウルト溜まり','遅め（×0.45）'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — マイクスイング</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>マイクを正面へまっすぐ突き出して殴る。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — マイクスイング（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>突き出したマイクを、そのまま上へ振り上げて攻撃する。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
@@ -1363,7 +1367,7 @@ function charStats(c){
  if(c==="kojiro")return{hp:240,spd:1.16,kb:1.08,dash:1180}; /* KOJIRO (user spec): HP 250 -> 240, knockback taken x1.02 -> x1.08, dash 1080 -> 1180; ground 464 (400x1.16) / air 450 (388x1.16) unchanged */
  if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:980}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 980 (nerfed from 1080), HP 270 (user spec) */
  if(c==="orchid")return{hp:250,spd:0.975,air:1.108,kb:1.08,dash:1200,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250, ground 390 (400x0.975), air 430 (388x1.108), dash 1200, knockback taken x1.08, falls 11% faster (fall) */
- if(c==="travis")return{hp:260,spd:1.08,air:1.05,kb:1.06,dash:1120}; /* TRAVIS (user spec): rapper — HP 255 -> 260, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02 -> x1.06, dash 1120 (duration 0.15s / CD 2.4s, the shared defaults in tryDash), ult gain x1.0 -> x0.66 (meterGainFor) */
+ if(c==="travis")return{hp:260,spd:1.08,air:1.05,kb:1.06,dash:1120}; /* TRAVIS (user spec): rapper — HP 255 -> 260, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02 -> x1.06, dash 1120 (duration 0.15s / CD 2.4s, the shared defaults in tryDash), ult gain x0.45 (meterGainFor) */
  if(c==="smiley")return{hp:230,spd:1.14,air:1.10,kb:1.12,dash:1300}; /* SMILEY (user spec): masked speedster — HP 235 -> 230, ground 456 (400x1.14), air 427 (388x1.10), knockback taken x1.08 -> x1.12, dash 1200 -> 1300 (CD 1.8s in tryDash), ult gain x1.1 (meterGainFor) */
  return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
@@ -5027,7 +5031,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList){
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:(att.char==="travis"?0.99:1))))))/1.5; /* SMILEY x1.1 (v102 spec); TRAVIS ult gain x1.0 -> x0.66 total (base 0.99 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:(att.char==="travis"?0.675:1))))))/1.5; /* SMILEY x1.1 (v102 spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
