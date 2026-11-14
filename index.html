@@ -425,6 +425,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["01:51"],tag:"修正",title:"ONLINE VS：自分のキャラを予測表示にして操作の遅延をほぼ無くしました",
+  items:["オンライン対戦で、自分のキャラだけを「予測表示」にしました：入力した瞬間に、自分のキャラが手元の計算（VS CPUと同じシミュレーション）で先行して動き出すので、サーバーの結果が返ってくるのを待つ分の遅延がほぼ無くなります。キーボードでもスマホのタッチ操作でも同じ予測が働きます",
+         "サーバーが正であることは変わりません：HP・当たり判定・KO・スコアはサーバーの結果が絶対で、自分のキャラの状態が届くたびに予測と照合します。ズレが小さい間は少しずつ滑らかに寄せ、被弾の吹き飛ばし・KO・リスポーンなど大きくズレた時だけ、短いブレンドでサーバーの状態へ合わせ直すので、ワープしたような見え方にはなりにくくなっています",
+         "相手キャラの表示はこれまで通り（スナップショットの補間＋外挿）です。攻撃の命中結果やエフェクトもこれまで通りサーバーのイベントで再生され、予測側で二重に当てることはありません。入力の送信（60fps・連番・即時送信）、ロビー・チャット・再戦・画面右上の遅延ms表示もそのままです",
+         "自分のキャラがCPU引き継ぎ状態のときや観戦時は、従来のスナップショット表示に自動で戻ります。VS CPU・トレーニングなどローカル対戦の動作と、技・数値への変更はありません"]},
  {date:"2026/11/15",times:["01:38"],tag:"修正",title:"試合中にフレンド画面が勝手に開く問題を修正",
   items:["VS CPU・トレーニング・オンライン対戦の試合中に、フレンド画面が勝手に開いて操作の邪魔になることがあった問題を修正しました。原因は、フレンド画面を一度開いて閉じた後も、閉じたはずの画面が内部に残ったままになっていて、フレンドのオンライン状態の変化や定期更新のたびに「開いている」と誤判定して再表示していたことです",
          "試合中は、フレンド申請の受信・オンライン状態の変化・接続の再試行など裏側のイベントでは、フレンド画面が自動で開かないようにしました。申請や招待の受信自体はこれまで通り行われ、試合が終わってから FRIENDS を開けば届いた内容をそのまま確認・参加できます（申請件数のバッジ表示もこれまで通り更新されます）",
@@ -513,11 +518,7 @@ var UPDATE_LOG=[
  {date:"2026/11/14",times:["20:52"],tag:"修正・調整",title:"ステージ：メインの床の下を地面として敷き詰め",
   items:["ステージのメインの床が薄い板のように見えていたのを直しました：床の下面からワールドの下端までを地面として埋めて描画し、地層のような質感（アイス寄りのネイビー×シアン×ティールの色合い）で「地面」らしく見えるようにしました",
          "埋めた範囲はメインの床の幅ぴったりです。左右の落下スペースは今まで通り開いています",
-         "見た目だけの変更です：当たり判定（床の上面・下面・側面、浮き台の配置）や物理に変更はありません"]},
- {date:"2026/11/14",times:["20:36"],tag:"修正・調整",title:"MIMI&SHADE：ウルト弾が実際に貫通するように",
-  items:["MIMI&SHADEのウルト「大好きだよSHADE／大好きだよMIMI」の光と闇の巨大弾が、敵に当たっても消えずにそのまま飛び続けるようになりました（技一覧の「貫通」表記どおりの挙動です）",
-         "同じ敵には1回だけ当たります（1体につき46ダメージ／KB880を1回）。複数の敵が並んでいれば、全員に当たります",
-         "弾の寿命・射程・速度、ダメージ／KBの数値はこれまで通りです。対象はこのウルト弾だけで、他のキャラの飛び道具は従来どおり当たったら消えます"]}
+         "見た目だけの変更です：当たり判定（床の上面・下面・側面、浮き台の配置）や物理に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1438,7 +1439,7 @@ function cleanupNet(){
  if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
  net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
- sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];
+ sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
  chatReset();
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
@@ -1647,6 +1648,10 @@ function svOnMsg(m){
  if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
  if(m.t==="ev"){svOnEv(m.ev);return} /* server FX events: the sim records every effect spawn (particles / rings / sparks / bursts / floaters / shake) and the Room forwards them — svOnEv replays them through the same spawn helpers the local sim uses, so online matches show the exact effects offline matches do. "banner" events inside are still skipped: the client renders KO banners itself from snapshot death transitions (svOnDeathFx), so they are not double-shown */
  if(m.t==="cpu"){
+   /* if the fighter handed to the CPU is OUR OWN, prediction no
+      longer applies to it (its inputs are no longer ours): fall
+      back to plain snapshot rendering for it */
+   if(net.match&&net.match[net.myIdx]&&m.name&&m.name===net.match[net.myIdx].name)sv.predOff=true;
    if(running&&mode==="online")showCenter((m.name||"プレイヤー")+" さんが退出しました\nCPUが引き継ぎます",2600);
    return;
  }
@@ -1762,33 +1767,45 @@ $("lobbyLeaveBtn").onclick=function(){
  cleanupNet();toMenu();
 };
 /* ================= SERVER-CLIENT MATCH ENGINE =================
-   v89 rework — fully server-authoritative rendering for EVERY
-   fighter, including your own. The previous build predicted P1
-   locally with this page's stepFighter / rbApplyInput and reconciled
-   against snapshots, but the server still runs the v53 extraction of
-   the game code while this page has moved on (land-lag, new move
-   timings / cooldowns / damage since v54–v88). Every attack made the
-   prediction and the server disagree about stateT / attackCd, so
-   reconciliation kept snapping the fighter back and forth (荒ぶる),
-   the server kept resetting the locally-spent cooldown to its own
-   value (技が無限に打てるように見える), and whenever the client's
-   prediction frame drifted from the server frame (its accumulator
-   drops time under load) the replay used the WRONG buffered inputs
-   (動けない／同期しない). Prediction with a non-identical sim can
-   never converge, so it is gone:
+   Server-authoritative match with CLIENT-SIDE PREDICTION for your
+   own fighter only (owner request):
    - inputs are sampled at a fixed 60fps into a numbered queue and
      sent in order, each sampled frame exactly once (see
      svSampleStep / svSendBundle — the old sender re-sent / dropped
      frames whenever the send timer and the step timer drifted);
-   - ALL fighters are rendered by interpolating between the two
-     snapshots bracketing a ~80ms render delay, and every scalar
-     (HP, cooldowns, state, ammo…) is taken from the newest snapshot
-     verbatim. What you see is exactly what the server decided, on
-     every screen at once. The server is the only place an attack can
-     start, so its cooldowns are absolute. */
+   - YOUR fighter is stepped locally the moment each input is
+     sampled — the same stepFighter / rbApplyInput the offline game
+     uses (svStepP1, called from svSampleStep) — so your own motion
+     answers your inputs with no round-trip wait. The prediction
+     step is presentation-only: every other fighter's state and all
+     effect / floater / placed-object spawns are rolled back around
+     it, so a predicted swing can never damage anyone locally or
+     double-spawn an effect. Hit results and effects stay exactly
+     what they were: decided by the server and replayed from its
+     snapshot stream + FX events.
+   - the server stays absolute for HP / hit resolution / KO /
+     score. Every snapshot reconciles the prediction
+     (svReconcileP1): HP, score, kills and deaths are taken
+     verbatim; the authoritative position is compared against the
+     predicted position at the snapshot's effective time (kept in
+     sv.predHist) — a small error is eased into the live prediction
+     a fraction at a time, while a large one (knockback the
+     prediction never saw, a KO, a respawn, a grab / phase change)
+     restores the server state outright and glides the rendered
+     body from its old spot to the corrected one over a short blend
+     (sv.corrX / sv.corrY) instead of teleporting it.
+   - everyone ELSE is rendered exactly as before: interpolating
+     between the two snapshots bracketing the adaptive render
+     delay, with velocity extrapolation when the buffer starves.
+   - prediction falls back to that same snapshot rendering
+     whenever it cannot apply: your fighter is dead (the server
+     owns the corpse and the respawn), the match is over, the
+     server handed your fighter to the CPU (sv.predOff, set from
+     the "cpu" notice for our own name), or you are not a playing
+     fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
-var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[]};
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false};
 var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
@@ -1899,13 +1916,67 @@ function svRestoreP1(o){
  hitstop=o.hs||0;
 }
 function svCdEstAt(j){
- if(sv.lastSnap)return Math.max(0,sv.lastSnap.cd-(j-sv.lastSnap.f)/60);
+ /* countdown estimate for the prediction step, in WALL-CLOCK terms:
+    the newest snapshot's cd minus the time since it arrived (before
+    the first snapshot: the fixed 1.5s from match start). The old
+    frame-based estimate subtracted the SERVER's frame counter from
+    the LOCAL sample counter — two clocks that drift apart under
+    load — and could park or release presses on the wrong frame. */
+ if(sv.lastSnap)return Math.max(0,sv.lastSnap.cd-(performance.now()-sv.lastArrival)/1000);
  return Math.max(0,1.5-(performance.now()-sv.startAt)/1000);
 }
-/* one prediction step of the local fighter for server frame j.
-   Projectiles the step spawns are collected into sv.predPr (they are
-   drawn immediately and retired once the server's snapshot carries
-   the real one); during replay passes they are discarded instead. */
+/* is local prediction of our own fighter in effect right now?
+   Falls back to plain snapshot rendering (the pre-prediction
+   behaviour) whenever prediction cannot apply: no live server
+   match, the match is over, our fighter is dead (the server owns
+   the corpse + respawn), the server handed our fighter to the CPU
+   (sv.predOff), or there is no playing local fighter at all
+   (spectating). Touch input feeds the same sampled bit stream as
+   the keyboard (svSampleLocal), so prediction covers mobile too. */
+function svPredOn(){
+ if(!sv.active||mode!=="online"||matchOver||sv.predOff)return false;
+ if(!P1||!P1.isPlayer||P1.remote)return false;
+ if(P1.dead)return false;
+ return true;
+}
+/* generic fighter save / restore for the prediction step's
+   bystander protection (same field list as svSaveP1, for any
+   fighter): a predicted step runs the real stepFighter, whose
+   melee / projectile code reads and writes EVERY fighter — the
+   bystanders' states are restored afterwards so the prediction can
+   never wound, launch or mark anyone locally. */
+function svSaveFighter(f){
+ var o={};
+ for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
+ o.la=f.lastAttacker;o.gb=f.grabBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;o.ax=f.axSpinT;
+ o.dmgBy=null;if(f.dmgBy){o.dmgBy={};for(var dmk in f.dmgBy)o.dmgBy[dmk]=f.dmgBy[dmk]}
+ o.trail=f.trail?f.trail.slice():[];
+ return o;
+}
+function svRestoreFighter(f,o){
+ if(!f||!o)return;
+ for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
+ f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;f.axSpinT=o.ax;
+ f.dmgBy={};if(o.dmgBy)for(var dmk2 in o.dmgBy)f.dmgBy[dmk2]=o.dmgBy[dmk2];
+ f.trail=o.trail?o.trail.slice():[];
+}
+/* one prediction step of the local fighter, for sampled frame j.
+   Runs the REAL rbApplyInput + stepFighter (the same code VS CPU
+   uses), but strictly as presentation:
+   - every OTHER fighter is saved beforehand and restored after, so
+     a predicted hit can never damage / launch / mark anyone on this
+     client — hit results are the server's alone, and its FX events
+     (svOnEv) are the only hit dressing shown;
+   - every effect / floater / placed-object list is swapped for a
+     scratch list for the duration and discarded, and svMute
+     silences beeps / banners, so the step spawns nothing visible —
+     the server's events replay the real effects exactly once;
+   - projectiles the step spawns are the one exception: they are
+     collected into sv.predPr (drawn immediately, retired once the
+     server's snapshot carries the real one — see svRenderWorld);
+   - the visual correction offset (sv.corrX / sv.corrY, from the
+     last hard resync) is un-applied before the step and re-applied
+     after, so the logic position never absorbs the blend. */
 function svStepP1(j,bits,replay){
  var f=P1;if(!f)return;
  if(svCdEstAt(j)>0){svParkPresses(f,bits,j);return}
@@ -1913,7 +1984,13 @@ function svStepP1(j,bits,replay){
  if(f.dead)return; /* the server owns the corpse and the respawn */
  time=(j+1)*SIM_STEP;
  f.px=f.x;f.py=f.y;
+ f.x-=sv.corrX;f.y-=sv.corrY;
  var foe=nearestOpponent(f);
+ var bystanders=[];
+ for(var bi=0;bi<fighters.length;bi++){var bf=fighters[bi];if(bf&&bf!==f)bystanders.push([bf,svSaveFighter(bf)])}
+ var svParticles=particles,svRings=rings,svFxBursts=fxBursts,svVecBursts=vecBursts,svFloaters=floaters,svIce=icePatches,svFire=fireOrbs,svMist=poisonMists,svDark=darkFields,svMines=mines;
+ particles=[];rings=[];fxBursts=[];vecBursts=[];floaters=[];icePatches=[];fireOrbs=[];poisonMists=[];darkFields=[];mines=[];
+ var svShake=shake,svWasMute=svMute;svMute=true;
  var scratch=projectiles;projectiles=sv.scratchPr;sv.scratchPr=[];
  var saveKeys=keys,saveDx=stick.dx,saveDy=stick.dy;
  keys={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:!!(bits&8)};
@@ -1927,6 +2004,11 @@ function svStepP1(j,bits,replay){
    }
  }
  projectiles=scratch;
+ particles=svParticles;rings=svRings;fxBursts=svFxBursts;vecBursts=svVecBursts;floaters=svFloaters;icePatches=svIce;fireOrbs=svFire;poisonMists=svMist;darkFields=svDark;mines=svMines;
+ shake=svShake;svMute=svWasMute;
+ for(var bj=0;bj<bystanders.length;bj++)svRestoreFighter(bystanders[bj][0],bystanders[bj][1]);
+ f.x+=sv.corrX;f.y+=sv.corrY;f.px=f.x;f.py=f.y;
+ sv.predStepped=true;
 }
 /* one 60fps input sample. Samples are numbered by sampleFrame and
    kept until the sender has shipped them; nothing is ever sampled
@@ -1949,6 +2031,18 @@ function svSampleStep(){
  if(sv.heldPrev===null||sv.heldPrev===undefined)sv.heldPrev=heldNow;
  else if(heldNow!==sv.heldPrev){sv.pressPending=true;sv.heldPrev=heldNow}
  sv.inpHist[sv.sampleFrame]=bits;
+ /* PREDICTION: the very input that was just sampled also steps our
+    own fighter locally, right now — the sampled bit stream is the
+    prediction stream, so keyboard and touch behave identically
+    and nothing waits for the server. The resulting position is
+    remembered (timestamped) so the next snapshot can be compared
+    against the prediction at ITS effective time (svReconcileP1). */
+ if(svPredOn()){
+   svStepP1(sv.sampleFrame,bits,false);
+   if(P1)sv.predHist.push({t:performance.now(),x:P1.x-sv.corrX,y:P1.y-sv.corrY});
+   while(sv.predHist.length>2&&sv.predHist[0].t<performance.now()-700)sv.predHist.shift();
+   if(sv.predHist.length>90)sv.predHist.shift();
+ }
  sv.sampleFrame++;
  sv.predFrame=sv.sampleFrame;
  for(var k in sv.inpHist){if(+k<sv.sentFrame-600)delete sv.inpHist[k]}
@@ -1984,12 +2078,90 @@ function svApplySnapP1(s,hist){
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
 }
-/* no reconciliation any more (see the engine note above): the
-   newest snapshot's own-fighter state is applied verbatim, exactly
-   like a remote fighter's. Kept under the old call name so svOnSnap
-   does not change shape. */
+/* hard resync of the predicted fighter to the authoritative
+   snapshot state: everything is taken verbatim (extrapolated
+   forward by the render delay so it lands on the present timeline),
+   and the visual correction offset is set to the gap between where
+   the body was being shown and where it truly is — svAdvance decays
+   that offset over ~150ms, so even a forced correction reads as a
+   short glide, not a teleport. The prediction history restarts
+   from the corrected state. */
+function svHardResyncP1(s){
+ var f=P1;if(!f||!s)return;
+ var shownX=f.x,shownY=f.y;
+ svApplySnapP1(s,null);
+ var age=sv.renderDelay/1000;
+ f.x+=(s.vx||0)*age;f.y+=(s.vy||0)*age;f.px=f.x;f.py=f.y;
+ sv.corrX=Math.max(-280,Math.min(280,shownX-f.x));
+ sv.corrY=Math.max(-200,Math.min(200,shownY-f.y));
+ f.x+=sv.corrX;f.y+=sv.corrY;f.px=f.x;f.py=f.y;
+ sv.predHist.length=0;
+ sv.predHist.push({t:performance.now(),x:f.x-sv.corrX,y:f.y-sv.corrY});
+ if(s.grb){if(!f.grabBy)f.grabBy=svFindWarden()}
+}
+/* reconciliation of the prediction against one snapshot of our own
+   fighter (see the engine note): the server is absolute for HP /
+   score / kills / deaths, taken verbatim every snapshot. Position
+   is compared against the predicted position at the snapshot's
+   effective time (now minus the render delay — the same lag the
+   remote timeline runs on), read from sv.predHist:
+   - LARGE divergence (position off by >150px, the snapshot reports
+     us dead / respawned / grabbed / in hitstun or frozen while the
+     prediction is not, or in a phase state like ultcharge the
+     prediction never entered) -> svHardResyncP1.
+   - SMALL divergence -> the live prediction is nudged a fraction
+     of the way toward the authoritative position / velocity, a few
+     pixels per snapshot, so it converges without ever jumping;
+     movement-owned timers (state / attackCd / dashCd / ammo) stay
+     with the prediction, which runs the identical input stream —
+     the v89 failure mode (the server resetting locally-spent
+     cooldowns from a stale snapshot) cannot recur. Meter adopts
+     confirmed gains from the server and confirmed spends when the
+     prediction is idle. If the server has us mid-move while the
+     prediction sits idle (a buffered press the server released
+     first), the move state is adopted so the animation matches. */
+function svReconcileP1(s,snap){
+ var f=P1;if(!f||!s)return;
+ f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;
+ if(typeof s.kl==="number")f.kills=s.kl;
+ if(typeof s.dt==="number")f.deaths=s.dt;
+ if(!sv.predStepped){svHardResyncP1(s);return}
+ var hard=false;
+ if(!!s.dead!==!!f.dead)hard=true;
+ else if(s.grb)hard=true;
+ else if((s.hs||0)>0.03&&(f.hitstun||0)<=0.03)hard=true; /* a knockback the prediction never saw */
+ else if((s.fr||0)>0.03&&(f.frozen||0)<=0.03)hard=true;
+ else if(s.st==="ultcharge"&&f.state!=="ultcharge")hard=true;
+ var targetT=(snap&&snap.at?snap.at:performance.now())-sv.renderDelay;
+ var hist=null;
+ for(var hi=sv.predHist.length-1;hi>=0;hi--){if(sv.predHist[hi].t<=targetT){hist=sv.predHist[hi];break}}
+ if(!hist&&sv.predHist.length)hist=sv.predHist[0];
+ var ex=0,ey=0;
+ if(hist){ex=hist.x-s.x;ey=hist.y-s.y}
+ if(!hard&&(Math.abs(ex)>150||Math.abs(ey)>150))hard=true;
+ if(hard){svHardResyncP1(s);return}
+ if(hist&&(ex||ey)){
+   var cx=Math.max(-24,Math.min(24,-ex*0.25)),cy=Math.max(-24,Math.min(24,-ey*0.25));
+   f.x+=cx;f.y+=cy;f.px=f.x;f.py=f.y;
+   if(Math.abs((s.vx||0)-f.vx)<600)f.vx+=((s.vx||0)-f.vx)*0.15;
+   if(Math.abs((s.vy||0)-f.vy)<600)f.vy+=((s.vy||0)-f.vy)*0.15;
+ }
+ if(s.mt>f.meter)f.meter=s.mt;
+ else if(f.state==="idle"&&s.mt<f.meter-20)f.meter=s.mt;
+ if(f.state==="idle"&&s.st&&s.st!=="idle"&&s.st!=="guard"){
+   f.state=s.st;f.stateT=s.sT;f.attackCd=s.atk;f.face=s.fc;
+ }
+ f.guarding=!!s.gd;
+ if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
+ else{f.grabT=0;f.grabBy=null}
+}
+/* snapshot entry point for our own fighter, called from svOnSnap:
+   prediction + reconciliation while prediction applies, the old
+   verbatim apply (exactly like a remote fighter's) whenever it
+   does not — dead, match over, CPU takeover, spectating. */
 function svReconcile(snap){
  var s=snap.fs[net.myIdx];if(!s||!P1)return;
+ if(svPredOn()){svReconcileP1(s,snap);return}
  svApplySnapRemote(P1,s);
  if(s.grb){if(!P1.grabBy)P1.grabBy=svFindWarden()}
  else{P1.grabT=0;P1.grabBy=null}
@@ -2150,15 +2322,15 @@ function svOnSnap(m){
    var sf=m.fs[i],f=fighters[i];if(!f||!sf)continue;
    var preDead=f.dead;
    if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now,gain:sf.sc-f._svScore}; /* v99: the snapshot score DIFF is the real gain (damage-proportional), shown on the death banner instead of the old fixed +100 */
-   if(true){ /* snapshot-derived effects + authoritative apply run for EVERY fighter now, our own included */
+   if(true){ /* snapshot-derived effects run for EVERY fighter, our own included; the authoritative APPLY runs for everyone except a locally predicted P1, whose apply is the reconciliation in svReconcile below (a verbatim apply would overwrite the prediction with a stale state 60 times a second) */
      if(f._svHp!==undefined&&sf.hp<f._svHp-0.01)f.flash=0.15; /* hit flash only — the real hit dressing (sparks / bursts / damage floater) arrives as FX events via svOnEv; the old generic 6-particle guess here would double it */
-     if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2){f.dashT=0.15;f.dashDir=sf.fc}
+     if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2&&!(i===net.myIdx&&svPredOn())){f.dashT=0.15;f.dashDir=sf.fc}
      if(sf.og&&!f._svOg)f.landT=0.14;
-     if(!sf.grb){f.grabT=0;f.grabBy=null}
+     if(!sf.grb){if(!(i===net.myIdx&&svPredOn())){f.grabT=0;f.grabBy=null}}
      else if(!f.grabBy)f.grabBy=svFindWarden();
      if(sf.st==="ultcharge")f.ultChargeT=0.12;
      /* attack-state entries no longer spawn a generic puff here: each move's own start effects arrive as FX events via svOnEv, exactly as the sim spawned them */
-     svApplySnapRemote(f,sf);
+     if(!(i===net.myIdx&&svPredOn()))svApplySnapRemote(f,sf);
    }
    if(sf.dead&&!f._svDead)svOnDeathFx(i,preDead);
    f._svDead=!!sf.dead;
@@ -2177,6 +2349,7 @@ function svReset(){
  sv.renderDelay=66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
+ sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
  sv.endShown=false;sv.endResults=null;sv.lastScorer=null;
  simSeedState=(net.seed|0)||1;
  for(var i=0;i<fighters.length;i++){var f=fighters[i];
@@ -2251,9 +2424,12 @@ function svRenderWorld(now){
     clean 60fps connection, widening to ~120ms only as jitter demands —
     replacing the old fixed 80ms, which starved whenever arrivals
     bunched and made remote fighters freeze, then teleport).
-    Your own fighter renders on a timeline ~42ms AHEAD of everyone
-    else's (20ms floor): it is the one body whose motion answers your inputs, so
-    shaving its delay is where the input lag is actually felt. When
+    Your own fighter is NOT rendered from these timelines while
+    prediction applies (svPredOn): it is drawn at its locally
+    predicted position, which answers your inputs immediately; the
+    snapshot timelines below drive it only in the fallback cases
+    (dead / match over / CPU takeover / spectating), where it uses
+    the timeline ~42ms AHEAD of everyone else's (20ms floor). When
     either timeline runs past the newest snapshot, positions are
     extrapolated from the snapshot velocities (capped at 120ms, never
     through a death) — a brief, smooth overshoot the next snapshot
@@ -2261,8 +2437,20 @@ function svRenderWorld(now){
  var brR=svBracket(now-sv.renderDelay);
  if(!brR)return;
  var brL=svBracket(now-Math.max(20,sv.renderDelay-42));
+ /* retire predicted projectiles: the server's own copy has arrived
+    (same kind, close by) or they have outlived any plausible
+    confirmation window — either way they must not linger or double */
+ if(sv.predPr.length){
+   var srvPr=brR.A.pr||[];
+   sv.predPr=sv.predPr.filter(function(pp){
+     if(now-pp.born>800)return false;
+     for(var qi=0;qi<srvPr.length;qi++){var qp=srvPr[qi];if(qp.k===pp.kind&&Math.abs(qp.x-pp.x)<80&&Math.abs(qp.y-pp.y)<80)return false}
+     return true;
+   });
+ }
  for(var fi=0;fi<fighters.length;fi++){
    var f=fighters[fi];if(!f)continue;
+   if(f===P1&&svPredOn()&&sv.predStepped){f.px=f.x;f.py=f.y;continue} /* our own fighter is drawn where the prediction put it (its x/y already carry the decaying correction blend) — the snapshot timelines below are for everyone else */
    var br=(f===P1&&brL)?brL:brR,A=br.A,B=br.B,sa=A.fs[fi];if(!sa)continue;
    var sb=B?B.fs[fi]:null;
    if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*br.t;f.y=sa.y+(sb.y-sa.y)*br.t}
@@ -2289,6 +2477,7 @@ function svRenderWorld(now){
    }
  }
  for(var pm2=0;pm2<sv.predPr.length;pm2++){var pp2=sv.predPr[pm2];
+   var ppAge=(now-pp2.born)/1000;pp2.x=pp2.px+(pp2.vx||0)*ppAge;pp2.y=pp2.py+(pp2.vy||0)*ppAge; /* predicted projectiles fly on their spawn velocity until the server's copy replaces them */
    if(out[outN]!==pp2){out[outN]=pp2}outN++;
  }
  out.length=outN;
@@ -2324,12 +2513,29 @@ function svAdvance(dtms){
    }
    drawAlpha=1;
    time+=dt;
+   /* decay the hard-resync correction blend: the rendered position
+      itself is shifted by the decayed amount each frame, so the
+      body glides from where it was shown to the corrected position
+      over ~150ms while the logic position (render minus offset)
+      stays exactly where the resync put it */
+   if(P1&&(sv.corrX||sv.corrY)){
+     var ck=Math.exp(-dt/0.05),ncx=sv.corrX*ck,ncy=sv.corrY*ck;
+     P1.x-=(sv.corrX-ncx);P1.y-=(sv.corrY-ncy);
+     sv.corrX=ncx;sv.corrY=ncy;
+     if(Math.abs(sv.corrX)<0.4){P1.x-=sv.corrX;P1.px=P1.x;sv.corrX=0}
+     if(Math.abs(sv.corrY)<0.4){P1.y-=sv.corrY;P1.py=P1.y;sv.corrY=0}
+     P1.px=P1.x;P1.py=P1.y;
+   }
    svRenderWorld(now);
  }
  /* every fighter's local animation clocks (the snapshot stream
-    refreshes the values; between snapshots they run down locally) */
+    refreshes the values; between snapshots they run down locally).
+    A locally predicted P1 is EXCLUDED: its stepFighter steps already
+    run these clocks down at 60fps, and running them here too would
+    drain its state / cooldown timers at double speed. */
  for(var fi=0;fi<fighters.length;fi++){
    var f=fighters[fi];if(!f)continue;
+   if(f===P1&&svPredOn()&&sv.predStepped)continue;
    if(f.stateT>0)f.stateT=Math.max(0,f.stateT-dt);
    if(f.flash>0)f.flash=Math.max(0,f.flash-dt);
    if(f.landT>0)f.landT=Math.max(0,f.landT-dt);
