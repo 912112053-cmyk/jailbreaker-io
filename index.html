@@ -392,6 +392,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["17:53"],tag:"修正・調整",title:"SMILEY 空中J「回転ダガー」の判定を前後左右に出るように修正",
+  items:["空中J 回転ダガー：判定が前方にしか出ていなかったのを、前後（左右）両側に出るように修正しました。回転斬りらしく、背後の相手にも当たります",
+         "前・後ろとも判定80×64・ダメージ10・KB280・被弾硬直0.28秒で、吹っ飛ばしは当たった側へ向かいます。体の真ん中で前後の判定が重なる位置にいる相手もヒットは1回だけです（ダメージは10のまま）",
+         "あわせて回転のエフェクトも前後両側に表示されるようにしました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["17:49"],tag:"修正・調整",title:"TRAVIS メテオソングの弾を発動と同時に発射",
   items:["空中↓+K メテオソング：弾を発動と同時に発射するように変更しました（これまでは発動後に空中に0.8秒間静止して音を溜めてから発射していました。発生 0.8秒→即時・全体 1.35→0.55秒）",
          "弾のダメージ・KB・弾速・爆発・発射の反動で小さく跳ねる動き・発射後の後硬直0.88秒は変更なし",
@@ -1134,7 +1139,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>後ろ+J — バックステップスラッシュ</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','72×54'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングカット</b><p>上昇斬り。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','540（真上）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','62×84')+mvS('上昇','vy -520'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — アンダーダガー</b><p>低く滑って足元を刺す。出が速く、低い姿勢で滑り込む。後硬直が短くなり、吹っ飛ばしが強くなった。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.2秒')+mvS('判定','74×34')+mvS('被弾硬直','0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 回転ダガー</b><p>空中で包丁を回す素早い一閃。着地すると<b>着地硬直0.18秒</b>がある。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','80×64')+mvS('被弾硬直','0.28秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 回転ダガー</b><p>空中で包丁を回す素早い一閃。判定は<b>前後（左右）両側</b>に出るので、背後の相手にも当たる（重なる位置でもヒットは1回だけ）。着地すると<b>着地硬直0.18秒</b>がある。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','80×64（前後）')+mvS('被弾硬直','0.28秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>落下しながらの斬り下ろし。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.38秒</b>がある。</p>'+mvSpec(mvS('ダメージ','本体13／着地 前10・後10')+mvS('KB','本体560／着地 560')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','本体72×60／着地120×58')+mvS('着地硬直','0.38秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。素早い二連斬りで吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 連続ナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>その場で包丁を振り回し続ける連続斬り。1ヒットごとに相手を0.2秒硬直させるので当て続ければ逃げられず、<b>最後の16ヒット目だけが KB 660 で吹っ飛ばす</b>。全体と後硬直はどちらも<b>完全硬直</b>（移動・ジャンプ不可）で、隙は大きい。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
@@ -4632,10 +4637,16 @@ function startSmileyAttack(f,type,foe){
    }else if(!f.onGround){
      /* 回転ダガー (air J): one quick spinning cut in mid-air, brief
         hover. KB 380 -> 280, 被弾硬直 0.22 -> 0.28s (user spec).
+        The spin cuts on BOTH sides (user spec): the same 80x64 /
+        10 dmg / KB 280 box goes out in front AND behind （前後左右）,
+        and each foe is knocked away from him on the side it was hit.
+        The shared sairjHit list rides along as meleeHit's hitList,
+        so a foe standing in the overlap at his centre is still hit
+        only ONCE — the damage stays 10, never 20.
         Landing lag 0.18 (LAND_LAG) */
      f.state="sairj";f.stateT=0.26;f.attackCd=0.3;f.comboWin=0;
      if(f.vy>60)f.vy=60;
-     meleeHit(f,foe,80,64,10,280,f.face,-0.28,0.28);
+     var sairjHit=[];meleeHit(f,foe,80,64,10,280,f.face,-0.28,0.28,false,0,sairjHit);meleeHit(f,foe,80,64,10,280,-f.face,-0.28,0.28,false,0,sairjHit);
      spawnParticles(f.x,f.y+f.h*0.45,10,"#fef08a",190);
      beep(1350,.05,"square",.04);
    }else if(downHeld){
@@ -4966,13 +4977,17 @@ function startAttack(f,type){
  }
  addRecovery(f);applyLandLag(f,wasAir);
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn){
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList){
+ /* hitList (optional): an array shared across several meleeHit calls
+    of ONE move — a fighter already recorded in it is skipped, so a
+    two-sided move (front call + back call) never hits the same foe
+    twice where the two boxes overlap */
  var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
- for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead)continue;
+ for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce)){hitAny=true;if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce)){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
  }
  return hitAny;
 }
@@ -6488,7 +6503,7 @@ function drawSmiley(f){
  else if(f.state==="sback"){cut(28,18,48,12);ctx.strokeStyle="rgba(254,240,138,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-16,30);ctx.lineTo(-30,30);ctx.stroke()}
  else if(f.state==="sriseup"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(10,26,32,-2.4,-1.2);ctx.stroke();cut(26,4,34,-6,2)}
  else if(f.state==="sslide"){cut(28,44,48,48);ctx.fillStyle="rgba(254,240,138,.4)";ctx.beginPath();ctx.ellipse(14,52,24,4.5,0,0,6.29);ctx.fill()}
- else if(f.state==="sairj"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(12,24,34,-1,0.8);ctx.stroke();cut(36,10,52,6,2);bld(51,6)}
+ else if(f.state==="sairj"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(12,24,34,-1,0.8);ctx.stroke();ctx.beginPath();ctx.arc(12,24,34,Math.PI-0.8,Math.PI+1);ctx.stroke();cut(36,10,52,6,2);bld(51,6);cut(-12,10,-28,6,2);bld(-27,6)} /* 回転ダガー: spin arc + dagger flash on BOTH sides now, mirroring the two-sided （前後左右） hitbox */
  else if(f.state==="sjail"){ctx.strokeStyle="#94a3b8";ctx.lineWidth=2.2;for(var chn=-1;chn<=1;chn+=2){for(var chl=0;chl<4;chl++){ctx.beginPath();ctx.arc(chn*17,10+chl*13,3.6,0,6.29);ctx.stroke()}}ctx.strokeStyle=yellC;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(0,58);ctx.lineTo(0,44);ctx.stroke()} /* チェーンジェイル: chain links hang on both sides of him as he rockets straight up */
  else if(f.state==="diveclaw"){cut(22,34,34,54);cut(14,30,24,48,1.8);bld(33,53)}
  else if(f.state==="jkcombo"){cut(30,18,50,12);cut(28,32,48,38,2);bld(49,12)}
