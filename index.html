@@ -1434,6 +1434,12 @@ var cv=$("cv"),ctx=cv.getContext("2d");
 var WORLD_W=2600,WORLD_H=1500,VIEW_H=480;
 var viewW=1067,viewH=VIEW_H,scale=1,cw=1280,ch=720;
 var cvDpr=1,skyCv=null,ovlCv=null;
+/* PERF (lag fix): adaptive quality state. perfTier 0 = full quality;
+   the main loop raises it while the measured frame rate stays low
+   (see loop()) and applyPerfTier() lowers the canvas resolution cap
+   and the particle budget to match. PART_CAP is the live particle
+   ceiling used by the steppers / spawners below. */
+var perfTier=0,perfDprCap=1.5,perfSlowMs=0,perfFastMs=0,perfCdMs=1500,PART_CAP=460;
 /* PERF (1P lag fix): the sky gradient and the screen-space overlay
    (moon halo + moon + vignette) are STATIC in screen space, yet they
    were re-rasterised as full-screen gradients every single frame.
@@ -1458,13 +1464,27 @@ function buildBgCaches(){
 }
 function resize(){
  var r=cv.getBoundingClientRect();if(r.width<10)return;
- var dpr=Math.min(1.5,window.devicePixelRatio||1); /* PERF: was 2 — at DPR 2 the canvas has ~78% more pixels to fill every frame; this is pixel art (image-rendering:pixelated), so 1.5 is visually identical and much cheaper on phones */
+ var dpr=Math.min(perfDprCap,window.devicePixelRatio||1); /* PERF: capped at 1.5 (was 2) — at DPR 2 the canvas has ~78% more pixels to fill every frame; this is pixel art (image-rendering:pixelated), so 1.5 is visually identical and much cheaper on phones. perfDprCap is lowered further at runtime by the adaptive quality pass when the frame rate sags (see applyPerfTier) */
  cvDpr=dpr;
  cw=r.width;ch=r.height;
  cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);
  ctx.setTransform(dpr,0,0,dpr,0,0);
  scale=ch/VIEW_H;viewW=cw/scale;viewH=VIEW_H;
  buildBgCaches();
+}
+/* PERF (lag fix): apply a quality tier picked by the main loop's
+   frame-rate monitor. Lower tiers shrink the canvas backing store
+   (fewer pixels to fill / composite every frame — the dominant cost
+   on phones) and trim the particle budget. Pixel art at these caps
+   looks the same; the game logic, speeds and hitboxes never change.
+   Tiers step back UP when the frame rate recovers, so a momentary
+   hitch (notification, tab restore) doesn't lock the game into a
+   blurry mode. */
+function applyPerfTier(){
+ var caps=[1.5,1.25,1.1,1.0,0.85],pcaps=[460,460,320,240,180];
+ perfDprCap=caps[perfTier]||1;
+ PART_CAP=pcaps[perfTier]||460;
+ resize();
 }
 window.addEventListener("resize",resize);
 
@@ -2822,6 +2842,7 @@ function svAdvance(dtms){
  /* visual-only particle / floater / burst clocks (they used to ride
     the rollback step; here they simply run at render rate) */
  particles=particles.filter(function(p){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.amb?-4:300)*dt;p.vx*=Math.pow(0.97,dt*60);return(p.life-=dt)>0});
+ if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: online FX events spawn particles outside the local stepper, so the same adaptive cap is enforced here too */
  floaters=floaters.filter(function(fl){fl.y-=34*dt;return(fl.life-=dt)>0});
  fxBursts=fxBursts.filter(function(b){return(b.life-=dt)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=dt)>0});
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
@@ -3877,7 +3898,7 @@ bindHoldBtn($("ultBtn"),"ult");
 cv.addEventListener("contextmenu",function(e){e.preventDefault()});
 document.addEventListener("gesturestart",function(e){e.preventDefault()});
 /* ---- combat ---- */
-function spawnParticles(x,y,n,col,spd){if(particles.length>430)return;for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
+function spawnParticles(x,y,n,col,spd){if(particles.length>PART_CAP)return;for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
 /* lightweight impact dressing: an expanding shockwave ring and a fan of
    directional spark streaks. Both reuse cheap canvas primitives only —
    no gradients, no shadowBlur, no extra per-frame allocations of note. */
@@ -6772,24 +6793,33 @@ function drawBG(){
  /* PERF: the sky gradient fill that used to be here is screen-space
     static, so draw() now blits the pre-rendered skyCv underneath
     everything before the world transform — identical colours. */
+ /* PERF (lag fix): every layer below is culled to the camera view.
+    The parallax layers sit under a net translate of -0.35*cam.x (far)
+    / -0.7*cam.x (near), so their visible window in layer coordinates
+    is [0.35*cam.x, +viewW] / [0.7*cam.x, +viewW]; buildings, windows,
+    wall panels, dots and stars outside it are skipped instead of
+    being rasterised off-screen every frame (~200 rects saved). */
+ var bgL0=cam.x*0.35-40,bgL1=cam.x*0.35+viewW+40;
  /* far skyline (parallax .35) */
  ctx.save();ctx.translate(cam.x*0.65,cam.y*0.8);
  ctx.fillStyle="#081426";
- for(var i=0;i<16;i++){var bx=i*230-160,bh=150+((i*83)%190);ctx.fillRect(bx,760-bh,170,bh+300)}
+ for(var i=0;i<16;i++){var bx=i*230-160,bh=150+((i*83)%190);if(bx+170<bgL0||bx>bgL1)continue;ctx.fillRect(bx,760-bh,170,bh+300)}
  ctx.fillStyle="rgba(103,232,249,.45)";
- for(var j=0;j<44;j++){ctx.fillRect((j*173)%2500,470+((j*97)%240),5,6)}
+ for(var j=0;j<44;j++){var jx=(j*173)%2500;if(jx<bgL0||jx>bgL1)continue;ctx.fillRect(jx,470+((j*97)%240),5,6)}
  ctx.restore();
  /* near walls with dotted panels (parallax .7) */
+ var bgW0=cam.x*0.7-40,bgW1=cam.x*0.7+viewW+40;
  ctx.save();ctx.translate(cam.x*0.3,cam.y*0.45);
  ctx.fillStyle="#050f1f";
- for(var k=0;k<9;k++){var wx=k*360-120;ctx.fillRect(wx,830,250,340)}
+ for(var k=0;k<9;k++){var wx=k*360-120;if(wx+250<bgW0||wx>bgW1)continue;ctx.fillRect(wx,830,250,340)}
  ctx.fillStyle="rgba(103,232,249,.14)";
- for(var d=0;d<130;d++){ctx.fillRect((d*61)%2500,860+((d*47)%280),4,4)}
+ for(var d=0;d<130;d++){var dx2=(d*61)%2500;if(dx2<bgW0||dx2>bgW1)continue;ctx.fillRect(dx2,860+((d*47)%280),4,4)}
  ctx.restore();
- bgStars.forEach(function(s,si){ctx.globalAlpha=.22+.5*(0.5+0.5*Math.sin(time*1.7+si*1.93));ctx.fillStyle=si%5===0?"#fef9c3":"#b9f3ff";ctx.fillRect(s.x,s.y,s.s,s.s)});
+ bgStars.forEach(function(s,si){if(s.x<cam.x-8||s.x>cam.x+viewW+8)return;ctx.globalAlpha=.22+.5*(0.5+0.5*Math.sin(time*1.7+si*1.93));ctx.fillStyle=si%5===0?"#fef9c3":"#b9f3ff";ctx.fillRect(s.x,s.y,s.s,s.s)});
  ctx.globalAlpha=1;
  /* platforms: deep-navy slabs with a cyan top edge, like the home screen */
  platforms.forEach(function(p){
+   if(p.x+p.w<cam.x-70||p.x>cam.x+viewW+70)return; /* PERF: off-screen ledge (and its vent slits) skipped */
    ctx.fillStyle="#0d2f47";ctx.fillRect(p.x,p.y,p.w,p.h);
    ctx.fillStyle="#155e75";ctx.fillRect(p.x,p.y,p.w,10);
    ctx.globalAlpha=0.7+0.3*Math.sin(time*2.2+p.x*0.013);ctx.fillStyle="#67e8f9";ctx.fillRect(p.x,p.y,p.w,4);ctx.globalAlpha=1;
@@ -6818,11 +6848,15 @@ function drawUltAura(f,r,g,b){
     static charge. Arc shapes re-roll ~22 times a second so they flicker. */
  var cx=f.x,cy=f.y+f.h*0.46,tick=Math.floor(time*22);
  var pulse=0.32+0.10*Math.sin(time*9)+0.06*Math.sin(time*23);
- var ag=ctx.createRadialGradient(cx,cy,6,cx,cy,66);
- ag.addColorStop(0,"rgba("+r+","+g+","+b+","+pulse+")");
- ag.addColorStop(0.65,"rgba("+r+","+g+","+b+","+(pulse*0.45)+")");
- ag.addColorStop(1,"rgba("+r+","+g+","+b+",0)");
- ctx.fillStyle=ag;ctx.beginPath();ctx.ellipse(cx,cy,52,64,0,0,6.29);ctx.fill();
+ /* PERF (lag fix): the aura gradient only varies with the pulse
+    alpha, so it is cached per (colour, alpha quantised to 0.04 steps)
+    in fighter-local coords and reused under a translate, instead of
+    being rebuilt for every ult-ready fighter every frame. */
+ var aq=Math.round(pulse*25),ak=r+","+g+","+b+","+aq;
+ if(!drawUltAura._gc)drawUltAura._gc={};
+ var ag=drawUltAura._gc[ak];
+ if(!ag){var pa=aq/25;ag=ctx.createRadialGradient(0,0,6,0,0,66);ag.addColorStop(0,"rgba("+r+","+g+","+b+","+pa+")");ag.addColorStop(0.65,"rgba("+r+","+g+","+b+","+(pa*0.45)+")");ag.addColorStop(1,"rgba("+r+","+g+","+b+",0)");drawUltAura._gc[ak]=ag}
+ ctx.save();ctx.translate(cx,cy);ctx.fillStyle=ag;ctx.beginPath();ctx.ellipse(0,0,52,64,0,0,6.29);ctx.fill();ctx.restore();
  for(var i=0;i<7;i++){
    var seed=tick*31+i*97,a0=auraRand(seed)*6.283,span=0.7+auraRand(seed+1)*1.1;
    ctx.beginPath();
@@ -7924,9 +7958,12 @@ function draw(){
    if(df.guarding){ /* guard barrier: a translucent RED SPHERE around the crouched fighter — kept very light so it never hides the action */
      var bcx=df.x,bcy=df.y+df.h*0.46,bR=57;
      var pulse=0.5+0.5*Math.sin(time*5+df.x*0.02);
-     var bg=ctx.createRadialGradient(bcx-16,bcy-18,6,bcx,bcy,bR);
-     bg.addColorStop(0,"rgba(255,150,150,0.10)");bg.addColorStop(0.65,"rgba(239,68,68,0.06)");bg.addColorStop(1,"rgba(239,68,68,0.015)");
-     ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bcx,bcy,bR,0,6.29);ctx.fill();
+     /* PERF (lag fix): the barrier gradient is identical every frame,
+        so it is built ONCE in fighter-local coords and reused under a
+        translate — creating a radial gradient per guarding fighter
+        per frame was pure allocation + raster setup. Same stops. */
+     if(!draw._gg){draw._gg=ctx.createRadialGradient(-16,-18,6,0,0,57);draw._gg.addColorStop(0,"rgba(255,150,150,0.10)");draw._gg.addColorStop(0.65,"rgba(239,68,68,0.06)");draw._gg.addColorStop(1,"rgba(239,68,68,0.015)")}
+     ctx.save();ctx.translate(bcx,bcy);ctx.fillStyle=draw._gg;ctx.beginPath();ctx.arc(0,0,bR,0,6.29);ctx.fill();ctx.restore();
      ctx.strokeStyle="rgba(248,113,113,"+(0.48+0.14*pulse)+")";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(bcx,bcy,bR,0,6.29);ctx.stroke();
      ctx.strokeStyle="rgba(254,202,202,.42)";ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(bcx,bcy,bR-5,Math.PI*1.08,Math.PI*1.52);ctx.stroke();
      ctx.strokeStyle="rgba(255,70,70,.78)";ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(bcx,bcy,bR-1,(df.guardDir>0?-1.02:Math.PI-1.02),(df.guardDir>0?1.02:Math.PI+1.02));ctx.stroke();
@@ -7988,7 +8025,7 @@ function draw(){
    ctx.fillStyle="#f59e0b";ctx.fillRect(f.x-15,f.y-184,30,13);
    ctx.fillStyle="#fde68a";ctx.fillRect(f.x-19,f.y-171,8,10);ctx.fillRect(f.x+11,f.y-171,8,10);
  });
- if(particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
+ if(perfTier<2&&particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
  particles.forEach(function(p){ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
  rings=rings.filter(function(r){r.r+=(r.max-r.r)*0.22+1.4;r.life-=0.05;return r.life>0});
  rings.forEach(function(r){ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
@@ -8110,6 +8147,16 @@ function loop(ts){
  var dtms=ts-lastTs;lastTs=ts;
  if(dtms>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,dtms))*0.05;
  fpsTick+=dtms;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
+ /* PERF (lag fix): adaptive quality driver. While the smoothed frame
+    rate stays under 47fps for ~0.6s, step the quality tier down (the
+    canvas gets cheaper to fill, particles get capped harder) and
+    re-check after a 2s cooldown; while it holds above 57fps for 5s,
+    step back up. Hysteresis + cooldown keep it from oscillating, and
+    the 1.5s initial cooldown keeps spawn-in jank from triggering it. */
+ if(perfCdMs>0)perfCdMs-=dtms;
+ if(fpsEMA<47){perfSlowMs+=dtms;perfFastMs=0}else if(fpsEMA>57.5){perfFastMs+=dtms;perfSlowMs=0}else{perfSlowMs=0;perfFastMs=0}
+ if(perfCdMs<=0&&perfSlowMs>600&&perfTier<4){perfTier++;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
+ else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
  if(mode==="online"){svAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){drawAlpha=1;draw();return}
@@ -8157,7 +8204,7 @@ function loop(ts){
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
-   if(particles.length>460)particles.length=460; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects */
+   if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (the cap itself shrinks at lower adaptive quality tiers) */
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
