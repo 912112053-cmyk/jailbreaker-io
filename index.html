@@ -425,6 +425,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["02:25"],tag:"修正",title:"ONLINE VS：予測表示を一時的に切り、スナップショット補間だけに戻しました",
+  items:["オンライン対戦で、自分のキャラの「予測表示」（入力した瞬間に手元で先行して動く方式）を一時的に切りました。しばらくは様子見として、予測なしの表示で遊びます",
+         "これにより、自分のキャラも相手キャラと同じく、サーバーから届くスナップショット同士の補間だけで表示されるようになりました。自分の操作が画面に反映されるまでには、描画遅延（現在は最大でも約56ms）＋サーバー往復ぶんの遅れが戻ります",
+         "入力の送信方法（60fps・連番・押した瞬間の即時送信）、描画遅延の自動調整、相手キャラの補間、命中・エフェクト・KOバナーなどのサーバー側の仕組みはこれまで通りです。予測の仕組み自体は残してあるので、戻したくなったらすぐ再開できます",
+         "技・数値への変更はありません。VS CPU・トレーニングなどローカル対戦の動作も変わりません"]},
  {date:"2026/11/15",times:["02:21"],tag:"修正",title:"ONLINE VS：描画遅延の自動調整を「遅延優先」に変更（上限 約56ms）",
   items:["オンライン対戦の描画遅延の自動調整を、これまでの「滑らかさ優先」から「遅延優先」に振り切りました。実機の録画で、スナップショットの到着が乱れた時に遅延表示が34msから最大97msまで膨らみ、相手キャラがワープして見えることが確認できたためです",
          "描画遅延の上限を 120ms → 約56ms に下げました。回線がどれだけ乱れても、遅延がこれ以上膨らむことはありません。その代わり、乱れの大きい場面では多少カクつくことがありますが、遅延を増やさない方を優先しています",
@@ -514,10 +519,6 @@ var UPDATE_LOG=[
          "L「大好きだよSHADE／大好きだよMIMI」（必殺）：ダメージ46→52／KB880→920／判定130×110→152×130／寿命1.5秒→2.5秒に強化しました。弾の見た目も判定に合わせて少し大きくしています（弾速620・貫通は変更なし）",
          "空中↓+J「落ちちゃう！」の着地：クライアント（ローカル対戦）側にもサーバーと同じ2段目の波（10ダメージ／判定120×58／KB560・黄色いエフェクト）を追加し、ローカルでも着地が片側 12＋10＝22 ダメージになりました。これまでクライアント側は12だけだった食い違いの修正で、技一覧の表示（22）とも一致します",
          "技一覧の K／↑+K／U／L の各行も、新しい数値と完全硬直・ジャンプ回復の表示に合わせて更新しました"]},
- {date:"2026/11/14",times:["21:49"],tag:"修正・調整",title:"MIMI&SHADE：技一覧の着地ダメージ表示を実装どおりに修正（12＋10＝22）",
-  items:["MIMI&SHADEの技一覧で、空中↓+J「落ちちゃう！／たすけるヨ！」の着地ダメージが「着地12」とだけ書かれていたのを、実装どおりに直しました：着地の衝撃波は2段で、1段目 12ダメージ（判定96×80／KB640）に続いて2段目の波 10ダメージ（判定120×58／KB560）が左右に広がり、片側の合計は22ダメージです。説明文・ダメージ欄・KB欄・判定欄のすべてに2段分を明記しました",
-         "表示だけの変更です：技の挙動・ダメージ・KB・判定などの数値はこれまで通りで、変更はありません",
-         "あわせて確認した L「大好きだよSHADE／大好きだよMIMI」の「貫通」表示は、前回の更新（21:44）で既に反映済みのため、重複して追加していません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -859,7 +860,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。自分のキャラは手元で先行して動くので操作は即反応し、相手のキャラはサーバーからの情報を補間して滑らかに表示します。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。全キャラともサーバーからの情報を補間して滑らかに表示します（自分のキャラの予測表示は現在オフになっています）。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1788,6 +1789,12 @@ $("lobbyLeaveBtn").onclick=function(){
  cleanupNet();toMenu();
 };
 /* ================= SERVER-CLIENT MATCH ENGINE =================
+   NOTE (2026-11-15): client-side prediction is TEMPORARILY OFF —
+   see SV_PREDICTION_ENABLED below (next to svPredOn). Every
+   fighter, our own included, is currently rendered by snapshot
+   interpolation only, exactly as described for "everyone ELSE"
+   in the note below. The prediction description below is kept
+   for when the switch is flipped back on.
    Server-authoritative match with CLIENT-SIDE PREDICTION for your
    own fighter only (owner request):
    - inputs are sampled at a fixed 60fps into a numbered queue and
@@ -1948,6 +1955,21 @@ function svCdEstAt(j){
  if(sv.lastSnap)return Math.max(0,sv.lastSnap.cd-(performance.now()-sv.lastArrival)/1000);
  return Math.max(0,1.5-(performance.now()-sv.startAt)/1000);
 }
+/* PREDICTION MASTER SWITCH — TEMPORARILY OFF (owner request,
+   2026-11-15: "一旦予測表示を切って、元のスナップショット補間
+   だけに戻してみる"). While this is false, svPredOn() always
+   returns false, so our own fighter is never stepped locally:
+   svStepP1 never runs, no predicted projectiles are spawned, no
+   reconciliation / correction blend runs, and P1 is rendered
+   exactly like every other fighter — purely by interpolating
+   between server snapshots in svRenderWorld (state applied
+   verbatim via svApplySnapRemote, position from the snapshot
+   timeline). Input sampling / sending (60fps, numbered, immediate
+   press flush) is unchanged: inputs still go to the server the
+   same way, only the local ahead-of-server rendering is off.
+   The prediction code itself is kept intact below; flip this
+   back to true to re-enable it. */
+var SV_PREDICTION_ENABLED=false;
 /* is local prediction of our own fighter in effect right now?
    Falls back to plain snapshot rendering (the pre-prediction
    behaviour) whenever prediction cannot apply: no live server
@@ -1955,8 +1977,10 @@ function svCdEstAt(j){
    the corpse + respawn), the server handed our fighter to the CPU
    (sv.predOff), or there is no playing local fighter at all
    (spectating). Touch input feeds the same sampled bit stream as
-   the keyboard (svSampleLocal), so prediction covers mobile too. */
+   the keyboard (svSampleLocal), so prediction covers mobile too.
+   NOTE: currently always false — see SV_PREDICTION_ENABLED above. */
 function svPredOn(){
+ if(!SV_PREDICTION_ENABLED)return false;
  if(!sv.active||mode!=="online"||matchOver||sv.predOff)return false;
  if(!P1||!P1.isPlayer||P1.remote)return false;
  if(P1.dead)return false;
