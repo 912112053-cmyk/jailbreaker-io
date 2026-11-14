@@ -426,6 +426,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["03:48"],tag:"新機能",title:"オンライン対戦に「直接接続（P2P）」モードを追加（標準はこちら）",
+  items:["オンライン対戦の接続方式を選べるようになりました：新方式「直接接続（P2P）」と、従来の「サーバー経由」です。オンライン画面のボタンで切り替えられ、標準は「直接接続（P2P）」になっています",
+         "直接接続（P2P）では、ホストの端末が試合を計算してプレイヤー同士が直接つながります。近くの相手とは遅延が小さくなりやすい方式です。その代わり、ホストが抜けるとその時点で試合は終了します（サーバー経由では、抜けた人のキャラをCPUが引き継いで試合が続きます）",
+         "うまく直接接続できない環境では、オンライン画面で「サーバー経由」に切り替えてください。これまで通りの方式で遊べます。フレンド機能（アカウント・申請・招待）はこれまで通りで、招待から参加すると相手が選んだ方式に自動で合います",
+         "技・数値・物理への変更はありません"]},
  {date:"2026/11/15",times:["03:15"],tag:"修正",title:"軽量化の見直し：エフェクトを全て元どおりに戻しました",
   items:["第2弾・第3弾の軽量化で入っていた「画質の段階に連動したエフェクトの省略」を全て廃止しました。パーティクルの発生数と上限（常に460で固定）、背景の星の瞬き、KOJIROの居合と斬空の光のボカし、技に重なるエフェクトテクスチャ、漂う光の粒、画面下部の霧は、どの画質段階でも常に出るようになりました。描画を1フレームおきに間引く処理も無くし、常に毎フレーム描画します",
          "代わりに、見た目が一切変わらない方法だけで軽くしました：カメラの画面の外に完全に出ている飛び道具・パーティクル・リング・浮き文字・各種フィールドなど11種類の描画をスキップするようにし、残像の描画で毎回切り替えていた設定をループの外で1回だけ行うようまとめました",
@@ -513,11 +518,6 @@ var UPDATE_LOG=[
   items:["↓+J「こけちゃうよ／こけロ」のSHADE側のKBを320→520に強化し、吹き飛ばし方向を横方向から真上に変更しました（当たった相手はその場から真上へ吹き飛びます）",
          "その他の数値は変更ありません：SHADE ダメージ12／発生0.16秒／判定92×40、MIMI側 ダメージ6／KB680、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／520（真上）」に合わせました",
          "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
- {date:"2026/11/14",times:["22:17"],tag:"修正・調整",title:"MIMI&SHADE：Kの全体・後硬直を元の速さに戻し、後硬直に完全硬直を適用",
-  items:["K「いってらっしゃいSHADE＆助けてSHADE！！」：前回の調整で長くなっていた全体を0.6秒→0.3秒に、後硬直を0.82秒→0.52秒に戻しました",
-         "後硬直は完全硬直です：動けるようになるまで、移動・ジャンプ・ダッシュ・他のワザは一切できません（SHADEの送り出し／呼び戻し自体は押した瞬間にこれまで通り発生します）",
-         "技一覧のKの行も、新しい数値（全体0.3秒／後硬直0.52秒（完全硬直））に合わせて更新しました",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1008,7 +1008,7 @@ var keys={},buf={};
    so a held on-screen button behaves exactly like a held key for
    the hold-to-continue rule (see rbApplyInput / gatherPlayerInput) */
 var touchHeld={j:false,k:false,l:false,ult:false};
-function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running){svPressQ.push(a);return}buf[a]=performance.now()}
+function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof p2pHostLive!=="undefined"&&p2pHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[];
@@ -1421,7 +1421,7 @@ function jbServerBase(){
 function jbHttpBase(){
  return JB_SERVER_URL.replace(/^wss:\/\//,"https://").replace(/^ws:\/\//,"http://");
 }
-var net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
+var net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
 /* FX spawn helpers call fxRec on every spawn. On the SERVER sim the
    same hook records each spawn into an FX event the Room forwards to
@@ -1429,7 +1429,25 @@ var guestChar=null,hostChar=null,forceP2Char=null;
    very helpers), so online matches show exactly the effects the sim
    produced. Here on the client fxRec stays a no-op: local spawns are
    already on screen, and replayed ones must not be re-recorded. */
-function fxRec(ev){}
+/* fxSink is installed ONLY while this device hosts a P2P match (see
+   the P2P section below): the local engine's spawns are then also
+   recorded into the host room's FX event queue and forwarded to the
+   guests, exactly like the server sim's fxRec stream. With no sink
+   (VS CPU / TRAINING / server-mode online / P2P guest) fxRec stays a
+   no-op and every spawn behaves exactly as before. pushFloater /
+   pushParticle are the recording twins of the engine's direct
+   floaters.push / particles.push sites (sim parity): they push the
+   very same object locally, then report the spawn through fxRec. */
+var fxSink=null;
+function fxRec(ev){if(fxSink){try{fxSink(ev)}catch(e){}}}
+function pushFloater(fl){floaters.push(fl);fxRec({k:"fl",x:Math.round(fl.x),y:Math.round(fl.y),t:fl.txt,c:fl.col,l:fl.life})}
+function pushParticle(p){particles.push(p);fxRec({k:"pt",x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),vy:Math.round(p.vy),l:p.life,c:p.col,s:Math.round((p.size||2)*10)/10,st:p.streak?1:0,amb:p.amb?1:0})}
+/* KO banner hook: while a P2P host match runs, killFighter delegates
+   its banner display to this hook (the hook queues the attributed
+   banner event for the guests and renders the host's own banner from
+   that same event via svOnEv). Null everywhere else — the banner
+   branches in killFighter are then byte-for-byte the old ones. */
+var killBannerHook=null;
 function fxImgKey(img){for(var k in FXIMG){if(FXIMG[k]===img)return k}return null}
 /* seeded RNG kept for parity with the shared simulation code paths
    (the server runs its own seeded stream; the client's prediction of
@@ -1440,9 +1458,10 @@ function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦（サーバー方式：専用サーバーが試合を60fpsで計算して全員に配信するので、カクつきや固まりが起きにくくなりました）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦。接続方式は2つあります。<b style="color:#fff">直接接続（P2P）</b>はホストの端末が試合を計算してプレイヤー同士が直接つながる方式で、近くの相手とは遅延が小さくなりやすいのが特徴です（その代わり、ホストが抜けると試合は終了します）。<b style="color:#fff">サーバー経由</b>は従来の方式で、専用サーバーが試合を60fpsで計算して全員に配信します。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
- +'<p style="color:var(--muted)">※ 試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
+ +'<p style="color:var(--muted)">※ サーバー経由では、試合中に誰かが抜けるとそのキャラはCPUが引き継いで対戦が続きます。直接接続（P2P）では、ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。どちらの方式でも、ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
+ +'<div class="bindRow"><div><span class="bname">接続方式</span><br><span class="bnote">直接接続（P2P）が標準です。うまくつながらない環境では「サーバー経由」に切り替えてください（招待で参加する場合は、相手の方式に自動で合います）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="modeP2pBtn" style="min-width:118px">直接接続（P2P）</button><button class="bindKey" id="modeSvBtn" style="min-width:118px">サーバー経由</button></span></div>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
  +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
  +'<p id="bindMsg">'+(msg||"")+'</p>';
@@ -1451,22 +1470,539 @@ function wireOnlineBtns(){
  var mk=$("makeRoomBtn"),jn=$("joinRoomBtn");
  if(mk)mk.onclick=createRoom;
  if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
+ var mp=$("modeP2pBtn"),ms=$("modeSvBtn");
+ if(mp)mp.onclick=function(){onlineTransport="p2p";beep(660,.05);p2pSyncModeBtns()};
+ if(ms)ms.onclick=function(){onlineTransport="server";beep(660,.05);p2pSyncModeBtns()};
+ p2pSyncModeBtns();
 }
 function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
 function cleanupNet(){
+ p2pCleanup();
  clearRematchWatch();
  if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
- net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
+ net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
  chatReset();
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
 }
-function svSend(o){if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}}
+function svSend(o){
+ /* the single send choke point for every room message: on the P2P
+    transport the same messages are re-routed to the PeerJS room
+    layer (p2pSend, below) instead of the match-server WebSocket —
+    no caller changes either way */
+ if(net.transport==="p2p"){p2pSend(o);return}
+ if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}
+}
+/* ================= P2P (DIRECT) TRANSPORT =================
+   The second online transport: PeerJS data connections, with the
+   HOST's device running the match itself on the local engine (the
+   very code VS CPU uses) and streaming the guests the same message
+   shapes the match server uses ({t:"joined" / "roster" / "start" /
+   "snap" / "ev" / "mymines" / "cpu" / "end" / "tolobby" /
+   "dissolved" / "error" / "chat"}), so guests render through the
+   existing svOnMsg / svOnSnap / svOnEv paths unchanged. The server
+   transport above is untouched and stays selectable as the fallback.
+   The room rules below replicate the match server's Room
+   (server/src/index.js) message for message: join limits and name /
+   chat cleanup, host-only start, the input cursor / seq rules, the
+   400ms chat rate limit, rematch, and the leave rules (mid-match a
+   departed slot is handed to the CPU; in the lobby a departing host
+   dissolves the room). Two structural differences from the server
+   are inherent to hosting on a player device: the host's own
+   fighter is played locally with zero added latency (its world IS
+   the match), and if the host goes away the match is over — guests
+   are told so on disconnect. The Peer instance here is separate
+   from the friend-presence peer (social.peer); PlayFab accounts /
+   friends are not involved in this layer at all. */
+var onlineTransport="p2p"; /* "p2p" (default) | "server" — picked on the ONLINE VS sheet, kept across re-renders */
+var p2pPeer=null;          /* our room PeerJS peer (host: the room id; guest: anonymous) */
+var p2pRoom=null;          /* host-side room state while hosting, else null */
+var p2pGuestConn=null;     /* guest-side data connection to the host */
+var p2pGuestTimer=null;    /* guest join timeout (10s without a joined reply) */
+var p2pGuestJoined=false;  /* guest: the host accepted our join */
+var p2pHostLive=false;     /* host match hooks are active: this device is running a P2P match on the local engine */
+var P2P_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi"];
+function p2pR1(n){return Math.round(n*10)/10}
+function p2pR2(n){return Math.round(n*100)/100}
+/* name cleanup with the match server's cleanName rule (control
+   characters stripped, whitespace collapsed, more than 20 code
+   points falls back instead of truncating) */
+function p2pCleanName(n,fallback){
+ if(typeof n!=="string")return fallback;
+ var t=n.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim();
+ if(!t||Array.from(t).length>20)return fallback;
+ return t;
+}
+/* chat cleanup with the server's cleanChat rule */
+function p2pCleanChat(text){
+ if(typeof text!=="string")return null;
+ var t=text.replace(/[\u0000-\u001f\u007f-\u009f]/g," ").trim();
+ if(!t)return null;
+ var chars=Array.from(t);
+ return chars.length>200?chars.slice(0,200).join(""):t;
+}
+function p2pSyncModeBtns(){
+ var a=$("modeP2pBtn"),b=$("modeSvBtn");
+ if(a){var onA=onlineTransport==="p2p";a.style.opacity=onA?"1":"0.45";a.style.borderColor=onA?"#67e8f9":"";a.style.boxShadow=onA?"0 0 0 1.5px #67e8f9 inset":""}
+ if(b){var onB=onlineTransport==="server";b.style.opacity=onB?"1":"0.45";b.style.borderColor=onB?"#67e8f9":"";b.style.boxShadow=onB?"0 0 0 1.5px #67e8f9 inset":""}
+}
+/* teardown for the P2P layer, run at the top of every cleanupNet():
+   hooks off, room dissolved (lobby-phase guests are told), guest
+   connection closed after a best-effort leave, peer destroyed, join
+   timer cleared. Safe to call when no P2P session exists (every
+   server-mode cleanup passes through here as a no-op). */
+function p2pCleanup(){
+ if(p2pGuestTimer){clearTimeout(p2pGuestTimer);p2pGuestTimer=null}
+ fxSink=null;killBannerHook=null;p2pHostLive=false;
+ if(p2pRoom){
+   var room=p2pRoom;p2pRoom=null;room.dead=true;
+   if(room.phase!=="match"){
+     for(var i=0;i<room.players.length;i++){var p=room.players[i];
+       if(p.loopback)continue;
+       if(p.conn&&p.conn.open){try{p.conn.send({t:"dissolved"})}catch(e){}}
+       if(p.conn){try{p.conn.close()}catch(e){}}
+     }
+   }
+ }
+ if(p2pGuestConn){
+   var c=p2pGuestConn;p2pGuestConn=null;
+   if(c.open){try{c.send({t:"leave"})}catch(e){}}
+   try{c.close()}catch(e){}
+ }
+ if(p2pPeer){var pp=p2pPeer;p2pPeer=null;try{pp.destroy()}catch(e){}}
+ p2pGuestJoined=false;
+}
+/* svSend's P2P route: the host's own messages go through the room
+   rules as the host player; a guest's go straight down its host
+   connection. Snapshots / events / end are never sent this way —
+   the host pump delivers those to guests directly. */
+function p2pSend(o){
+ if(!o||!o.t)return;
+ if(p2pRoom){
+   if(p2pRoom.hostPlayer&&p2pRoom.hostPlayer.pid)p2pRoomHandle(p2pRoom,p2pRoom.hostPlayer,o);
+   return;
+ }
+ if(p2pGuestConn&&p2pGuestConn.open){try{p2pGuestConn.send(o)}catch(e){}}
+}
+/* ---- host room: delivery ---- */
+function p2pLoopback(m){
+ /* the host's own copies: snap / ev / mymines / end are NOT
+    delivered (the host's world is the match itself, its mines are
+    already local, and its results come from the local match-end
+    flow), and dissolved is not either (the host's own leave flow
+    handles leaving). Everything else enters the normal svOnMsg. */
+ if(!m||!m.t)return;
+ if(m.t==="snap"||m.t==="ev"||m.t==="mymines"||m.t==="end"||m.t==="dissolved")return;
+ svOnMsg(m);
+}
+function p2pDeliver(player,msg){
+ if(!player||!msg)return;
+ if(player.loopback){p2pLoopback(msg);return}
+ if(player.conn&&player.conn.open){try{player.conn.send(msg)}catch(e){}}
+}
+function p2pBroadcastRoom(room,msg){
+ for(var i=0;i<room.players.length;i++)p2pDeliver(room.players[i],msg);
+}
+function p2pSendGuests(room,msg){
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)p2pDeliver(p,msg)}
+}
+function p2pRosterMsg(room){
+ return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host}})};
+}
+function p2pBroadcastRoster(room){p2pBroadcastRoom(room,p2pRosterMsg(room))}
+function p2pPlayerMatchIdx(room,pid){
+ for(var i=0;i<room.matchRoster.length;i++){if(room.matchRoster[i].pid===pid)return i}
+ return -1;
+}
+/* ---- host room: message rules (the server Room, replicated) ---- */
+function p2pRoomJoin(room,player,m){
+ if(player.pid){p2pDeliver(player,{t:"error",msg:"already joined"});return}
+ if(room.phase==="match"){p2pDeliver(player,{t:"error",msg:"試合中です"});if(player.conn)setTimeout(function(){try{player.conn.close()}catch(e){}},250);return}
+ if(room.players.length>=8){p2pDeliver(player,{t:"error",msg:"満員です"});if(player.conn)setTimeout(function(){try{player.conn.close()}catch(e){}},250);return}
+ player.pid="p"+Math.random().toString(36).slice(2,10);
+ player.name=p2pCleanName(m.name,"ゲスト"+(room.players.length+1));
+ player.joinSeq=++room.joinCounter;
+ player.host=(room.players.length===0);
+ player.char=null;player.cursor=0;player.lastSeq=-1;player.mnJson=null;player.lastChatAt=0;
+ room.players.push(player);
+ p2pDeliver(player,{t:"joined",pid:player.pid,host:player.host});
+ p2pBroadcastRoster(room);
+ p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が参加しました"});
+}
+function p2pRoomHandle(room,player,m){
+ if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
+ if(m.t==="chat"){
+   if(!player.pid)return;
+   var text=p2pCleanChat(m.text);if(text===null)return;
+   var now=Date.now();if(now-(player.lastChatAt||0)<400)return;
+   player.lastChatAt=now;
+   p2pBroadcastRoom(room,{t:"chat",name:player.name,text:text});
+   return;
+ }
+ if(!player.pid){p2pDeliver(player,{t:"error",msg:"join first"});return}
+ if(m.t==="char"){
+   if(room.phase==="match")return;
+   if(P2P_CHARS.indexOf(m.char)<0){p2pDeliver(player,{t:"error",msg:"unknown char"});return}
+   player.char=m.char;p2pBroadcastRoster(room);return;
+ }
+ if(m.t==="start"){
+   if(!player.host){p2pDeliver(player,{t:"error",msg:"host only"});return}
+   if(room.phase==="match")return;
+   if(room.players.length<2){p2pDeliver(player,{t:"error",msg:"2人以上必要です"});return}
+   for(var si=0;si<room.players.length;si++){if(!room.players[si].char){p2pDeliver(player,{t:"error",msg:"全員がキャラを選んでいません"});return}}
+   p2pRoomStartMatch(room);return;
+ }
+ if(m.t==="in"){
+   if(room.phase!=="match")return;
+   var idx=p2pPlayerMatchIdx(room,player.pid);if(idx<0)return;
+   var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
+   if(typeof m.seq==="number"&&m.seq<=player.lastSeq)return;
+   if(typeof m.seq==="number")player.lastSeq=m.seq;
+   var ins=Array.isArray(m.ins)?m.ins:[];
+   var base=Math.max(player.cursor||0,room.frame+2);
+   for(var k=0;k<ins.length&&k<4;k++)slot.realIn[base+k]=(ins[k]|0)&0xffff;
+   if(ins.length)player.cursor=base+Math.min(ins.length,4);
+   return;
+ }
+ if(m.t==="rematch"){
+   if(room.phase!=="ended")return;
+   room.phase="lobby";room.matchRoster=[];room.matchSlots=[];
+   room.players=room.players.filter(function(p){return !p.departed});
+   /* the match is over: release the host hooks before everyone
+      lands back in character select (the next start re-arms them) */
+   fxSink=null;killBannerHook=null;p2pHostLive=false;
+   var rmMsg=p2pRosterMsg(room);
+   p2pSendGuests(room,{t:"tolobby"});
+   p2pSendGuests(room,rmMsg);
+   /* the host's own tolobby is delivered a tick later, NOT in this
+      synchronous turn: when the host itself requested the rematch,
+      requestRematch() arms its watchdog and shows its wait message
+      AFTER svSend returns (the server flow it was written for is
+      asynchronous) — a synchronous loopback here would let that
+      watchdog fire into the fresh character select seconds later
+      and yank the host out of the lobby it had already entered */
+   setTimeout(function(){
+     if(p2pRoom!==room||room.dead)return;
+     p2pLoopback({t:"tolobby"});
+     p2pLoopback(rmMsg);
+   },0);
+   return;
+ }
+ if(m.t==="leave"){
+   p2pRoomGone(room,player);
+   if(player.conn){try{player.conn.close()}catch(e){}}
+   return;
+ }
+}
+function p2pRoomGone(room,player){
+ if(!player||player.goneHandled||!player.pid)return;
+ player.goneHandled=true;player.departed=true;
+ if(p2pRoom!==room||room.dead)return;
+ if(room.phase==="match"){
+   var idx=p2pPlayerMatchIdx(room,player.pid);
+   if(idx>=0&&!room.matchRoster[idx].gone){
+     room.matchRoster[idx].gone=true;
+     if(room.matchSlots[idx])room.matchSlots[idx].ai=true;
+     p2pBroadcastRoom(room,{t:"cpu",i:idx,name:room.matchRoster[idx].name});
+     p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
+   }
+   return;
+ }
+ /* lobby / ended: a departing host dissolves the room; a departing
+    guest is removed from the player list */
+ if(player.host){
+   room.dead=true;
+   var guests=room.players.slice();
+   for(var gi=0;gi<guests.length;gi++){var gp=guests[gi];
+     if(gp.loopback)continue;
+     if(gp.conn&&gp.conn.open){try{gp.conn.send({t:"dissolved"})}catch(e){}}
+     if(gp.conn){try{gp.conn.close()}catch(e){}}
+   }
+   if(p2pRoom===room)p2pRoom=null;
+   return;
+ }
+ var pi=room.players.indexOf(player);if(pi>=0)room.players.splice(pi,1);
+ p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
+ p2pBroadcastRoster(room);
+}
+function p2pRoomStartMatch(room){
+ room.matchRoster=room.players.map(function(p){return{pid:p.pid,name:p.name,char:p.char,gone:false}});
+ room.seed=(Math.random()*0x7fffffff)|0||1;
+ room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
+ room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.mnJson=null}
+ room.phase="match";
+ var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
+ p2pSendGuests(room,startMsg);
+ /* the host builds its own match through the very same svOnMsg
+    start handler a guest uses (startMatch("online")), delivered by
+    loopback; the match hooks (guest input source, step hook, KO
+    hook, FX sink) arm in this same synchronous turn, below */
+ p2pLoopback(startMsg);
+ p2pHostLive=true;
+ fxSink=function(ev){var r=p2pRoom;if(r&&r.evQ.length<1500)r.evQ.push(ev)};
+ killBannerHook=p2pKillHook;
+}
+/* ---- host: peer + room creation ---- */
+function p2pCreateRoom(){
+ net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();net.transport="p2p";
+ net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
+ openOnline("接続を準備しています…");
+ p2pHostPeer(0);
+}
+function p2pHostPeer(retry){
+ if(typeof Peer==="undefined"){cleanupNet();openOnline("オンライン基盤（PeerJS）の読み込みに失敗したため、直接接続は使えません。「サーバー経由」を試してください。");return}
+ var peer=null;
+ try{peer=new Peer("jailbreaker-room-"+net.code)}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+ p2pPeer=peer;
+ peer.on("open",function(){
+   if(p2pPeer!==peer)return;
+   var room={code:net.code,phase:"lobby",players:[],joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,dead:false,hostPlayer:null};
+   p2pRoom=room;
+   var hp={pid:null,name:"",char:null,host:false,joinSeq:0,conn:null,loopback:true,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false};
+   room.hostPlayer=hp;
+   p2pRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
+ });
+ peer.on("connection",function(conn){
+   if(p2pPeer!==peer||!p2pRoom)return;
+   p2pHostAccept(p2pRoom,conn);
+ });
+ peer.on("error",function(err){
+   if(p2pPeer!==peer)return;
+   if(err&&err.type==="unavailable-id"){
+     /* the code collided with a live room: mint a fresh code and
+        retry, exactly like the server path's createRetry (max 3) */
+     if(retry<3){
+       try{peer.destroy()}catch(e){}
+       if(p2pPeer===peer)p2pPeer=null;
+       net.code=genRoomCode();net.createRetry=retry+1;
+       p2pHostPeer(retry+1);
+     }else{cleanupNet();openOnline("ルームを作成できませんでした。少し待ってから、もう一度お試しください。")}
+     return;
+   }
+   if(!p2pRoom){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。")}
+ });
+ peer.on("disconnected",function(){
+   if(p2pPeer===peer){try{peer.reconnect()}catch(e){}}
+ });
+}
+function p2pHostAccept(room,conn){
+ var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false};
+ conn.on("data",function(data){
+   if(p2pRoom!==room||room.dead)return;
+   var m=data;
+   if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
+   if(!m||typeof m!=="object")return;
+   if(!player.pid){if(m.t==="join")p2pRoomJoin(room,player,m);return}
+   p2pRoomHandle(room,player,m);
+ });
+ conn.on("close",function(){p2pRoomGone(room,player)});
+ conn.on("error",function(){p2pRoomGone(room,player)});
+}
+/* ---- guest: join + failure / disconnect reporting ---- */
+function p2pJoinRoom(code){
+ net.role="guest";net.expectHost=false;net.code=code;net.transport="p2p";
+ p2pGuestJoined=false;
+ openOnline("ルーム "+code+" に接続しています…");
+ if(typeof Peer==="undefined"){cleanupNet();openOnline("オンライン基盤（PeerJS）の読み込みに失敗したため、直接接続は使えません。「サーバー経由」を試してください。");return}
+ var peer=null;
+ try{peer=new Peer()}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+ p2pPeer=peer;
+ p2pGuestTimer=setTimeout(function(){
+   p2pGuestTimer=null;
+   if(p2pPeer!==peer||p2pGuestJoined)return;
+   cleanupNet();
+   openOnline("ホストに接続できませんでした。相手がルームを作成しているか、コードが合っているか確認してください。お互いの通信環境によっては直接接続できない場合があります。その場合は「サーバー経由」も試してください。");
+ },10000);
+ peer.on("open",function(){
+   if(p2pPeer!==peer)return;
+   var conn=null;
+   try{conn=peer.connect("jailbreaker-room-"+code,{reliable:true})}catch(e){p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+   p2pGuestConn=conn;
+   conn.on("open",function(){
+     if(p2pGuestConn!==conn)return;
+     try{conn.send({t:"join",name:(social.loggedIn&&social.name)?myDispName():""})}catch(e){}
+   });
+   conn.on("data",function(data){
+     if(p2pGuestConn!==conn)return;
+     var m=data;
+     if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
+     if(!m||typeof m!=="object")return;
+     if(m.t==="joined"){p2pGuestJoined=true;if(p2pGuestTimer){clearTimeout(p2pGuestTimer);p2pGuestTimer=null}}
+     svOnMsg(m);
+   });
+   conn.on("close",function(){p2pGuestClosed(conn)});
+   conn.on("error",function(){if(!p2pGuestJoined)p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。")});
+ });
+ peer.on("error",function(err){
+   if(p2pPeer!==peer||p2pGuestJoined)return;
+   if(err&&err.type==="peer-unavailable"){p2pGuestFail(peer,"そのコードのルームが見つかりませんでした。コードを確認してください。");return}
+   p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。");
+ });
+ peer.on("disconnected",function(){
+   if(p2pPeer===peer){try{peer.reconnect()}catch(e){}}
+ });
+}
+function p2pGuestFail(peer,msg){
+ if(p2pPeer!==peer)return;
+ cleanupNet();
+ openOnline(msg);
+}
+function p2pGuestClosed(conn){
+ if(p2pGuestConn!==conn)return;
+ if(net.leaving||net.dissolved)return;
+ if(!p2pGuestJoined)return; /* a pre-join close is reported by the timeout / error paths instead */
+ if(running&&mode==="online"&&net.started&&!matchOver){
+   /* the host is the match: losing it ends the match (the one
+      behavioural difference from the server transport) */
+   cleanupNet();toMenu();openOnline("ホストとの接続が切れたため、試合は終了しました。");
+ }else{
+   cleanupNet();toMenu();openOnline("ホストとの接続が切れました。");
+ }
+}
+/* ---- host match: step hook, guest input source, KO hook ---- */
+/* called at the top of every fixed step in loop() (right after
+   time+=STEP) while this device hosts a P2P match: advances the
+   room frame counter. During the countdown fighters are not
+   stepped, so each guest slot's input for this frame is consumed
+   here instead and its presses parked with svParkPresses — exactly
+   the server sim's stepFrame treatment, so a press thrown during
+   the countdown fires right after FIGHT. */
+function p2pStepHook(){
+ if(!p2pHostLive||!p2pRoom||p2pRoom.phase!=="match")return;
+ var room=p2pRoom,F=room.frame;
+ room.fNow=F;room.frame=F+1;
+ if(countdown>0){
+   for(var i=0;i<fighters.length;i++){
+     if(i===net.myIdx)continue;
+     var slot=room.matchSlots[i];if(!slot||slot.ai)continue;
+     var f=fighters[i];if(!f)continue;
+     var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&15);
+     slot.used[F]=bits;svParkPresses(f,bits,F);
+   }
+ }
+}
+/* the input source for a guest fighter on the host (loop() calls
+   this instead of aiControl while hosting): the server sim's rule —
+   the slot's real input for this frame, else the previous frame's
+   held bits repeated; the input is recorded as used, its presses
+   parked, and rbApplyInput builds the step input from
+   bits | rbPendBits. A CPU-handed slot is driven by aiControl,
+   with the same held-direction bookkeeping the sim's AI driver
+   applies. */
+function p2pInputFor(f,foe){
+ var room=p2pRoom;
+ var idx=fighters.indexOf(f);
+ var slot=room?room.matchSlots[idx]:null;
+ if(!slot)return aiControl(f,foe);
+ if(slot.ai){
+   var inp=aiControl(f,foe);
+   inp.upHeld=true;
+   f.hDown=!!inp.down;f.hUp=!!inp.jump;
+   f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
+   f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
+   return inp;
+ }
+ var F=room.fNow;
+ var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&15);
+ slot.used[F]=bits;
+ svParkPresses(f,bits,F);
+ if(F>900){delete slot.used[F-900];delete slot.realIn[F-900]}
+ return rbApplyInput(f,bits|rbPendBits(f,F),F);
+}
+/* killFighter's banner hook while hosting: build the server sim's
+   attributed banner event, queue it for the guests, and render the
+   host's own banner from that very event through svOnEv (so every
+   screen words the KO identically). Unattributed deaths (falls)
+   come through too, with who=-1 / gain 0 / heal 0. */
+function p2pKillHook(def,att,gain,heal){
+ var room=p2pRoom;if(!room||room.phase!=="match")return;
+ var ev={k:"banner",big:"DOWN…",pts:"",sub:"",who:(att&&att!==def)?fighters.indexOf(att):-1,vic:fighters.indexOf(def),gain:gain||0,heal:heal||0};
+ if(room.evQ.length<1500)room.evQ.push(ev);
+ svOnEv([ev]);
+}
+/* ---- host match: snapshot / results / mines / pump ---- */
+/* field-for-field the server sim's snapshot(), built from the local
+   engine state (ck is 0: the client never verifies a checksum) */
+function p2pBuildSnap(room){
+ return{
+  f:room.frame,tm:p2pR1(timer),cd:p2pR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0,
+  fs:fighters.map(function(f,i){
+   return{
+    c:f.char,x:p2pR2(f.x),y:p2pR2(f.y),px:p2pR2(f.px),py:p2pR2(f.py),vx:p2pR1(f.vx),vy:p2pR1(f.vy),
+    hp:p2pR1(f.hp),hg:p2pR1(f.hpGhost),sc:f.score,kl:f.kills||0,awk:p2pR2(f.awakenT||0),mt:p2pR1(f.meter),fc:f.face,st:f.state,sT:p2pR2(f.stateT),
+    dead:f.dead?1:0,gd:f.guarding?1:0,hs:p2pR2(f.hitstun),fr:p2pR2(f.frozen),inv:p2pR2(f.invuln),
+    atk:p2pR2(f.attackCd),dcd:p2pR2(f.dashCd),spc:p2pR2(f.specCd||0),mcd:p2pR2(f.mistCd||0),fcd:p2pR2(f.flyCd||0),
+    uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:p2pR2(f.poisonT||0),brn:p2pR2(f.burnT||0),bld:p2pR2(f.bleedT||0),slo:p2pR2(f.slowT||0),
+    sph:f.spinHits||0,flm:p2pR2(f.flameT||0),fld:p2pR2(f.flameDelay||0),ven:f.venom?1:0,bft:p2pR2(f.buffT||0),
+    shx:f.char==="mimi"?p2pR2(f.shX):undefined,shy:f.char==="mimi"?p2pR2(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,
+    grb:f.grabT>0?1:0,og:f.onGround?1:0,cmb:f.comboHits,cdg:f.comboDmg,ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
+   };
+  }),
+  pr:projectiles.map(function(p){return{x:p2pR2(p.x),y:p2pR2(p.y),vx:p2pR1(p.vx),vy:p2pR1(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
+  ip:icePatches.map(function(p){return{x:p2pR2(p.x),y:p2pR2(p.y),w:p.w,t:p2pR1(p.t)}}),
+  fo:fireOrbs.map(function(o){return{x:p2pR2(o.x),y:p2pR2(o.y),t:p2pR1(o.t)}}),
+  pm:poisonMists.map(function(o){return{x:p2pR2(o.x),y:p2pR2(o.y),t:p2pR1(o.t)}}),
+  df:darkFields.map(function(d){return{x:p2pR2(d.x),y:p2pR2(d.y),w:d.w,t:p2pR1(d.t)}})
+ };
+}
+/* the server's results(): per-fighter rows sorted by score, then
+   current HP, with the roster name attached to each row */
+function p2pBuildResults(room){
+ var rows=fighters.map(function(f,i){return{i:i,char:f.char,score:f.score,hp:Math.max(0,Math.round(f.hp)),kills:f.kills||0,assists:f.assists||0,deaths:f.deaths||0}});
+ rows.sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)});
+ return rows.map(function(r){var mr=room.matchRoster[r.i];return{i:r.i,char:r.char,score:r.score,hp:r.hp,kills:r.kills,assists:r.assists,deaths:r.deaths,name:mr?mr.name:""}});
+}
+/* the server's syncMines(): each guest receives ONLY their own
+   fighter's mines, and only when that list changed. The host's own
+   mines are already local and are never sent. */
+function p2pSyncMines(room){
+ for(var i=0;i<room.players.length;i++){
+   var p=room.players[i];
+   if(p.loopback||!p.pid)continue;
+   var idx=p2pPlayerMatchIdx(room,p.pid);if(idx<0)continue;
+   var f=fighters[idx];if(!f)continue;
+   var mn=mines.filter(function(m){return m.owner===f}).map(function(m){return{x:p2pR2(m.x),y:p2pR2(m.y)}});
+   var j=JSON.stringify(mn);
+   if(p.mnJson===j)continue;
+   p.mnJson=j;
+   p2pDeliver(p,{t:"mymines",mn:mn});
+ }
+}
+/* called from loop() after the local step processing (before the
+   render interpolation factor is computed) while hosting: sample
+   the screen-shake peak into the FX queue, stream a snapshot on
+   even frames (30/s, the server's current rate), flush the queued
+   FX events, sync each guest's own mines, and — once, when the
+   local match ends — send the results and close the match phase.
+   The host's own results screen is the local flow's (TIME UP banner
+   + showLocalResults), not this message. */
+function p2pPump(){
+ if(!p2pHostLive||!p2pRoom)return;
+ var room=p2pRoom;
+ if(room.phase!=="match")return;
+ if(shake>room.shkPeak)room.shkPeak=shake;
+ if(room.shkPeak>0){if(room.evQ.length<1500)room.evQ.push({k:"shk",v:room.shkPeak});room.shkPeak=0}
+ if(room.frame%2===0){
+   var snap=p2pBuildSnap(room);snap.t="snap";
+   p2pSendGuests(room,snap);
+ }
+ if(room.evQ.length){
+   var evs=room.evQ.splice(0,room.evQ.length);
+   p2pSendGuests(room,{t:"ev",ev:evs});
+ }
+ p2pSyncMines(room);
+ if(matchOver&&!room.endSent){
+   room.endSent=true;room.phase="ended";
+   p2pSendGuests(room,{t:"end",results:p2pBuildResults(room)});
+   for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)p2pDeliver(p,{t:"mymines",mn:[]})}
+ }
+}
 /* ================= ONLINE CHAT (bottom-left, bandit.rip style) =====
    Room chat rides the same match-server WebSocket as everything
    else: the client sends {t:"chat", text} and the server broadcasts
@@ -1508,7 +2044,7 @@ function chatAdd(name,text,sys){
  chatRender();
 }
 function chatVisible(){
- return !!($("gameScreen").classList.contains("on")&&net.ws&&net.myId);
+ return !!($("gameScreen").classList.contains("on")&&(net.ws||net.transport==="p2p")&&net.myId);
 }
 function chatSyncVis(){
  var ui=$("chatUI");if(!ui)return;
@@ -1608,14 +2144,18 @@ function svConnect(){
  ws.onerror=function(){};
 }
 function createRoom(){
- cleanupNet();net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();
+ cleanupNet();
+ if(onlineTransport==="p2p"){p2pCreateRoom();return}
+ net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();
  net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
  openOnline("接続を準備しています…");
  svConnect();
 }
 function joinRoom(code){
  if(!code||code.length<4){openOnline("コードを入力してください。");return}
- cleanupNet();net.role="guest";net.expectHost=false;net.code=code;
+ cleanupNet();
+ if(onlineTransport==="p2p"){p2pJoinRoom(code);return}
+ net.role="guest";net.expectHost=false;net.code=code;
  openOnline("ルーム "+code+" に接続しています…");
  svConnect();
 }
@@ -1784,7 +2324,7 @@ function inviteFriendFromLobby(name){
  var stat=$("lobbyStatus");
  if(!net.isHost||!net.code){if(stat)stat.textContent="招待はホストのロビーでのみ送れます。";return}
  if(!social.online[name]){if(stat)stat.textContent=name+" さんは今オフラインのようです。";renderLobbyInvites();return}
- if(socialSend(name,{t:"invite",from:social.name,fromName:myDispName(),code:net.code})){if(stat)stat.textContent=name+" さんに招待を送りました。相手が参加するとロビーに入ります。"}
+ if(socialSend(name,{t:"invite",from:social.name,fromName:myDispName(),code:net.code,mode:net.transport})){if(stat)stat.textContent=name+" さんに招待を送りました。相手が参加するとロビーに入ります。"}
  else if(stat)stat.textContent=name+" さんに招待を送れませんでした。接続を確認してください。";
 }
 $("lobbyInviteBtn").onclick=function(){
@@ -2931,7 +3471,7 @@ function onSocialData(from,m){
       invite carries one (fromName, validated like every other
       remote name); older clients send none and keep the username */
    var invName=(typeof m.fromName==="string"&&validDisplayName(cleanName(m.fromName)))?cleanName(m.fromName):from;
-   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
+   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");onlineTransport=(m.mode==="p2p")?"p2p":"server";joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
    return;
  }
  /* friend-request signals carry a PlayFab id + display name from a
@@ -3406,7 +3946,7 @@ function sendFriendRequest(){
 function inviteFriend(name){
  if(net.role!=="host"||!net.code){openFriends("招待は、ONLINE VS でルームを作って待機している時に送れます。まずルームを作成してください。");return}
  if(!social.online[name]){openFriends(name+" さんは今オフラインのようです。");return}
- if(socialSend(name,{t:"invite",from:social.name,fromName:myDispName(),code:net.code}))openFriends(name+" さんに招待を送りました。相手が参加すると、キャラ選択をしてロビーに入ります。");
+ if(socialSend(name,{t:"invite",from:social.name,fromName:myDispName(),code:net.code,mode:net.transport}))openFriends(name+" さんに招待を送りました。相手が参加すると、キャラ選択をしてロビーに入ります。");
  else openFriends(name+" さんに招待を送れませんでした。接続を確認してください。");
 }
 var FRIEND_INPUT_STYLE="background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:150px;font-size:15px";
@@ -3660,7 +4200,7 @@ window.addEventListener("keydown",function(e){
    keys[k]=true;press(k);
    if(running&&P1&&(k==="left"||k==="right")){
      var now=performance.now();
-     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
+     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&!(typeof p2pHostLive!=="undefined"&&p2pHostLive)){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
      lastTap[k]=now;
    }
  }
@@ -3744,7 +4284,7 @@ function drawFxTex(img,x,y,size,rot,flip,alpha){if(!img||!img.complete||!img.nat
    with a few red pixel blood specks. Pure presentation — no numbers,
    no hitboxes, no timing change anywhere. */
 var vecBursts=[];
-function spawnVecBurst(kind,x,y,size,life,rot,flip,alpha){vecBursts.push({kind:kind,x:x,y:y,size:size,life:life,max:life,rot:rot||0,flip:flip||1,alpha:alpha||0.9,seed:Math.random()*6.28});if(vecBursts.length>42)vecBursts.shift()}
+function spawnVecBurst(kind,x,y,size,life,rot,flip,alpha){vecBursts.push({kind:kind,x:x,y:y,size:size,life:life,max:life,rot:rot||0,flip:flip||1,alpha:alpha||0.9,seed:Math.random()*6.28});if(vecBursts.length>42)vecBursts.shift();fxRec({k:"v",kd:kind,x:Math.round(x),y:Math.round(y),z:Math.round(size),l:Math.round((life||0)*100)/100,r:Math.round((rot||0)*100)/100,f:flip||1,a:alpha||0.9})}
 function spawnCharBurst(char,x,y,size,life,rot,flip,alpha){if(char==="travis")spawnVecBurst("travis",x,y,size,life,rot,flip,alpha);else if(char==="smiley")spawnVecBurst("smiley",x,y,size,life,rot,flip,alpha);else spawnFxBurst(charFxImg(char),x,y,size,life,rot,flip,alpha)}
 function drawVecBursts(){
  var vX0=cam.x-340,vX1=cam.x+viewW+340,vY0=cam.y-340,vY1=cam.y+viewH+340; /* PERF (picture unchanged): same off-screen culling as the passes in draw() */
@@ -4470,8 +5010,8 @@ function startSaraAttack(f,type,foe){
      var cut=Math.floor(f.hp*0.3); /* コスト: 現在HPの1/3 -> 30% (user spec) */if(f.hp-cut<1)cut=f.hp-1;
      f.hp-=cut;if(f.hpGhost>f.hp)f.hpGhost=f.hp;f.lastHurt=time;f.flash=0.22;
      f.state="schaos";f.stateT=0.5;f.attackCd=0.25;f.comboWin=0;applyFullLock(f); /* 後硬直 0.67 -> 0.32秒（完全硬直） (user spec) */
-     floaters.push({x:f.x,y:f.y-32,txt:"与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"}); /* 技名部分のみ削除し、効果情報の表示は残す (user request) */
-     floaters.push({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
+     pushFloater({x:f.x,y:f.y-32,txt:"与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"}); /* 技名部分のみ削除し、効果情報の表示は残す (user request) */
+     pushFloater({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
      spawnParticles(f.x,f.y+f.h*0.45,30,"#ef4444",250);spawnParticles(f.x,f.y+f.h*0.45,18,"#fb923c",210);spawnRing(f.x,f.y+f.h*0.45,"#ef4444",64);
      shake=Math.max(shake,5);beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
    }else if(upHeld){
@@ -4647,8 +5187,8 @@ function startOrchidAttack(f,type,foe){
    f.specCd=14;f.state="onutri";f.stateT=0.6;f.attackCd=0.75;f.comboWin=0;
    var healed=Math.min(40,(f.maxHp||MAXHP)-f.hp);if(healed<0)healed=0;
    f.hp+=healed;f.buffT=8;f.venom=true;f.hitstun=Math.max(f.hitstun,0.6);
-   floaters.push({x:f.x,y:f.y-30,txt:"+"+healed+" HP",life:1.05,col:"#4ade80"}); /* 技名部分のみ削除し、回復量の表示は残す (user request) */
-   floaters.push({x:f.x,y:f.y-12,txt:"全攻撃に毒付与",life:1.05,col:"#d9f99d"});
+   pushFloater({x:f.x,y:f.y-30,txt:"+"+healed+" HP",life:1.05,col:"#4ade80"}); /* 技名部分のみ削除し、回復量の表示は残す (user request) */
+   pushFloater({x:f.x,y:f.y-12,txt:"全攻撃に毒付与",life:1.05,col:"#d9f99d"});
    spawnParticles(f.x,f.y+f.h*0.5,22,"#4ade80",170);spawnParticles(f.x,f.y+f.h-4,10,"#a3e635",120);spawnRing(f.x,f.y+f.h*0.5,"#4ade80",52);
    beep(520,.18,"sine",.05);setTimeout(function(){beep(780,.14,"sine",.04)},80);
  }else if(type==="ult"){
@@ -5464,8 +6004,8 @@ function startAttack(f,type){
    if(f.char==="kairo"&&(f.isPlayer||f.remote)){
      if(ultHit){
        f.ultChain++;
-       if(f.ultChain<5){f.meter=100;floaters.push({x:f.x,y:f.y-30,txt:"ULT RECHARGE "+f.ultChain+"/5",life:.95,col:"#7dd3fc"})}
-       else{f.ultChain=0;floaters.push({x:f.x,y:f.y-30,txt:"ULT CHAIN RESET",life:1.1,col:"#fda4af"})}
+       if(f.ultChain<5){f.meter=100;pushFloater({x:f.x,y:f.y-30,txt:"ULT RECHARGE "+f.ultChain+"/5",life:.95,col:"#7dd3fc"})}
+       else{f.ultChain=0;pushFloater({x:f.x,y:f.y-30,txt:"ULT CHAIN RESET",life:1.1,col:"#fda4af"})}
      }else f.ultChain=0;
    }
    beep(80,.4,"sawtooth",.09);setTimeout(function(){beep(1400,.3,"sine",.06)},90);
@@ -5538,7 +6078,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
      hitstop=0.012;shake=Math.min(shake+1.5,4);
      spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
      spawnRing(def.x,def.y+def.h*0.45,"#a5f3fc",40);spawnSparks(def.x,def.y+def.h*0.45,dir,"#a5f3fc",5);spawnFxBurst(FXIMG.hit,def.x+(def.guardDir||def.face)*24,def.y+def.h*0.45,72,0.18,(Math.random()-0.5)*0.8,dir,0.75);
-     floaters.push({x:def.x,y:def.y-16,txt:"GUARD -"+gd,life:.7,col:"#a5f3fc"});
+     pushFloater({x:def.x,y:def.y-16,txt:"GUARD -"+gd,life:.7,col:"#a5f3fc"});
      beep(980,.05,"square",.045);
      if(att){if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}att.comboHits++;att.comboDmg+=gd;att.comboT=0.95;if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,gd))}
      if(def.hp<=0)killFighter(def,att);
@@ -5552,7 +6092,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
  hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011);
  spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
- floaters.push({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
+ pushFloater({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
  spawnRing(cx||def.x,cy||def.y+def.h*0.45,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?78:36);spawnSparks(cx||def.x,cy||def.y+def.h*0.45,dir,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?11:6);
  if(att&&(att.char==="travis"||att.char==="smiley")){ /* TRAVIS / SMILEY hits burst with their own vector art only — never the shared hit / signature FX textures */
    spawnVecBurst(att.char,cx||def.x,cy||def.y+def.h*0.45,isUlt?190:130,isUlt?0.42:0.3,att.char==="smiley"?(Math.random()-0.5)*0.9:Math.random()*6.28,dir,0.9);
@@ -5599,12 +6139,14 @@ function killFighter(def,att){
    if(killHeal>0){
      att.hp=Math.min(att.maxHp||MAXHP,att.hp+killHeal);
      /* kill reward heal, made visible so the player can see it land */
-     floaters.push({x:att.x,y:att.y-24,txt:"+"+killHeal+" HP",life:.95,col:"#4ade80"});
+     pushFloater({x:att.x,y:att.y-24,txt:"+"+killHeal+" HP",life:.95,col:"#4ade80"});
      spawnParticles(att.x,att.y+att.h*0.4,12,"#4ade80",150);
    }
-   if(att.isPlayer)showBanner("KNOCKOUT!","+"+killerGain+" POINTS",killHeal>0?("REGEN +"+killHeal+"HP"):"");
+   if(killBannerHook)killBannerHook(def,att,killerGain,killHeal);
+   else if(att.isPlayer)showBanner("KNOCKOUT!","+"+killerGain+" POINTS",killHeal>0?("REGEN +"+killHeal+"HP"):"");
    else showBanner("DOWN…",cname(att.char)+" +"+killerGain,"");
- }else if(def.isPlayer){showBanner("DOWN…","","")}
+ }else if(killBannerHook){killBannerHook(def,att,0,0)}
+ else if(def.isPlayer){showBanner("DOWN…","","")}
 }
 /* ---- AI (WARDEN) ---- */
 function aiControl(f,foe){
@@ -5671,11 +6213,11 @@ function stepFighter(f,dt,input,foe){
  /* SARA モードカオス duration: 13s max — when chaosT runs out the mode
     ends on the spot (it also ends on death: killFighter / resetFighter).
     No stacking: startSaraAttack refuses to re-activate while f.chaos */
- if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;floaters.push({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
+ if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;pushFloater({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
  /* SMILEY 覚醒 duration: 8s — the mask stays dark red and warped
     (drawCharSprite swaps to the awakened sheet) until the timer runs
     out or he dies (killFighter / resetFighter clear awakenT) */
- if(f.char==="smiley"&&(f.awakenT||0)>0){f.awakenT=Math.max(0,f.awakenT-dt);if(f.awakenT<=0)floaters.push({x:f.x,y:f.y-30,txt:"Berserker終了",life:.9,col:"#fca5a5"});else if(Math.random()<0.35)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*(0.25+Math.random()*0.5),1,Math.random()<0.6?"#dc2626":"#7f1d1d",60)}
+ if(f.char==="smiley"&&(f.awakenT||0)>0){f.awakenT=Math.max(0,f.awakenT-dt);if(f.awakenT<=0)pushFloater({x:f.x,y:f.y-30,txt:"Berserker終了",life:.9,col:"#fca5a5"});else if(Math.random()<0.35)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*(0.25+Math.random()*0.5),1,Math.random()<0.6?"#dc2626":"#7f1d1d",60)}
  if(f.char==="sara"&&f.state==="sflare"&&f.stateT===0&&f.attackCd>0)f.recLockT=Math.max(f.recLockT||0,f.attackCd); /* ハンドフレア 後硬直（完全硬直）: 技が終わった後の残り硬直の間は移動・ジャンプ不可 */
  if(f.char==="travis"&&f.state==="tsing"&&f.stateT===0&&f.attackCd>0)f.recLockT=Math.max(f.recLockT||0,f.attackCd); /* シング・タイム 後硬直 2.5秒（完全硬直）: 歌い終わった後の残り硬直（=2.5秒）の間は移動・ジャンプ・ダッシュ・ワザのすべてが不可 (user spec) */
  if(f.stateT===0&&f.state!=="idle")f.state="idle";
@@ -5697,7 +6239,7 @@ function stepFighter(f,dt,input,foe){
  if(f.chaos)regenRate*=0.65; /* SARA モードカオス中は回復量-35%: out-of-combat regen included */
  if(time-f.lastHurt>regenDelay&&f.hp>0&&f.hp<(f.maxHp||MAXHP)){
    var before=f.hp;f.hp=Math.min(f.maxHp||MAXHP,f.hp+regenRate*dt);
-   if(Math.floor(before/50)!==Math.floor(f.hp/50))floaters.push({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
+   if(Math.floor(before/50)!==Math.floor(f.hp/50))pushFloater({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
  }
  var frozenFactor=1;if(f.frozen>0){f.frozen-=dt;frozenFactor=0.45}
  if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?80:74,f.char==="kairo"?64:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?660:620):(airT?620:580),f.face,airT?0.95:-0.5);if(f.char==="kairo"){spawnParticles(f.x+f.face*40,f.y+f.h*0.5,10,"#a5f3fc",210);spawnParticles(f.x+f.face*34,f.y+f.h*0.42,5,"#e0f2fe",150);spawnRing(f.x+f.face*38,f.y+f.h*0.48,"#7dd3fc",30)} /* KAIRO フロストテイル: 氷まみれの尻尾のヒット時に氷片バーストを追加 (数値は変更なし) */beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64, dmg 33 ground / 32 air, KB 620 ground / 660 air; other chars keep their values */
@@ -5727,7 +6269,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      var shAx=shadeAnchorX(f),shAy=f.y+f.h,shDx=shAx-f.shX,shDy=shAy-f.shY,shDist=Math.sqrt(shDx*shDx+shDy*shDy);
      var shSpd=Math.max(430*(f.speedMul||1),shDist*7);if(shSpd>1750)shSpd=1750;
      if(shDist>2){var shMv=Math.min(shDist,shSpd*dt);f.shX+=shDx/shDist*shMv;f.shY+=shDy/shDist*shMv}
-     if(Math.random()<0.06)particles.push({x:f.shX+(Math.random()-0.5)*36,y:f.shY-6,vx:(Math.random()-0.5)*20,vy:-20-Math.random()*24,life:.45,col:"#3b0764",size:3+Math.random()*3});
+     if(Math.random()<0.06)pushParticle({x:f.shX+(Math.random()-0.5)*36,y:f.shY-6,vx:(Math.random()-0.5)*20,vy:-20-Math.random()*24,life:.45,col:"#3b0764",size:3+Math.random()*3});
    }else{
      /* sent away with K (user request): SHADE no longer holds its
         ground — it copies MIMI's movement exactly, taking the same
@@ -5740,7 +6282,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        var shMx=f.x-f._shPX,shMy=(f.y+f.h)-f._shPY;
        if(Math.abs(shMx)<=140&&Math.abs(shMy)<=140){f.shX+=shMx;f.shY+=shMy;if(f.shX<60)f.shX=60;if(f.shX>WORLD_W-60)f.shX=WORLD_W-60}
      }
-     if(Math.random()<0.06)particles.push({x:f.shX+(Math.random()-0.5)*36,y:f.shY-6,vx:(Math.random()-0.5)*20,vy:-20-Math.random()*24,life:.45,col:"#3b0764",size:3+Math.random()*3});
+     if(Math.random()<0.06)pushParticle({x:f.shX+(Math.random()-0.5)*36,y:f.shY-6,vx:(Math.random()-0.5)*20,vy:-20-Math.random()*24,life:.45,col:"#3b0764",size:3+Math.random()*3});
    }
    f._shPX=f.x;f._shPY=f.y+f.h;
    /* SHADE delayed hits: the J+K sky upper (0.28s), the down+K
@@ -5833,7 +6375,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     guard / moves — the same lockout 着地硬直 uses) plus attackCd
     both run 0.32s from the hit, so he can neither move nor jump
     for exactly that span */
- if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.landLagT=Math.max(f.landLagT||0,0.32);f.attackCd=Math.max(f.attackCd,0.32);floaters.push({x:f.x,y:f.y-30,txt:"硬直 0.32秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中でその場0.32秒硬直 (user spec) */
+ if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.landLagT=Math.max(f.landLagT||0,0.32);f.attackCd=Math.max(f.attackCd,0.32);pushFloater({x:f.x,y:f.y-30,txt:"硬直 0.32秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中でその場0.32秒硬直 (user spec) */
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
@@ -6144,7 +6686,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(gb&&!f.dead){
        applyHit(gb,f,46,820,(f.x>=gb.x?1:-1),1.02,true,f.x,f.y+f.h*0.6);
        if(!f.dead){f.vx*=0.22;f.vy=1020;f.fastfall=false}
-       floaters.push({x:f.x,y:f.y-26,txt:"SLAM!",life:.85,col:"#fde68a"});
+       pushFloater({x:f.x,y:f.y-26,txt:"SLAM!",life:.85,col:"#fde68a"});
      }
    }
    return;
@@ -6161,7 +6703,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.onGround)f.vy=0;
      if(Math.random()<0.4)spawnParticles(f.x-f.pushBy.ultDir*20,f.y+f.h*0.6,1,"#fdba74",90);
      f.pushDmgT=(f.pushDmgT||0)+dt;
-     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);floaters.push({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;if(f.hp<=0)killFighter(f,pa)}
+     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);pushFloater({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;if(f.hp<=0)killFighter(f,pa)}
    }
  }
  /* AXE ULT — the charge itself: full invincibility for exactly 1.5s,
@@ -6193,7 +6735,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
         with knockback 810 in the charge direction, instead of simply
         being released in place. pushBy is cleared first so the
         victim's own step this frame cannot overwrite the launch. */
-     for(var fin=0;fin<fighters.length;fin++){var fv=fighters[fin];if(fv===f||fv.dead||fv.pushBy!==f)continue;fv.pushBy=null;fv.pushT=0;fv.pushDmgT=0;if(applyHit(f,fv,33,810,f.ultDir,-0.42,true,fv.x,fv.y+fv.h*0.45))floaters.push({x:fv.x,y:fv.y-28,txt:"FINISH!",life:.9,col:"#fdba74"})}
+     for(var fin=0;fin<fighters.length;fin++){var fv=fighters[fin];if(fv===f||fv.dead||fv.pushBy!==f)continue;fv.pushBy=null;fv.pushT=0;fv.pushDmgT=0;if(applyHit(f,fv,33,810,f.ultDir,-0.42,true,fv.x,fv.y+fv.h*0.45))pushFloater({x:fv.x,y:fv.y-28,txt:"FINISH!",life:.9,col:"#fdba74"})}
      spawnRing(f.x+f.ultDir*40,f.y+f.h*0.45,"#fdba74",56);
    }
  }
@@ -7865,7 +8407,7 @@ function draw(){
    ctx.fillStyle="#f59e0b";ctx.fillRect(f.x-15,f.y-184,30,13);
    ctx.fillStyle="#fde68a";ctx.fillRect(f.x-19,f.y-171,8,10);ctx.fillRect(f.x+11,f.y-171,8,10);
  });
- if(particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
+ if(particles.length<430&&Math.random()<0.55)pushParticle({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
  particles.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
  rings=rings.filter(function(r){r.r+=(r.max-r.r)*0.22+1.4;r.life-=0.05;return r.life>0});
  rings.forEach(function(r){if(r.x<cX0||r.x>cX1||r.y<cY0||r.y>cY1)return;ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
@@ -7993,7 +8535,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!p2pHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
@@ -8013,7 +8555,7 @@ function loop(ts){
     player sits in the worst of it. Step-up is unchanged. */
  if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
  else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
- if(mode==="online"){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped) */
+ if(mode==="online"&&!p2pHostLive){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A P2P HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
   var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
@@ -8023,7 +8565,7 @@ function loop(ts){
  var STEP=1/60;
  if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
  while(acc>=STEP){
-   acc-=STEP;time+=STEP;
+   acc-=STEP;time+=STEP;p2pStepHook();
    /* remember pre-step positions: draw() blends from these to the
       post-step positions for render interpolation */
    for(var pvi=0;pvi<fighters.length;pvi++){var pf=fighters[pvi];pf.px=pf.x;pf.py=pf.y}
@@ -8037,13 +8579,13 @@ function loop(ts){
      if(!matchOver){
        var pInp=gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
-         var inpF=(ff===P1)?pInp:aiControl(ff,foeF);
+         var inpF=(ff===P1)?pInp:(p2pHostLive?p2pInputFor(ff,foeF):aiControl(ff,foeF));
          stepFighter(ff,STEP,inpF,foeF);
        }
      }
    }
    /* projectiles */
-   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)particles.push({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")particles.push({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)particles.push({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))))){foe=qf;break}}
+   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))))){foe=qf;break}}
      if(foe){
        if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
@@ -8066,7 +8608,7 @@ function loop(ts){
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
-   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)pushParticle({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
       into its enlarged 160x60 trigger (±80 across / 60 around the feet
       line, up from ±55 / 46), then bursts for 20 damage / KB 560 away
@@ -8078,11 +8620,12 @@ function loop(ts){
    mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<80&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
    /* MIMI&SHADE placed dark field: the system stays only so fields already in flight (or arriving in an online snapshot) still tick out — 4 damage every 0.5s, no knockback / no hitstun. NO current move places one: the field belonged to the deleted 落ちちゃう！／たすけるヨ！ dive, replaced by 落として！！ */
-   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)particles.push({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}}}return df.t>0});
-   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
+   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}}}return df.t>0});
+   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
+ p2pPump();
  drawAlpha=Math.min(1,acc/STEP);
  camDtMs+=dtms;
  /* The scene is drawn on EVERY display frame at every tier (the old
