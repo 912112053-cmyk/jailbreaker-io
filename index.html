@@ -425,6 +425,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["02:12"],tag:"修正",title:"ONLINE VS：KOバナー・自分の地雷・一部の状態表示がオンラインで出ない問題を修正",
+  items:["オンライン対戦で、KOした時・された時のバナー（KNOCKOUT!／DOWN…、倒した相手のプレイヤーネームと獲得ポイント、KO時の回復表示）が出ていなかった問題を修正しました。サーバーから死ごとに1回だけ届くKO通知をもとに表示するようになり、スコア表示もそのライフで与えた実ダメージ分がそのまま出ます",
+         "WARDENが設置した地雷が、設置した本人にも見えなかった問題を修正しました。自分の地雷の位置だけが本人に届くようになり、金色の本体と探知範囲の楕円がローカル対戦と同じ見た目で表示されます（他のプレイヤーには今までどおり一切見えません）",
+         "オンライン対戦で一部の状態がキャラに反映されていなかった問題もあわせて修正しました。スナップショットで届く描画用の状態（回転ヒットの残り・炎の状態・毒・バフの残り時間）を受け取るようになり、オンラインでもローカルと同じ見た目になります",
+         "技・数値への変更はありません"]},
  {date:"2026/11/15",times:["02:00"],tag:"修正",title:"ONLINE VS：再戦後にロビーが閉じなくなる問題を修正",
   items:["オンライン対戦で再戦したあと、ロビー画面が閉じなくなることがある問題を修正しました。原因は、再戦では前回のキャラ選択が引き継がれて全員が最初から「準備OK」になるため、まだキャラを選び直している途中の人がいてもホストが試合を開始できてしまうことでした。その状態で試合が始まると、選び直し中の人の画面ではキャラ選択が試合の上に残ったままになり、そのボタンを押すとロビーが試合の上に開いて、二度と閉じなくなっていました",
          "試合開始の合図を受け取った時に、ロビーだけでなくキャラ選択画面も必ず閉じるようにしました。あわせて、すでに試合が始まっている時にキャラ選択のボタンを押しても、ロビーが開かないようにしました",
@@ -510,16 +515,6 @@ var UPDATE_LOG=[
  {date:"2026/11/14",times:["21:44"],tag:"修正・調整",title:"MIMI&SHADE：技一覧のウルトに「貫通」表示を追加",
   items:["MIMI&SHADEの技一覧で、L「大好きだよSHADE／大好きだよMIMI」の行に「貫通」の表示が無かったのを直しました：見出しタグに「貫通」を追加し、説明文にも「弾は貫通する：敵に当たっても消えずにそのまま飛び続け、並んだ敵全員に当たる（同じ敵には1回だけ命中）」と明記、スペック欄にも「追加効果：貫通」を追加しました",
          "表示だけの変更です：ウルト弾の貫通挙動・ダメージ46／KB880・弾速620などの数値はこれまで通りで、変更はありません"]},
- {date:"2026/11/14",times:["21:33"],tag:"修正・調整",title:"MIMI&SHADE：バランス調整（MIMI側を弱く・SHADE側を遅く大きく）",
-  items:["基本性能：受けKB ×1.05→×1.12、ウルト溜まり ×0.6→×0.44に下方修正（HP240／地上400／空中388／ダッシュ1080は変更なし）",
-         "Jチェーン：MIMIのダメージとKBを全体的に下げ（1段目 8→5／KB280→180、2段目 9→6／KB320→220、3段目 13→10／KB620→320）、判定は拡大（68×62／68×62／86×72）。被弾硬直は1段目0.32秒・2段目0.34秒に延長し、技全体の時間も長く（0.4秒／0.42秒／0.6秒）なりました",
-         "SHADE側のJチェーンは発生が付きました（即時→1段目0.18秒／2段目0.16秒／3段目0.2秒遅れて発動）。その代わりダメージと判定は拡大（12／KB300・116×74、14／KB320・120×94、20／KB1000・136×88）",
-         "前+J：MIMI 14→10ダメージ／KB700→800、後硬直0.5秒→0.58秒、被弾硬直0.22秒を追加。SHADEは発生0.18秒が付き、KB640→770・判定110×72→134×98（ダメージ13は変更なし）。技全体は0.34秒→0.52秒",
-         "↓+J：MIMI 7→6ダメージ／KB480→68・判定68×34、全体0.16秒→0.32秒、被弾硬直0.24秒→0.32秒。SHADEは発生0.16秒が付き、9→12ダメージ／KB520→320・判定96×40→92×40",
-         "空中J：MIMI 5→4ダメージ×最大3ヒット／KB260→300・判定 周囲78・被弾硬直0.22秒。SHADEの掴み範囲は周囲110→周囲124に拡大",
-         "J+K：MIMIの光の魔法は三連撃（6＋6＋8）から単発（9ダメージ／KB720・判定70×62）に変更し、空中で出した場合の着地硬直は0.18秒→0.22秒。SHADEのアッパーは24→28ダメージ／KB1050→1130・発生0.3秒→0.28秒・判定 周囲102",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
-
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1665,8 +1660,9 @@ function svOnMsg(m){
    return;
  }
  if(m.t==="snap"){svOnSnap(m);return}
+ if(m.t==="mymines"){ if(mode==="online"){ mines = (m.mn||[]).map(function(s){ return {x:s.x, y:s.y, owner:P1}; }); } return; } /* targeted per-connection: only the WARDEN who placed them ever receives this list (it changes only when their own mines change), so the existing draw loop (owner===P1 only: gold body + detection ellipse) renders our own mines exactly like local play while no other player ever sees them */
  if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
- if(m.t==="ev"){svOnEv(m.ev);return} /* server FX events: the sim records every effect spawn (particles / rings / sparks / bursts / floaters / shake) and the Room forwards them — svOnEv replays them through the same spawn helpers the local sim uses, so online matches show the exact effects offline matches do. "banner" events inside are still skipped: the client renders KO banners itself from snapshot death transitions (svOnDeathFx), so they are not double-shown */
+ if(m.t==="ev"){svOnEv(m.ev);return} /* server FX events: the sim records every effect spawn (particles / rings / sparks / bursts / floaters / shake) and the Room forwards them — svOnEv replays them through the same spawn helpers the local sim uses, so online matches show the exact effects offline matches do. "banner" events inside are rendered by svOnEv too: the server sends exactly one per death and it is the single source of KO banners online */
  if(m.t==="cpu"){
    /* if the fighter handed to the CPU is OUR OWN, prediction no
       longer applies to it (its inputs are no longer ours): fall
@@ -2098,6 +2094,7 @@ function svApplySnapP1(s,hist){
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
  f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
+ if(typeof s.sph==="number")f.spinHits=s.sph; if(typeof s.flm==="number")f.flameT=s.flm; if(typeof s.fld==="number")f.flameDelay=s.fld; if(typeof s.ven==="number")f.venom=!!s.ven; if(typeof s.bft==="number")f.buffT=s.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft): spin-hit count, flame timers, venom flag and buff time the draw code reads — without these they stayed at local defaults online */
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
 }
 /* hard resync of the predicted fighter to the authoritative
@@ -2195,31 +2192,23 @@ function svApplySnapRemote(f,sf){
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
  f.comboHits=sf.cmb;f.comboDmg=sf.cdg;f.groundPlat=null;
+ if(typeof sf.sph==="number")f.spinHits=sf.sph; if(typeof sf.flm==="number")f.flameT=sf.flm; if(typeof sf.fld==="number")f.flameDelay=sf.fld; if(typeof sf.ven==="number")f.venom=!!sf.ven; if(typeof sf.bft==="number")f.buffT=sf.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft) — see svApplySnapP1 */
  if(sf.grb)f.grabT=Math.max(f.grabT||0,0.15);
 }
 function svFindWarden(){for(var i=0;i<fighters.length;i++){if(fighters[i]&&fighters[i].char==="warden")return fighters[i]}return null}
 function svIsAttackState(st){return st&&st!=="idle"&&st!=="guard"}
-/* a death the snapshots report: burst + banner, mirroring what
-   killFighter shows on a fully local simulation. Deaths the local
-   prediction already played (our own predicted kill) are skipped —
-   the fighter is already dead locally and the banner already ran. */
+/* a death the snapshots report. This used to also render the KO
+   banner (guessing the killer from the latest snapshot score diff),
+   but banners are no longer generated here: the server sends exactly
+   one {k:"banner"} event per death and svOnEv renders it — that
+   event is the single source, so nothing is shown twice and the
+   points shown are the killer's real damage for that life. The
+   death burst itself (46 particles / ring / sparks / hit + char
+   bursts / shake 16) likewise arrives as FX events via svOnEv (the
+   sim's killFighter spawns it) — spawning it here too would double
+   every death effect online. Nothing remains for this handler to
+   do; it is kept as the snapshot death-edge hook. */
 function svOnDeathFx(i,preDead){
- var f=fighters[i];if(!f)return;
- /* the caller only invokes this on the _svDead false->true edge of
-    the snapshot stream, so it fires exactly once per death for every
-    fighter, our own included */
- /* the death burst itself (46 particles / ring / sparks / hit +
-    char bursts / shake 16) is NOT spawned here any more: the sim's
-    killFighter spawns it and it arrives as FX events via svOnEv —
-    spawning it here too would double every death effect online.
-    This handler keeps only the banner. */
- var killer=(sv.lastScorer&&(performance.now()-sv.lastScorer.at)<500)?fighters[sv.lastScorer.i]:null;
- var gainTxt=(killer&&typeof sv.lastScorer.gain==="number")?(" +"+sv.lastScorer.gain):""; /* unknown gain (no score diff seen): show the name with NO points rather than a wrong number */
- /* the killer is named by their PLAYER NAME online (the name they
-    joined with), matching the overhead labels / leaderboard —
-    the character name is only the offline wording */
- if(i===net.myIdx)showBanner("DOWN…",killer?fighterDispName(killer)+gainTxt:"","");
- else if(killer&&killer!==P1)showBanner("DOWN…",fighterDispName(killer)+gainTxt,"");
 }
 /* ---- server FX events: replay the sim's own effect spawns ----
    The server sim runs the same attack / hit code as the local game
@@ -2253,6 +2242,17 @@ function svOnEv(evs){
  if(!evs||!sv.active||mode!=="online")return;
  for(var i=0;i<evs.length;i++){var e=evs[i];if(!e||!e.k)continue;
   if(SVFX_COUNT)SVFX_COUNT[e.k]=(SVFX_COUNT[e.k]||0)+1;
+  if(e.k==="banner"){
+   /* KO banner: the server sends exactly one of these per death.
+      who = killer fighter index (-1 = unattributed), vic = victim
+      index, gain = the real damage the killer dealt that life,
+      heal = the KO regen amount. This event is the only source of
+      KO banners online — svOnDeathFx no longer invents its own. */
+   if(e.who===net.myIdx)showBanner("KNOCKOUT!","+"+e.gain+" POINTS",e.heal>0?"REGEN +"+e.heal+"HP":"");
+   else if(e.vic===net.myIdx)showBanner("DOWN…",e.who>=0?fighterDispName(fighters[e.who])+" +"+e.gain:"","");
+   else if(e.who>=0)showBanner("DOWN…",fighterDispName(fighters[e.who])+" +"+e.gain,"");
+   continue;
+  }
   if(e.k==="p")spawnParticles(e.x,e.y,e.n,e.c,e.s);
   else if(e.k==="r")spawnRing(e.x,e.y,e.c,e.m);
   else if(e.k==="s")spawnSparks(e.x,e.y,e.d,e.c,e.n);
@@ -2261,8 +2261,8 @@ function svOnEv(evs){
   else if(e.k==="fl"){var flt=svFloaterTxt(e.t);if(flt!==null)floaters.push({x:e.x,y:e.y,txt:flt,life:e.l,col:e.c})}
   else if(e.k==="pt"){var pp={x:e.x,y:e.y,vx:e.vx,vy:e.vy,life:e.l,col:e.c,size:e.s};if(e.st)pp.streak=1;if(e.amb)pp.amb=1;particles.push(pp)}
   else if(e.k==="shk")shake=Math.max(shake,e.v||0);
-  /* "banner" events are not replayed: the client renders the same KO
-     banners itself from snapshot death transitions (svOnDeathFx) */
+  /* "banner" events are handled at the top of this loop (the server
+     sends one per death and it is the single source of KO banners) */
  }
 }
 /* placed-object lists ride every snapshot: reuse the existing objects
