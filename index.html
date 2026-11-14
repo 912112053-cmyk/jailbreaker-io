@@ -423,6 +423,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["23:35"],tag:"見た目変更",title:"TRAVIS／SMILEYの体の大きさを他キャラと同じ背丈に統一",
+  items:["TRAVISとSMILEYは、ドット絵シートの中で体が他キャラより大きく描かれていたため（待機ポーズの体の高さで TRAVIS 約1.15倍／SMILEY 約1.2倍）、試合中の表示を縮小して、WARDENやSARAなど他キャラと同じ背丈に揃えました。SMILEYの覚醒（Berserker）時の姿も同じ大きさに揃えています",
+         "縮小は足の裏を中心に行っているので、地面や台への接地位置はこれまで通りぴったり合っています",
+         "見た目だけの変更です：当たり判定・移動や技の数値・エフェクトには変更はありません"]},
  {date:"2026/11/14",times:["23:21"],tag:"新機能",title:"オンライン対戦にチャットを追加（左下・Tキー／ボタンで入力、ミュート可）",
   items:["オンライン対戦（ルーム接続中）のときだけ、画面左下にチャットが出るようになりました。ロビー・試合中・リザルト画面のどこでも使えます。直近の会話がログに残り、入退室のお知らせは色を変えて表示されます",
          "Tキーで入力欄を開いて Enter で送信、Esc でキャンセルです。入力しているあいだは移動・ワザ・ダッシュなどのゲーム操作は一切入りません。スマホ・タブレットでは CHAT ボタンから入力でき、左下のスティックに被らない位置に置いてあります（スティック操作はそのまま使えます）",
@@ -6593,7 +6597,15 @@ function drawCharSprite(f,key,fallback){
  if(sheet){
   var fw=sheet.naturalWidth/ANIM_FRAMES,fh=sheet.naturalHeight;
   var bw=ent.img.naturalWidth||fw,bh=ent.img.naturalHeight||fh;
-  ctx.drawImage(sheet,fi*fw,0,fw,fh,DX,spriteDY(skey,fi,true,bh),S*fw/bw,S*fh/bh);
+  var dy0=spriteDY(skey,fi,true,bh),dw0=S*fw/bw,dh0=S*fh/bh;
+  /* TRAVIS / SMILEY はシート内の体が他キャラより大きく描かれている (待機
+     フレームの体の高さ: TRAVIS 220行 / SMILEY・覚醒 230行 に対して、標準の
+     WARDEN / SARA / ORCHID は 192行)。その分だけ縮小して背丈を他キャラに
+     揃える。縮小の中心は足裏アンカー (x=0, y=70/CHAR_SCALE) なので、接地
+     位置・足裏合わせ (SPR_FOOT) はそのまま崩れない。描画サイズだけの変更で、
+     当たり判定・物理・技の数値には一切触れていない */
+  var sk=skey==="travis"?192/220:((skey==="smiley"||skey==="smileyAwk")?192/230:1);
+  ctx.drawImage(sheet,fi*fw,0,fw,fh,DX*sk,70/CHAR_SCALE+(dy0-70/CHAR_SCALE)*sk,dw0*sk,dh0*sk);
  }
  else{
   var im=ent.img;
