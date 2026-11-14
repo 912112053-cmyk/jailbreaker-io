@@ -392,6 +392,20 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["14:54"],tag:"修正・調整",title:"SARAを上方・下方調整（ラッシュ／燃焼／ジャベリン装填制／火炎放射ほか）",
+items:["ウルト溜まりを下方修正：与ダメージでの溜まりが 約1.07倍 → 0.7倍",
+"Jラッシュを調整：1段目 KB 290→250・後硬直 0.34→0.22秒・被弾硬直0.26秒を追加／2段目 KB 270→180・後硬直 0.41→0.22秒・被弾硬直0.3秒と燃焼2.0秒を追加／3段目 ダメージ 9→10・KB 340→300・後硬直 0.43→0.28秒・判定 64×80→80×94・被弾硬直0.3秒を追加／4段目 ダメージ 前20→22・後10→11、KB 前640→720、判定 前102×72→118×76",
+"ダッシュ中J ホーンチャージ：KB 600→720・判定 88×58→94×76・後硬直 0.59→0.66秒",
+"↓+J ハンドフレア：KB 110→140・発生 0.38→0.32秒・判定 86×56→112×88・燃焼を2.0秒に変更・後硬直（終了後）0.37→0.32秒で完全硬直に",
+"空中J スピンフレイム：判定 66×64→76×74・KB 後240→280・被弾硬直0.3秒を追加・着地硬直 0.30→0.23秒",
+"空中↓+J／空中↓+K 落下フレイムフィスト：本体 ダメージ 15→18・KB 480→660、着地 KB 前430→680・後340→680",
+"J+K フレイムテイル・コンボ：2段目 KB 560→820・燃焼2秒を追加。K フレイムノヴァ：KB 700→920・判定 96×74→108×88・燃焼3.0秒を追加",
+"↓+K モードカオス：コスト 現在HPの1/3→30%・効果時間 12→13秒・後硬直 0.67→0.32秒（完全硬直）。↑+K 飛翔：上昇 vy -500→-1020・再使用 5.0→2.5秒",
+"U ファイアジャヴェリンを装填制に変更：装填数2発（8秒ごとに1発装填）・再使用 4.2→0.8秒・直撃 KB 300→720・燃焼 2.0→2.5秒・火種 約6秒→約8秒／半径 64→92",
+"L 火炎放射：KB なし→210・全体 1.91→1.8秒・判定 前方6〜215→6〜230。燃焼は放射終了時に「当てていた時間0.25秒ごとに0.5秒」を付与する方式に変更",
+"ダッシュ再使用：2.4→2.2秒",
+"を変更：継続ダメージが 0.5秒ごとに4ダメージ（吹っ飛ばしなし）→ 0.5秒ごとに3ダメージ＋KB110",
+"なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["14:21"],tag:"修正・調整",title:"SMILEYの包丁の刃を、本物の包丁らしい細長い形に描き直し",
   items:["SMILEY の包丁の刃が四角く短かったのを、洋包丁（牛刀）／三徳包丁のような細長い刃に描き直しました：刃を今より長くし、峰（背）はほぼ真っ直ぐに走って先端に向かってカーブして下がり、刃先はやや丸みを帯びた一点に収まる形に。刃（下側）は緩やかなカーブ（ベリー）を描きます。中華包丁・菜切りのような四角い形ではありません",
          "描き直しは包丁が出る全箇所に適用しました：静止画スプライト、アニメーション全14フレーム（体の位置・アンカーは無変更）、投擲する包丁（U）の描画、投げモーション中の手元の包丁、キャラ選択カードの画像、覚醒時のスプライト",
@@ -960,27 +974,28 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進中は<b>近くの相手を斧のほうへ引き寄せる吸引</b>が発生するので、端に逃げても吸い戻されやすい。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','240'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。巨体ゆえ他のキャラよりダッシュ自体も少し遅い。</p>'+mvSpec(mvS('速度','840')+mvS('持続','0.18秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
-var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×1.60</b>と速い。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに4ダメージを受け続ける（吹っ飛ばし・被弾硬直なし）。</p>'
-+mvSpec(mvS('HP','270')+mvS('地上速度','420')+mvS('空中速度','400')+mvS('受けKB','×0.89')+mvS('ダッシュ','980')+mvS('ウルト溜まり','速め（約1.07倍）'))
+var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.7</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ＋KB110</b>を受け続ける。</p>'
++mvSpec(mvS('HP','270')+mvS('地上速度','420')+mvS('空中速度','400')+mvS('受けKB','×0.89')+mvS('ダッシュ','980')+mvS('ウルト溜まり','0.7倍'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 爪ひっかき（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.85秒・全4段</span><p>小ダメージの素早い一爪。各段とも<b>約0.2秒スタン</b>付き（KBから生まれる被弾硬直）。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','290')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.34秒')+mvS('判定','62×52'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 火の粉ブレス</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.85秒</span><p>火の粉を吹いて<b>小ダメージ2ヒット</b>（2発目は少し遠くまで届く）。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','270')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.41秒')+mvS('判定','64×54 → 78×54'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — アッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.85秒</span><p>相手を空へ浮かせる小ダメージ。浮かせた相手は空中Jで追撃できる。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','340（上吹き強）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.43秒')+mvS('判定','64×80'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 4段目 — 尻尾フィニッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。背後にも小さく判定がある。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','前20／後10')+mvS('KB','前640／後380')+mvS('発生','即時')+mvS('全体','0.42秒')+mvS('後硬直','0.67秒')+mvS('判定','前102×72／後70×60'))+'</div></div>'
-+'<div class="moveRow"><div><b>ダッシュ中J — ホーンチャージ</b><p>ツノで突進。中ダメージ＋吹っ飛ばし。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','600')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.59秒')+mvS('判定','88×58'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — ハンドフレア</b><p>両手を左右に広げて炎を出し続ける継続攻撃。約0.38秒の溜めの後、0.22秒間隔で両側へヒットし、当たった相手は燃焼0.7秒。技中は自分の移動速度が ×0.4 まで落ち、技後の硬直も長め。</p>'+mvSpec(mvS('ダメージ','5／tick（両側）')+mvS('KB','110')+mvS('発生','約0.38秒')+mvS('全体','1.05秒')+mvS('後硬直','0.37秒（終了後）／次の技まで1.42秒')+mvS('判定','86×56（両側）'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 爪ひっかき（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.85秒・全4段</span><p>小ダメージの素早い一爪。<b>被弾硬直0.26秒</b>付き。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.22秒')+mvS('判定','62×52')+mvS('被弾硬直','0.26秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 火の粉ブレス</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.85秒</span><p>火の粉を吹いて<b>小ダメージ2ヒット</b>（2発目は少し遠くまで届く）。当たった相手は<b>燃焼2.0秒</b>。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','180')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.22秒')+mvS('判定','64×54 → 78×54')+mvS('被弾硬直','0.3秒')+mvS('追加効果','燃焼2.0秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — アッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.85秒</span><p>相手を空へ浮かせる一撃。浮かせた相手は空中Jで追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','300（上吹き強）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.28秒')+mvS('判定','80×94')+mvS('被弾硬直','0.3秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 4段目 — 尻尾フィニッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。背後にも小さく判定がある。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','前22／後11')+mvS('KB','前720／後380')+mvS('発生','即時')+mvS('全体','0.42秒')+mvS('後硬直','0.67秒')+mvS('判定','前118×76／後70×60'))+'</div></div>'
++'<div class="moveRow"><div><b>ダッシュ中J — ホーンチャージ</b><p>ツノで突進。中ダメージ＋吹っ飛ばし。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.66秒')+mvS('判定','94×76'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — ハンドフレア</b><p>両手を左右に広げて炎を出し続ける継続攻撃。約0.32秒の溜めの後、0.22秒間隔で両側へヒットし、当たった相手は<b>燃焼2.0秒</b>。技中は自分の移動速度が ×0.4 まで落ち、技後の後硬直は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','5／tick（両側）')+mvS('KB','140')+mvS('発生','約0.32秒')+mvS('全体','1.05秒')+mvS('後硬直','0.32秒（完全硬直）／次の技まで1.37秒')+mvS('判定','112×88（両側）')+mvS('追加効果','燃焼2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングフレア</b><p>指定が「考え中」だった枠の仮実装。斬り上げアッパーで、当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.49秒')+mvS('判定','64×86')+mvS('上昇','vy -470'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — スピンフレイム</b><p>炎を纏った拳で左右に回転しながら攻撃。0.1秒間隔で<b>最大5ヒット</b>、各ヒット約0.2秒スタン。</p>'+mvSpec(mvS('ダメージ','4＋4 ×最大5')+mvS('KB','前280／後240')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.67秒')+mvS('判定','66×64（両側）')+mvS('着地硬直','0.30秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — スピンフレイム</b><p>炎を纏った拳で左右に回転しながら攻撃。0.1秒間隔で<b>最大5ヒット</b>、各ヒット<b>被弾硬直0.3秒</b>。</p>'+mvSpec(mvS('ダメージ','4＋4 ×最大5')+mvS('KB','前280／後280')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.67秒')+mvS('判定','76×74（両側）')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','0.23秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+J — フレイムブレス</b><p>上方向の円錐形・広範囲に炎を吹く。<b>約1.0秒の溜め中は空中で静止</b>し、その後<b>0.85秒間・0.16秒間隔で8ダメージ</b>の左右に広がるコーン＋<b>燃焼2.0秒</b>。放射中の落下速度は<b>20</b>に抑えられる。</p>'+mvSpec(mvS('ダメージ','8／tick')+mvS('KB','なし')+mvS('発生','約1.0秒（溜め）')+mvS('全体','1.95秒（溜め＋放射）')+mvS('後硬直','約0.27秒（放射後）')+mvS('判定','上方向 横105×上4〜215')+mvS('追加効果','燃焼2.0秒')+mvS('着地硬直','0.30秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J／空中↓+K — 落下フレイムフィスト</b><p>炎を纏った拳で真下へ落下攻撃。中ダメージ＋着地時に衝撃波。</p>'+mvSpec(mvS('ダメージ','本体15／着地 前12・後9')+mvS('KB','本体480／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.49秒')+mvS('判定','本体70×62／着地96×58')+mvS('着地硬直','0.25秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — フレイムテイル・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>爪の一撃→回転尻尾の2ヒットで吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','13＋16')+mvS('KB','360／560')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','80×60／86×74'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・長めの遅延ヒット・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。溜めが長く、押してから<b>約0.52秒遅れて</b>ヒットする（避けられやすい代わりに一撃は重い）。空中でも同じ拳が出る。</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','700')+mvS('発生','約0.52秒')+mvS('全体','0.78秒')+mvS('後硬直','0.27秒')+mvS('判定','96×74')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — モードカオス</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト・12秒間</span><p>発動時に<b>自分の現在HPを1/3削る</b>代わりに、<b>12秒間</b>、<b>すべての攻撃の与ダメージが+30%</b>になる（<b>燃焼の継続ダメージ（tick）も対象</b>）。その代わり発動中は<b>受ける回復量が35%減少</b>する（自動回復・キル回復の両方）。効果は12秒で切れ、倒されても終了する。<b>重ねがけは不可</b>（発動中に押しても延長・再発動しない）。HPは残り1未満にはならない。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p>'+mvSpec(mvS('ダメージ','なし（自己強化）')+mvS('発生','—')+mvS('全体','0.50秒')+mvS('後硬直','0.67秒')+mvS('コスト','現在HPの1/3')+mvS('効果時間','12秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム5.0秒</span><p>翼をはためかせて<b>その場で真上へ vy -500 で即座に上昇</b>し、<b>2段ジャンプが回復</b>する。復帰・回避・空中コンボの起点に。地上・空中どちらでも出せる。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','—')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('上昇','vy -500')+mvS('再使用','5.0秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・クールタイム4.2秒</span><p>炎の玉を<b>投射速度520・放物線</b>で投げる。地面・台に着弾するとその場に<b>設置型の火種</b>として約6秒残り、<b>半径64以内</b>の相手を<b>燃焼1.1秒</b>で燃やし続ける。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','直撃24')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.51秒')+mvS('弾速','520')+mvS('再使用','4.2秒')+mvS('追加効果','燃焼2.0秒／火種 約6秒・半径64'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、正面の広範囲に炎を放射し続ける（<b>約1.86秒・0.16秒間隔</b>）。当たっている間ずっと<b>1ヒット9ダメージ</b>を与え、相手は燃え続ける（燃焼1.0秒を付与）。<b>吹っ飛ばしは一切なし</b>——逃げ場のない場所で押し込み続けるための必殺。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','9／tick')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','1.91秒')+mvS('後硬直','約0.22秒（放射後）')+mvS('判定','前方6〜215'))+'</div></div>'
-+'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','980')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J／空中↓+K — 落下フレイムフィスト</b><p>炎を纏った拳で真下へ落下攻撃。中ダメージ＋着地時に衝撃波。</p>'+mvSpec(mvS('ダメージ','本体18／着地 前12・後9')+mvS('KB','本体660／着地 前680・後680')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.49秒')+mvS('判定','本体70×62／着地96×58')+mvS('着地硬直','0.25秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — フレイムテイル・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>爪の一撃→回転尻尾の2ヒットで吹っ飛ばす。当たった相手は<b>燃焼2秒</b>。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','13＋16')+mvS('KB','360／820')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','80×60／86×74')+mvS('追加効果','燃焼2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・長めの遅延ヒット・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。溜めが長く、押してから<b>約0.52秒遅れて</b>ヒットする（避けられやすい代わりに一撃は重い）。当たった相手は<b>燃焼3.0秒</b>。空中でも同じ拳が出る。</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','920')+mvS('発生','約0.52秒')+mvS('全体','0.78秒')+mvS('後硬直','0.27秒')+mvS('判定','108×88')+mvS('追加効果','燃焼3.0秒')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — モードカオス</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト・13秒間</span><p>発動時に<b>自分の現在HPを30%削る</b>代わりに、<b>13秒間</b>、<b>すべての攻撃の与ダメージが+30%</b>になる（<b>燃焼の継続ダメージ（tick）も対象</b>）。その代わり発動中は<b>受ける回復量が35%減少</b>する（自動回復・キル回復の両方）。効果は13秒で切れ、倒されても終了する。<b>重ねがけは不可</b>（発動中に押しても延長・再発動しない）。HPは残り1未満にはならない。後硬直は<b>完全硬直</b>。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p>'+mvSpec(mvS('ダメージ','なし（自己強化）')+mvS('発生','—')+mvS('全体','0.50秒')+mvS('後硬直','0.32秒（完全硬直）')+mvS('コスト','現在HPの30％')+mvS('効果時間','13秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム2.5秒</span><p>翼をはためかせて<b>その場で真上へ vy -1020 で即座に上昇</b>し、<b>2段ジャンプが回復</b>する。復帰・回避・空中コンボの起点に。地上・空中どちらでも出せる。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','—')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('上昇','vy -1020')+mvS('再使用','2.5秒'))+'</div></div>'
++'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・装填2発・再使用0.8秒</span><p>炎の玉を<b>投射速度520・放物線</b>で投げる。<b>装填数は2発</b>で、<b>8秒ごとに1発ずつ装填</b>される。地面・台に着弾するとその場に<b>設置型の火種</b>として約8秒残り、<b>半径92以内</b>の相手を<b>燃焼1.1秒</b>で燃やし続ける。直撃した相手は<b>燃焼2.5秒</b>。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','直撃24')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.51秒')+mvS('弾速','520')+mvS('再使用','0.8秒')+mvS('装填数','2（8秒ごとに1発装填）')+mvS('追加効果','燃焼2.5秒／火種 約8秒・半径92'))+'</div></div>'
++'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、正面の広範囲に炎を放射し続ける（<b>約1.75秒・0.16秒間隔</b>）。当たっている間ずっと<b>1ヒット9ダメージ＋KB210</b>を与え、<b>放射終了時、当てていた時間0.25秒ごとに0.5秒の燃焼</b>を付与する。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','9／tick')+mvS('KB','210')+mvS('発生','即時')+mvS('全体','1.8秒')+mvS('後硬直','約0.22秒（放射後）')+mvS('判定','前方6〜230')+mvS('追加効果','放射後：当てた時間0.25秒ごとに燃焼0.5秒'))+'</div></div>'
++'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','980')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
+
 var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>ウツボカズラの見た目をした木の精霊。<b>毒やHP吸収を使ってデバフをばらまいて戦うデバッファー</b>。HPは250。地上390・空中430と<b>空中寄りの機動力</b>で、ダッシュは1200と速い。その代わり<b>ふっとばされやすさ1.08倍</b>、<b>ウルトゲージの溜まり×0.88</b>、<b>落下速度+11%</b>という癖のあるステータス。<b>毒</b>にかかった相手は<b>0.2秒ごとに2ダメージ</b>を受け続ける（ノックバック・ヒットストゥンなし）。</p>'
 +mvSpec(mvS('HP','250')+mvS('地上速度','390')+mvS('空中速度','430')+mvS('受けKB','×1.08（吹っ飛びやすい）')+mvS('ダッシュ','1200')+mvS('ウルト溜まり','遅め（約0.59倍）')+mvS('落下速度','+11%'))
 +mvLegend
@@ -1238,7 +1253,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:3)),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1248,7 +1263,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:3));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1815,7 +1830,7 @@ $("lobbyLeaveBtn").onclick=function(){
      every screen at once. The server is the only place an attack can
      start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -3259,7 +3274,7 @@ function tryDash(f,dir){
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
  f.jBoostT=0; /* a dash cancels a pending first-jump height decision: the burst holds vy at 0, so no boost may fire after it */
- f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:(f.char==="smiley"?((f.awakenT||0)>0?1.1:2.2):DASH_CD));f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec). SMILEY dash CD 2.2s (v102 spec); TRAVIS keeps the shared 2.4s */
+ f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:(f.char==="sara"?2.2:(f.char==="smiley"?((f.awakenT||0)>0?1.1:2.2):DASH_CD)));f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec). SMILEY dash CD 2.2s (v102 spec); SARA dash CD 2.4s -> 2.2s (user spec); TRAVIS keeps the shared 2.4s */
  if(!f.onGround)f.airDashed=true;
  spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnCharBurst(f.char,f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5);beep(f.isPlayer?880:440,.06,"sawtooth",.03);
  return true;
@@ -3802,7 +3817,7 @@ var LAND_LAG={
  warden:{airclaw:0.33,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18},
  kojiro:{airslash:0.2,airheavy:0.3,taildrop:0.30,diveclaw:0.44,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.26 -> 0.2, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{airclaw:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
- sara:{sspin:0.30,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25},
+ sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
  orchid:{ohook:0.28,odive:0.25,oshot:0.24,otackle:0.25,jkcombo:0.25},
  travis:{airclaw:0.24,diveclaw:0.30,taildrop:0.34,jkcombo:0.25}, /* TRAVIS (v102 spec): エアスピンマイク (airclaw) 0.24 / ダイブマイク (diveclaw) 0.30 / メテオマイク (taildrop) 0.34 / マイク&パンチ (jkcombo) 0.25 — the existing jkcombo landing lag */
  smiley:{sairj:0.18,diveclaw:0.38,taildrop:0.30,jkcombo:0.18} /* SMILEY (v102 spec): エアスラッシュ (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / ダイブスタブ (taildrop) 0.30 / 連続斬り (jkcombo) 0.18 */
@@ -3817,10 +3832,10 @@ function applyLandLag(f,wasAir){
 function startSaraAttack(f,type,foe){
  /* SARA — dragon girl (user spec). Midweight, fastest feet on the ground.
     Her kit is built around the 4-stage J rush, flame DoT (burn), a
-    self-buff paid for in HP (モードカオス: -1/3 current HP, all damage
-    +30% incl. burn ticks for 12s, healing received -35% while active,
+    self-buff paid for in HP (モードカオス: -30% current HP, all damage
+    +30% incl. burn ticks for 13s, healing received -35% while active,
     no stacking; applied centrally in applyHit while f.chaos is on), a placed fire
-    orb (ファイアジャヴェリン, CD 4.2s) and a no-knockback flame jet as
+    orb (ファイアジャヴェリン, 装填2発・再使用0.8秒) and a no-knockback flame jet as
     her L (火炎放射). 地上上+J was left "考え中" in the spec, so it is a
     provisional rising upper for now (ライジングフレア). */
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
@@ -3829,7 +3844,7 @@ function startSaraAttack(f,type,foe){
    /* フレイムテイル・コンボ: claw into a spinning tail — 2 hits */
    f.state="jkcombo";f.stateT=0.5;f.attackCd=0.66;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*150;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,80,60,13,360,f.face,-0.3);
+   meleeHit(f,foe,80,60,13,360,f.face,-0.3,0,false,2.0); /* フレイムテイル・コンボ 1段目: 燃焼2秒 (user spec) */
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#ff8f5c",200);beep(700,.06,"square",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
@@ -3837,7 +3852,7 @@ function startSaraAttack(f,type,foe){
         (the shared dive-landing shockwave fires via diveArmed) */
      f.state="sdive";f.stateT=0.34;f.attackCd=0.42;f.comboWin=0;f.diveArmed=true;
      f.vx=f.face*120;f.vy=Math.max(f.vy,760);f.fastfall=false;
-     meleeHit(f,foe,70,62,15,480,f.face,0.85);
+     meleeHit(f,foe,70,62,18,660,f.face,0.85);
      spawnParticles(f.x+f.face*10,f.y+f.h*0.6,9,"#fb923c",180);beep(300,.09,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
      /* 空中上J: フレイムブレス — upward cone breath (buffed spec).
@@ -3861,7 +3876,7 @@ function startSaraAttack(f,type,foe){
         continuous ticks both sides (stepFighter, state "sflare"),
         slow startup, her own movement is heavily slowed (RMAX cut in
         stepFighter) and the recovery afterwards is long */
-     f.state="sflare";f.stateT=1.05;f.attackCd=1.35;f.comboWin=0;f.flareTick=0.38;
+     f.state="sflare";f.stateT=1.05;f.attackCd=1.30;f.comboWin=0;f.flareTick=0.32; /* ハンドフレア (user spec): 発生 0.38 -> 0.32秒, 後硬直(終了後) 0.37 -> 0.32秒（完全硬直 — stepFighter の sflare 終了フックで recLockT を立てる） */
      spawnParticles(f.x,f.y+f.h*0.45,10,"#ff8f5c",130);beep(160,.18,"sawtooth",.05);
    }else if(upHeld){
      /* 地上上J: ライジングフレア (PROVISIONAL — the spec left this slot
@@ -3874,9 +3889,9 @@ function startSaraAttack(f,type,foe){
    }else if(f.dashT>0||Math.abs(f.vx)>330){
      /* ダッシュJ: ホーンチャージ — horn-first charge, mid damage,
         real knockback */
-     f.state="shorn";f.stateT=0.36;f.attackCd=0.52;f.comboWin=0;f.dashT=0;
+     f.state="shorn";f.stateT=0.36;f.attackCd=0.59;f.comboWin=0;f.dashT=0;
      f.vx=f.face*620;
-     meleeHit(f,foe,88,58,16,600,f.face,-0.34);
+     meleeHit(f,foe,94,76,16,720,f.face,-0.34); /* ホーンチャージ (user spec): KB 600 -> 720, 判定 88x58 -> 94x76, 後硬直 0.59 -> 0.66秒 */
      spawnParticles(f.x+f.face*30,f.y+f.h*0.4,11,"#ff8f5c",200);beep(480,.07,"sawtooth",.05);
    }else{
      /* ラッシュ: the 4-stage J chain (user spec). Every stage carries
@@ -3887,62 +3902,62 @@ function startSaraAttack(f,type,foe){
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%4:0;
      if(f.comboStep===0){
        f.comboWin=0.85;
-       f.state="sclaw1";f.stateT=0.2;f.attackCd=0.27;
-       meleeHit(f,foe,62,52,8,290,f.face,-0.2);
+       f.state="sclaw1";f.stateT=0.2;f.attackCd=0.15;
+       meleeHit(f,foe,62,52,8,250,f.face,-0.2,0.26); /* 爪ひっかき (user spec): KB 290 -> 250, 後硬直 0.34 -> 0.22秒, 被弾硬直 0.26秒 */
        spawnParticles(f.x+f.face*22,f.y+f.h*0.42,6,"#ff8f5c",150);beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.85;
-       f.state="sbreath";f.stateT=0.3;f.attackCd=0.34;
-       meleeHit(f,foe,64,54,5,270,f.face,-0.18);
-       meleeHit(f,foe,78,54,5,270,f.face,-0.18); /* second puff reaches a touch further: the 2-hit breath */
+       f.state="sbreath";f.stateT=0.3;f.attackCd=0.15;
+       meleeHit(f,foe,64,54,5,180,f.face,-0.18,0.3,false,2.0); /* 火の粉ブレス (user spec): KB 270 -> 180, 後硬直 0.41 -> 0.22秒, 被弾硬直 0.3秒, 燃焼 2.0秒 */
+       meleeHit(f,foe,78,54,5,180,f.face,-0.18,0.3,false,2.0); /* second puff reaches a touch further: the 2-hit breath */
        spawnParticles(f.x+f.face*30,f.y+f.h*0.3,12,"#fb923c",170);spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.32,86,0.22,0,f.face,0.7);beep(500,.09,"sawtooth",.045);
      }else if(f.comboStep===2){
        f.comboWin=0.85;
-       f.state="supper";f.stateT=0.28;f.attackCd=0.36;
-       meleeHit(f,foe,64,80,9,340,f.face,-1.15);
+       f.state="supper";f.stateT=0.28;f.attackCd=0.21;
+       meleeHit(f,foe,80,94,10,300,f.face,-1.15,0.3); /* アッパー (user spec): ダメージ 9 -> 10, KB 340 -> 300, 後硬直 0.43 -> 0.28秒, 判定 64x80 -> 80x94, 被弾硬直 0.3秒 */
        spawnParticles(f.x+f.face*14,f.y+f.h*0.3,8,"#ff8f5c",160);beep(760,.06,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0; /* chain is spent — the next J restarts at stage 1 */
        f.state="stail";f.stateT=0.42;f.attackCd=0.6;
        f.vx+=f.face*120;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,102,72,20,640,f.face,-0.42);
-       meleeHit(f,foe,70,60,10,380,-f.face,-0.2); /* the tail sweeps behind her too */
+       meleeHit(f,foe,118,76,22,720,f.face,-0.42); /* 尻尾フィニッシュ (user spec): 前ダメージ 20 -> 22, 前KB 640 -> 720, 判定 前102x72 -> 118x76 */
+       meleeHit(f,foe,70,60,11,380,-f.face,-0.2); /* 後ダメージ 10 -> 11 (KB 380 据え置き) */ /* the tail sweeps behind her too */
        shake=Math.max(shake,4);
        spawnParticles(f.x+f.face*30,f.y+f.h*0.5,16,"#fb923c",240);spawnRing(f.x+f.face*30,f.y+f.h*0.5,"#fb923c",50);beep(240,.11,"sawtooth",.06);
      }
    }
  }else if(type==="k"){
    if(downHeld&&f.onGround){
-     /* 下K: モードカオス — burns 1/3 of her CURRENT HP (never below 1)
+     /* 下K: モードカオス — burns 30% of her CURRENT HP (never below 1)
         and raises ALL of her damage by 30% (burn ticks included, since
-        they also route through applyHit) for 12 SECONDS only (chaosT,
+        they also route through applyHit) for 13 SECONDS only (chaosT,
         ticked down in stepFighter; dying also ends it). While it lasts,
         ALL healing she receives is cut by 35% (regen in stepFighter and
         the kill heal in killFighter). No stacking / no refresh: pressing
         it again while active does nothing. The multiplier itself is
         applied in applyHit (att.chaos). */
      if(f.chaos){beep(200,.07);return}
-     f.chaos=true;f.chaosT=12;
-     var cut=Math.floor(f.hp/3);if(f.hp-cut<1)cut=f.hp-1;
+     f.chaos=true;f.chaosT=13;
+     var cut=Math.floor(f.hp*0.3); /* コスト: 現在HPの1/3 -> 30% (user spec) */if(f.hp-cut<1)cut=f.hp-1;
      f.hp-=cut;if(f.hpGhost>f.hp)f.hpGhost=f.hp;f.lastHurt=time;f.flash=0.22;
-     f.state="schaos";f.stateT=0.5;f.attackCd=0.6;f.comboWin=0;
-     floaters.push({x:f.x,y:f.y-32,txt:"モードカオス！ 与ダメ+30%（12秒）",life:1.15,col:"#fca5a5"});
+     f.state="schaos";f.stateT=0.5;f.attackCd=0.25;f.comboWin=0;applyFullLock(f); /* 後硬直 0.67 -> 0.32秒（完全硬直） (user spec) */
+     floaters.push({x:f.x,y:f.y-32,txt:"モードカオス！ 与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"});
      floaters.push({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
      spawnParticles(f.x,f.y+f.h*0.45,30,"#ef4444",250);spawnParticles(f.x,f.y+f.h*0.45,18,"#fb923c",210);spawnRing(f.x,f.y+f.h*0.45,"#ef4444",64);
      shake=Math.max(shake,5);beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
    }else if(upHeld){
-     /* 上K: 飛翔 — instantly rises straight up on her wings at vy -500
+     /* 上K: 飛翔 — instantly rises straight up on her wings at vy -1020
         (nerfed from -980) and refunds the double jump (jumps=1).
-        flyCd is 5.0s (nerfed from 2.5s) */
+        flyCd is 2.5s (buffed from 5.0s) */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=5.0;f.state="sfly";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
-     f.vy=-500;f.onGround=false;f.fastfall=false;f.jumps=1;
+     f.flyCd=2.5;f.state="sfly";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
+     f.vy=-1020;f.onGround=false;f.fastfall=false;f.jumps=1; /* 飛翔 (user spec): 上昇 vy -500 -> -1020 */
      spawnParticles(f.x,f.y+f.h,16,"#ff8f5c",190);spawnParticles(f.x,f.y+f.h-6,8,"#fca5a5",140);beep(980,.14,"sine",.05);setTimeout(function(){beep(1400,.12,"sine",.04)},60);
    }else if(downHeld&&!f.onGround){
      /* air down+K falls back to the dive fist, same as air down+J */
      f.state="sdive";f.stateT=0.34;f.attackCd=0.42;f.comboWin=0;f.diveArmed=true;
      f.vx=f.face*120;f.vy=Math.max(f.vy,760);f.fastfall=false;
-     meleeHit(f,foe,70,62,15,480,f.face,0.85);beep(300,.09,"sawtooth",.05);
+     meleeHit(f,foe,70,62,18,660,f.face,0.85);beep(300,.09,"sawtooth",.05);
    }else{
      /* K: フレイムノヴァ — a slow, heavy flaming fist. The hit itself
         is DELAYED (lands in stepFighter when stateT runs down to 0.26),
@@ -3954,21 +3969,23 @@ function startSaraAttack(f,type,foe){
    }
  }else if(type==="l"){
    /* U: ファイアジャヴェリン — throws a fire orb at speed 520 in an
-      arc (CD 4.2s, specCd). A direct hit deals 24 damage, KB 300 and
-      burn 2.0s; on landing on ground/a platform it becomes a placed
-      fire orb (fireOrbs) that stays ~6s and keeps foes within radius
-      64 burning (burn 1.1s). Conversion happens in the projectile step. */
+      arc (装填2発・再使用0.8秒, specCd). A direct hit deals 24 damage, KB 720 and
+      burn 2.5s; on landing on ground/a platform it becomes a placed
+      fire orb (fireOrbs) that stays ~8s and keeps foes within radius
+      92 burning (burn 1.1s). Conversion happens in the projectile step. */
    if(f.specCd>0){beep(200,.07);return}
-   f.specCd=4.2;f.state="sjavelin";f.stateT=0.3;f.attackCd=0.44;f.comboWin=0;
+   if(f.ammo<=0){beep(200,.07);return}
+ f.ammo--;if(f.javT<=0)f.javT=8;f.specCd=0.8;f.state="sjavelin";f.stateT=0.3;f.attackCd=0.44;f.comboWin=0; /* ファイアジャヴェリン (user spec): 装填数2・8秒ごとに1発装填・再使用 4.2 -> 0.8秒 */
    projectiles.push({x:f.x+f.face*38,y:f.y+f.h*0.4,vx:f.face*520,vy:-190,owner:f,life:2.6,kind:"javelin"});
    spawnParticles(f.x+f.face*26,f.y+f.h*0.4,8,"#fb923c",160);beep(840,.09,"sine",.05);
  }else if(type==="ult"){
    /* L: 火炎放射 — her ult slot: consumes the full meter to 0 and
-      breathes a wide flame jet forward for ~1.86s (stepFighter,
+      breathes a wide flame jet forward for ~1.75s (stepFighter,
       flameMode 1): ticks every 0.16s for 9 damage over forward range
-      6-215. Heavy continuous damage + burn, but NO knockback (noKb) */
-   if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.91;f.attackCd=2.01;f.comboWin=0;
-   f.flameDelay=0;f.flameT=1.86;f.flameMode=1;f.flameTick=0;
+      6-230. Ticks now knock back (KB 210), and burn is settled AFTER the jet ends: 0.5s of burn per full 0.25s a foe stayed in the flame (flameExp, user spec) */
+   if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.8;f.attackCd=1.90;f.comboWin=0; /* 火炎放射 (user spec): 全体 1.91 -> 1.8秒 */
+   f.flameDelay=0;f.flameT=1.75;f.flameMode=1;f.flameTick=0;
+ for(var ufi=0;ufi<fighters.length;ufi++){fighters[ufi].flameExp=0;fighters[ufi].flameExpBy=null} /* fresh exposure tally for this jet */
    floaters.push({x:f.x,y:f.y-30,txt:"火炎放射！",life:1.0,col:"#fdba74"});
    spawnParticles(f.x+f.face*20,f.y+f.h*0.4,20,"#fb923c",230);
    beep(110,.4,"sawtooth",.08);setTimeout(function(){beep(240,.3,"sawtooth",.06)},80);
@@ -4603,13 +4620,13 @@ function startAttack(f,type){
  }
  addRecovery(f);applyLandLag(f,wasAir);
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce){
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn){
  var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead)continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce)){hitAny=true;if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.3;t.bleedT=Math.max(t.bleedT||0,1.5);t.bleedBy=att}}}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce)){hitAny=true;if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.3;t.bleedT=Math.max(t.bleedT||0,1.5);t.bleedBy=att}}}
  }
  return hitAny;
 }
@@ -4619,7 +4636,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce){
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.6:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:1)))))/1.5; /* TRAVIS ult gain is the standard x1.0 (the plain default); SMILEY x1.1 (v102 spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x1.60 (user spec). ORCHID: x0.88 (user spec) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?1.1:1)))))/1.5; /* TRAVIS ult gain is the standard x1.0 (the plain default); SMILEY x1.1 (v102 spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -4637,7 +4654,7 @@ function recordDmg(att,def,amount){
 }
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.dead||def.invuln>0)return false;
- /* SARA モードカオス: while her chaos mode is on (12s max), EVERY
+ /* SARA モードカオス: while her chaos mode is on (13s max), EVERY
     damage she deals is +30% (paid for with 1/3 of her HP at
     activation) — burn ticks included, since the burn DoT in
     stepFighter also deals its damage through this function */
@@ -4764,7 +4781,7 @@ function aiControl(f,foe){
    if(f.char!=="kojiro"&&f.char!=="axe"&&f.char!=="sara"&&f.char!=="orchid"&&f.char!=="travis"&&f.char!=="smiley"&&f.attackCd<=0&&adx>240&&adx<760&&rnd()<0.5){f.state="shard";f.stateT=0.24;f.attackCd=0.85;projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*528,vy:-8,owner:f,life:1.3,kind:f.char==="warden"?"bolt":"shard"});beep(500,.08,"sine",.03)}
    else if((f.char==="travis"||f.char==="smiley")&&f.attackCd<=0&&adx>240&&adx<760&&rnd()<0.5)startAttack(f,"l"); /* CPU TRAVIS / SMILEY: like the other projectile fighters they shoot their U at range and brawl up close (v102 spec) */
    else if(f.char==="axe"&&f.attackCd<=0&&f.specCd<=0&&adx>70&&adx<190&&rnd()<0.6)startAttack(f,"l");
-   else if(f.char==="sara"&&f.attackCd<=0&&f.specCd<=0&&adx>200&&adx<640&&rnd()<0.5)startAttack(f,"l"); /* CPU SARA lobs her fire javelin while closing in (it lands as a placed orb) */
+   else if(f.char==="sara"&&f.attackCd<=0&&f.specCd<=0&&f.ammo>0&&adx>200&&adx<640&&rnd()<0.5)startAttack(f,"l"); /* CPU SARA lobs her fire javelin while closing in (it lands as a placed orb) */
    else if(f.char==="orchid"&&f.attackCd<=0&&adx>150&&adx<420&&rnd()<0.45)startAttack(f,"k"); /* CPU ORCHID pecks with her poison shot at mid range (poison + slow) */
  }else{
    f.face=dx>0?1:-1;
@@ -4786,9 +4803,10 @@ function stepFighter(f,dt,input,foe){
  f.specCd=Math.max(0,(f.specCd||0)-dt);
  f.mistCd=Math.max(0,(f.mistCd||0)-dt); /* ORCHID 毒霧 cooldown (separate from her U) */
  f.flyCd=Math.max(0,(f.flyCd||0)-dt); /* SARA 飛翔 cooldown */
+ if(f.char==="sara"&&f.ammo<2){f.javT=(f.javT||0)-dt;if(f.javT<=0){f.ammo++;f.javT=f.ammo<2?8:0}} /* SARA ファイアジャヴェリン装填: 8秒ごとに1発回復（最大2発） */
  f.slowT=Math.max(0,(f.slowT||0)-dt); /* ORCHID ポイズンショット slow: movement x0.88 while it lasts */
  f.buffT=Math.max(0,(f.buffT||0)-dt); /* ORCHID 栄養補給 speed buff: movement x1.07 for 8s */
- /* SARA モードカオス duration: 12s max — when chaosT runs out the mode
+ /* SARA モードカオス duration: 13s max — when chaosT runs out the mode
     ends on the spot (it also ends on death: killFighter / resetFighter).
     No stacking: startSaraAttack refuses to re-activate while f.chaos */
  if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;floaters.push({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
@@ -4796,6 +4814,7 @@ function stepFighter(f,dt,input,foe){
     (drawCharSprite swaps to the awakened sheet) until the timer runs
     out or he dies (killFighter / resetFighter clear awakenT) */
  if(f.char==="smiley"&&(f.awakenT||0)>0){f.awakenT=Math.max(0,f.awakenT-dt);if(f.awakenT<=0)floaters.push({x:f.x,y:f.y-30,txt:"覚醒終了",life:.9,col:"#fca5a5"});else if(Math.random()<0.35)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*(0.25+Math.random()*0.5),1,Math.random()<0.6?"#dc2626":"#7f1d1d",60)}
+ if(f.char==="sara"&&f.state==="sflare"&&f.stateT===0&&f.attackCd>0)f.recLockT=Math.max(f.recLockT||0,f.attackCd); /* ハンドフレア 後硬直（完全硬直）: 技が終わった後の残り硬直の間は移動・ジャンプ不可 */
  if(f.stateT===0&&f.state!=="idle")f.state="idle";
  if(f.reloadT>0){f.reloadT-=dt;if(f.reloadT<=0)f.ammo=(f.char==="warden"?4:3)}
  /* hp ghost drains toward real hp; regen when out of combat */
@@ -4815,7 +4834,7 @@ function stepFighter(f,dt,input,foe){
  if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,80,70,airB?22:24,airB?640:600,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
 if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /* AXE メテオドロップ: 空中で静止 — he hangs in the air until the hit fires at 0.34s (threshold below), then plunges */
  if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:(f.char==="axe"?0.24:(f.char==="smiley"?0.30:0.28)))){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else if(f.char==="travis"){meleeHit(f,foe,100,80,22,660,f.face,1.05);meleeHit(f,foe,100,80,22,660,-f.face,1.05)} /* TRAVIS メテオマイク (v102 spec): 22 dmg / KB 660 on BOTH sides, box 100x80 — fires 0.12s after the press like the shared timing */else if(f.char==="smiley"){meleeHit(f,foe,84,76,20,640,f.face,1.05)} /* SMILEY ダイブスタブ (v102 spec): 20 dmg / KB 640, box 84x76 — fires 0.12s after the press (stateT 0.42 -> threshold 0.30) */else if(f.char==="axe"){f.meteorArm=true;f.vy=Math.max(f.vy,880);spawnParticles(f.x,f.y+f.h*0.8,12,"#fdba74",210)} /* AXE メテオドロップ (okaki rework): NO hit in mid-air any more — the plunge just arms the slam (meteorArm) and the damage (左右102x72・32 dmg / KB 700) lands on TOUCHDOWN in the landing block, butt-first */else{meleeHit(f,foe,76,72,26,700,f.face,1.05)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?8:(f.char==="smiley"?7:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?400:(f.char==="smiley"?380:560))))),f.face,-0.52 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (v102 spec): 8 dmg / KB 400, box 78x68. SMILEY 連続斬り 2段目 (v102 spec): 7 dmg / KB 380, box 74x60 */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?8:(f.char==="smiley"?7:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?400:(f.char==="smiley"?380:(f.char==="sara"?820:560)))))),f.face,-0.52,0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (v102 spec): 8 dmg / KB 400, box 78x68. SMILEY 連続斬り 2段目 (v102 spec): 7 dmg / KB 380, box 74x60. SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */beep(420,.1,"sawtooth",.05)}
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
  if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,148,58,7,320,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)}
@@ -4973,28 +4992,27 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    }
  }
  /* SARA delayed heavy hit: フレイムノヴァ (K) lands partway through its
-    slow wind-up, not on the press. Spec: damage 50, KB 700, range 96x74,
+    slow wind-up, not on the press. Spec: damage 50, KB 920, range 108x88, burn 3.0s,
     CD 0.72s, and a LONG delay — stateT starts at 0.78 and the hit fires
     at 0.26, so it connects ~0.52s after the press */
- if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;var nvHit=meleeHit(f,foe,96,74,50,700,f.face,-0.42);spawnParticles(f.x+f.face*34,f.y+f.h*0.45,16,"#fb923c",240);spawnFxBurst(FXIMG.fire,f.x+f.face*34,f.y+f.h*0.45,150,0.3,0,f.face,0.85);if(nvHit){shake=Math.max(shake,5);spawnRing(f.x+f.face*36,f.y+f.h*0.45,"#fb923c",52)}beep(210,.12,"sawtooth",.06)}
+ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;var nvHit=meleeHit(f,foe,108,88,50,920,f.face,-0.42,0,false,3.0);spawnParticles(f.x+f.face*34,f.y+f.h*0.45,16,"#fb923c",240);spawnFxBurst(FXIMG.fire,f.x+f.face*34,f.y+f.h*0.45,150,0.3,0,f.face,0.85);if(nvHit){shake=Math.max(shake,5);spawnRing(f.x+f.face*36,f.y+f.h*0.45,"#fb923c",52)}beep(210,.12,"sawtooth",.06)}
  /* SARA air J (スピンフレイム): while the spin state lasts the fall is
     nearly cancelled and the spin ticks out up to 5 small hits, both
     sides, ~0.2s stun each (kb-sized like her chain openers) */
  if(f.char==="sara"&&f.state==="sspin"){
    if(f.vy>30)f.vy=30;
    f.spinTick+=dt;
-   if(f.spinTick>=0.1&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,66,64,4,280,f.face,-0.25);meleeHit(f,foe,66,64,4,240,-f.face,-0.2);spawnParticles(f.x,f.y+f.h*0.45,6,"#fb923c",180)}
+   if(f.spinTick>=0.1&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,76,74,4,280,f.face,-0.25,0.3);meleeHit(f,foe,76,74,4,280,-f.face,-0.2,0.3); /* スピンフレイム (user spec): 判定 66x64 -> 76x74, 後KB 240 -> 280, 被弾硬直 0.3秒 */spawnParticles(f.x,f.y+f.h*0.45,6,"#fb923c",180)}
  }
- /* SARA ground down+J (ハンドフレア): after a slow wind-up (~0.38s),
+ /* SARA ground down+J (ハンドフレア): after a wind-up (~0.32s),
     flames jet from both hands and tick damage on BOTH sides; anyone
     caught also starts burning */
  if(f.char==="sara"&&f.state==="sflare"){
    f.flareTick-=dt;
    if(Math.random()<0.6){spawnParticles(f.x+f.face*30,f.y+f.h*0.45,1,"#fb923c",150);spawnParticles(f.x-f.face*30,f.y+f.h*0.45,1,"#fb923c",150)}
    if(f.flareTick<=0){f.flareTick=0.22;
-     var flHit=meleeHit(f,foe,86,56,5,110,f.face,-0.05);var flHit2=meleeHit(f,foe,86,56,5,110,-f.face,-0.05);
-     if(flHit||flHit2){for(var fi3=0;fi3<fighters.length;fi3++){var ft=fighters[fi3];if(ft!==f&&!ft.dead&&Math.abs(ft.x-f.x)<96&&Math.abs((ft.y+ft.h/2)-(f.y+f.h*0.45))<62){ft.burnT=Math.max(ft.burnT||0,0.7);ft.burnBy=f}}}
-     spawnParticles(f.x+f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);spawnParticles(f.x-f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);
+     var flHit=meleeHit(f,foe,112,88,5,140,f.face,-0.05,0,false,2.0);var flHit2=meleeHit(f,foe,112,88,5,140,-f.face,-0.05,0,false,2.0); /* ハンドフレア (user spec): KB 110 -> 140, 判定 86x56 -> 112x88, 燃焼 2.0秒 */
+         spawnParticles(f.x+f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);spawnParticles(f.x-f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);
    }
  }
  /* ORCHID ground down+J (スパイラルポイズン): after the 0.38s wind-up
@@ -5043,22 +5061,22 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.flameTick<=0){f.flameTick=0.16;
        for(var fli=0;fli<fighters.length;fli++){var flt=fighters[fli];if(flt===f||flt.dead||flt.invuln>0)continue;
          var fdx=(flt.x-f.x)*f.face,fdy=(flt.y+flt.h/2)-(f.y+f.h*0.45);
-         if(f.flameMode===1){if(fdx>6&&fdx<215&&Math.abs(fdy)<80){applyHit(f,flt,9,0,f.face,0,true,flt.x,flt.y+flt.h*0.45,true);flt.burnT=Math.max(flt.burnT||0,1.0);flt.burnBy=f}}
+         if(f.flameMode===1){if(fdx>6&&fdx<230&&Math.abs(fdy)<80){applyHit(f,flt,9,210,f.face,-0.15,true,flt.x,flt.y+flt.h*0.45,false);flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}} /* 火炎放射 (user spec): KB なし -> 210, 判定 6〜215 -> 6〜230, 燃焼は放射後に滞在時間で精算 */
          else if(f.flameMode===3){if(fdx>6&&fdx<670&&Math.abs(fdy)<95)applyHit(f,flt,9,0,f.face,0,true,flt.x,flt.y+flt.h*0.45,true)} /* サンフラワー: huge forward beam, damage only — no knockback, no burn */
          else{var udx=Math.abs(flt.x-f.x),udy=f.y-flt.y;if(udx<105&&udy>4&&udy<215){applyHit(f,flt,8,0,f.face,0,false,flt.x,flt.y+flt.h*0.5,true);flt.burnT=Math.max(flt.burnT||0,2.0);flt.burnBy=f}}
        }
      }
-     if(f.flameT<=0){f.flameT=0;f.flameMode=0}
+     if(f.flameT<=0){if(f.flameMode===1){for(var fei=0;fei<fighters.length;fei++){var fet=fighters[fei];if(fet.flameExpBy===f&&(fet.flameExp||0)>0){var fbd=Math.floor(fet.flameExp/0.25)*0.5;if(fbd>0&&!fet.dead){fet.burnT=Math.max(fet.burnT||0,fbd);fet.burnBy=f}fet.flameExp=0;fet.flameExpBy=null}}}f.flameT=0;f.flameMode=0} /* 火炎放射の燃焼精算: 当てていた時間0.25秒ごとに0.5秒の燃焼を放射後に付与 */
    }
  }
  /* BURN (SARA's fire DoT): while burnT lasts, the victim takes a small
-    damage-only tick every 0.5s (no knockback, no hitstun) credited to
+    3-damage tick with KB 110 every 0.5s (user spec) credited to
     whoever lit them. Set by the javelin orb, ハンドフレア, 火炎放射,
     空中上J breath and direct javelin hits. */
  if(f.burnT>0){
    f.burnT-=dt;f.burnTick-=dt;
    if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*26,f.y+f.h*0.45,1,Math.random()<0.5?"#fb923c":"#ef4444",80);
-   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0)applyHit(bb,f,4,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true)}
+   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0)applyHit(bb,f,3,110,bb.x<=f.x?1:-1,-0.12,false,f.x,f.y+f.h*0.5,false) /* 燃焼 (user spec): 0.5秒ごとに 4 -> 3ダメージ + KB 110 */}
  }
  /* POISON (ORCHID's toxin DoT): while poisonT lasts, the victim takes
     2 damage every 0.2s — NO knockback, NO hitstun (spec). The tick
@@ -5312,7 +5330,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        meleeHit(f,foe,dvRg,dvH,10,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,10,430,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
        meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
-     }else if(f.char==="axe"){meleeHit(f,foe,dvRg,dvH,24,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,18,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fdba74",230);spawnParticles(f.x,f.y+f.h-6,10,"#a8a29e",200);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",42)} /* AXE 下斧 landing (user spec): shockwave front 24 / back 18 in the generic 96x58 dive box */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
+     }else if(f.char==="axe"){meleeHit(f,foe,dvRg,dvH,24,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,18,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fdba74",230);spawnParticles(f.x,f.y+f.h-6,10,"#a8a29e",200);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",42)} /* AXE 下斧 landing (user spec): shockwave front 24 / back 18 in the generic 96x58 dive box */else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
  /* BECAME AIRBORNE WITHOUT JUMPING (v93): this step ended airborne after
@@ -6114,7 +6132,7 @@ function draw(){
  drawBG();
  icePatches.forEach(function(p){ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,64*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
+ fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,92*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
     planted a mine can see it (the viewer is P1), so a foe's mines are
     skipped entirely here: no body, no blinking light, no range mark.
@@ -6243,7 +6261,7 @@ function syncHUD(){
  var lbHtml="";sorted.forEach(function(f,ri){lbHtml+='<div class="lbRow"><span>'+(ri+1)+'. <b style="color:'+FIGHTER_COLORS[fighters.indexOf(f)%FIGHTER_COLORS.length]+'">'+cname(f.char)+(f.isPlayer?" (YOU)":"")+'</b></span><b>'+f.score+'</b></div>'});
  var lbEl=$("lbRows");if(lbEl)lbEl.innerHTML=lbHtml;
  $("scoreText").textContent=P1.score;
- $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
+ $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
  $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
@@ -6257,7 +6275,7 @@ function syncHUD(){
  var chainTxt=P1.char==="warden"?"BATON":(P1.char==="kojiro"?"KEN":(P1.char==="axe"?"AXE":(P1.char==="sara"?"RUSH":(P1.char==="orchid"?"VINE":(P1.char==="travis"?"MIC":(P1.char==="smiley"?"KNIFE":"CLAW"))))));
  $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"ROCK":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"SHOT":(P1.char==="travis"?"BLOW":(P1.char==="smiley"?"STAB":"TAIL"))))));
- $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
+ $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
  var kbd=$("kbDash");
  if(P1.dashCd>0){$("kbDashCnt").textContent="DASH "+P1.dashCd.toFixed(1);kbd.classList.add("cooling")}
  else{$("kbDashCnt").textContent="DASH";kbd.classList.remove("cooling")}
@@ -6345,20 +6363,20 @@ function loop(ts){
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,220,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 235 -> 220 (user spec) */
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
        else if(pr.kind==="rock"){applyHit(pr.owner,foe,26,660,pr.vx>0?1:-1,-0.32,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#a8a29e",210);spawnParticles(pr.x,pr.y,6,"#78716c",160);shake=Math.max(shake,4)} /* AXE 投岩: 26 dmg / KB 660 (user spec) */
-       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,300,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.0);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin: direct hit damages and ignites */
+       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,720,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.5);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin (user spec): direct hit KB 300 -> 720, burn 2.0 -> 2.5s */
        else if(pr.kind==="blast"){applyHit(pr.owner,foe,12,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y)} /* TRAVIS ソニックブラスト (v102 spec): 12 dmg / KB 300 */
        else if(pr.kind==="gwave"){applyHit(pr.owner,foe,12,380,pr.vx>0?1:-1,-0.1,false,pr.x,pr.y)} /* TRAVIS グラウンドウェーブ (v102 spec): 12 dmg / KB 380 — slow, ground-travelling */
        else if(pr.kind==="knife"){applyHit(pr.owner,foe,10,240,pr.vx>0?1:-1,-0.14,false,pr.x,pr.y)} /* SMILEY スローイングナイフ (v102 spec): 10 dmg / KB 240 — fast (900) and light */
        else if(pr.kind==="sonic"){applyHit(pr.owner,foe,17,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y)} /* TRAVIS ult ワールドツアー (v102 spec): each giant wave = 17 dmg / KB 520, box 150x110 via the hit test above */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,0.85)} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s (movement x0.45) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        return false}
-     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:6,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
+     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
-   /* SARA placed fire orbs: burn for ~6s; foes within radius 64 keep burning (burn 1.1s) */
-   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<64&&Math.abs((of.y+of.h)-ob.y)<64){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+   /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
+   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)particles.push({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
       into its enlarged 160x60 trigger (±80 across / 60 around the feet
       line, up from ±55 / 46), then bursts for 20 damage / KB 560 away
