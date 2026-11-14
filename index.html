@@ -392,6 +392,16 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["17:47"],tag:"修正・調整",title:"TRAVIS シング・タイムの判定を左右210×102に縮小（エフェクトはそのまま）",
+  items:["↓+K シング・タイム：実際に当たる判定を 480×240 → 左右210×102 に縮小しました",
+         "歌のフィールドやスピーカーなどのエフェクトの大きさは今までどおり（480×240のまま）で、見た目は変更していません。フィールドの見た目より実際の判定のほうが小さくなります",
+         "ダメージ5・KB300・最大12ヒット・被弾硬直0.2秒・全体3.6秒・後硬直1.3秒は変更なし",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
+ {date:"2026/11/14",times:["17:42"],tag:"修正・調整",title:"TRAVIS／SMILEYの↑+K上昇技にクールダウンを追加",
+  items:["TRAVIS ↑+K「シングソングジャンプ」にクールダウン（再使用）2.2秒を追加しました。クールダウン中は↑+Kを押しても出ません（他の数値は変更なし）",
+         "SMILEY ↑+K「チェーンジェイル」にクールダウン（再使用）2.4秒を追加しました。クールダウン中は↑+Kを押しても出ません（他の数値は変更なし）",
+         "技一覧の表示にも「再使用」を追加しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["17:38"],tag:"修正・調整",title:"TRAVIS シング・タイム中はジャンプ・ダッシュ不可に／1ヒットごとに被弾硬直0.2秒を追加",
   items:["↓+K シング・タイム：歌っている間（3.6秒）はジャンプもダッシュもできなくなりました（今までは歌いながらジャンプやダッシュで移動できてしまいました）",
          "↓+K シング・タイム：1ヒットごとに被弾硬直0.2秒が入るようになりました（ダメージ5・KB300・判定480×240・最大12ヒットは変更なし）",
@@ -1103,8 +1113,8 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>K — ボディブロー</b><p>素早い腹パン。拳から金と紫の音波が花のように咲く豪華なエフェクト。出が速く、牽制と割り込みに使える。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','680')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','102×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動した瞬間、<b>空中に0.8秒間静止</b>して音を溜め、それから真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。発射の反動で小さく跳ねる。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','0.8秒（空中で静止）')+mvS('全体','1.35秒')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>判定（480×240）ぴったりの歌のフィールド</b>が展開してダメージ判定の範囲が目に見える。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできない</b>。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','480×240'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできない</b>。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','左右210×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1120')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -1125,7 +1135,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。素早い二連斬りで吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 連続ナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>その場で包丁を振り回し続ける連続斬り。1ヒットごとに相手を0.2秒硬直させるので当て続ければ逃げられず、<b>最後の16ヒット目だけが KB 660 で吹っ飛ばす</b>。全体と後硬直はどちらも<b>完全硬直</b>（移動・ジャンプ不可）で、隙は大きい。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 連続エアナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>空中に留まって振り回す連続ナイフ。性能は地上版と同じで、最後の一撃だけが吹っ飛ばす。空中↓+Kでも出る（旧ダイブスタブは削除）。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>低い足払いが<b>2段技</b>になった。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は1.1秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','1.1秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って10秒間「Berserker」状態になる。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+14%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.9秒になり、近接ヒットで「出血」を付ける（0.4秒ごとに2ダメージ、1.6秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの15%を回復</b>する。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','10秒')+mvS('移動速度','+14%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.9秒')+mvS('出血','2ダメ／0.4秒・1.6秒間')+mvS('回復','与えたダメージの15%')+mvS('無敵','なし'))+'</div></div>'
@@ -4514,10 +4524,10 @@ function startTravisAttack(f,type,foe){
      /* シング・タイム (down+K, NEW — replaces the deleted グラウンド
         ウェーブ): plants his feet and SINGS for 3.6s — the voice
         rolls out on BOTH sides, up to 12 ticks of 5 dmg / KB 300 in
-        a 480x240 box (ticks in stepFighter, state "tsing": first
-        tick at 発生 0.32s, then every 0.27s; widened from 左右210x102,
-        user spec — the drawn song field in drawTravis matches the
-        480x240 box exactly). He is rooted while the state lasts
+        a 左右210x102 box (ticks in stepFighter, state "tsing": first
+        tick at 発生 0.32s, then every 0.27s; hitbox shrunk back from
+        480x240, user spec — the drawn song field in drawTravis stays
+        at its 480x240 EFFECT size, larger than the hitbox). He is rooted while the state lasts
         (vx forced to 0 in stepFighter), and for the whole song he
         can neither jump nor dash (user spec — the stepFighter jump
         gate and tryDash both refuse while state is "tsing"); every
@@ -4536,8 +4546,10 @@ function startTravisAttack(f,type,foe){
         attackCd 1.07 + the 0.07 tail = startup 0.8 + 後硬直 0.34.
         着地硬直 0.34 is marked as airLag when the launch fires in
         stepFighter (and via LAND_LAG for air starts), so it applies
-        however the move was started */
-     f.state="tsingjump";f.stateT=1.14;f.attackCd=1.07;f.comboWin=0;f.hitDone=false;
+        however the move was started. CD 2.2s on the shared flyCd
+        (user spec) */
+     if(f.flyCd>0){beep(200,.07);return}
+     f.flyCd=2.2;f.state="tsingjump";f.stateT=1.14;f.attackCd=1.07;f.comboWin=0;f.hitDone=false;
      f.vy=0;f.vx=0;f.onGround=false;f.fastfall=false;
      spawnParticles(f.x,f.y+f.h*0.4,10,"#c084fc",150);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",30);
      beep(520,.16,"sine",.05);
@@ -4705,8 +4717,10 @@ function startSmileyAttack(f,type,foe){
         straight up at vy -1080. attackCd 0.31 + the 0.07 tail =
         後硬直 0.38. 着地硬直 0.33 is marked as airLag right here
         (he is airborne from this instant) and via LAND_LAG for air
-        starts, so it applies however the move was started */
-     f.state="sjail";f.stateT=0.31;f.attackCd=0.31;f.comboWin=0;
+        starts, so it applies however the move was started.
+        CD 2.4s on the shared flyCd (user spec) */
+     if(f.flyCd>0){beep(200,.07);return}
+     f.flyCd=2.4;f.state="sjail";f.stateT=0.31;f.attackCd=0.31;f.comboWin=0;
      f.vy=-1080;f.onGround=false;f.fastfall=false;f.airLag=Math.max(f.airLag||0,0.33);
      spawnParticles(f.x,f.y+f.h,10,"#fef08a",170);spawnRing(f.x,f.y+f.h*0.6,"#fde047",30);
      beep(980,.07,"square",.045);
@@ -5325,8 +5339,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     3.6s song (vx forced to 0, like AXE's rooted states); the voice
     rolls out on BOTH sides — first tick 0.32s after the press
     (spinTick started at -0.05 in startTravisAttack), then every
-    0.27s, up to 12 ticks of 5 dmg / KB 300 in the 480x240 box
-    (widened from 左右210x102, user spec), and EVERY tick inflicts
+    0.27s, up to 12 ticks of 5 dmg / KB 300 in the 左右210x102 box
+    (hitbox shrunk back from 480x240, user spec — the drawn song
+    field keeps its 480x240 effect size, visual only), and EVERY tick inflicts
     被弾硬直 0.2s on the foe it catches (user spec — the hs
     argument on the tick hits below). For the whole song Travis
     himself can neither JUMP (the jump gate in the movement chain
@@ -5352,7 +5367,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.char==="travis"&&f.state==="tsing"){
    f.vx=0;
    f.spinTick+=dt;
-   if(f.spinTick>=0.27&&f.spinHits<12){f.spinTick=0;f.spinHits++;meleeHit(f,foe,480,240,5,300,f.face,-0.2,0.2);meleeHit(f,foe,480,240,5,300,-f.face,-0.2,0.2); /* 被弾硬直 0.2秒 (user spec): EVERY tick of the song stuns the foe it catches for exactly 0.2s — the hs argument on both side hits, same fixed-stun mechanism as SMILEY's flurry */spawnRing(f.x,f.y+f.h*0.42,"#c084fc",44+f.spinHits*3);spawnParticles(f.x+(Math.random()-0.5)*400,f.y+f.h*0.3,3,"#e9d5ff",120);beep(620+f.spinHits*40,.07,"sine",.04)}
+   if(f.spinTick>=0.27&&f.spinHits<12){f.spinTick=0;f.spinHits++;meleeHit(f,foe,210,102,5,300,f.face,-0.2,0.2);meleeHit(f,foe,210,102,5,300,-f.face,-0.2,0.2); /* 被弾硬直 0.2秒 (user spec): EVERY tick of the song stuns the foe it catches for exactly 0.2s — the hs argument on both side hits, same fixed-stun mechanism as SMILEY's flurry */spawnRing(f.x,f.y+f.h*0.42,"#c084fc",44+f.spinHits*3);spawnParticles(f.x+(Math.random()-0.5)*400,f.y+f.h*0.3,3,"#e9d5ff",120);beep(620+f.spinHits*40,.07,"sine",.04)}
    else if(Math.random()<0.3)spawnParticles(f.x+(Math.random()-0.5)*320,f.y+f.h*0.35,1,"#e9d5ff",90);
  }
  /* TRAVIS ult ワールドツアー: shots 2 and 3 of the giant sound waves
@@ -6339,9 +6354,10 @@ function drawTravis(f){
  else if(f.state==="tsing"){
   /* シング・タイム (見た目変更): a full SONG FIELD — speakers stand
      at BOTH edges of him and a dashed rectangular field boundary,
-     drawn to the exact 480x240 hitbox (±200 x -142..58 in local
+     drawn at the 480x240 EFFECT size (±200 x -142..58 in local
      units = 480 wide x 240 tall in world units, its floor edge on
-     his feet line), shows precisely where the voice hurts. Inside:
+     his feet line) — the field is visual only and stays this size;
+     the actual hitbox inside it is now 左右210x102 (user spec). Inside:
      a sweeping waveform across the whole width, EQ bars dancing
      along the floor, notes drifting through the field */
   ctx.fillStyle="rgba(192,132,252,.08)";ctx.fillRect(-200,-142,400,200);
@@ -6359,7 +6375,7 @@ function drawTravis(f){
   micAt(15,13,-0.55,0.9); /* mic up at his mouth */
   sndRing(8,14,11+Math.sin(time*10)*2,0.8);
   ctx.fillStyle="#e9d5ff";ctx.font="700 13px 'DotGothic16'";ctx.fillText("♪",24+Math.sin(time*3)*3,-6+Math.sin(time*5)*2);ctx.fillText("♫",-30,2+Math.cos(time*4)*2);ctx.fillText("♪",-120,-70+Math.sin(time*4.4+2)*2.4);ctx.fillText("♫",150,-95+Math.cos(time*3.6+1)*2.4);ctx.fillText("♪",-172,-20+Math.sin(time*3.9+1)*2.2);ctx.fillText("♫",105,18+Math.cos(time*4.2+3)*2.2);ctx.fillText("♪",-64,-118+Math.sin(time*4.7)*2);ctx.fillText("♫",64,-112+Math.cos(time*4.1+2)*2);
- } /* シング・タイム: he sings into the mic while the speaker field holds the whole 480x240 box */
+ } /* シング・タイム: he sings into the mic while the speaker field holds the whole 480x240 effect area (visual size unchanged; the hitbox inside is 左右210x102) */
  else if(f.state==="tsingjump"){if(!f.hitDone){sndRing(6,26,15+Math.sin(time*12)*2,0.8);ctx.fillStyle="#e9d5ff";ctx.font="700 13px 'DotGothic16'";ctx.fillText("♪",16+Math.sin(time*4)*2,-2+Math.sin(time*6)*2)}else{ctx.strokeStyle=goldC;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(24,40);ctx.lineTo(28,12);ctx.stroke();sndRing(16,4,11+Math.sin(time*26)*2,0.8)}} /* シングソングジャンプ: while he hangs singing the note builds; after the launch it reads as a rising shout */
  else if(f.state==="diveclaw"){
   /* ダイブマイク (見た目変更): the mic points STRAIGHT DOWN under
