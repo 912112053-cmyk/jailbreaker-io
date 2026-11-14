@@ -392,6 +392,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["17:49"],tag:"修正・調整",title:"TRAVIS メテオソングの弾を発動と同時に発射",
+  items:["空中↓+K メテオソング：弾を発動と同時に発射するように変更しました（これまでは発動後に空中に0.8秒間静止して音を溜めてから発射していました。発生 0.8秒→即時・全体 1.35→0.55秒）",
+         "弾のダメージ・KB・弾速・爆発・発射の反動で小さく跳ねる動き・発射後の後硬直0.88秒は変更なし",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["17:47"],tag:"修正・調整",title:"TRAVIS シング・タイムの判定を左右210×102に縮小（エフェクトはそのまま）",
   items:["↓+K シング・タイム：実際に当たる判定を 480×240 → 左右210×102 に縮小しました",
          "歌のフィールドやスピーカーなどのエフェクトの大きさは今までどおり（480×240のまま）で、見た目は変更していません。フィールドの見た目より実際の判定のほうが小さくなります",
@@ -1112,7 +1116,7 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J+K 同時押し — マイク＆パンチ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。鋭いマイクの刺突→派手なアッパーの2連打で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','16＋11')+mvS('KB','770')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','66×58／78×68')+mvS('着地硬直','空中で出した場合0.33秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — ボディブロー</b><p>素早い腹パン。拳から金と紫の音波が花のように咲く豪華なエフェクト。出が速く、牽制と割り込みに使える。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','680')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','102×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動した瞬間、<b>空中に0.8秒間静止</b>して音を溜め、それから真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。発射の反動で小さく跳ねる。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','0.8秒（空中で静止）')+mvS('全体','1.35秒')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動と<b>同時に</b>、真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。発射の反動で小さく跳ねる。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできない</b>。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','左右210×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
@@ -4505,21 +4509,22 @@ function startTravisAttack(f,type,foe){
  }else if(type==="k"){
    if(!f.onGround&&downHeld){
      /* メテオソング (air down+K, NEW — replaces the deleted メテオマイク):
-        on the press he HANGS STATIONARY in the air for 0.8s （発動した
-        瞬間に空中に0.8秒間静止， user spec — the hang is held in
-        stepFighter, state "tmsong", exactly like シングソングジャンプ's
-        startup), and only THEN fires the ball of sound straight DOWN
-        at 1020 (an "msong" projectile, resolved at the projectile
-        filter: direct hit 40 dmg / KB 800 in a 96x66 box; the moment
-        it touches the ground it explodes — 22 dmg / KB 1100 in a
-        102x102 box on both sides, explodeMsong). The recoil pops him
-        into a small hop (no hop height was specced; vy -380 is a
-        modest bounce, well under a jump). 全体 1.35 (0.8 hang + the
-        old 0.55) / attackCd 1.61 + 0.07 tail = 発生 0.8 + 後硬直 0.88 */
-     f.state="tmsong";f.stateT=1.35;f.attackCd=1.61;f.comboWin=0;f.hitDone=false;
-     f.vy=0;f.vx=0;f.fastfall=false;
-     spawnParticles(f.x,f.y+f.h*0.4,10,"#c084fc",150);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",30);
-     beep(520,.16,"sine",.05);
+        the ball of sound fires straight DOWN at 1020 AT THE SAME
+        MOMENT as the press （発動と同時に発射， user spec — the 0.8s
+        stationary hang added at 17:32 is removed, restoring the
+        original instant fire). An "msong" projectile, resolved at
+        the projectile filter: direct hit 40 dmg / KB 800 in a 96x66
+        box; the moment it touches the ground it explodes — 22 dmg /
+        KB 1100 in a 102x102 box on both sides, explodeMsong. The
+        recoil pops him into a small hop (no hop height was specced;
+        vy -380 is a modest bounce, well under a jump). 全体 0.55 /
+        attackCd 0.81 + 0.07 tail = 後硬直 0.88 (all unchanged from
+        the original instant-fire version) */
+     f.state="tmsong";f.stateT=0.55;f.attackCd=0.81;f.comboWin=0;f.hitDone=true;
+     projectiles.push({x:f.x,y:f.y+f.h*0.62,vx:0,vy:1020,owner:f,life:1.6,kind:"msong"});
+     f.vy=-380;f.fastfall=false;
+     spawnParticles(f.x,f.y+f.h*0.6,10,"#c084fc",180);spawnParticles(f.x,f.y+f.h*0.4,10,"#c084fc",150);spawnRing(f.x,f.y+f.h*0.55,"#fcd34d",30);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",30);
+     beep(300,.16,"sawtooth",.06);setTimeout(function(){beep(900,.12,"sine",.05)},60);
    }else if(downHeld&&f.onGround){
      /* シング・タイム (down+K, NEW — replaces the deleted グラウンド
         ウェーブ): plants his feet and SINGS for 3.6s — the voice
@@ -5320,21 +5325,11 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     the press (発生 0.38秒; stateT 0.44 -> threshold 0.06) —
     28 dmg / KB 1020, box 102x66 */
  if(f.char==="travis"&&f.state==="tkick"&&!f.hitDone&&f.stateT<=0.06){f.hitDone=true;meleeHit(f,foe,102,66,28,1020,f.face,0.5);spawnParticles(f.x+f.face*30,f.y+f.h*0.55,10,"#fcd34d",200);spawnCharBurst("travis",f.x+f.face*52,f.y+f.h*0.5,110,0.3,0,f.face,0.95);spawnRing(f.x+f.face*50,f.y+f.h*0.5,"#c084fc",48);spawnSparks(f.x+f.face*54,f.y+f.h*0.5,f.face,"#fcd34d",6);beep(760,.08,"square",.05)} /* (見た目変更) on the hit frame the sound wave bursts off the dropkick's boots */
- /* TRAVIS メテオソング (air down+K): for the first 0.8s after the
-    press he hangs STATIONARY in the air （空中に静止， user spec) —
-    velocity is zeroed here every step while he is not in hitstun
-    (gravity is also held for the hang in the gravity step, like
-    シングソングジャンプ). At stateT 0.55 — exactly 0.8s after the
-    press — the shot fires: the "msong" ball straight down at 1020
-    and the recoil hop vy -380 (both unchanged from the old
-    instant-fire version) */
- if(f.char==="travis"&&f.state==="tmsong"){
-   if(!f.hitDone){
-     if(f.hitstun<=0){f.vy=0;f.vx=0}
-     if(Math.random()<0.3)spawnParticles(f.x+(Math.random()-0.5)*36,f.y+f.h*0.3,1,"#e9d5ff",90);
-     if(f.stateT<=0.55){f.hitDone=true;projectiles.push({x:f.x,y:f.y+f.h*0.62,vx:0,vy:1020,owner:f,life:1.6,kind:"msong"});f.vy=-380;f.fastfall=false;spawnParticles(f.x,f.y+f.h*0.6,10,"#c084fc",180);spawnRing(f.x,f.y+f.h*0.55,"#fcd34d",30);beep(300,.16,"sawtooth",.06);setTimeout(function(){beep(900,.12,"sine",.05)},60)}
-   }
- }
+ /* TRAVIS メテオソング (air down+K): NO delayed step here any more —
+    the "msong" ball fires at the same moment as the press, inside
+    startTravisAttack （発動と同時に発射， user spec), together with
+    the recoil hop vy -380. The 0.8s stationary hang that used to be
+    held here (and in the gravity step) is gone. */
  /* TRAVIS シング・タイム (down+K): rooted in place for the whole
     3.6s song (vx forced to 0, like AXE's rooted states); the voice
     rolls out on BOTH sides — first tick 0.32s after the press
@@ -5723,7 +5718,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
  else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
  else if(f.char==="travis"&&f.state==="tsingjump"&&!f.hitDone&&f.hitstun<=0){f.vy=0} /* TRAVIS シングソングジャンプ: fully stationary in the air for the whole 0.8s startup （空中で静止 — the launch in the state hook above sets hitDone and vy -960, which ends the hold) */
- else if(f.char==="travis"&&f.state==="tmsong"&&!f.hitDone&&f.hitstun<=0){f.vy=0} /* TRAVIS メテオソング: fully stationary in the air for the 0.8s hang after the press （空中に静止 — the shot in the state hook above sets hitDone and the recoil vy -380, which ends the hold) */
  else if(f.char==="orchid"&&(f.flyDur||0)>0){f.vy=-120} /* ORCHID 飛翔: a steady vy -120 rise for the whole 5s (user spec) */
  else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 0.55s (user spec) */
  else f.vy+=g*dt;
@@ -6350,7 +6344,7 @@ function drawTravis(f){
   ctx.strokeStyle="rgba(255,247,237,.7)";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(50,44);ctx.lineTo(56,34+Math.sin(time*30)*2);ctx.moveTo(62,46);ctx.lineTo(66,38);ctx.stroke();
   sndRing(-8,50,13,0.5);
  }
- else if(f.state==="tmsong"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(10,44,4.6,0,6.29);ctx.fill();sndRing(10,54,13+Math.sin(time*26)*2,0.85);sndRing(10,54,22+Math.cos(time*20)*2,0.5);if(!f.hitDone){sndRing(10,54,30+Math.sin(time*10)*3,0.55);ctx.strokeStyle="rgba(233,213,255,.65)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,58);ctx.lineTo(10,70+Math.sin(time*14)*2);ctx.stroke();ctx.fillStyle="#e9d5ff";ctx.font="700 13px 'DotGothic16'";ctx.fillText("♪",20+Math.sin(time*4)*2,30+Math.sin(time*6)*2);ctx.fillText("♫",-16,38+Math.cos(time*5)*2)}} /* メテオソング: while he hangs stationary for the 0.8s charge (hitDone false) the rings build and a targeting line + notes gather under the mic; once the ball fires it reads as mic swung down, the sound ball already away below him */
+ else if(f.state==="tmsong"){ctx.fillStyle="#e5e7eb";ctx.beginPath();ctx.arc(10,44,4.6,0,6.29);ctx.fill();sndRing(10,54,13+Math.sin(time*26)*2,0.85);sndRing(10,54,22+Math.cos(time*20)*2,0.5);if(!f.hitDone){sndRing(10,54,30+Math.sin(time*10)*3,0.55);ctx.strokeStyle="rgba(233,213,255,.65)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,58);ctx.lineTo(10,70+Math.sin(time*14)*2);ctx.stroke();ctx.fillStyle="#e9d5ff";ctx.font="700 13px 'DotGothic16'";ctx.fillText("♪",20+Math.sin(time*4)*2,30+Math.sin(time*6)*2);ctx.fillText("♫",-16,38+Math.cos(time*5)*2)}} /* メテオソング: the ball fires the moment the move starts (hitDone is true from the press), so this always reads as mic swung down, the sound ball already away below him — the charge-build branch (!hitDone) no longer occurs */
  else if(f.state==="tsing"){
   /* シング・タイム (見た目変更): a full SONG FIELD — speakers stand
      at BOTH edges of him and a dashed rectangular field boundary,
