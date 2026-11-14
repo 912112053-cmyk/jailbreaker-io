@@ -425,6 +425,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["02:43"],tag:"修正",title:"軽量化 第2弾：描画の無駄をさらに削りました",
+  items:["スマホでは最初から少し軽い画質（解像度上限を少し下げた状態）で始まるようにしました。フレームレートが安定すれば自動で元の画質に戻ります",
+         "フレームレートが下がったときの画質調整が、これまでより早め・深めに効くようになりました（段階が1つ増え、最下段では描画回数も半分にして処理を逃がします）。ゲームの速度・技・数値はいつも通り60fpsのままです",
+         "毎フレームやっていた無駄な全画面クリアをやめ、画面外の背景描画もさらに間引きました。重い半透明エフェクト（テクスチャ合成）は、低画質の段階では自動で省略されます",
+         "ポーズ中は画面を描き直し続けないようにしました（電池の減りも抑えられます）。技・数値・オンライン対戦の仕組みへの変更はありません"]},
  {date:"2026/11/15",times:["02:25"],tag:"修正",title:"ONLINE VS：予測表示を一時的に切り、スナップショット補間だけに戻しました",
   items:["オンライン対戦で、自分のキャラの「予測表示」（入力した瞬間に手元で先行して動く方式）を一時的に切りました。しばらくは様子見として、予測なしの表示で遊びます",
          "これにより、自分のキャラも相手キャラと同じく、サーバーから届くスナップショット同士の補間だけで表示されるようになりました。自分の操作が画面に反映されるまでには、描画遅延（現在は最大でも約56ms）＋サーバー往復ぶんの遅れが戻ります",
@@ -511,14 +516,7 @@ var UPDATE_LOG=[
  {date:"2026/11/14",times:["21:59"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけちゃうよ」のMIMI側KBを修正（68→680）",
   items:["↓+J「こけちゃうよ／こけロ」のMIMI側のKBが、前回のバランス調整（21:33）で誤って68になっていたのを、正しい680に修正しました（約10倍の吹き飛ばしになります）",
          "その他の数値は前回の調整どおりで変更ありません：MIMI ダメージ6／判定68×34、SHADE ダメージ12／KB320／発生0.16秒／判定92×40、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／320」に合わせました",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
- {date:"2026/11/14",times:["21:51","21:54"],tag:"修正・調整",title:"MIMI&SHADE：バランス調整（K・Uに完全硬直／ブランコにジャンプ回復／ウルト強化）と、ダイブ着地に10の波を追加",
-  items:["K「いってらっしゃいSHADE＆助けてSHADE！！」：全体が0.3秒→0.6秒に長くなり（+0.3秒）、後硬直も0.52秒→0.82秒に。さらに技のあいだ全体が完全硬直になりました：終わるまで移動・ジャンプ・ダッシュ・他のワザは一切できません（SHADEの送り出し／呼び戻し自体は押した瞬間にこれまで通り発生します）",
-         "↑+K「SHADEブランコ」：ジャンプ回復を追加しました。使うと二段ジャンプが回復します（上昇・クールタイム2.4秒・着地硬直0.3秒は変更なし）",
-         "U「助けて！」：全体0.25秒・後硬直0.62秒はそのまま、後硬直が完全硬直になりました：ワープ後に動けるようになるまで、移動・ジャンプ・ダッシュはできません",
-         "L「大好きだよSHADE／大好きだよMIMI」（必殺）：ダメージ46→52／KB880→920／判定130×110→152×130／寿命1.5秒→2.5秒に強化しました。弾の見た目も判定に合わせて少し大きくしています（弾速620・貫通は変更なし）",
-         "空中↓+J「落ちちゃう！」の着地：クライアント（ローカル対戦）側にもサーバーと同じ2段目の波（10ダメージ／判定120×58／KB560・黄色いエフェクト）を追加し、ローカルでも着地が片側 12＋10＝22 ダメージになりました。これまでクライアント側は12だけだった食い違いの修正で、技一覧の表示（22）とも一致します",
-         "技一覧の K／↑+K／U／L の各行も、新しい数値と完全硬直・ジャンプ回復の表示に合わせて更新しました"]},
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -890,6 +888,15 @@ var cvDpr=1,skyCv=null,ovlCv=null;
    and the particle budget to match. PART_CAP is the live particle
    ceiling used by the steppers / spawners below. */
 var perfTier=0,perfDprCap=1.5,perfSlowMs=0,perfFastMs=0,perfCdMs=1500,PART_CAP=460;
+/* PERF round 2 (user: still heavy): frame counter for the half-rate
+   render at the deepest tiers, the camera's accumulated frame time
+   for those skipped frames, and the paused-scene repaint flag. */
+var frameNo=0,camDtMs=0,pausedDrawn=false;
+/* PERF round 2: touch devices START one tier down (DPR cap 1.25
+   instead of 1.5 = ~30% fewer canvas pixels from the first frame)
+   instead of waiting for the adaptive pass to notice the sag; the
+   tier can still step back up if the frame rate holds. */
+if(window.matchMedia&&matchMedia("(pointer:coarse)").matches){perfTier=1;perfDprCap=1.25}
 /* PERF (1P lag fix): the sky gradient and the screen-space overlay
    (moon halo + moon + vignette) are STATIC in screen space, yet they
    were re-rasterised as full-screen gradients every single frame.
@@ -921,6 +928,7 @@ function resize(){
  ctx.setTransform(dpr,0,0,dpr,0,0);
  scale=ch/VIEW_H;viewW=cw/scale;viewH=VIEW_H;
  buildBgCaches();
+ pausedDrawn=false; /* PERF round 2: a resize invalidates the frozen paused frame */
 }
 /* PERF (lag fix): apply a quality tier picked by the main loop's
    frame-rate monitor. Lower tiers shrink the canvas backing store
@@ -931,7 +939,7 @@ function resize(){
    hitch (notification, tab restore) doesn't lock the game into a
    blurry mode. */
 function applyPerfTier(){
- var caps=[1.5,1.25,1.1,1.0,0.85],pcaps=[460,460,320,240,180];
+ var caps=[1.5,1.25,1.1,1.0,0.85,0.75],pcaps=[460,460,320,240,180,140]; /* round 2: a 6th, deepest tier (DPR 0.75 / 140 particles) for the weakest phones */
  perfDprCap=caps[perfTier]||1;
  PART_CAP=pcaps[perfTier]||460;
  resize();
@@ -3701,7 +3709,7 @@ bindHoldBtn($("ultBtn"),"ult");
 cv.addEventListener("contextmenu",function(e){e.preventDefault()});
 document.addEventListener("gesturestart",function(e){e.preventDefault()});
 /* ---- combat ---- */
-function spawnParticles(x,y,n,col,spd){if(particles.length>PART_CAP)return;for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
+function spawnParticles(x,y,n,col,spd){if(particles.length>PART_CAP)return;if(perfTier>=2)n=Math.max(1,Math.round(n*(perfTier>=3?0.55:0.75))); /* PERF round 2: at lower tiers each burst spawns fewer motes (the fxRec replay below uses the same scaled n, so online viewers match) */ for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
 /* lightweight impact dressing: an expanding shockwave ring and a fan of
    directional spark streaks. Both reuse cheap canvas primitives only —
    no gradients, no shadowBlur, no extra per-frame allocations of note. */
@@ -6627,7 +6635,8 @@ function drawBG(){
    ctx.fillStyle="#155e75";ctx.fillRect(p.x,p.y,p.w,10);
    ctx.globalAlpha=0.7+0.3*Math.sin(time*2.2+p.x*0.013);ctx.fillStyle="#67e8f9";ctx.fillRect(p.x,p.y,p.w,4);ctx.globalAlpha=1;
    ctx.fillStyle="rgba(2,10,20,.5)";
-   for(var x=p.x+46;x<p.x+p.w-8;x+=46)ctx.fillRect(x,p.y+3,3,Math.min(20,p.h-4));
+   var vx0=p.x+46,vx1=Math.min(p.x+p.w-8,cam.x+viewW+70);if(vx0<cam.x-70)vx0+=Math.ceil((cam.x-70-vx0)/46)*46; /* PERF round 2: vent slits culled to the camera window like the rest of the layer (the main floor is 2360 wide — most slits were rasterised off-screen every frame) */
+   for(var x=vx0;x<vx1;x+=46)ctx.fillRect(x,p.y+3,3,Math.min(20,p.h-4));
    if(p.main){ctx.fillStyle="rgba(2,8,18,.5)";ctx.fillRect(p.x,p.y+34,p.w,p.h-34);
      ctx.fillStyle="rgba(103,232,249,.3)";ctx.font="14px 'DotGothic16'";ctx.fillText("— ROOFTOP / PRISON YARD 07 —",p.x+22,p.y+62);
 }
@@ -7704,15 +7713,20 @@ function draw(){
     refresh rate. Guests already interpolate remote fighters from
     snapshots, so the swap applies to local / host rendering only.
     Real positions are restored at the end of draw(). */
- var useInterp=true,swapped=[];
+ var useInterp=true,swapped=draw._sw||(draw._sw=[]);swapped.length=0; /* PERF round 2: reuse one scratch array instead of allocating per frame */
  if(useInterp){
    var dList=fighters.length?fighters:[P1,P2];
    for(var di2=0;di2<dList.length;di2++){var df2=dList[di2];if(!df2||df2.px==null)continue;swapped.push(df2);df2._rx=df2.x;df2._ry=df2.y;df2.x=df2.px+(df2.x-df2.px)*drawAlpha;df2.y=df2.py+(df2.y-df2.py)*drawAlpha}
    for(var dj=0;dj<projectiles.length;dj++){var pj2=projectiles[dj];if(pj2.px==null)continue;swapped.push(pj2);pj2._rx=pj2.x;pj2._ry=pj2.y;pj2.x=pj2.px+(pj2.x-pj2.px)*drawAlpha;pj2.y=pj2.py+(pj2.y-pj2.py)*drawAlpha}
  }
- ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.restore();
+ /* PERF round 2: the full-screen clearRect that used to run here is
+    gone — the pre-rendered sky is fully opaque and covers the canvas
+    edge to edge (16px overscan), so clearing first was a wasted
+    full-screen pass every frame. The clear survives only as the
+    fallback for when the cache is unavailable. */
  if(!skyCv)buildBgCaches();
  if(skyCv)ctx.drawImage(skyCv,-16,-16,cw+32,ch+32); /* pre-rendered sky (see buildBgCaches) */
+ else{ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.restore()}
  ctx.save();
  ctx.scale(scale,scale);
  ctx.translate(-cam.x,-cam.y);
@@ -7808,7 +7822,10 @@ function draw(){
     matching generated FX texture over the motion itself — ice shards for
     KAIRO, lightning for WARDEN, wind + the slash beam for KOJIRO, fire
     for AXE — pure dressing on top of the procedural animation */
- (fighters.length?fighters:[P1,P2]).forEach(function(f){
+ /* PERF round 2: at tier 3+ the whole texture-overlay pass is skipped
+    — "screen"-blended drawImage is the most expensive composite on
+    mobile GPUs, and this pass is pure dressing over the animation */
+ if(perfTier<3)(fighters.length?fighters:[P1,P2]).forEach(function(f){
    if(!f||f.dead)return;
    if(f.ultChargeT>0){drawFxTex(FXIMG.fire,f.x,f.y+f.h*0.46,220,time*2.6,f.face,0.5)}
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
@@ -7835,7 +7852,7 @@ function draw(){
  particles.forEach(function(p){ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
  rings=rings.filter(function(r){r.r+=(r.max-r.r)*0.22+1.4;r.life-=0.05;return r.life>0});
  rings.forEach(function(r){ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
- fxBursts.forEach(function(b){var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))});
+ if(perfTier<3)fxBursts.forEach(function(b){var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))}); /* PERF round 2: same "screen"-blend cut as the overlay pass at tier 3+ (the vector bursts below still draw) */
  drawVecBursts(); /* TRAVIS / SMILEY dedicated vector bursts (no borrowed FX textures) */
  floaters.forEach(function(fl){ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
  ctx.restore();
@@ -7844,7 +7861,7 @@ function draw(){
     to cost two full-screen radial-gradient fills every frame). The fog
     sits at the bottom of the screen and the moon at the top-right, so
     drawing the fog before the overlay changes nothing visible. */
- ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}
+ if(perfTier<3){ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}} /* PERF round 2: the drifting screen fog is also cut at tier 3+ */
  drawMinimap();
  if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
@@ -7949,6 +7966,7 @@ function explodeMsong(pr){
 function loop(ts){
  requestAnimationFrame(loop);
  if(!running||!P1||!P2)return;
+ frameNo++;
  if(!lastTs)lastTs=ts;
  var dtms=ts-lastTs;lastTs=ts;
  if(dtms>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,dtms))*0.05;
@@ -7958,14 +7976,19 @@ function loop(ts){
     canvas gets cheaper to fill, particles get capped harder) and
     re-check after a 2s cooldown; while it holds above 57fps for 5s,
     step back up. Hysteresis + cooldown keep it from oscillating, and
-    the 1.5s initial cooldown keeps spawn-in jank from triggering it. */
+    the 1.5s initial cooldown keeps spawn-in jank from triggering it.
+    PERF round 2 (user: still heavy): the step-down now reacts sooner
+    (under 50fps for ~0.4s) and has a 6th tier to land on, so a phone
+    that hovers in the high-40s no longer sits at near-full quality
+    forever; the step-up rule is unchanged. */
  if(perfCdMs>0)perfCdMs-=dtms;
- if(fpsEMA<47){perfSlowMs+=dtms;perfFastMs=0}else if(fpsEMA>57.5){perfFastMs+=dtms;perfSlowMs=0}else{perfSlowMs=0;perfFastMs=0}
- if(perfCdMs<=0&&perfSlowMs>600&&perfTier<4){perfTier++;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
+ if(fpsEMA<50){perfSlowMs+=dtms;perfFastMs=0}else if(fpsEMA>57.5){perfFastMs+=dtms;perfSlowMs=0}else{perfSlowMs=0;perfFastMs=0}
+ if(perfCdMs<=0&&perfSlowMs>400&&perfTier<5){perfTier++;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
  else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
  if(mode==="online"){svAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
- if(paused){drawAlpha=1;draw();return}
+ if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
+ pausedDrawn=false;
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
  acc+=Math.min(0.1,dtms/1000);
  var STEP=1/60;
@@ -8032,13 +8055,21 @@ function loop(ts){
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
  drawAlpha=Math.min(1,acc/STEP);
+ camDtMs+=dtms;
+ /* PERF round 2: at the two deepest tiers the draw itself is the
+    bottleneck, so render every OTHER display frame. The logic above
+    still steps at a full 60fps and the HUD still syncs; only the
+    rasterisation is sampled at half rate, and the camera below is
+    fed the accumulated two-frame dt (it clamps internally) so its
+    tracking speed is unchanged. */
+ if(perfTier>=4&&(frameNo&1)){syncHUD();return}
  /* camera at RENDER rate (it used to advance inside the logic step):
     updateCamera() aims at P1's interpolated position so the camera
     doesn't step at 60Hz on a faster display either — see its note
     for the dead zone / damped-follow / smoothed-lookahead design
     that keeps the tracking precise without the old sway. */
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
- updateCamera(dtms,ipX,ipY);
+ updateCamera(camDtMs,ipX,ipY);camDtMs=0;
  /* render shake offset */
  var ox=shake?(Math.random()-.5)*shake:0,oy=shake?(Math.random()-.5)*shake:0;
  ctx.save();ctx.translate(ox,oy);draw();ctx.restore();
