@@ -374,6 +374,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+  {date:"2026/11/14",times:["11:30"],tag:"新機能",title:"「完全硬直」を実装：対象の後硬直中は移動・ジャンプ不可に",
+   items:["新仕様「完全硬直」を実装しました。技一覧で後硬直に（完全硬直）と書かれた技は、その後硬直が続いている間、移動とジャンプが一切できなくなります（ダッシュ・急降下・台すり抜けも不可。着地硬直と同じ縫い止め方式で、その場に摩擦で止まります）",
+          "対象は KOJIRO ↓+K 風波（後硬直1.35秒）／ KOJIRO L 斬空（後硬直0.33秒）／ AXE ↓+J 震撃+・↓+K 震撃（後硬直0.53秒）の4技で、これまで後硬直に書かれていた（動けない）の表記を（完全硬直）に統一しました。技の秒数・ダメージ・KBなどの数値自体に変更はありません",
+          "KAIRO ↓+K アイスエッジ（後硬直0.62秒）は、これまでも技全体＋後硬直の合計2.0秒の間ずっと動けず・ジャンプもできない実装だったため、動作はそのままに（完全硬直）表記へ統一しています",
+          "オンライン対戦はサーバー側の計算で動くため、このページ側の実装がそのまま効くのは VS CPU / TRAINING などローカル計算のモードです（オンライン分はサーバー側の計算への反映が別途必要です）"]},
   {date:"2026/11/14",times:["02:35"],tag:"修正・調整",title:"ジャンプ力を少し低く／空中でのジャンプ段数バグを修正",
    items:["ジャンプの初速を 860→825 に少しだけ下げました（頂点は約188→約172）。重力・落下速度は変更していません。2段ジャンプの初速も同じ比率で 720→691 に下げました（上昇量は約130→約120）。台の段差（最大115）はこれまでどおり1回のジャンプで届き、同段の台同士の間隔（最大321）も飛距離（約330）の範囲内で渡れることを確認済みです",
           "バグ修正：台の端から歩いて落ちたときや吹き飛ばされて空中に出たときなど、「ジャンプせずに空中へ出た」場合でも、空中での最初のジャンプが2段目として処理されてしまう問題を直しました。ジャンプせずに空中へ出た場合は、空中での最初のジャンプ入力が1段目（通常のジャンプ）として扱われ、その後さらに2段目を1回だけ使えます。地面でジャンプして空中に出た場合はこれまでどおり2段目が1回だけ残り、着地するとジャンプ回数はリセットされます。CPU の挙動にも同じルールを適用しています",
@@ -772,7 +777,7 @@ function openUpdateLog(){
 $("updBtn").onclick=function(){openUpdateLog()};
 $("updMoreBtn").onclick=function(){openUpdateLog()};
 renderUpdPreview();
-var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ <b>被弾硬直＝その技が命中した相手に付与される硬直</b>。技ごとに秒数が決まっている技は、その秒数がそのまま入る（ノックバックとは別に発生し、KBや相手の残りHPでは変わらない）。被弾硬直の数値が書かれていない技では、硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから動けるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。その間は移動・ジャンプ・ダッシュ・ガード・技のすべてができない）。</div>';
+var mvLegend='<div class="mvLegend"><b>数値の読み方（全キャラ共通・コード上の実数値）</b><br>発生＝押してから判定が出るまでの時間（「即時」は押した瞬間）／ 全体＝技のモーション時間 ／ <b>後硬直＝判定が出終わってから次の行動ができるまでの時間</b>（全技共通の仕上げ硬直 +0.07秒 を含む）／ 判定＝判定の大きさ（横×縦の目安）／ KB＝吹っ飛ばしの基礎値（実際は ×0.8 を基準に、相手の残りHPが少ないほど最大で約1.7倍まで伸び、重いキャラほど受けにくい）／ <b>被弾硬直＝その技が命中した相手に付与される硬直</b>。技ごとに秒数が決まっている技は、その秒数がそのまま入る（ノックバックとは別に発生し、KBや相手の残りHPでは変わらない）。被弾硬直の数値が書かれていない技では、硬直は KB と相手の残りHPで変わり 約0.13〜0.50秒。専用クールタイムがある技は「再使用」に別記。／ <b>着地硬直＝空中でその技を出した場合に、着地してから動けるようになるまでの時間</b>（技自体の後硬直がまだ残っていれば、長い方まで待つ。その間は移動・ジャンプ・ダッシュ・ガード・技のすべてができない）／ <b>完全硬直＝後硬直に（完全硬直）と書かれた技の仕様。その後硬直が続く間は、移動とジャンプが一切できない（ダッシュ・急降下・台すり抜けも不可）</b>。</div>';
 function mvSpec(s){return '<div class="mvSpec">'+s+'</div>'}
 function mvS(k,v){return '<span><i>'+k+'</i>'+v+'</span>'}
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
@@ -790,7 +795,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。判定は<b>左右両側</b>に出るので、真横や背後側にいる相手にも当たる。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は移動速度0.45倍に鈍る）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','左右122×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず<b>ジャンプもできない</b>。さらに<b>後硬直の間も動けず、ジャンプもできない</b>、全体の拘束が長い大技。</p>'+mvSpec(mvS('ダメージ','一段目62／二段目56／三段目48')+mvS('KB','一段目800（真上へ）／二段目720（真上へ）／三段目920')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒（動けない・ジャンプ不可）')+mvS('後硬直','0.62秒（動けない・ジャンプ不可）')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず<b>ジャンプもできない</b>。さらに<b>後硬直（完全硬直）の間も動けず、ジャンプもできない</b>、全体の拘束が長い大技。</p>'+mvSpec(mvS('ダメージ','一段目62／二段目56／三段目48')+mvS('KB','一段目800（真上へ）／二段目720（真上へ）／三段目920')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒（動けない・ジャンプ不可）')+mvS('後硬直','0.62秒（完全硬直）')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','5.0秒')+mvS('着地硬直','0.40秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発撃つと自動リロード。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','940')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
@@ -834,10 +839,10 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 三日月斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>三日月型の斬撃の攻撃をする。判定は振りの途中（約0.12秒後）に出る。出は遅いが一撃の威力と吹っ飛ばしは最大級。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','770')+mvS('発生','約0.12秒')+mvS('全体','0.42秒')+mvS('後硬直','0.44秒')+mvS('判定','82×80'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 空中三日月斬り</b><p>空中で三日月型の斬撃の攻撃をする。判定は約0.10秒後に出る。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','740')+mvS('発生','約0.10秒')+mvS('全体','0.36秒')+mvS('後硬直','0.34秒')+mvS('判定','76×76')+mvS('着地硬直','0.34秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.35秒（動けない）')+mvS('判定','210×230'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けず、<b>後硬直（完全硬直）の間も移動・ジャンプができない</b>。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.35秒（完全硬直）')+mvS('判定','210×230'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ勢いよく上昇しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。1段目は相手を<b>真上に吹っ飛ばす</b>。着地すると<b>着地硬直0.28秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','820（真上）／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('上昇','vy -820')+mvS('再使用','2.2秒')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.8秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で約118前進して間合いを一気に詰め、斬り抜ける。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','500')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','102×58')+mvS('再使用','1.8秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直は短くなったが、その間は動けない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','66')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.33秒（動けない）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
++'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直（完全硬直）は短くなったが、その間は移動もジャンプもできない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','66')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.33秒（完全硬直）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を担ぐ重戦士。送ってくれた写真のキャラ（上半身裸の巨漢、オレンジの髭、ドクロのベルト）がモチーフ。<b>足は全キャラで一番遅く、一つ一つの技に大きな隙と長い硬直がある</b>。その代わり<b>体力は360</b>（他は250）で吹っ飛ばされにくく、斧のリーチ（範囲）と一撃の火力は随一。<b>遠距離攻撃は一切持たない</b>——飛び道具も床を走る衝撃波もなし。全部、体と斧が届く範囲で殴る近接技だけ。当てれば勝てる、外せば殴られる、重量級らしいキャラ。</p>'
@@ -848,12 +853,12 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +'<div class="moveRow"><div><b>前+J — 突進</b><p>前方に少し移動（突進速度660）して攻撃する。技自体は0.22秒と短くなったが、技後の硬直1.03秒はそのまま長い。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','660')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','1.03秒')+mvS('判定','110×66')+mvS('突進速度','660'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き薙ぎ</b><p>斬りながら後ろへ下がる。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','420')+mvS('発生','即時')+mvS('全体','0.52秒')+mvS('後硬直','0.79秒')+mvS('判定','102×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り薙ぎ</b><p>斬り上げながら跳ぶ対空。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','460（上吹き強）')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.81秒')+mvS('判定','92×92')+mvS('上昇','vy -420'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 震撃+</b><p>斧を地面に突き立て、0.42秒後に<b>正面に砕けた岩が多数出現</b>して攻撃する。判定は前方だけだが230×102と巨大。技中はその場から動けない。↓+Kの震撃とまったく同じ技。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','640')+mvS('発生','0.42秒')+mvS('全体','1.35秒')+mvS('後硬直','0.53秒（動けない）')+mvS('判定','230×102'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 震撃+</b><p>斧を地面に突き立て、0.42秒後に<b>正面に砕けた岩が多数出現</b>して攻撃する。判定は前方だけだが230×102と巨大。技中はその場から動けず、後硬直（完全硬直）の間も移動・ジャンプができない。↓+Kの震撃とまったく同じ技。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','640')+mvS('発生','0.42秒')+mvS('全体','1.35秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','230×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 宙斧</b><p>空中で宙返りして持続の長い攻撃をする。発生0.24秒のあと回転が続く間ヒットし続け、横方向に当たれば22ダメージ、上下方向に当たれば18ダメージ（同じ相手には最大2ヒットまで）。</p>'+mvSpec(mvS('ダメージ','前後22／上下18')+mvS('KB','前後550／上下500')+mvS('発生','0.24秒')+mvS('全体','0.58秒')+mvS('後硬直','0.81秒')+mvS('判定','112×108')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 下斧</b><p>急降下しながら、0.32秒後に下へ斧を振りかざして攻撃する。<b>メテオ判定</b>あり（真下へ叩き落とす）。旧・落下斬りにあった着地時の衝撃波はなくなった。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','720')+mvS('発生','0.32秒')+mvS('全体','0.64秒')+mvS('後硬直','0.77秒')+mvS('判定','下方向98×102')+mvS('着地硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一閃重ね</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直は最長クラス</span><p>横薙ぎから振り下ろしへつなぐ2ヒット。当たれば大ダメージだが、全体の硬直は全技でも最長クラス。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','18＋18')+mvS('KB','430／660')+mvS('発生','即時／2段目 約0.52秒')+mvS('全体','0.78秒')+mvS('後硬直','0.67秒')+mvS('判定','106×70／86×74'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 破砕ショット</b> <span style="color:#f59e0b;font-weight:900">最大火力・最大の隙</span><p>斧を正面に突き出して、岩を破壊しながら攻撃する。判定は約0.24秒後に出る（旧・大振りより少し速くなった）。当たれば通常技で最大のダメージと吹っ飛ばし。</p>'+mvSpec(mvS('ダメージ','31')+mvS('KB','780')+mvS('発生','約0.24秒')+mvS('全体','0.62秒')+mvS('後硬直','0.71秒')+mvS('判定','114×86'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — 震撃</b><p>↓+Jの震撃+とまったく同じ技：0.42秒後に正面へ砕けた岩が多数出現して攻撃する。技中はその場から動けない。旧・大回転斬りは廃止。<b>空中では発動できない</b>（空中K自体が廃止され、空中で使えるKは↑+Kのヘッドロケットだけ）。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','640')+mvS('発生','0.42秒')+mvS('全体','1.35秒')+mvS('後硬直','0.53秒（動けない）')+mvS('判定','前方230×102'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — 震撃</b><p>↓+Jの震撃+とまったく同じ技：0.42秒後に正面へ砕けた岩が多数出現して攻撃する。技中はその場から動けず、後硬直（完全硬直）の間も移動・ジャンプができない。旧・大回転斬りは廃止。<b>空中では発動できない</b>（空中K自体が廃止され、空中で使えるKは↑+Kのヘッドロケットだけ）。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','640')+mvS('発生','0.42秒')+mvS('全体','1.35秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','前方230×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — ヘッドロケット</b><p>真上に隕石のように素早く飛び上がり、岩砕きを起こしながら攻撃する。前後どちら側でも同じ26ダメージ／KB620の単一判定。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.42秒')+mvS('後硬直','0.8秒')+mvS('判定','112×130')+mvS('再使用','7.0秒')+mvS('着地硬直','0.40秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 豪腕ラリアット（突進体当たり）</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.9秒・飛び道具なし・ガード貫通</span><p>旧・投げ斧は廃止。代わりに巨体ごと肩から突っ込む短距離ラリアット。斧ではなく腕と肩で殴るのでリーチは短いが、密着すれば<b>38ダメージ</b>＋強烈な吹っ飛ばし。しかも<b>ガード貫通</b>：ガード中の相手にも軽減なしでそのまま当たる。踏み込み距離は短く、外すと硬直が長い。遠くへは何も飛ばない、間合いを詰めるための近接技。</p>'+mvSpec(mvS('ダメージ','38')+mvS('KB','840')+mvS('発生','即時')+mvS('全体','0.52秒')+mvS('後硬直','0.93秒')+mvS('判定','122×78')+mvS('追加効果','ガード貫通')+mvS('再使用','1.9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','210'))+'</div></div>'
@@ -1069,7 +1074,7 @@ function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecac
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:3),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1079,7 +1084,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:3);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1642,7 +1647,7 @@ $("lobbyLeaveBtn").onclick=function(){
      every screen at once. The server is the only place an attack can
      start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
 var svPressQ=[];
 var svMute=false;
@@ -2979,7 +2984,7 @@ function drawFxTex(img,x,y,size,rot,flip,alpha){if(!img||!img.complete||!img.nat
 /* hard cap for attack step-in velocity: J mashing can never stack speed */
 function capVx(f,lim){if(f.vx>lim)f.vx=lim;else if(f.vx<-lim)f.vx=-lim}
 function tryDash(f,dir){
- if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0)return false; /* 着地硬直中はダッシュも不可 */
+ if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0||(f.recLockT||0)>0)return false; /* 着地硬直中・完全硬直中はダッシュも不可 */
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
@@ -3249,7 +3254,7 @@ function startKojiroAttack(f,type,foe){
         huge 210x230 box. He is rooted for the whole move (vx pinned in
         stepFighter) and the total lockout is 1.35s (attackCd 1.28 +
         the universal 0.07 tail; user spec, up from 0.88s) */
-     f.state="sweep";f.stateT=0.6;f.attackCd=1.28;f.comboWin=0;f.vx=0;
+     f.state="sweep";f.stateT=0.6;f.attackCd=1.28;f.comboWin=0;f.vx=0;applyFullLock(f); /* 後硬直は完全硬直: 合計1.35秒の間は移動・ジャンプ不可 */
      meleeHit(f,foe,210,230,0,820,f.face,-0.35);meleeHit(f,foe,210,230,0,820,-f.face,-0.35);
      spawnParticles(f.x,f.y+f.h*0.5,20,"#a7f3d0",240);spawnParticles(f.x,f.y+f.h*0.3,12,"#fecaca",200);spawnRing(f.x,f.y+f.h*0.5,"#a7f3d0",64);beep(400,.16,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
@@ -3293,7 +3298,7 @@ function startKojiroAttack(f,type,foe){
       and it charges fast (his meter-gain multiplier lives in applyHit).
       STOCK system: his meter caps at 300 (= 3 stocks of 100); firing
       spends ONE stock (100), so a single full stock is enough to fire */
-   if(f.meter<100)return;f.meter-=100;f.state="ult";f.stateT=0.5;f.attackCd=0.26;shake=10; /* attackCd 0.26 + 0.07 = 後硬直 0.33 (user spec, down from 0.67); the wave itself is 66 dmg / KB 740 at the projectile hit, range ~860 = 1520 x 0.566s */
+   if(f.meter<100)return;f.meter-=100;f.state="ult";f.stateT=0.5;f.attackCd=0.26;applyFullLock(f); /* 後硬直0.33秒は完全硬直: その間は移動・ジャンプ不可 */shake=10; /* attackCd 0.26 + 0.07 = 後硬直 0.33 (user spec, down from 0.67); the wave itself is 66 dmg / KB 740 at the projectile hit, range ~860 = 1520 x 0.566s */
    projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*1520,vy:0,owner:f,life:0.566,kind:"slash"});
    spawnParticles(f.x+f.face*30,f.y+f.h*0.45,26,"#fecaca",260);
    beep(160,.3,"sawtooth",.08);setTimeout(function(){beep(1300,.22,"sine",.05)},70);
@@ -3350,7 +3355,7 @@ function startAxeAttack(f,type,foe){
         (全体 1.35s) and stuck 0.53s more after it — attackCd
         1.81 + 0.07 = 1.35 + 0.53 (the アイスエッジ convention).
         ↓+K 震撃 below is the exact same move (user spec) */
-     f.state="lowclaw";f.stateT=1.35;f.attackCd=1.81;f.comboWin=0;f.hitDone=false;f.vx=0;
+     f.state="lowclaw";f.stateT=1.35;f.attackCd=1.81;f.comboWin=0;f.hitDone=false;f.vx=0;applyFullLock(f); /* 後硬直0.53秒は完全硬直: 全体と合わせて1.88秒の間は移動・ジャンプ不可 */
      spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",160);beep(90,.16,"sawtooth",.07);
    }else if(upHeld){
      f.state="clawup";f.stateT=0.55;f.attackCd=0.74;f.comboWin=0;
@@ -3402,7 +3407,7 @@ function startAxeAttack(f,type,foe){
         box 230x102, rooted for the whole 1.35s + 0.53s more.
         The old 大回転斬り is gone. Ground only — in the air
         ↓+K does nothing at all (see the air branch below) */
-     f.state="lowclaw";f.stateT=1.35;f.attackCd=1.81;f.comboWin=0;f.hitDone=false;f.vx=0;
+     f.state="lowclaw";f.stateT=1.35;f.attackCd=1.81;f.comboWin=0;f.hitDone=false;f.vx=0;applyFullLock(f); /* 後硬直0.53秒は完全硬直: 全体と合わせて1.88秒の間は移動・ジャンプ不可 */
      spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",160);beep(90,.16,"sawtooth",.07);
    }else if(!f.onGround&&upHeld){
      /* 空中↑+K: ヘッドロケット — rockets straight up like a
@@ -3462,6 +3467,22 @@ function startAxeAttack(f,type,foe){
    previous one ends. J-chains are unaffected in practice — their chain
    window (0.65-1.0s) is far longer than this tail. */
 function addRecovery(f){if(f.attackCd>0)f.attackCd+=0.07}
+/* 完全硬直 (FULL RECOVERY LOCK — user spec): a move whose listed 後硬直
+   carries the （完全硬直） mark locks MOVEMENT and JUMP for the whole
+   recovery. Mechanically f.recLockT counts down from the press for
+   attackCd + the universal 0.07 tail (set here, BEFORE addRecovery adds
+   that tail to attackCd, so the two spans match exactly) — the full
+   span in which the user cannot act again. While recLockT runs, the
+   movement chain in stepFighter roots the fighter in place (no
+   steering, no facing change, no jump, no fastfall, no drop-through;
+   ground friction stops any slide), and tryDash / startAttack refuse —
+   the same guards 着地硬直 uses. Being launched mid-lock still works:
+   hitstun takes precedence in the movement chain, so knockback flight
+   and landing are unaffected. Marked moves: KOJIRO 風波 (1.35s from
+   the press) / 斬空 (0.33s), AXE 震撃+ / 震撃 (全体1.35 + 後硬直0.53
+   = 1.88s). KAIRO アイスエッジ already roots its move + recovery
+   through landLagT (2.0s) and is listed as 完全硬直 on the same terms. */
+function applyFullLock(f){f.recLockT=Math.max(f.recLockT||0,f.attackCd+0.07)}
 /* 着地硬直 (LANDING LAG) — the full-cast table, in seconds. A move
    STARTED in the air marks its lag on the fighter (f.airLag, via
    applyLandLag below, called from startAttack); when the fighter
@@ -3804,7 +3825,7 @@ function startOrchidAttack(f,type,foe){
  }
 }
 function startAttack(f,type){
- if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0)return; /* 着地硬直中はワザも不可 */
+ if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0||(f.recLockT||0)>0)return; /* 着地硬直中・完全硬直中はワザも不可 */
  if(f.ultChargeT>0||f.pushBy)return; /* the ult charge is uncontrollable; a pushed victim cannot act */
  if(f.dashT>0&&type!=="j")return; /* only J can dash-cancel */
  var wasAir=!f.onGround; /* 着地硬直: was this move started in the air? (applyLandLag hook on every exit below) */
@@ -4116,7 +4137,7 @@ function stepFighter(f,dt,input,foe){
    f.respawnT-=dt;if(f.respawnT<=0&&!matchOver){var sidx=Math.max(0,fighters.indexOf(f));var s=SPAWNS_ALL[sidx%SPAWNS_ALL.length];resetFighter(f,s.x,s.y)}return}
  f.stateT=Math.max(0,f.stateT-dt);f.attackCd=Math.max(0,f.attackCd-dt);f.dashCd=Math.max(0,f.dashCd-dt);
  f.comboT=Math.max(0,f.comboT-dt);if(f.comboT===0){f.comboHits=0;f.comboDmg=0}
- f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;
+ f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.recLockT=Math.max(0,(f.recLockT||0)-dt); /* 完全硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・急降下・台すり抜けが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;
  f.flash=Math.max(0,f.flash-dt);
  f.specCd=Math.max(0,(f.specCd||0)-dt);
  f.mistCd=Math.max(0,(f.mistCd||0)-dt); /* ORCHID 毒霧 cooldown (separate from her U) */
@@ -4459,6 +4480,11 @@ function stepFighter(f,dt,input,foe){
    /* 着地硬直中: その場に縫い止められる。移動入力・向き変更・ジャンプ・
       急降下・台すり抜けは一切受け付けず、地面の摩擦で止まるだけ */
    var lgs=Math.sign(f.vx);f.vx-=lgs*RUN_FRICTION*dt;if(Math.sign(f.vx)!==lgs)f.vx=0;
+ }else if((f.recLockT||0)>0){
+   /* 完全硬直中: 後硬直の間、その場に縫い止められる。移動入力・向き変更・
+      ジャンプ・急降下・台すり抜けは一切受け付けず、地面の摩擦で止まるだけ
+      (ワザとダッシュは startAttack / tryDash 側のガードでも拒否される) */
+   var rgs=Math.sign(f.vx);f.vx-=rgs*RUN_FRICTION*dt;if(Math.sign(f.vx)!==rgs)f.vx=0;
  }else{
    if(f.onGround){
      if(dirIn!==0){
