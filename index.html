@@ -423,6 +423,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["00:33"],tag:"修正",title:"ONLINE VS のラグ・カクつきを軽減（回線適応型の補間に変更）",
+  items:["オンライン対戦の描画遅延を固定80msから「回線の揺れに合わせて自動調整（約52〜150ms）」に変更しました。回線が不安定な相手と対戦しても、キャラが止まったり瞬間移動したりしにくくなります",
+         "自分のキャラは他のキャラより少し手前（約38ms前）のタイミングで描画されるようになり、操作に対する反応が速くなりました",
+         "スナップショットが一瞬途切れた時は、速度から先の位置を予測して滑らかに繋ぐようになりました（最大約120msまで）。固まってからワープするような動きが減ります",
+         "攻撃・ダッシュ・ジャンプなどのボタン入力は、送信タイミングを待たずに即座にサーバーへ送られるようになりました（最大で約33ms早く届きます）",
+         "画面右上の表示に、オンライン中は現在の描画遅延（ms）が併記されるようになりました。技のダメージや判定などの対戦バランス数値に変更はありません"]},
  {date:"2026/11/15",times:["00:04"],tag:"修正・調整",title:"MIMI&SHADE：空中↓+J「落ちちゃう！」を削除し、新技「落として！！」に変更",
   items:["空中↓+J「落ちちゃう！／たすけるヨ！」を削除しました：お尻から急降下するダイブ本体（16ダメージ）、着地の衝撃波2段（12＋10）、着地と同時に出ていた闇フィールド（0.5秒ごとに4ダメージ）はすべて無くなります",
          "新技「落として！！」：MIMIは発動と同時に0.32秒間 空中で静止し、真下へぬいぐるみで2回攻撃します（ダメージ5＋5／KB560／発生 即時（2回目は0.16秒後）／判定 下方向98×68／被弾硬直0.32秒／全体0.32秒／後硬直0.36秒）。ダイブではないので着地硬直もありません",
@@ -1863,7 +1869,11 @@ function hideBanner(){$("banner").style.display="none"}
      present with effects muted). Small errors are absorbed by the
      replay; large ones snap straight to the server state.
    - everyone else (and projectiles) is rendered by interpolating
-     between the two snapshots that bracket a ~100ms render delay.
+     between the two snapshots that bracket an ADAPTIVE render delay
+     (lag fix: measured from the snapshot stream's own arrival jitter,
+     ~52ms on a clean connection up to ~150ms on a jittery one, with
+     velocity extrapolation when the buffer starves and a ~38ms
+     shorter delay for your own fighter — see svOnSnap / svRenderWorld).
    - effects for remote fighters are derived from the snapshot stream
      (state changes, HP drops, dash cooldown jumps, deaths), the same
      information the old guest rendering ultimately displayed.
@@ -2275,7 +2285,7 @@ $("lobbyLeaveBtn").onclick=function(){
      start, so its cooldowns are absolute. */
 var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
-var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null};
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,projPool:[]};
 var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
@@ -2425,6 +2435,7 @@ function svStepP1(j,bits,replay){
    at all, eating the input.) */
 function svSampleStep(){
  var bits=svSampleLocal();
+ if(bits&4080)sv.pressPending=true; /* any press bit (jump 16 / J 32 / K 64 / L 128 / ult 256 / dash 512+1024+2048): svAdvance flushes the bundle immediately instead of waiting for the next send tick, so attacks and dashes reach the server up to ~33ms sooner */
  sv.inpHist[sv.sampleFrame]=bits;
  sv.sampleFrame++;
  sv.predFrame=sv.sampleFrame;
@@ -2545,11 +2556,55 @@ function svOnEv(evs){
      banners itself from snapshot death transitions (svOnDeathFx) */
  }
 }
+/* placed-object lists ride every snapshot: reuse the existing objects
+   by index (updating x/y/w/t in place) instead of allocating a fresh
+   array of fresh objects 30 times a second — the old .map() churn was
+   a steady source of GC pauses mid-match on weaker devices */
+function svSyncPlaced(arr,list,mk){
+ var n=list?list.length:0;
+ for(var i=0;i<n;i++){var s=list[i],o=arr[i];
+  if(o){o.x=s.x;o.y=s.y;if(typeof s.w==="number")o.w=s.w;o.t=s.t}
+  else arr.push(mk(s));
+ }
+ if(arr.length>n)arr.length=n;
+ return arr;
+}
 function svOnSnap(m){
  if(!sv.active||!m||!m.fs)return;
  var now=performance.now();
+ /* drop a duplicated / out-of-order snapshot outright: TCP already
+    orders the stream, so a frame at or below the newest one can only
+    be a retransmit artifact, and bracketing against it would judder */
+ if(typeof m.f==="number"&&sv.lastSnapF!==null&&m.f<=sv.lastSnapF)return;
+ if(typeof m.f==="number")sv.lastSnapF=m.f;
+ /* --- adaptive jitter buffer (lag fix) ---
+    Measure the snapshot stream as it actually arrives: the EMA of the
+    inter-arrival interval plus the EMA of its deviation (jitter) set
+    the render delay svRenderWorld uses — interval + 2.2 x jitter +
+    12ms of headroom, clamped to 52..150ms and eased 20% per snapshot
+    so the delay itself never jumps. A steady connection settles near
+    55-70ms (LESS delay than the old fixed 80ms); a jittery one (the
+    reported case: bursts of snapshots after stalls on a shaky Wi-Fi)
+    widens the buffer instead of freezing and teleporting fighters.
+    A stall over 400ms (tab switch, long hitch, network drop) clears
+    the buffer entirely: interpolating across a hole that big would
+    drag fighters through walls, so rendering resyncs to the newest
+    snapshot instead. */
+ if(sv.lastArrival){
+  var gap=now-sv.lastArrival;
+  if(gap>400){sv.snaps.length=0;sv.intervalEMA=33.3}
+  else if(gap>0){
+   sv.intervalEMA+=(gap-sv.intervalEMA)*0.2;
+   var dev=Math.abs(gap-sv.intervalEMA);
+   sv.jitterEMA+=(dev-sv.jitterEMA)*0.15;
+   var target=sv.intervalEMA+sv.jitterEMA*2.2+12;
+   if(target<52)target=52;else if(target>150)target=150;
+   sv.renderDelay+=(target-sv.renderDelay)*0.2;
+  }
+ }
+ sv.lastArrival=now;
  m.at=now;
- sv.snaps.push(m);if(sv.snaps.length>12)sv.snaps.shift();
+ sv.snaps.push(m);if(sv.snaps.length>40)sv.snaps.shift();
  sv.lastSnap=m;
  timer=m.tm;countdown=m.cd;
  if(m.ov)matchOver=true;
@@ -2579,14 +2634,16 @@ function svOnSnap(m){
    f._svHp=sf.hp;f._svScore=sf.sc;f._svDcd=sf.dcd;f._svOg=!!sf.og;f._svState=sf.st;
  }
  svReconcile(m);
- /* placed objects ride the newest snapshot verbatim */
- icePatches=(m.ip||[]).map(function(p){return{x:p.x,y:p.y,w:p.w,t:p.t,owner:null}});
- fireOrbs=(m.fo||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
- poisonMists=(m.pm||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
- darkFields=(m.df||[]).map(function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
+ /* placed objects ride the newest snapshot verbatim (objects reused
+    by index via svSyncPlaced — see its note) */
+ icePatches=svSyncPlaced(icePatches,m.ip,function(p){return{x:p.x,y:p.y,w:p.w,t:p.t,owner:null}});
+ fireOrbs=svSyncPlaced(fireOrbs,m.fo,function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
+ poisonMists=svSyncPlaced(poisonMists,m.pm,function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
+ darkFields=svSyncPlaced(darkFields,m.df,function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
 }
 function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
+ sv.renderDelay=66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.endShown=false;sv.endResults=null;sv.lastScorer=null;
@@ -2644,35 +2701,66 @@ function svShowEnd(){
    }));
  }else showLocalResults();
 }
+/* bracket a snapshot pair for render time rt. When rt runs past the
+   newest snapshot (buffer starved by jitter), report how far past it
+   is via .extra (seconds, capped by the caller) so positions can be
+   dead-reckoned from velocity instead of freezing in place. */
+function svBracket(rt){
+ var n=sv.snaps.length;if(!n)return null;
+ var newest=sv.snaps[n-1];
+ if(rt>=newest.at)return{A:newest,B:null,t:0,extra:Math.min(0.12,(rt-newest.at)/1000)};
+ for(var i=n-1;i>=0;i--){if(sv.snaps[i].at<=rt){var A=sv.snaps[i],B=sv.snaps[i+1]||null;
+   var span=(B&&B.at>A.at)?(B.at-A.at):33;
+   return{A:A,B:B,t:B?Math.max(0,Math.min(1,(rt-A.at)/span)):0,extra:0}}}
+ return{A:sv.snaps[0],B:sv.snaps[1]||null,t:0,extra:0};
+}
 function svRenderWorld(now){
- /* bracket the ~80ms-delayed render time with two snapshots and
-    interpolate EVERY fighter (our own included) + projectiles
-    between them — one shared timeline for all screens */
- var rt=now-80,A=null,B=null;
- for(var i=sv.snaps.length-1;i>=0;i--){if(sv.snaps[i].at<=rt){A=sv.snaps[i];B=sv.snaps[i+1]||null;break}}
- if(!A){A=sv.snaps[0]||null;B=sv.snaps[1]||null}
- if(!A)return;
- var span=(B&&B.at>A.at)?(B.at-A.at):33;
- var t=B?Math.max(0,Math.min(1,(rt-A.at)/span)):0;
+ /* Interpolate every fighter + projectile between the two snapshots
+    bracketing an ADAPTIVE render delay (see svOnSnap: ~52ms on a
+    clean connection, widening to ~150ms only as jitter demands —
+    replacing the old fixed 80ms, which starved whenever arrivals
+    bunched and made remote fighters freeze, then teleport).
+    Your own fighter renders on a timeline ~38ms AHEAD of everyone
+    else's: it is the one body whose motion answers your inputs, so
+    shaving its delay is where the input lag is actually felt. When
+    either timeline runs past the newest snapshot, positions are
+    extrapolated from the snapshot velocities (capped at 120ms, never
+    through a death) — a brief, smooth overshoot the next snapshot
+    corrects, instead of a visible freeze-frame. */
+ var brR=svBracket(now-sv.renderDelay);
+ if(!brR)return;
+ var brL=svBracket(now-Math.max(30,sv.renderDelay-38));
  for(var fi=0;fi<fighters.length;fi++){
-   var f=fighters[fi],sa=A.fs[fi];if(!f||!sa)continue;
+   var f=fighters[fi];if(!f)continue;
+   var br=(f===P1&&brL)?brL:brR,A=br.A,B=br.B,sa=A.fs[fi];if(!sa)continue;
    var sb=B?B.fs[fi]:null;
-   if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*t;f.y=sa.y+(sb.y-sa.y)*t}
+   if(sb&&!sa.dead&&!sb.dead){f.x=sa.x+(sb.x-sa.x)*br.t;f.y=sa.y+(sb.y-sa.y)*br.t}
+   else if(br.extra>0&&!sa.dead){f.x=sa.x+(sa.vx||0)*br.extra;f.y=sa.y+(sa.vy||0)*br.extra}
    else{f.x=sa.x;f.y=sa.y}
    f.px=f.x;f.py=f.y;
  }
- var out=[],pa=A.pr||[],pb=B?(B.pr||[]):null;
+ var A2=brR.A,B2=brR.B,t2=brR.t,ex2=brR.extra,pa=A2.pr||[],pb=B2?(B2.pr||[]):null;
+ var out=sv.projPool,outN=0;
+ function pushProj(x,y,vx,vy,kind,oi){
+   var o=out[outN];
+   if(o){o.x=x;o.y=y;o.px=x;o.py=y;o.vx=vx;o.vy=vy;o.kind=kind;o.life=1;o.owner=(oi>=0&&fighters[oi])?fighters[oi]:null}
+   else out.push({x:x,y:y,px:x,py:y,vx:vx,vy:vy,kind:kind,life:1,owner:(oi>=0&&fighters[oi])?fighters[oi]:null});
+   outN++;
+ }
  if(pb&&pb.length===pa.length){
    for(var pi=0;pi<pa.length;pi++){var p0=pa[pi],p1=pb[pi];
-     out.push({x:p0.x+(p1.x-p0.x)*t,y:p0.y+(p1.y-p0.y)*t,px:0,py:0,vx:p1.vx,vy:p1.vy,kind:p1.k,life:1,owner:(p1.o>=0&&fighters[p1.o])?fighters[p1.o]:null});
+     pushProj(p0.x+(p1.x-p0.x)*t2,p0.y+(p1.y-p0.y)*t2,p1.vx,p1.vy,p1.k,p1.o);
    }
  }else{
    for(var pj2=0;pj2<pa.length;pj2++){var p2=pa[pj2];
-     out.push({x:p2.x,y:p2.y,px:p2.x,py:p2.y,vx:p2.vx,vy:p2.vy,kind:p2.k,life:1,owner:(p2.o>=0&&fighters[p2.o])?fighters[p2.o]:null});
+     if(ex2>0)pushProj(p2.x+(p2.vx||0)*ex2,p2.y+(p2.vy||0)*ex2,p2.vx,p2.vy,p2.k,p2.o);
+     else pushProj(p2.x,p2.y,p2.vx,p2.vy,p2.k,p2.o);
    }
  }
- for(var pk=0;pk<out.length;pk++){if(!out[pk].px&&!out[pk].py){out[pk].px=out[pk].x;out[pk].py=out[pk].y}}
- for(var pm2=0;pm2<sv.predPr.length;pm2++)out.push(sv.predPr[pm2]);
+ for(var pm2=0;pm2<sv.predPr.length;pm2++){var pp2=sv.predPr[pm2];
+   if(out[outN]!==pp2){out[outN]=pp2}outN++;
+ }
+ out.length=outN;
  projectiles=out;
 }
 function svAdvance(dtms){
@@ -2683,14 +2771,26 @@ function svAdvance(dtms){
    svRenderWorld(now);
    if(!sv.endShown){sv.endShown=true;svShowEnd()}
  }else{
-   /* inputs sampled at a fixed 60/s and shipped at 30/s — sampling
-      no longer steps any local simulation */
-   sv.sendAcc+=dtms;
-   while(sv.sendAcc>=33.333){sv.sendAcc-=33.333;svSendBundle()}
+   /* inputs sampled at a fixed 60/s. Sampling runs FIRST and shipping
+      immediately after (the old order shipped the previous frame's
+      samples on a separate 33.3ms accumulator, so the two timers
+      drifting apart added up to a full bundle of avoidable input
+      latency). A bundle now leaves as soon as 2 sampled frames are
+      queued (the normal 30/s cadence), the moment a press is pending
+      (attacks / dashes / jumps ship the same frame they are sampled),
+      or when the oldest queued frame has waited 50ms (low-fps safety).
+      The sample accumulator clamps its leftover to one step instead of
+      zeroing it, so a hitch can no longer silently swallow a sample
+      slot and shift every later input by a frame. */
    sv.acc+=dt;
    var n=0;
-   while(sv.acc>=SIM_STEP&&n<5){sv.acc-=SIM_STEP;n++;svSampleStep()}
-   if(n===5&&sv.acc>=SIM_STEP)sv.acc=0;
+   while(sv.acc>=SIM_STEP&&n<8){sv.acc-=SIM_STEP;n++;svSampleStep()}
+   if(sv.acc>=SIM_STEP)sv.acc=SIM_STEP;
+   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
+     var sentBefore=sv.sentFrame;
+     svSendBundle();
+     if(sv.sentFrame!==sentBefore){sv.lastSendAt=now;sv.pressPending=false}
+   }
    drawAlpha=1;
    time+=dt;
    svRenderWorld(now);
@@ -8009,7 +8109,7 @@ function loop(ts){
  if(!lastTs)lastTs=ts;
  var dtms=ts-lastTs;lastTs=ts;
  if(dtms>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,dtms))*0.05;
- fpsTick+=dtms;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=Math.round(fpsEMA)}
+ fpsTick+=dtms;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
  if(mode==="online"){svAdvance(dtms);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){drawAlpha=1;draw();return}
