@@ -425,6 +425,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["02:21"],tag:"修正",title:"ONLINE VS：描画遅延の自動調整を「遅延優先」に変更（上限 約56ms）",
+  items:["オンライン対戦の描画遅延の自動調整を、これまでの「滑らかさ優先」から「遅延優先」に振り切りました。実機の録画で、スナップショットの到着が乱れた時に遅延表示が34msから最大97msまで膨らみ、相手キャラがワープして見えることが確認できたためです",
+         "描画遅延の上限を 120ms → 約56ms に下げました。回線がどれだけ乱れても、遅延がこれ以上膨らむことはありません。その代わり、乱れの大きい場面では多少カクつくことがありますが、遅延を増やさない方を優先しています",
+         "到着の揺れ（ジッター）への追随も弱めました。60fps配信ではスナップショットの間隔が約16.7msあり、多少の到着の乱れはその範囲で吸収できるため、揺れに引っ張られて遅延が大きくなることはほぼ無くなります。下限の約34msはこれまで通りです",
+         "回線の乱れが収まった時は、遅延が素早く低い値へ戻るようになりました（以前は広がった遅延がしばらく残っていました）。画面右上の遅延ms表示もこれまで通りです",
+         "自分のキャラの予測表示と、相手キャラの補間処理そのものには変更はありません。技・数値への変更もありません"]},
  {date:"2026/11/15",times:["02:12"],tag:"修正",title:"ONLINE VS：KOバナー・自分の地雷・一部の状態表示がオンラインで出ない問題を修正",
   items:["オンライン対戦で、KOした時・された時のバナー（KNOCKOUT!／DOWN…、倒した相手のプレイヤーネームと獲得ポイント、KO時の回復表示）が出ていなかった問題を修正しました。サーバーから死ごとに1回だけ届くKO通知をもとに表示するようになり、スコア表示もそのライフで与えた実ダメージ分がそのまま出ます",
          "WARDENが設置した地雷が、設置した本人にも見えなかった問題を修正しました。自分の地雷の位置だけが本人に届くようになり、金色の本体と探知範囲の楕円がローカル対戦と同じ見た目で表示されます（他のプレイヤーには今までどおり一切見えません）",
@@ -512,9 +518,6 @@ var UPDATE_LOG=[
   items:["MIMI&SHADEの技一覧で、空中↓+J「落ちちゃう！／たすけるヨ！」の着地ダメージが「着地12」とだけ書かれていたのを、実装どおりに直しました：着地の衝撃波は2段で、1段目 12ダメージ（判定96×80／KB640）に続いて2段目の波 10ダメージ（判定120×58／KB560）が左右に広がり、片側の合計は22ダメージです。説明文・ダメージ欄・KB欄・判定欄のすべてに2段分を明記しました",
          "表示だけの変更です：技の挙動・ダメージ・KB・判定などの数値はこれまで通りで、変更はありません",
          "あわせて確認した L「大好きだよSHADE／大好きだよMIMI」の「貫通」表示は、前回の更新（21:44）で既に反映済みのため、重複して追加していません"]},
- {date:"2026/11/14",times:["21:44"],tag:"修正・調整",title:"MIMI&SHADE：技一覧のウルトに「貫通」表示を追加",
-  items:["MIMI&SHADEの技一覧で、L「大好きだよSHADE／大好きだよMIMI」の行に「貫通」の表示が無かったのを直しました：見出しタグに「貫通」を追加し、説明文にも「弾は貫通する：敵に当たっても消えずにそのまま飛び続け、並んだ敵全員に当たる（同じ敵には1回だけ命中）」と明記、スペック欄にも「追加効果：貫通」を追加しました",
-         "表示だけの変更です：ウルト弾の貫通挙動・ダメージ46／KB880・弾速620などの数値はこれまで通りで、変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1377,7 +1380,9 @@ function hideBanner(){$("banner").style.display="none"}
    - everyone else (and projectiles) is rendered by interpolating
      between the two snapshots that bracket an ADAPTIVE render delay
      (lag fix: measured from the snapshot stream's own arrival jitter,
-     ~44ms on a clean connection up to ~150ms on a jittery one; when
+     LATENCY-FIRST tuning: ~34ms on a clean connection and hard-capped
+     at ~56ms even on a jittery one — a little judder is accepted
+     rather than letting the delay balloon; when
      the buffer starves, fighters hold at the newest snapshot's real
      position — no velocity extrapolation — and your own fighter uses
      a ~42ms shorter delay — see svOnSnap / svRenderWorld).
@@ -2289,15 +2294,17 @@ function svOnSnap(m){
  /* --- adaptive jitter buffer (lag fix) ---
     Measure the snapshot stream as it actually arrives: the EMA of the
     inter-arrival interval plus the EMA of its deviation (jitter) set
-    the render delay svRenderWorld uses — interval + 2.2 x jitter +
-    9ms of headroom, clamped to 34..120ms and eased per snapshot
-    (faster down than up) so the delay itself never jumps. With the
+    the render delay svRenderWorld uses — interval + 0.8 x jitter +
+    9ms of headroom, clamped to 34..56ms and eased per snapshot
+    (much faster down than up) so the delay itself never jumps. With the
     server now streaming at 60fps a steady connection settles at the
     ~34ms floor (about two snapshots); on a 30fps stream it settles
     near 45ms as before, since the formula keys off the measured
     arrival interval. A jittery connection (the
     reported case: bursts of snapshots after stalls on a shaky Wi-Fi)
-    widens the buffer instead of freezing and teleporting fighters.
+    widens the buffer only slightly — the LATENCY-FIRST retune below
+    caps it at 56ms and accepts some judder instead of letting the
+    delay grow until fighters appear to teleport.
     A stall over 400ms (tab switch, long hitch, network drop) clears
     the buffer entirely: interpolating across a hole that big would
     drag fighters through walls, so rendering resyncs to the newest
@@ -2310,21 +2317,28 @@ function svOnSnap(m){
    var dev=Math.abs(gap-sv.intervalEMA);
    sv.jitterEMA+=(dev-sv.jitterEMA)*0.15;
    /* LAG: the fixed headroom / floor were trimmed (12ms -> 9ms,
-      52ms -> 44ms) so a STEADY connection renders noticeably sooner;
-      the jitter term (2.2x) is untouched, so an unstable line still
-      widens the buffer exactly as before. The delay also eases DOWN
-      faster (0.35) than it widens (0.2): when the line recovers, the
-      improvement is felt within a few snapshots instead of lingering
-      at the wide setting, while widening stays gradual so the delay
-      itself never oscillates visibly.
+      52ms -> 44ms) so a STEADY connection renders noticeably sooner.
       60FPS RETUNE: with the server streaming snapshots at 60fps
       (16.7ms apart) there is no need to buffer as deep, so the floor
       drops 44ms -> 34ms (~2 snapshots) and the cap 150ms -> 120ms.
-      Only the clamp values changed — the adaptive mechanism is the
-      same, so a server still on 30fps settles exactly as before. */
-   var target=sv.intervalEMA+sv.jitterEMA*2.2+9;
-   if(target<34)target=34;else if(target>120)target=120;
-   sv.renderDelay+=(target-sv.renderDelay)*(target<sv.renderDelay?0.35:0.2);
+      LATENCY-FIRST RETUNE (this change): the philosophy flips from
+      smoothness-first to latency-first. A field recording showed the
+      delay swelling 34ms -> 97ms whenever arrivals got ragged, and
+      opponents visibly warping. So: (1) the cap drops 120ms -> 56ms
+      — the delay simply cannot balloon any more; (2) the jitter term
+      is weakened 2.2x -> 0.8x — at 60fps the 16.7ms interval already
+      absorbs small arrival wobble, so jitter no longer drags the
+      target up (the 9ms headroom and the 34ms floor are unchanged);
+      (3) the easing DOWN is sped up 0.35 -> 0.6 while widening stays
+      at 0.2, so the moment the line settles the delay snaps back to
+      the low setting within a snapshot or two instead of lingering
+      wide. The price is occasional judder on a bad line, accepted
+      deliberately: a little judder beats a large, warping delay.
+      Prediction of our own fighter and the interpolation itself are
+      untouched — only this target/clamp/easing changed. */
+   var target=sv.intervalEMA+sv.jitterEMA*0.8+9;
+   if(target<34)target=34;else if(target>56)target=56;
+   sv.renderDelay+=(target-sv.renderDelay)*(target<sv.renderDelay?0.6:0.2);
   }
  }
  sv.lastArrival=now;
@@ -2444,7 +2458,7 @@ function svBracket(rt){
 function svRenderWorld(now){
  /* Interpolate every fighter + projectile between the two snapshots
     bracketing an ADAPTIVE render delay (see svOnSnap: ~34ms on a
-    clean 60fps connection, widening to ~120ms only as jitter demands —
+    clean 60fps connection, widening to at most ~56ms as jitter demands (latency-first cap) —
     replacing the old fixed 80ms, which starved whenever arrivals
     bunched and made remote fighters freeze, then teleport).
     Your own fighter is NOT rendered from these timelines while
