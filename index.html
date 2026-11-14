@@ -426,6 +426,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["03:15"],tag:"修正",title:"軽量化の見直し：エフェクトを全て元どおりに戻しました",
+  items:["第2弾・第3弾の軽量化で入っていた「画質の段階に連動したエフェクトの省略」を全て廃止しました。パーティクルの発生数と上限（常に460で固定）、背景の星の瞬き、KOJIROの居合と斬空の光のボカし、技に重なるエフェクトテクスチャ、漂う光の粒、画面下部の霧は、どの画質段階でも常に出るようになりました。描画を1フレームおきに間引く処理も無くし、常に毎フレーム描画します",
+         "代わりに、見た目が一切変わらない方法だけで軽くしました：カメラの画面の外に完全に出ている飛び道具・パーティクル・リング・浮き文字・各種フィールドなど11種類の描画をスキップするようにし、残像の描画で毎回切り替えていた設定をループの外で1回だけ行うようまとめました",
+         "画質の自動調整（解像度だけを下げる仕組み）自体は残しています。技・数値・物理・オンライン対戦の仕組みへの変更はありません"]},
  {date:"2026/11/15",times:["02:43"],tag:"修正",title:"軽量化 第2弾：描画の無駄をさらに削りました",
   items:["スマホでは最初から少し軽い画質（解像度上限を少し下げた状態）で始まるようにしました。フレームレートが安定すれば自動で元の画質に戻ります",
          "フレームレートが下がったときの画質調整が、これまでより早め・深めに効くようになりました（段階が1つ増え、最下段では描画回数も半分にして処理を逃がします）。ゲームの速度・技・数値はいつも通り60fpsのままです",
@@ -513,10 +517,6 @@ var UPDATE_LOG=[
   items:["K「いってらっしゃいSHADE＆助けてSHADE！！」：前回の調整で長くなっていた全体を0.6秒→0.3秒に、後硬直を0.82秒→0.52秒に戻しました",
          "後硬直は完全硬直です：動けるようになるまで、移動・ジャンプ・ダッシュ・他のワザは一切できません（SHADEの送り出し／呼び戻し自体は押した瞬間にこれまで通り発生します）",
          "技一覧のKの行も、新しい数値（全体0.3秒／後硬直0.52秒（完全硬直））に合わせて更新しました",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
- {date:"2026/11/14",times:["21:59"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけちゃうよ」のMIMI側KBを修正（68→680）",
-  items:["↓+J「こけちゃうよ／こけロ」のMIMI側のKBが、前回のバランス調整（21:33）で誤って68になっていたのを、正しい680に修正しました（約10倍の吹き飛ばしになります）",
-         "その他の数値は前回の調整どおりで変更ありません：MIMI ダメージ6／判定68×34、SHADE ダメージ12／KB320／発生0.16秒／判定92×40、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／320」に合わせました",
          "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
@@ -886,12 +886,14 @@ var cvDpr=1,skyCv=null,ovlCv=null;
 /* PERF (lag fix): adaptive quality state. perfTier 0 = full quality;
    the main loop raises it while the measured frame rate stays low
    (see loop()) and applyPerfTier() lowers the canvas resolution cap
-   and the particle budget to match. PART_CAP is the live particle
-   ceiling used by the steppers / spawners below. */
-var perfTier=0,perfDprCap=1.25,perfSlowMs=0,perfFastMs=0,perfCdMs=1200,PART_CAP=320; /* PERF round 3 (user: got heavier again): every tier's DPR cap and particle budget stepped down one notch (see applyPerfTier) — pixel art reads the same at 1.25 as at 1.5, but the canvas fill cost drops ~30% */
-/* PERF round 2 (user: still heavy): frame counter for the half-rate
-   render at the deepest tiers, the camera's accumulated frame time
-   for those skipped frames, and the paused-scene repaint flag. */
+   to match. PART_CAP is the live particle ceiling used by the
+   steppers / spawners below — it is FIXED at 460 and never follows
+   the tier: per the owner's directive, effects are never scaled
+   down, so the tiers only ever change the rendering resolution. */
+var perfTier=0,perfDprCap=1.25,perfSlowMs=0,perfFastMs=0,perfCdMs=1200,PART_CAP=460; /* PERF round 3: every tier's DPR cap stepped down one notch (see applyPerfTier) — pixel art reads the same at 1.25 as at 1.5, but the canvas fill cost drops ~30%. The particle budget deliberately does NOT step down with the tiers (owner directive: no effect is ever omitted or reduced) */
+/* PERF round 2: display-frame counter, the camera's accumulated
+   frame time (handed to updateCamera on every draw), and the
+   paused-scene repaint flag. */
 var frameNo=0,camDtMs=0,pausedDrawn=false;
 /* PERF round 2: touch devices START one tier down (DPR cap 1.25
    instead of 1.5 = ~30% fewer canvas pixels from the first frame)
@@ -935,15 +937,15 @@ function resize(){
 /* PERF (lag fix): apply a quality tier picked by the main loop's
    frame-rate monitor. Lower tiers shrink the canvas backing store
    (fewer pixels to fill / composite every frame — the dominant cost
-   on phones) and trim the particle budget. Pixel art at these caps
-   looks the same; the game logic, speeds and hitboxes never change.
+   on phones). Pixel art at these caps looks the same; the game
+   logic, speeds and hitboxes never change, and NO visual effect is
+   ever tied to the tier (owner directive: effects are never cut).
    Tiers step back UP when the frame rate recovers, so a momentary
    hitch (notification, tab restore) doesn't lock the game into a
    blurry mode. */
 function applyPerfTier(){
- var caps=[1.25,1.1,1.0,0.9,0.8,0.7],pcaps=[320,260,200,160,120,90]; /* round 3: every cap one notch lower than round 2 (was 1.5..0.75 / 460..140) — fewer pixels to fill and fewer particles to step on every device, before the adaptive pass even has to react */
+ var caps=[1.25,1.1,1.0,0.9,0.8,0.7]; /* round 3: every cap one notch lower than round 2 (was 1.5..0.75) — fewer pixels to fill on every device, before the adaptive pass even has to react. ONLY the resolution follows the tier; PART_CAP stays fixed at 460 (owner directive) */
  perfDprCap=caps[perfTier]||1;
- PART_CAP=pcaps[perfTier]||320;
  resize();
 }
 window.addEventListener("resize",resize);
@@ -2630,7 +2632,7 @@ function svAdvance(dtms){
  /* visual-only particle / floater / burst clocks (they used to ride
     the rollback step; here they simply run at render rate) */
  particles=particles.filter(function(p){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.amb?-4:300)*dt;p.vx*=Math.pow(0.97,dt*60);return(p.life-=dt)>0});
- if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: online FX events spawn particles outside the local stepper, so the same adaptive cap is enforced here too */
+ if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: online FX events spawn particles outside the local stepper, so the same fixed cap is enforced here too */
  floaters=floaters.filter(function(fl){fl.y-=34*dt;return(fl.life-=dt)>0});
  fxBursts=fxBursts.filter(function(b){return(b.life-=dt)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=dt)>0});
  var ipX=(P1.px!=null)?P1.px+(P1.x-P1.px)*drawAlpha:P1.x,ipY=(P1.py!=null)?P1.py+(P1.y-P1.py)*drawAlpha:P1.y;
@@ -3711,7 +3713,7 @@ bindHoldBtn($("ultBtn"),"ult");
 cv.addEventListener("contextmenu",function(e){e.preventDefault()});
 document.addEventListener("gesturestart",function(e){e.preventDefault()});
 /* ---- combat ---- */
-function spawnParticles(x,y,n,col,spd){if(particles.length>PART_CAP)return;if(perfTier>=2)n=Math.max(1,Math.round(n*(perfTier>=3?0.55:0.75))); /* PERF round 2: at lower tiers each burst spawns fewer motes (the fxRec replay below uses the same scaled n, so online viewers match) */ for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
+function spawnParticles(x,y,n,col,spd){if(particles.length>PART_CAP)return; /* the spawn count is NEVER scaled by the quality tier (owner directive: effects are never reduced) — n is used exactly as specified, and the fxRec replay below carries the same n, so online viewers match */ for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
 /* lightweight impact dressing: an expanding shockwave ring and a fan of
    directional spark streaks. Both reuse cheap canvas primitives only —
    no gradients, no shadowBlur, no extra per-frame allocations of note. */
@@ -3745,7 +3747,9 @@ var vecBursts=[];
 function spawnVecBurst(kind,x,y,size,life,rot,flip,alpha){vecBursts.push({kind:kind,x:x,y:y,size:size,life:life,max:life,rot:rot||0,flip:flip||1,alpha:alpha||0.9,seed:Math.random()*6.28});if(vecBursts.length>42)vecBursts.shift()}
 function spawnCharBurst(char,x,y,size,life,rot,flip,alpha){if(char==="travis")spawnVecBurst("travis",x,y,size,life,rot,flip,alpha);else if(char==="smiley")spawnVecBurst("smiley",x,y,size,life,rot,flip,alpha);else spawnFxBurst(charFxImg(char),x,y,size,life,rot,flip,alpha)}
 function drawVecBursts(){
+ var vX0=cam.x-340,vX1=cam.x+viewW+340,vY0=cam.y-340,vY1=cam.y+viewH+340; /* PERF (picture unchanged): same off-screen culling as the passes in draw() */
  vecBursts.forEach(function(b){
+  if(b.x<vX0||b.x>vX1||b.y<vY0||b.y>vY1)return;
   var bt=Math.max(0,b.life/b.max),pr=1-bt,a=Math.min(1,bt*1.7)*b.alpha;
   ctx.save();ctx.translate(b.x,b.y);ctx.scale(b.flip,1);ctx.globalAlpha=a;
   if(b.kind==="travis"){
@@ -6598,7 +6602,9 @@ function drawCharSprite(f,key,fallback){
 function drawSpriteTrail(f,key){
  var ent=CHAR_SPRITE_IMG[key],tkey=key;if(key==="smiley"&&(f.awakenT||0)>0&&CHAR_SPRITE_IMG.smileyAwk){ent=CHAR_SPRITE_IMG.smileyAwk;tkey="smileyAwk"}if(!ent||!(ent.img.complete&&ent.img.naturalWidth))return;
  var tdy=spriteDY(tkey,0,false,ent.img.naturalHeight);
- f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(ent.img,-40.5,tdy,86.4,86.4);ctx.restore()});
+ ctx.imageSmoothingEnabled=false; /* PERF (picture unchanged): the flag is the same for every trail entry, so it is set once around the loop instead of per entry, and restored afterwards */
+ f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.drawImage(ent.img,-40.5,tdy,86.4,86.4);ctx.restore()});
+ ctx.imageSmoothingEnabled=true;
 } /* 残像も本体と同じ足裏アンカー (spriteDY) で描く */
 var bgStars=[];
 for(var si=0;si<70;si++)bgStars.push({x:Math.random()*WORLD_W,y:Math.random()*900,s:2+Math.random()*3});
@@ -6628,7 +6634,7 @@ function drawBG(){
  ctx.fillStyle="rgba(103,232,249,.14)";
  for(var d=0;d<130;d++){var dx2=(d*61)%2500;if(dx2<bgW0||dx2>bgW1)continue;ctx.fillRect(dx2,860+((d*47)%280),4,4)}
  ctx.restore();
- bgStars.forEach(function(s,si){if(s.x<cam.x-8||s.x>cam.x+viewW+8)return;ctx.globalAlpha=perfTier>=3?.45:(.22+.5*(0.5+0.5*Math.sin(time*1.7+si*1.93))); /* PERF round 3: at lower tiers the stars stop twinkling (a per-star sin every frame) and just hold a steady alpha */ ctx.fillStyle=si%5===0?"#fef9c3":"#b9f3ff";ctx.fillRect(s.x,s.y,s.s,s.s)});
+ bgStars.forEach(function(s,si){if(s.x<cam.x-8||s.x>cam.x+viewW+8)return;ctx.globalAlpha=.22+.5*(0.5+0.5*Math.sin(time*1.7+si*1.93)); /* the stars always twinkle, at every quality tier (owner directive: no visual is ever simplified) */ ctx.fillStyle=si%5===0?"#fef9c3":"#b9f3ff";ctx.fillRect(s.x,s.y,s.s,s.s)});
  ctx.globalAlpha=1;
  /* platforms: deep-navy slabs with a cyan top edge, like the home screen */
  platforms.forEach(function(p){
@@ -6707,7 +6713,9 @@ function drawKairo(f){
     J+K の氷の拳・メテオドロップの氷柱・フロストテイルなど。
     本体部分 (体・耳・髪・尻尾そのもの) だけはスプライトが担う */
  if(f.meter>=100&&!f.dead)drawUltAura(f,56,189,248);
- f.trail.forEach(function(t){if(KAIRO_IMG.complete&&KAIRO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.imageSmoothingEnabled=false;ctx.drawImage(KAIRO_IMG,-40.5,spriteDY("kairo",0,false,48),86.4,86.4);ctx.restore()}});
+ ctx.imageSmoothingEnabled=false; /* PERF (picture unchanged): set once around the trail loop instead of per entry, restored afterwards */
+ f.trail.forEach(function(t){if(KAIRO_IMG.complete&&KAIRO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.drawImage(KAIRO_IMG,-40.5,spriteDY("kairo",0,false,48),86.4,86.4);ctx.restore()}});
+ ctx.imageSmoothingEnabled=true;
  f.trail.forEach(function(t){drawFxTex(FXIMG.ice,t.x,t.y+30,88,0,t.face,t.life/0.2*.5)});
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
@@ -7640,7 +7648,7 @@ function drawKojiro(f){
  else if(f.state==="diveclaw"||f.state==="taildrop"){ctx.strokeStyle="rgba(167,243,208,.9)";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(10,44,10,time*20,time*20+4.2);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-4,4);ctx.lineTo(-14,-12);ctx.moveTo(10,0);ctx.lineTo(4,-14);ctx.moveTo(-12,16);ctx.lineTo(-22,4);ctx.stroke()} /* 落下斬り: wind coiling around the plunge, longer speed streaks */
  else if(f.state==="yokonagi"){ctx.strokeStyle="#f87171";ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(2,26,44,-0.6,0.7);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,18);ctx.lineTo(-26,14);ctx.moveTo(-8,32);ctx.lineTo(-22,34);ctx.stroke()} /* 横薙ぎ: one wide horizontal sweep */
  else if(f.state==="sweep"){ctx.strokeStyle="#a7f3d0";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,42,42,0.1,2.7);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,30,30,time*9,time*9+3.6);ctx.stroke();ctx.beginPath();ctx.arc(0,16,19,time*11+2,time*11+5.2);ctx.stroke();ctx.strokeStyle="rgba(167,243,208,.85)";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(0,2,13,time*13+1,time*13+4.8);ctx.stroke();ctx.beginPath();ctx.arc(0,-10,8,time*15,time*15+4.4);ctx.stroke();ctx.strokeStyle="rgba(167,243,208,.8)";ctx.beginPath();ctx.arc(0,44,50,0.4,2.2);ctx.stroke()} /* 風波: the tornado spiral climbs higher above his head */
- else if(f.state==="iaido"){ctx.save();ctx.shadowColor="#f87171";ctx.shadowBlur=perfTier>=2?0:9; /* PERF round 3: shadowBlur is one of the most expensive canvas ops — dropped at lower quality tiers, the stroke itself is unchanged */ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(38,28.5);ctx.lineTo(122,24);ctx.stroke();ctx.restore();ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(46,34);ctx.lineTo(108,30.5);ctx.moveTo(52,22);ctx.lineTo(96,19.5);ctx.stroke();ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-10,26);ctx.lineTo(-30,26);ctx.moveTo(-8,36);ctx.lineTo(-26,36);ctx.stroke()} /* 居合斬り: the draw leaves a glowing rift torn through the air itself */
+ else if(f.state==="iaido"){ctx.save();ctx.shadowColor="#f87171";ctx.shadowBlur=9; /* the glow is drawn at every quality tier (owner directive: effects are never cut) */ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(38,28.5);ctx.lineTo(122,24);ctx.stroke();ctx.restore();ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(46,34);ctx.lineTo(108,30.5);ctx.moveTo(52,22);ctx.lineTo(96,19.5);ctx.stroke();ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-10,26);ctx.lineTo(-30,26);ctx.moveTo(-8,36);ctx.lineTo(-26,36);ctx.stroke()} /* 居合斬り: the draw leaves a glowing rift torn through the air itself */
  else if(f.state==="jkcombo"){var cross2=f.stateT<=0.26;ctx.strokeStyle="#4ade80";ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(4,26,38,cross2?-0.35:-1.25,cross2?1.25:0.35);ctx.stroke();ctx.strokeStyle="rgba(187,247,208,.9)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(4,26,28,cross2?-0.3:-1.2,cross2?1.15:0.3);ctx.stroke();var swp=1-Math.max(0,Math.min(1,(f.stateT-(cross2?0:0.26))/0.24));swallow(8+swp*40,cross2?40-swp*26:12+swp*26,0.85,"#166534");swallow(2+swp*30,cross2?46-swp*20:6+swp*20,0.55,"rgba(74,222,128,.75)")} /* 燕返し: the two cuts cross in an X while green swallows dart along the paths */
  else if(f.state==="krise"){ctx.strokeStyle="#f87171";ctx.lineWidth=3.6;ctx.beginPath();ctx.arc(8,22,42,-2.4,-0.9);ctx.stroke();if(f.hitDone){ctx.strokeStyle="#fff1f2";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(14,18,34,-2.5,-1.1);ctx.stroke()}ctx.strokeStyle="rgba(167,243,208,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(2,30,24,-2.2,-1.2);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.8)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-6,44);ctx.lineTo(-10,58);ctx.moveTo(8,46);ctx.lineTo(6,60);ctx.moveTo(20,44);ctx.lineTo(22,57);ctx.stroke()} /* 昇り斬り: twin rising arcs with wind and speed streaks */
  else if(f.state==="ult"){ctx.strokeStyle="#f87171";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(6,20,52,-1.1,1.0);ctx.stroke();ctx.strokeStyle="#fff1f2";ctx.lineWidth=2;ctx.beginPath();ctx.arc(6,20,44,-1.0,0.9);ctx.stroke()}
@@ -7733,26 +7741,34 @@ function draw(){
  ctx.scale(scale,scale);
  ctx.translate(-cam.x,-cam.y);
  drawBG();
- icePatches.forEach(function(p){ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
+ /* PERF (picture unchanged): off-screen culling bounds for the effect
+    passes below. An element whose CENTRE is more than 340 world units
+    outside the camera view cannot touch the screen — 340 covers the
+    widest extent of every culled element (FX textures reach ~175 from
+    centre, rings ~124, poison banks ~182) — so its draw is skipped
+    entirely. Anything inside the bounds is drawn exactly as before. */
+ var cX0=cam.x-340,cX1=cam.x+viewW+340,cY0=cam.y-340,cY1=cam.y+viewH+340;
+ icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- fireOrbs.forEach(function(ob){var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,92*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
+ fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,92*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
     planted a mine can see it (the viewer is P1), so a foe's mines are
     skipped entirely here: no body, no blinking light, no range mark.
     For the owner's own mines, a faint wide ellipse on the floor first
     marks the enlarged 160-wide trigger, then the squat gold mine with
     its blinking light is drawn on top */
- mines.forEach(function(mn){if(mn.owner!==P1)return;ctx.strokeStyle="rgba(245,158,11,.30)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.stroke();ctx.fillStyle="rgba(245,158,11,.07)";ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.fill();ctx.fillStyle="#334155";ctx.beginPath();ctx.ellipse(mn.x,mn.y-6,24,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(mn.x-15,mn.y-13,30,5);ctx.fillStyle=(Math.sin(time*7+mn.x)>0?"#ef4444":"#7f1d1d");ctx.beginPath();ctx.arc(mn.x,mn.y-16,3.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(245,158,11,.5)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,31,4,0,0,6.29);ctx.stroke()});
+ mines.forEach(function(mn){if(mn.owner!==P1)return;if(mn.x<cX0||mn.x>cX1||mn.y<cY0||mn.y>cY1)return;ctx.strokeStyle="rgba(245,158,11,.30)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.stroke();ctx.fillStyle="rgba(245,158,11,.07)";ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,80,7,0,0,6.29);ctx.fill();ctx.fillStyle="#334155";ctx.beginPath();ctx.ellipse(mn.x,mn.y-6,24,9,0,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.fillRect(mn.x-15,mn.y-13,30,5);ctx.fillStyle=(Math.sin(time*7+mn.x)>0?"#ef4444":"#7f1d1d");ctx.beginPath();ctx.arc(mn.x,mn.y-16,3.5,0,6.29);ctx.fill();ctx.strokeStyle="rgba(245,158,11,.5)";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(mn.x,mn.y-2,31,4,0,0,6.29);ctx.stroke()});
  /* ORCHID placed poison mist: a low, wide bank of green-purple fog that hangs where she summoned it */
- poisonMists.forEach(function(mb){var pu2=1+Math.sin(time*5+mb.x)*0.05;ctx.globalAlpha=Math.min(0.85,mb.t/1.0);ctx.fillStyle="rgba(101,163,13,.20)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-16,118*pu2,34,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(163,230,53,.16)";ctx.beginPath();ctx.ellipse(mb.x-40+Math.sin(time*3+mb.x)*8,mb.y-10,62,20,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(192,132,252,.15)";ctx.beginPath();ctx.ellipse(mb.x+44+Math.cos(time*2.6+mb.x)*8,mb.y-12,58,18,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(217,249,157,.10)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-30,80,16,0,0,6.29);ctx.fill()});ctx.globalAlpha=1;
+ poisonMists.forEach(function(mb){if(mb.x<cX0||mb.x>cX1||mb.y<cY0||mb.y>cY1)return;var pu2=1+Math.sin(time*5+mb.x)*0.05;ctx.globalAlpha=Math.min(0.85,mb.t/1.0);ctx.fillStyle="rgba(101,163,13,.20)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-16,118*pu2,34,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(163,230,53,.16)";ctx.beginPath();ctx.ellipse(mb.x-40+Math.sin(time*3+mb.x)*8,mb.y-10,62,20,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(192,132,252,.15)";ctx.beginPath();ctx.ellipse(mb.x+44+Math.cos(time*2.6+mb.x)*8,mb.y-12,58,18,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(217,249,157,.10)";ctx.beginPath();ctx.ellipse(mb.x,mb.y-30,80,16,0,0,6.29);ctx.fill()});ctx.globalAlpha=1;
  /* MIMI&SHADE placed dark field （たすけるヨ！): a pool of living darkness at MIMI's feet — black-purple banks with violet rims and slow rising wisps */
- darkFields.forEach(function(df){var pu3=1+Math.sin(time*4+df.x)*0.05;ctx.globalAlpha=Math.min(0.9,df.t/1.0);PXU=3;ctx.fillStyle="rgba(168,85,247,.5)";pxEll(df.x,df.y-3,103*pu3,15);ctx.fillStyle="rgba(10,4,24,.55)";pxEll(df.x,df.y-3,100*pu3,13);ctx.fillStyle="rgba(46,16,101,.5)";pxEll(df.x-30+Math.sin(time*2.4+df.x)*7,df.y-8,52,15);pxEll(df.x+34+Math.cos(time*2.1+df.x)*7,df.y-7,48,14);ctx.fillStyle="rgba(192,132,252,.75)";for(var dwi=0;dwi<4;dwi++){var dwx=df.x-70+((time*22+dwi*47+df.x)%140),dwy=df.y-8-((time*16+dwi*29)%34);pxR(dwx,dwy,3,3)}});ctx.globalAlpha=1;
+ darkFields.forEach(function(df){if(df.x<cX0||df.x>cX1||df.y<cY0||df.y>cY1)return;var pu3=1+Math.sin(time*4+df.x)*0.05;ctx.globalAlpha=Math.min(0.9,df.t/1.0);PXU=3;ctx.fillStyle="rgba(168,85,247,.5)";pxEll(df.x,df.y-3,103*pu3,15);ctx.fillStyle="rgba(10,4,24,.55)";pxEll(df.x,df.y-3,100*pu3,13);ctx.fillStyle="rgba(46,16,101,.5)";pxEll(df.x-30+Math.sin(time*2.4+df.x)*7,df.y-8,52,15);pxEll(df.x+34+Math.cos(time*2.1+df.x)*7,df.y-7,48,14);ctx.fillStyle="rgba(192,132,252,.75)";for(var dwi=0;dwi<4;dwi++){var dwx=df.x-70+((time*22+dwi*47+df.x)%140),dwy=df.y-8-((time*16+dwi*29)%34);pxR(dwx,dwy,3,3)}});ctx.globalAlpha=1;
  projectiles.forEach(function(pr){
+   if(pr.x<cX0||pr.x>cX1||pr.y<cY0||pr.y>cY1)return; /* fully off-screen: nothing of this shot can be visible */
    ctx.save();ctx.translate(pr.x,pr.y);
    if(pr.kind==="bolt"){ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,8,0,6.29);ctx.fill();ctx.fillStyle="#fdf4ff";ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill()}
    else if(pr.kind==="javelin"){ctx.fillStyle="rgba(249,115,22,.45)";ctx.beginPath();ctx.arc(0,0,13,0,6.29);ctx.fill();ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.5,0,6.29);ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-(pr.vx>0?1:-1)*10,-3);ctx.lineTo(-(pr.vx>0?1:-1)*22,0);ctx.lineTo(-(pr.vx>0?1:-1)*10,3);ctx.closePath();ctx.fill()}
    else if(pr.kind==="wave"){ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.ellipse(0,6,21,10,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,6,12,6,0,Math.PI,0);ctx.fill()}
-   else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=perfTier>=2?0:16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
+   else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
    else if(pr.kind==="blast"){ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.arc(0,0,13+Math.sin(time*30)*1.5,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,5,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,2.4,0,6.29);ctx.fill()} /* TRAVIS ソニックブラスト: a pulsing purple-gold lump of sound */
@@ -7824,10 +7840,9 @@ function draw(){
     matching generated FX texture over the motion itself — ice shards for
     KAIRO, lightning for WARDEN, wind + the slash beam for KOJIRO, fire
     for AXE — pure dressing on top of the procedural animation */
- /* PERF round 2: at tier 3+ the whole texture-overlay pass is skipped
-    — "screen"-blended drawImage is the most expensive composite on
-    mobile GPUs, and this pass is pure dressing over the animation */
- if(perfTier<3)(fighters.length?fighters:[P1,P2]).forEach(function(f){
+ /* This texture-overlay pass runs on EVERY frame at every quality
+    tier (owner directive: effects are never omitted) */
+ (fighters.length?fighters:[P1,P2]).forEach(function(f){
    if(!f||f.dead)return;
    if(f.ultChargeT>0){drawFxTex(FXIMG.fire,f.x,f.y+f.h*0.46,220,time*2.6,f.face,0.5)}
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
@@ -7850,20 +7865,20 @@ function draw(){
    ctx.fillStyle="#f59e0b";ctx.fillRect(f.x-15,f.y-184,30,13);
    ctx.fillStyle="#fde68a";ctx.fillRect(f.x-19,f.y-171,8,10);ctx.fillRect(f.x+11,f.y-171,8,10);
  });
- if(perfTier<2&&particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
- particles.forEach(function(p){ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
+ if(particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
+ particles.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
  rings=rings.filter(function(r){r.r+=(r.max-r.r)*0.22+1.4;r.life-=0.05;return r.life>0});
- rings.forEach(function(r){ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
- if(perfTier<3)fxBursts.forEach(function(b){var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))}); /* PERF round 2: same "screen"-blend cut as the overlay pass at tier 3+ (the vector bursts below still draw) */
+ rings.forEach(function(r){if(r.x<cX0||r.x>cX1||r.y<cY0||r.y>cY1)return;ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
+ fxBursts.forEach(function(b){if(b.x<cX0||b.x>cX1||b.y<cY0||b.y>cY1)return;var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))}); /* texture bursts draw at every tier; only fully off-screen ones are culled (see the culling bounds above) */
  drawVecBursts(); /* TRAVIS / SMILEY dedicated vector bursts (no borrowed FX textures) */
- floaters.forEach(function(fl){ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
+ floaters.forEach(function(fl){if(fl.x<cX0||fl.x>cX1||fl.y<cY0||fl.y>cY1)return;ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
  ctx.restore();
  /* screen-space: low drifting fog, then minimap, then the pre-rendered
     overlay (moon + halo + vignette — static, see buildBgCaches; it used
     to cost two full-screen radial-gradient fills every frame). The fog
     sits at the bottom of the screen and the moon at the top-right, so
     drawing the fog before the overlay changes nothing visible. */
- if(perfTier<3){ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}} /* PERF round 2: the drifting screen fog is also cut at tier 3+ */
+ {ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}} /* the drifting screen fog is drawn at every quality tier (owner directive: effects are never cut) */
  drawMinimap();
  if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
@@ -7981,7 +7996,8 @@ function loop(ts){
  fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay)+"ms"):Math.round(fpsEMA)}
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
-    canvas gets cheaper to fill, particles get capped harder) and
+    canvas gets cheaper to fill — resolution only; no effect, particle
+    count or draw pass is ever tied to the tier) and
     re-check after a 2s cooldown; while it holds above 57fps for 5s,
     step back up. Hysteresis + cooldown keep it from oscillating, and
     the 1.5s initial cooldown keeps spawn-in jank from triggering it.
@@ -7997,8 +8013,7 @@ function loop(ts){
     player sits in the worst of it. Step-up is unchanged. */
  if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
  else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
- if(mode==="online"){svAdvance(dtms); /* PERF round 3: online matches get the same half-rate rasterisation at the deepest tier (snapshots still advance every frame; only the draw is sampled) */
-  if(perfTier>=5&&(frameNo&1)){syncHUD();return}
+ if(mode==="online"){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped) */
   var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
@@ -8047,7 +8062,7 @@ function loop(ts){
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
-   if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (the cap itself shrinks at lower adaptive quality tiers) */
+   if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (a fixed ceiling of 460, independent of the quality tier) */
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
@@ -8070,13 +8085,10 @@ function loop(ts){
  }
  drawAlpha=Math.min(1,acc/STEP);
  camDtMs+=dtms;
- /* PERF round 2: at the two deepest tiers the draw itself is the
-    bottleneck, so render every OTHER display frame. The logic above
-    still steps at a full 60fps and the HUD still syncs; only the
-    rasterisation is sampled at half rate, and the camera below is
-    fed the accumulated two-frame dt (it clamps internally) so its
-    tracking speed is unchanged. */
- if(perfTier>=4&&(frameNo&1)){syncHUD();return}
+ /* The scene is drawn on EVERY display frame at every tier (the old
+    half-rate draw skip at the deepest tiers was removed — owner
+    directive). camDtMs above still accumulates the real frame time
+    and is handed to the camera below, which clamps internally. */
  /* camera at RENDER rate (it used to advance inside the logic step):
     updateCamera() aims at P1's interpolated position so the camera
     doesn't step at 60Hz on a faster display either — see its note
