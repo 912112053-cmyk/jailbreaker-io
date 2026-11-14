@@ -426,6 +426,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["07:57"],tag:"修正",title:"直接接続（P2P）：2人目（ゲスト）の操作が重く感じる問題を軽減",
+  items:["P2P対戦で、ホスト（1人目）は自分の端末でそのまま遊べるのに、ゲスト（2人目）だけ操作の反映が遅く「重い」と感じる問題に対応しました。原因は、ゲストの入力が試合に反映されるまでの段取りと、ホストからの状態配信の間隔にありました",
+         "ホストからゲストへの状態配信を 30/s → 60/s（毎フレーム）に増やしました。ゲスト側の表示が細かく・新しくなり、補間の待ち時間も短くなります",
+         "ゲストの入力がホストの試合に反映されるタイミングを、到着から「2フレーム先」→「次のフレーム」に早めました（約17ms短縮）。入力が遅れて届いた場合の扱い（押しっぱなしの継続・取りこぼしなし）はこれまで通りです",
+         "ゲスト側で自分のキャラを描くタイミングも、他のキャラよりさらに約10ms手前に寄せました。あわせて、ゲストの操作が画面に返ってくるまでの遅れが合計で数十ms短くなります",
+         "変更は直接接続（P2P）のときだけです。サーバー経由の対戦、予測表示を切っている様子見の方針、技・数値・物理には変更はありません"]},
  {date:"2026/11/15",times:["03:48"],tag:"新機能",title:"オンライン対戦に「直接接続（P2P）」モードを追加（標準はこちら）",
   items:["オンライン対戦の接続方式を選べるようになりました：新方式「直接接続（P2P）」と、従来の「サーバー経由」です。オンライン画面のボタンで切り替えられ、標準は「直接接続（P2P）」になっています",
          "直接接続（P2P）では、ホストの端末が試合を計算してプレイヤー同士が直接つながります。近くの相手とは遅延が小さくなりやすい方式です。その代わり、ホストが抜けるとその時点で試合は終了します（サーバー経由では、抜けた人のキャラをCPUが引き継いで試合が続きます）",
@@ -514,10 +520,6 @@ var UPDATE_LOG=[
          "Tキーで入力欄を開いて Enter で送信、Esc でキャンセルです。入力しているあいだは移動・ワザ・ダッシュなどのゲーム操作は一切入りません。スマホ・タブレットでは CHAT ボタンから入力でき、左下のスティックに被らない位置に置いてあります（スティック操作はそのまま使えます）",
          "MUTEボタンでチャットの表示／非表示を切り替えられます（ミュート中はログと入力ヒントが隠れます）",
          "チャットは表示と通信だけの追加です：対戦の計算（このページ内蔵の計算・オンライン対戦のサーバー側計算）や技の数値に変更はありません。オフライン（VS CPU・TRAINING）では表示されません"]},
- {date:"2026/11/14",times:["22:20"],tag:"修正・調整",title:"MIMI&SHADE：↓+J「こけロ」のSHADE側KBを320→520に強化し、吹き飛ばし方向を真上に変更",
-  items:["↓+J「こけちゃうよ／こけロ」のSHADE側のKBを320→520に強化し、吹き飛ばし方向を横方向から真上に変更しました（当たった相手はその場から真上へ吹き飛びます）",
-         "その他の数値は変更ありません：SHADE ダメージ12／発生0.16秒／判定92×40、MIMI側 ダメージ6／KB680、技全体0.32秒、被弾硬直0.32秒。技一覧のKB表示も「680／520（真上）」に合わせました",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1664,7 +1666,15 @@ function p2pRoomHandle(room,player,m){
    if(typeof m.seq==="number"&&m.seq<=player.lastSeq)return;
    if(typeof m.seq==="number")player.lastSeq=m.seq;
    var ins=Array.isArray(m.ins)?m.ins:[];
-   var base=Math.max(player.cursor||0,room.frame+2);
+   /* guest heaviness fix: schedule at the NEXT frame, not +2. The
+      match server's +2 headroom covers a remote hop the host device
+      does not have — this handler runs the moment the bundle arrives
+      (single-threaded: never mid-step), so frame+1 is always a
+      not-yet-stepped frame, and a bundle that arrives late simply
+      chains forward from the cursor exactly as before (held bits
+      repeat in the meantime; nothing is dropped). One full frame
+      (~16.7ms) of input latency comes off every guest action. */
+   var base=Math.max(player.cursor||0,room.frame+1);
    for(var k=0;k<ins.length&&k<4;k++)slot.realIn[base+k]=(ins[k]|0)&0xffff;
    if(ins.length)player.cursor=base+Math.min(ins.length,4);
    return;
@@ -1734,7 +1744,7 @@ function p2pRoomStartMatch(room){
  room.matchRoster=room.players.map(function(p){return{pid:p.pid,name:p.name,char:p.char,gone:false}});
  room.seed=(Math.random()*0x7fffffff)|0||1;
  room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
- room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;
+ room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
  for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.mnJson=null}
  room.phase="match";
  var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
@@ -1762,7 +1772,7 @@ function p2pHostPeer(retry){
  p2pPeer=peer;
  peer.on("open",function(){
    if(p2pPeer!==peer)return;
-   var room={code:net.code,phase:"lobby",players:[],joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,dead:false,hostPlayer:null};
+   var room={code:net.code,phase:"lobby",players:[],joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,lastSnapF:-1,dead:false,hostPlayer:null};
    p2pRoom=room;
    var hp={pid:null,name:"",char:null,host:false,joinSeq:0,conn:null,loopback:true,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false};
    room.hostPlayer=hp;
@@ -1977,18 +1987,26 @@ function p2pSyncMines(room){
 /* called from loop() after the local step processing (before the
    render interpolation factor is computed) while hosting: sample
    the screen-shake peak into the FX queue, stream a snapshot on
-   even frames (30/s, the server's current rate), flush the queued
-   FX events, sync each guest's own mines, and — once, when the
-   local match ends — send the results and close the match phase.
-   The host's own results screen is the local flow's (TIME UP banner
-   + showLocalResults), not this message. */
+   EVERY sim frame (60/s — guest heaviness fix: the match server's
+   30/s rate exists for a hosted hop the direct WebRTC link does
+   not have; at 30/s a guest waited up to a full extra frame for
+   the next state and interpolated across 33ms gaps, which read as
+   heaviness next to the host's zero-latency local play. The
+   guest's adaptive buffer keys off the measured arrival interval,
+   so the denser stream also lets its render delay settle at the
+   floor), flush the queued FX events, sync each guest's own
+   mines, and — once, when the local match ends — send the results
+   and close the match phase. The host's own results screen is the
+   local flow's (TIME UP banner + showLocalResults), not this
+   message. */
 function p2pPump(){
  if(!p2pHostLive||!p2pRoom)return;
  var room=p2pRoom;
  if(room.phase!=="match")return;
  if(shake>room.shkPeak)room.shkPeak=shake;
  if(room.shkPeak>0){if(room.evQ.length<1500)room.evQ.push({k:"shk",v:room.shkPeak});room.shkPeak=0}
- if(room.frame%2===0){
+ if(room.frame!==room.lastSnapF){
+   room.lastSnapF=room.frame;
    var snap=p2pBuildSnap(room);snap.t="snap";
    p2pSendGuests(room,snap);
  }
@@ -3042,7 +3060,10 @@ function svRenderWorld(now){
     predicted position, which answers your inputs immediately; the
     snapshot timelines below drive it only in the fallback cases
     (dead / match over / CPU takeover / spectating), where it uses
-    the timeline ~42ms AHEAD of everyone else's (20ms floor). When
+    the timeline ~42ms AHEAD of everyone else's (20ms floor — 10ms
+    for a P2P guest: the host streams snapshots at 60fps, so the
+    earlier render time still brackets cleanly, and the guest's
+    own fighter is where the P2P latency chain shows most). When
     either timeline runs past the newest snapshot, the fighter holds
     at that snapshot's real position until the next one arrives —
     snapshot-rendered fighters are never extrapolated from velocity
@@ -3050,7 +3071,7 @@ function svRenderWorld(now){
     predicting; only our own locally predicted fighter runs ahead). */
  var brR=svBracket(now-sv.renderDelay);
  if(!brR)return;
- var brL=svBracket(now-Math.max(20,sv.renderDelay-42));
+ var brL=svBracket(now-Math.max(net.transport==="p2p"?10:20,sv.renderDelay-42));
  /* retire predicted projectiles: the server's own copy has arrived
     (same kind, close by) or they have outlived any plausible
     confirmation window — either way they must not linger or double */
