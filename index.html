@@ -423,6 +423,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["00:04"],tag:"修正・調整",title:"MIMI&SHADE：空中↓+J「落ちちゃう！」を削除し、新技「落として！！」に変更",
+  items:["空中↓+J「落ちちゃう！／たすけるヨ！」を削除しました：お尻から急降下するダイブ本体（16ダメージ）、着地の衝撃波2段（12＋10）、着地と同時に出ていた闇フィールド（0.5秒ごとに4ダメージ）はすべて無くなります",
+         "新技「落として！！」：MIMIは発動と同時に0.32秒間 空中で静止し、真下へぬいぐるみで2回攻撃します（ダメージ5＋5／KB560／発生 即時（2回目は0.16秒後）／判定 下方向98×68／被弾硬直0.32秒／全体0.32秒／後硬直0.36秒）。ダイブではないので着地硬直もありません",
+         "同時にSHADEは、自分のいる位置で真下へすさまじい速度で拳を振り下ろします（ダメージ24／KB700（下方向）・メテオ判定あり／発生0.36秒／全体0.66秒／判定 下方向112×92）。当たった相手は真下へ叩き落とされます",
+         "技一覧の空中↓+Jの行も「落として！！」の新しい内容・数値に合わせて更新しました",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
  {date:"2026/11/14",times:["23:35"],tag:"見た目変更",title:"TRAVIS／SMILEYの体の大きさを他キャラと同じ背丈に統一",
   items:["TRAVISとSMILEYは、ドット絵シートの中で体が他キャラより大きく描かれていたため（待機ポーズの体の高さで TRAVIS 約1.15倍／SMILEY 約1.2倍）、試合中の表示を縮小して、WARDENやSARAなど他キャラと同じ背丈に揃えました。SMILEYの覚醒（Berserker）時の姿も同じ大きさに揃えています",
          "縮小は足の裏を中心に行っているので、地面や台への接地位置はこれまで通りぴったり合っています",
@@ -1308,7 +1314,7 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、少し遅れてSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 13')+mvS('KB','800／770')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.52秒')+mvS('後硬直','0.58秒')+mvS('判定','MIMI 80×62／SHADE 134×98')+mvS('被弾硬直','0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。SHADEの手は当たった相手を<b>真上</b>へ吹き飛ばす。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／520（真上）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — 落ちちゃう！／たすけるヨ！</b><p>MIMIはお尻から急降下し、着地で衝撃波が<b>2段</b>発生する：1段目 <b>12ダメージ</b>（判定96×80／KB640）に続いて、2段目の波 <b>10ダメージ</b>（判定120×58／KB560）が左右に広がり、<b>片側の合計は22ダメージ</b>になる。同時にSHADEは<b>MIMIの足元に闇フィールド</b>を展開する：4秒間残り、中にいる相手に0.5秒ごとに4ダメージ（MIMIはダメージを受けない。KB・硬直なし）。</p>'+mvSpec(mvS('ダメージ','MIMI 本体16／着地 12＋10＝22（片側・2段）／闇フィールド 4×最大8')+mvS('KB','560／着地 640・2段目560')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地 左右96×80＋2段目 120×58／フィールド 幅190')+mvS('着地硬直','0.3秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — 落として！！</b><p>MIMIは<b>発動と同時に0.32秒間 空中で静止</b>し、そのまま真下へ<b>ぬいぐるみで2回攻撃</b>する（1回目 発生即時／2回目 0.16秒後）。同時にSHADEは<b>すさまじい速度で拳を振り下ろし</b>、真下の相手を<b>メテオ</b>で叩き落とす。旧「落ちちゃう！」のお尻ダイブ・着地衝撃波・闇フィールドは<b>削除</b>された。</p>'+mvSpec(mvS('ダメージ','MIMI 5＋5／SHADE 24')+mvS('KB','MIMI 560／SHADE 700（下方向）')+mvS('発生','MIMI 即時／SHADE 0.36秒')+mvS('全体','MIMI 0.32秒／SHADE 0.66秒')+mvS('後硬直','0.36秒')+mvS('判定','MIMI 下方向98×68／SHADE 下方向112×92')+mvS('被弾硬直','MIMI 0.32秒')+mvS('追加効果','MIMIは0.32秒間 空中で静止／SHADE メテオ判定'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・完全硬直</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。後硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュ・他のワザは一切できない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.52秒（完全硬直）')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒・ジャンプ回復</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。使うと<b>ジャンプ回復</b>：二段ジャンプが回復する。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
@@ -1421,13 +1427,38 @@ $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
 var cv=$("cv"),ctx=cv.getContext("2d");
 var WORLD_W=2600,WORLD_H=1500,VIEW_H=480;
 var viewW=1067,viewH=VIEW_H,scale=1,cw=1280,ch=720;
+var cvDpr=1,skyCv=null,ovlCv=null;
+/* PERF (1P lag fix): the sky gradient and the screen-space overlay
+   (moon halo + moon + vignette) are STATIC in screen space, yet they
+   were re-rasterised as full-screen gradients every single frame.
+   They are now rendered ONCE per resize into offscreen canvases
+   (with a 16px overscan margin so the hit-shake offset can never
+   expose an edge) and blitted with drawImage each frame instead —
+   same pixels, a fraction of the fill cost. */
+function buildBgCaches(){
+ if(cw<10||ch<10)return;
+ var dpr=cvDpr||1,W=Math.round((cw+32)*dpr),H=Math.round((ch+32)*dpr);
+ skyCv=document.createElement("canvas");skyCv.width=W;skyCv.height=H;
+ var s=skyCv.getContext("2d");s.setTransform(dpr,0,0,dpr,0,0);
+ var g=s.createLinearGradient(0,16,0,16+ch);
+ g.addColorStop(0,"#030a18");g.addColorStop(.55,"#07304a");g.addColorStop(1,"#020610");
+ s.fillStyle=g;s.fillRect(0,0,cw+32,ch+32);
+ ovlCv=document.createElement("canvas");ovlCv.width=W;ovlCv.height=H;
+ var o=ovlCv.getContext("2d");o.setTransform(dpr,0,0,dpr,0,0);
+ var mg=o.createRadialGradient(cw-102,96,6,cw-102,96,104);mg.addColorStop(0,"rgba(224,247,255,.28)");mg.addColorStop(1,"rgba(224,247,255,0)");o.fillStyle=mg;o.fillRect(cw-206,-8,208,208);
+ o.fillStyle="rgba(232,251,255,.9)";o.beginPath();o.arc(cw-102,96,25,0,6.29);o.fill();
+ o.fillStyle="rgba(148,197,255,.4)";o.beginPath();o.arc(cw-110,88,5.5,0,6.29);o.arc(cw-92,106,4,0,6.29);o.fill();
+ var v=o.createRadialGradient(cw/2+16,ch/2+16,ch*0.55,cw/2+16,ch/2+16,ch*1.05);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(2,0,10,.42)");o.fillStyle=v;o.fillRect(0,0,cw+32,ch+32);
+}
 function resize(){
  var r=cv.getBoundingClientRect();if(r.width<10)return;
- var dpr=Math.min(2,window.devicePixelRatio||1);
+ var dpr=Math.min(1.5,window.devicePixelRatio||1); /* PERF: was 2 — at DPR 2 the canvas has ~78% more pixels to fill every frame; this is pixel art (image-rendering:pixelated), so 1.5 is visually identical and much cheaper on phones */
+ cvDpr=dpr;
  cw=r.width;ch=r.height;
  cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);
  ctx.setTransform(dpr,0,0,dpr,0,0);
  scale=ch/VIEW_H;viewW=cw/scale;viewH=VIEW_H;
+ buildBgCaches();
 }
 window.addEventListener("resize",resize);
 
@@ -3746,7 +3777,7 @@ bindHoldBtn($("ultBtn"),"ult");
 cv.addEventListener("contextmenu",function(e){e.preventDefault()});
 document.addEventListener("gesturestart",function(e){e.preventDefault()});
 /* ---- combat ---- */
-function spawnParticles(x,y,n,col,spd){for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
+function spawnParticles(x,y,n,col,spd){if(particles.length>430)return;for(var i=0;i<n;i++){var a=Math.random()*6.28,s=(Math.random()*.7+.3)*(spd||160);particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:.35+Math.random()*.3,col:col,size:2.5+Math.random()*4})}fxRec({k:"p",x:Math.round(x),y:Math.round(y),n:n,c:col,s:spd||160})}
 /* lightweight impact dressing: an expanding shockwave ring and a fan of
    directional spark streaks. Both reuse cheap canvas primitives only —
    no gradients, no shadowBlur, no extra per-frame allocations of note. */
@@ -4380,7 +4411,7 @@ var LAND_LAG={
  orchid:{ohook:0.28,odive:0.25,oshot:0.24,otackle:0.25,jkcombo:0.25},
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,jkcombo:0.18,sjail:0.33}, /* SMILEY: 回転ダガー (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / 連続斬り (jkcombo) 0.18 / チェーンジェイル (sjail) 着地硬直 0.33 (the move also marks the same airLag directly at the press, so ground starts pay it too). ダイブスタブ (taildrop) は削除されたため項目も削除； 連続エアナイフ (sairknife) は後硬直0.5秒が完全硬直 (recLockT) のため着地硬直なし */
- mimi:{mdive:0.3,mairspin:0.2,mlight:0.22,mswing:0.3} /* MIMI&SHADE: 落ちちゃう！ (mdive) 0.3 / 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too) */
+ mimi:{mairspin:0.2,mlight:0.22,mswing:0.3} /* MIMI&SHADE: 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too). 落として！！ (mdrop, the air down+J that replaced the 落ちちゃう！ dive) has NO landing lag — it is not a dive and its spec lists none, so the old mdive 0.3 entry is deleted with the move */
 };
 function landLagFor(ch,st){var t=LAND_LAG[ch];return t?(t[st]||0):0}
 function applyLandLag(f,wasAir){
@@ -5139,17 +5170,26 @@ function startMimiAttack(f,type,foe){
    beep(1500,.06,"sine",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
-     /* 落ちちゃう！／たすけるヨ！: MIMI drops butt-first (diveArmed —
-        the landing shockwave lives in the shared landing block);
-        SHADE spreads a DARK FIELD at MIMI's feet: 4s of standing
-        damage for foes (4 dmg every 0.5s, no knockback / no stun,
-        ticked in the main loop like ORCHID's mist — MIMI herself is
-        the owner and takes nothing). Field cooldown 1.5s */
-     f.state="mdive";f.stateT=0.3;f.attackCd=0.48;f.comboWin=0;f.diveArmed=true;
-     f.vx=f.face*312;f.vy=Math.max(f.vy,608);f.fastfall=false;
-     meleeHit(f,foe,62,52,16,560,f.face,0.85);
-     if((f.fieldCd||0)<=0){f.fieldCd=1.5;darkFields.push({x:f.x,y:f.y+f.h,w:190,t:4,tick:0,owner:f});f.shState="sfield";f.shStateT=0.5;spawnParticles(f.x,f.y+f.h-4,14,"#7e22ce",170);spawnRing(f.x,f.y+f.h-2,"#a855f7",40)}
-     beep(520,.09,"square",.05);
+     /* 落として！！ (user spec, REPLACES 落ちちゃう！／たすけるヨ！ —
+        the butt dive, its landing shockwave and the dark field are
+        deleted): MIMI hangs perfectly still in the air for the whole
+        0.32s move (the gravity step holds vy/vx at 0 while state
+        "mdrop" lasts — the same hold as TRAVIS's meteor song) and
+        swings the bunny doll DOWN twice: hit 1 lands on the press
+        （発生 即時）, hit 2 ticks out at 0.16s in stepFighter — 5 dmg
+        each / KB 560, box 下方向98x68 (centred under her feet via
+        shadeHit's explicit box), foe stun 0.32s. 全体 0.32s /
+        後硬直 0.36s (attackCd 0.29 + the shared 0.07). At the same
+        moment SHADE winds up its meteor fist: it slams straight
+        down 0.36s later (shHitKind "smeteor") from wherever SHADE
+        stands — 24 dmg / KB 700 straight down, box 下方向112x92,
+        SHADE 全体 0.66s */
+     f.state="mdrop";f.stateT=0.32;f.attackCd=0.29;f.comboWin=0;f.spinHits=1;f.spinTick=0;
+     f.vx=0;f.vy=0;f.fastfall=false;
+     shadeHit(f,f.x,f.y+f.h+16,98,68,5,560,f.face,0.85,0.32);
+     f.shState="smeteor";f.shStateT=0.66;f.shHitT=0.36;f.shHitKind="smeteor";
+     spawnParticles(f.x,f.y+f.h+10,8,"#fbcfe8",150);
+     beep(880,.06,"square",.045);
    }else if(!f.onGround){
      /* 回るよ！／こいつカ？: MIMI spins in the air (ticks in
         stepFighter, state "mairspin", up to 3 hits on both sides,
@@ -5778,6 +5818,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      else if(shk==="upper1"){shadeHit(f,f.shX+f.shFace*60,f.shY-58,120,94,14,320,f.shFace,-1.0,0.34);shadeBurst(f,9);beep(1350,.06,"square",.045)} /* J2 upper: 14 dmg / KB 320, box 120x94, stun 0.34s */
      else if(shk==="fist"){shadeHit(f,f.shX+f.shFace*68,f.shY-52,136,88,20,1000,f.shFace,-0.35);shadeBurst(f,12);shake=Math.max(shake,4);beep(240,.1,"sawtooth",.05)} /* J3 fist: 20 dmg / KB 1000, box 136x88 */
      else if(shk==="sweep"){shadeHit(f,f.shX+f.shFace*67,f.shY-52,134,98,13,770,f.shFace,-0.25,0.22);shadeBurst(f,9);beep(1100,.06,"square",.05)} /* fwd+J sweep: 13 dmg / KB 770, box 134x98, stun 0.22s */
+     else if(shk==="smeteor"){shadeHit(f,f.shX,f.shY-16,112,92,24,700,0,1.05);shadeBurst(f,12);spawnRing(f.shX,f.shY-4,"#a855f7",46);shake=Math.max(shake,5);beep(140,.14,"sawtooth",.06)} /* 落として！！ SHADE meteor fist: 24 dmg / KB 700 STRAIGHT DOWN (meteor: dir 0, up 1.05 — the same downward launch the other meteor hits use), box 下方向112x92 centred low over SHADE's feet, 発生 0.36s */
      else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,520,0,-1.0,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 520 straight up (dir 0, up -1.0), box 92x40, stun 0.32s — KB 320 -> 520 and launch direction changed to 真上 (user spec) */
    }}
    /* 回るよ！ ticks: a hit on both sides every 0.11s, up to 3 — a
@@ -5787,6 +5828,13 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    if(f.state==="mairspin"){
      f.spinTick+=dt;
      if(f.spinTick>=0.11&&f.spinHits<3){f.spinTick=0;f.spinHits++;var mhl=[];meleeHit(f,foe,78,78,4,300,f.face,-0.2,0.22,false,false,mhl);meleeHit(f,foe,78,78,4,300,-f.face,-0.2,0.22,false,false,mhl);spawnParticles(f.x,f.y+f.h*0.45,5,"#f9a8d4",150);beep(1500,.04,"square",.035)}
+   }
+   /* 落として！！ 2段目: the second doll swing lands 0.16s after
+      the press (hit 1 was 即時 on the press) — same 5 dmg / KB 560 /
+      下方向98x68 box / 0.32s foe stun as the first */
+   if(f.state==="mdrop"){
+     f.spinTick+=dt;
+     if(f.spinTick>=0.16&&f.spinHits<2){f.spinTick=0;f.spinHits++;shadeHit(f,f.x,f.y+f.h+16,98,68,5,560,f.face,0.85,0.32);spawnParticles(f.x,f.y+f.h+10,7,"#fbcfe8",150);beep(990,.05,"square",.04)}
    }
    /* 一人でもやれるもん！ is a SINGLE blast since the balance pass
       (9 dmg / KB 720 on the press in startMimiAttack) — state
@@ -6340,6 +6388,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
  else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* SARA flame-breath charge: fully stationary in the air for ~1.0s */
  else if(f.char==="travis"&&f.state==="tsingjump"&&!f.hitDone&&f.hitstun<=0){f.vy=0} /* TRAVIS シングソングジャンプ: fully stationary in the air for the whole 0.8s startup （空中で静止 — the launch in the state hook above sets hitDone and vy -960, which ends the hold) */
+ else if(f.char==="mimi"&&f.state==="mdrop"&&f.hitstun<=0){f.vy=0;f.vx=0} /* MIMI 落として！！: fully stationary in the air for the whole 0.32s state （空中で静止, user spec) */
  else if(f.char==="travis"&&f.state==="tmsong"&&f.hitstun<=0){f.vy=0;f.vx=0} /* TRAVIS メテオソング: fully stationary in the air for the whole 0.8s state （空中で静止， user spec — the ball already left on the press; vx is zeroed too, right before integration, so steering / fastfall input cannot drift him while he hangs) */
  else if(f.char==="orchid"&&(f.flyDur||0)>0){f.vy=-120} /* ORCHID 飛翔: a steady vy -120 rise for the whole 5s (user spec) */
  else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 0.55s (user spec) */
@@ -6411,9 +6460,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      }else if(f.char==="travis"){ /* TRAVIS ダイブマイク landing (user spec): the sound shockwave rolls out on BOTH sides — 14 dmg / KB 980 in a 96x86 box (was 10 / 430 in the generic 96x58). The single new KB 980 covers the landing hits too (spec: KB 600・430 -> 980) */
        meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);var tdY=f.y+f.h-5;spawnRing(f.x-52,tdY,"#fcd34d",50);spawnRing(f.x+52,tdY,"#fcd34d",50);spawnCharBurst("travis",f.x-54,tdY-8,96,0.3,0,-1,0.85);spawnCharBurst("travis",f.x+54,tdY-8,96,0.3,0,1,0.85);spawnSparks(f.x,tdY,1,"#fcd34d",6);spawnSparks(f.x,tdY,-1,"#fcd34d",6);spawnParticles(f.x-44,tdY,9,"#c084fc",210);spawnParticles(f.x+44,tdY,9,"#c084fc",210); /* (見た目変更) the landing shockwave now VISIBLY rolls out on both sides — a ring + sound burst + spark fan on each side, mirroring the 96x86 two-sided hit */
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
-       meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
-     }else if(f.char==="mimi"){ /* MIMI 落ちちゃう！ landing: TWO shockwaves roll out on BOTH sides — first 12 dmg / KB 640 in a 96x80 box (pink-and-dark burst), then a second wave of 10 dmg / KB 560 in a 120x58 box with the yellow burst, so each side totals 22 (okaki decision A: the landing is 12 + 10 = 22; this second wave matches the server sim exactly — same numbers, same yellow #fef08a / #fde047 look as SMILEY's landing wave above) */
-       meleeHit(f,foe,96,80,12,640,f.face,-0.28);meleeHit(f,foe,96,80,12,640,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,16,"#f9a8d4",230);spawnParticles(f.x,f.y+f.h-4,10,"#7e22ce",200);spawnRing(f.x,f.y+f.h-4,"#f9a8d4",44);
        meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
      }else if(f.char==="axe"){meleeHit(f,foe,dvRg,dvH,24,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,18,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fdba74",230);spawnParticles(f.x,f.y+f.h-6,10,"#a8a29e",200);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",42)} /* AXE 下斧 landing (user spec): shockwave front 24 / back 18 in the generic 96x58 dive box */else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
@@ -6623,9 +6669,9 @@ function drawSpriteTrail(f,key){
 var bgStars=[];
 for(var si=0;si<70;si++)bgStars.push({x:Math.random()*WORLD_W,y:Math.random()*900,s:2+Math.random()*3});
 function drawBG(){
- var g=ctx.createLinearGradient(0,cam.y,0,cam.y+viewH);
- g.addColorStop(0,"#030a18");g.addColorStop(.55,"#07304a");g.addColorStop(1,"#020610");
- ctx.fillStyle=g;ctx.fillRect(cam.x-60,cam.y-60,viewW+120,viewH+120);
+ /* PERF: the sky gradient fill that used to be here is screen-space
+    static, so draw() now blits the pre-rendered skyCv underneath
+    everything before the world transform — identical colours. */
  /* far skyline (parallax .35) */
  ctx.save();ctx.translate(cam.x*0.65,cam.y*0.8);
  ctx.fillStyle="#081426";
@@ -7357,6 +7403,7 @@ function drawShade(f){
  else if(st==="sfist")frontPose="fist";else if(st==="slow")frontPose="low";
  else if(st==="ssweep")frontPose="sweep";else if(st==="sgrab"){frontPose="grab";backPose="grab"}
  else if(st==="supper2"){frontPose="upper";frontS=1.72}else if(st==="sfield"){frontPose="flat";backPose="flat"}
+ else if(st==="smeteor")frontPose="slam" /* 落として！！: the front hand turns into the downward slam fist */
  else if(st==="ssend")frontPose="push";else if(st==="sult"){frontPose="push";backPose="push"}
  ctx.globalAlpha=0.92;
  drawShadeHand(sx-dir*36,sy-66+bob,dir,backPose,pr,backS);
@@ -7367,6 +7414,10 @@ function drawShade(f){
    drawShadeHand(sx+dir*30,sy-58-bob,dir,frontPose,pr,frontS);
  }
  PXU=2.6;
+ if(st==="smeteor"){ /* 落として！！: SHADE's fist rockets down from high above and stays slammed (travel clamps at the hit point, reached at 発生 0.36s) */
+   drawShadeHand(sx,sy-150+Math.min(pr,0.55)*190,dir,"slam",pr,1.6);
+   ctx.fillStyle="rgba(168,85,247,.5)";pxLine(sx-12,sy-150+Math.min(pr,0.55)*190-50,sx-8,sy-196+Math.min(pr,0.55)*190,PXU*0.8);pxLine(sx+11,sy-150+Math.min(pr,0.55)*190-48,sx+15,sy-190+Math.min(pr,0.55)*190,PXU*0.8);
+ }
  if(st==="sslam"){ /* つぶしてやル: a third arm falls from above SHADE */
    drawShadeHand(sx,sy-196+pr*86,dir,"slam",pr,1.65);
    ctx.fillStyle="rgba(168,85,247,.5)";pxLine(sx-14,sy-196+pr*86-52,sx-10,sy-236+pr*86,PXU*0.8);pxLine(sx+13,sy-196+pr*86-50,sx+17,sy-230+pr*86,PXU*0.8);
@@ -7400,7 +7451,7 @@ function drawMimi(f){
  var bob=isGuardM?3:0;
  ctx.translate(0,bob);
  if(f.state==="mairspin"){ctx.translate(0,29);ctx.rotate(time*21);ctx.translate(0,-29)}
- if(f.state==="mdive")ctx.rotate(0.42);
+ /* 落として！！ (mdrop): no body tilt — she hangs upright and still, doll swinging below her */
  if(f.state==="mpush3"||f.state==="mfpush")ctx.translate(3,0);
  if(f.state==="mswing")ctx.translate(0,-3);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.4,0);
@@ -7410,7 +7461,7 @@ function drawMimi(f){
  pxEllO(0,25,12,19.5,hairD,hairO);
  ctx.fillStyle=hairD;pxR(-7.5,40,3,6);pxR(-1.5,41,3,5);pxR(4.5,40,3,4.5);
  /* legs (bare) — forward-sitting for the butt drop / swing ride */
- if(f.state==="mdive"||f.state==="mswing"){
+ if(f.state==="mswing"){
    ctx.fillStyle=skinC;pxR(0,48,15,4.6);pxR(1,53.4,14,4.4);pxR(14,47.4,4.4,3);pxR(14,52.8,4.4,3);
  }else{
    ctx.fillStyle=skinC;pxR(-7.4,47,4.8,9);pxR(2.6,47,4.8,9);pxR(-8.6,55.4,6.6,2.8);pxR(2.2,55.4,6.6,2.8);
@@ -7442,6 +7493,7 @@ function drawMimi(f){
  else if(f.state==="mpush3"||f.state==="mfpush"){dollX=21;dollY=29;dollA=0.5}
  else if(f.state==="mlowj"){dollX=17;dollY=46;dollA=0.9}
  else if(f.state==="mlight"){dollX=2;dollY=36;dollA=0.1;armUp=true}
+ else if(f.state==="mdrop"){var pdr=prog(0.32);dollX=5;dollY=40+8*Math.abs(Math.sin(pdr*6.28));dollA=0.85} /* 落として！！: the doll pumps straight down twice (two swings inside the 0.32s hang) */
  else if(f.state==="mdk"){dollX=2;dollY=37;armUp=true}
  else if(f.state==="mult"){dollX=4;dollY=34;armUp=true}
  else if(f.state==="mswap"){dollX=13;dollY=30;dollA=0.3}
@@ -7466,6 +7518,7 @@ function drawMimi(f){
  if(f.state==="mpush3"||f.state==="mfpush"){ctx.fillStyle="rgba(254,249,195,.8)";pxLine(27,22,33,20,2);pxLine(28,29,35,29,2);pxLine(27,36,33,38,2)}
  if(f.state==="mlight"){for(var lo=0;lo<3;lo++){var lx=24+lo*8+Math.sin(time*26+lo*2)*1.6,ly=19+Math.cos(time*22+lo*1.7)*2.4;ctx.fillStyle="rgba(253,230,138,.4)";pxEll(lx,ly,5,5);ctx.fillStyle="rgba(254,249,195,.95)";pxEll(lx,ly,2.6,2.6)}}
  if(f.state==="mdk"||f.state==="mult"){ctx.fillStyle="rgba(254,249,195,.9)";for(var sp2=0;sp2<4;sp2++){var sxp=14+((time*30+sp2*13)%16),syp=12-((time*24+sp2*7)%10);pxR(sxp,syp,2,2)}}
+ if(f.state==="mdrop"){ctx.fillStyle="rgba(249,168,212,.8)";pxArc(2,50,21,0.35,2.75,2.4);ctx.fillStyle="rgba(126,34,206,.45)";pxArc(2,50,27,0.5,2.6,2)} /* 落として！！: twin pink arcs bloom under her feet as the doll slams down */
  if(f.state==="mswing"){ctx.fillStyle="rgba(249,168,212,.7)";pxLine(-14,44,-17,30+Math.sin(time*9)*2,2);pxLine(14,44,17,30+Math.cos(time*9)*2,2)} /* swing ropes to SHADE's hands */
  ctx.restore();
  /* frozen tint, in the same style as the other fighters' draw code
@@ -7718,6 +7771,8 @@ function draw(){
    for(var dj=0;dj<projectiles.length;dj++){var pj2=projectiles[dj];if(pj2.px==null)continue;swapped.push(pj2);pj2._rx=pj2.x;pj2._ry=pj2.y;pj2.x=pj2.px+(pj2.x-pj2.px)*drawAlpha;pj2.y=pj2.py+(pj2.y-pj2.py)*drawAlpha}
  }
  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.restore();
+ if(!skyCv)buildBgCaches();
+ if(skyCv)ctx.drawImage(skyCv,-16,-16,cw+32,ch+32); /* pre-rendered sky (see buildBgCaches) */
  ctx.save();
  ctx.scale(scale,scale);
  ctx.translate(-cam.x,-cam.y);
@@ -7833,7 +7888,7 @@ function draw(){
    ctx.fillStyle="#f59e0b";ctx.fillRect(f.x-15,f.y-184,30,13);
    ctx.fillStyle="#fde68a";ctx.fillRect(f.x-19,f.y-171,8,10);ctx.fillRect(f.x+11,f.y-171,8,10);
  });
- if(Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
+ if(particles.length<430&&Math.random()<0.55)particles.push({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
  particles.forEach(function(p){ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
  rings=rings.filter(function(r){r.r+=(r.max-r.r)*0.22+1.4;r.life-=0.05;return r.life>0});
  rings.forEach(function(r){ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
@@ -7841,22 +7896,41 @@ function draw(){
  drawVecBursts(); /* TRAVIS / SMILEY dedicated vector bursts (no borrowed FX textures) */
  floaters.forEach(function(fl){ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
  ctx.restore();
- /* screen-space: moon with a soft halo + low drifting fog, then minimap + vignette */
- var mg=ctx.createRadialGradient(cw-118,80,6,cw-118,80,104);mg.addColorStop(0,"rgba(224,247,255,.28)");mg.addColorStop(1,"rgba(224,247,255,0)");ctx.fillStyle=mg;ctx.fillRect(cw-222,-24,208,208);
- ctx.fillStyle="rgba(232,251,255,.9)";ctx.beginPath();ctx.arc(cw-118,80,25,0,6.29);ctx.fill();
- ctx.fillStyle="rgba(148,197,255,.4)";ctx.beginPath();ctx.arc(cw-126,72,5.5,0,6.29);ctx.arc(cw-108,90,4,0,6.29);ctx.fill();
+ /* screen-space: low drifting fog, then minimap, then the pre-rendered
+    overlay (moon + halo + vignette — static, see buildBgCaches; it used
+    to cost two full-screen radial-gradient fills every frame). The fog
+    sits at the bottom of the screen and the moon at the top-right, so
+    drawing the fog before the overlay changes nothing visible. */
  ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}
  drawMinimap();
- var v=ctx.createRadialGradient(cw/2,ch/2,ch*0.55,cw/2,ch/2,ch*1.05);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(2,0,10,.42)");ctx.fillStyle=v;ctx.fillRect(0,0,cw,ch);
+ if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
  for(var ri2=0;ri2<swapped.length;ri2++){swapped[ri2].x=swapped[ri2]._rx;swapped[ri2].y=swapped[ri2]._ry}
 }
+/* PERF (1P lag fix): syncHUD() runs EVERY rendered frame, and it used
+   to rebuild the leaderboard's innerHTML and rewrite ~20 textContents
+   unconditionally — a full HTML parse + layout pass 60-120 times a
+   second on the same thread the local sim runs on. hudTxt() only
+   touches the DOM when the value actually changed, and the
+   leaderboard is only re-assigned when its HTML string differs. */
+function hudTxt(el,v){if(el&&el._hv!==v){el._hv=v;el.textContent=v}}
 function syncHUD(){
  if(!P1||!P2)return;
+ /* PERF gate: build a signature of every value this function displays
+    (leaderboard order/content, score, ammo/cooldowns at the same 0.1s
+    resolution the HUD prints, meter, dash, combo, timer second, mode
+    flags). If it matches the last call, NOTHING on screen can have
+    changed, so skip the sort, the HTML rebuild and all DOM writes.
+    syncFinalCount() at the end only depends on values in this
+    signature (timer second / mode / matchOver / countdown), so
+    skipping it here is safe too. */
+ var lbSig="";for(var lbi=0;lbi<fighters.length;lbi++){var lf2=fighters[lbi];lbSig+=lf2.char+":"+lf2.score+":"+(lf2.kills||0)+":"+Math.round(lf2.hp)+":"+(lf2.isPlayer?1:0)+";"}
+ var hudSig=lbSig+"#"+P1.char+"|"+P1.score+"|"+P1.ammo+"|"+(P1.specCd>0?P1.specCd.toFixed(1):"R")+"|"+(P1.mistCd>0?P1.mistCd.toFixed(1):"R")+"|"+(P1.reloadT>0?1:0)+"|"+Math.floor(P1.meter)+"|"+P1.ultChain+"|"+(P1.dashCd>0?P1.dashCd.toFixed(1):"R")+"|"+P1.comboHits+"|"+P1.comboDmg+"|"+(P1.onGround?1:0)+"|"+(Math.abs(P1.vx)>330?1:0)+"|"+(P1.comboWin>0?P1.comboStep:0)+"|"+Math.floor(timer)+"|"+mode+"|"+(matchOver?1:0)+"|"+(countdown>0?1:0);
+ if(hudSig===syncHUD._sig)return;syncHUD._sig=hudSig;
  var sorted=fighters.slice().sort(function(a,b){return (b.score-a.score)||((b.kills||0)-(a.kills||0))||(b.hp-a.hp)}); /* v102 (owner fix): the in-match leaderboard uses the SAME order as the v99 results screen — SCORE desc, ties broken by KILLS then current HP (was score-only, so ties stayed in join order and disagreed with the results) */
  var lbHtml="";sorted.forEach(function(f,ri){lbHtml+='<div class="lbRow"><span>'+(ri+1)+'. <b style="color:'+FIGHTER_COLORS[fighters.indexOf(f)%FIGHTER_COLORS.length]+'">'+cname(f.char)+(f.isPlayer?" (YOU)":"")+'</b></span><b>'+f.score+'</b></div>'});
- var lbEl=$("lbRows");if(lbEl)lbEl.innerHTML=lbHtml;
- $("scoreText").textContent=P1.score;
+ var lbEl=$("lbRows");if(lbEl&&lbEl._hv!==lbHtml){lbEl._hv=lbHtml;lbEl.innerHTML=lbHtml}
+ hudTxt($("scoreText"),P1.score);
  $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 6"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
  if(P1.char==="mimi")$("ammoText").textContent="WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY"); /* MIMI&SHADE: U is the warp to SHADE, gated by specCd — the pill shows its cooldown instead of an ammo count */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  var db=$("dashBtn");
@@ -7942,6 +8016,7 @@ function loop(ts){
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
  acc+=Math.min(0.1,dtms/1000);
  var STEP=1/60;
+ if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
  while(acc>=STEP){
    acc-=STEP;time+=STEP;
    /* remember pre-step positions: draw() blends from these to the
@@ -7982,6 +8057,7 @@ function loop(ts){
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
+   if(particles.length>460)particles.length=460; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects */
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
@@ -7996,7 +8072,7 @@ function loop(ts){
       the moment the mine reveals itself */
    mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<80&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
-   /* MIMI&SHADE placed dark field （たすけるヨ！): hangs at MIMI's feet for 4s; foes standing in it take 4 damage every 0.5s (direct ticks, grind-style like the mist: no knockback, no hitstun; the owner MIMI takes nothing) */
+   /* MIMI&SHADE placed dark field: the system stays only so fields already in flight (or arriving in an online snapshot) still tick out — 4 damage every 0.5s, no knockback / no hitstun. NO current move places one: the field belonged to the deleted 落ちちゃう！／たすけるヨ！ dive, replaced by 落として！！ */
    darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)particles.push({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}}}return df.t>0});
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)particles.push({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
