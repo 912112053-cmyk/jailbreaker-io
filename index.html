@@ -393,6 +393,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["20:10"],tag:"修正・調整",title:"MIMI&SHADE：SHADEの手を大きく",
+  items:["SHADEの両手の見た目を大きくしました（通常時・技のポーズ・ブランコ・踏み潰しの手すべて）。変更は見た目だけで、技の判定・ダメージ・数値に変更はありません"]},
+ {date:"2026/11/14",times:["20:07"],tag:"修正・調整",title:"MIMI&SHADEをオンライン対戦に対応（サーバー側計算へ同期）",
+  items:["MIMI&SHADEの技・SHADEの動き・ワープ・ウルト・闇フィールドをオンライン対戦のサーバー側計算へ反映しました。オンラインでもSHADEがMIMIと一緒に動き、送り出し／呼び戻し／ワープが使えます",
+         "オンラインでSHADEの位置・向き・技のポーズと、闇フィールドの見た目が表示されるようになりました（これまではSHADEがMIMIに寄り添う仮表示で、闇フィールドは見えませんでした）",
+         "技の数値・ダメージ・挙動に変更はありません。ウルトの大玉は技一覧に「貫通」とありますが、実際の挙動は他の飛び道具と同じく最初の相手に当たった時点で消えます（クライアント側の実装どおり）"]},
  {date:"2026/11/14",times:["20:02"],tag:"修正・調整",title:"MIMI&SHADE：送り出したSHADEもMIMIと同じ動きに／SHADEは常にMIMIの方を向く",
   items:["K「いってらっしゃいSHADE」で前方へ送り出した後も、SHADEがその場に留まらずMIMIと同じ動きをするよう修正しました：MIMIが歩く・跳ぶ・ダッシュする・吹き飛ばされると、SHADEも同じ分だけ同じ方向へ動き、二人の距離を保ったまま一緒に移動します（呼び戻し・ワープの挙動は変更なし）",
          "SHADEが常にMIMIの方を向くよう修正しました：そばにいる時はこれまで通りMIMIと同じ向き、送り出して離れている時はMIMIのいる側へ向き直ります。SHADEの技の出る向きもこれに合わせます",
@@ -2215,7 +2221,7 @@ function svApplySnapP1(s,hist){
  if(hist)svRestoreP1(hist); /* fields the snapshot does not carry (jump state, combo step, press buffers…) come from the predicted state at the same frame */
  f.char=s.c;applyCharStats(f);
  f.x=s.x;f.y=s.y;f.px=s.px;f.py=s.py;f.vx=s.vx;f.vy=s.vy;
- f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf} /* forward-compat: MIMI&SHADE's second body (shx/shy/sha/shf) — once the server sim carries SHADE, its position / sent-away state / facing come from the snapshot; until then the fields are absent and the local follow / draw fallback covers it */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
+ f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf;if(typeof s.shs==="string")f.shState=s.shs;if(typeof s.sht==="number")f.shStateT=s.sht} /* forward-compat: MIMI&SHADE's second body (shx/shy/sha/shf) — once the server sim carries SHADE, its position / sent-away state / facing come from the snapshot; until then the fields are absent and the local follow / draw fallback covers it */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
  f.dead=!!s.dead;f.guarding=!!s.gd;f.hitstun=s.hs;f.frozen=s.fr;f.invuln=s.inv;
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
  f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
@@ -2234,7 +2240,7 @@ function svReconcile(snap){
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
- f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf} /* MIMI&SHADE second body (shx/shy/sha/shf) — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
+ f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht} /* MIMI&SHADE second body (shx/shy/sha/shf) — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
  f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
@@ -2329,6 +2335,7 @@ function svOnSnap(m){
  icePatches=(m.ip||[]).map(function(p){return{x:p.x,y:p.y,w:p.w,t:p.t,owner:null}});
  fireOrbs=(m.fo||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
  poisonMists=(m.pm||[]).map(function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
+ darkFields=(m.df||[]).map(function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
 }
 function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
@@ -6976,7 +6983,7 @@ function drawSmiley(f){
    ahead, or recalled mid-ult — which a body-locked sprite cannot
    do. MIMI is a small chibi girl (pink hair, white one-piece dress,
    grey bunny doll); SHADE is a pool of living darkness with TWO
-   giant clawed hands, each about 1.8x MIMI's height, drawn in world
+   giant clawed hands, each far bigger than MIMI herself, drawn in world
    space at (shX, shY) before MIMI herself is drawn in local space. */
 function drawShadeHand(x,y,dir,pose,prog,s){
  /* one giant black clawed hand: a knotted palm with four long
@@ -7034,22 +7041,22 @@ function drawShade(f){
  ctx.fillStyle="rgba(88,28,135,.5)";
  for(var wi=0;wi<3;wi++){var wx=sx-44+((time*17+wi*39+sx)%88),wy=sy-10-((time*11+wi*23)%30);ctx.fillRect(wx,wy,3,3)}
  /* the two hands (back hand first, a little higher and darker) */
- var backPose="idle",frontPose="idle",frontS=1.06,backS=0.98;
+ var backPose="idle",frontPose="idle",frontS=1.5,backS=1.38; /* hand scales only (user request: SHADE's hands bigger — appearance only, hit boxes unchanged) */
  if(st==="sclaw")frontPose="claw";else if(st==="supper")frontPose="upper";
  else if(st==="sfist")frontPose="fist";else if(st==="slow")frontPose="low";
  else if(st==="ssweep")frontPose="sweep";else if(st==="sgrab"){frontPose="grab";backPose="grab"}
- else if(st==="supper2"){frontPose="upper";frontS=1.22}else if(st==="sfield"){frontPose="flat";backPose="flat"}
+ else if(st==="supper2"){frontPose="upper";frontS=1.72}else if(st==="sfield"){frontPose="flat";backPose="flat"}
  else if(st==="ssend")frontPose="push";else if(st==="sult"){frontPose="push";backPose="push"}
  ctx.globalAlpha=0.92;
  drawShadeHand(sx-dir*36,sy-66+bob,dir,backPose,pr,backS);
  ctx.globalAlpha=1;
  if(st==="sswing"){ /* ブランコ: both hands cupped together under MIMI's feet */
-   drawShadeHand(f.x-13,f.y+f.h-6,1,"cup",pr,0.8);drawShadeHand(f.x+13,f.y+f.h-6,-1,"cup",pr,0.8);
+   drawShadeHand(f.x-15,f.y+f.h-6,1,"cup",pr,1.12);drawShadeHand(f.x+15,f.y+f.h-6,-1,"cup",pr,1.12);
  }else{
    drawShadeHand(sx+dir*30,sy-58-bob,dir,frontPose,pr,frontS);
  }
  if(st==="sslam"){ /* つぶしてやル: a third arm falls from above SHADE */
-   drawShadeHand(sx,sy-196+pr*86,dir,"slam",pr,1.18);
+   drawShadeHand(sx,sy-196+pr*86,dir,"slam",pr,1.65);
    ctx.strokeStyle="rgba(168,85,247,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx-14,sy-196+pr*86-52);ctx.lineTo(sx-10,sy-236+pr*86);ctx.moveTo(sx+13,sy-196+pr*86-50);ctx.lineTo(sx+17,sy-230+pr*86);ctx.stroke();
  }
  /* attack arcs for the claw / sweep */
