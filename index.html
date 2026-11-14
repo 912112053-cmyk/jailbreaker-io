@@ -392,6 +392,23 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["18:22"],tag:"修正・調整",title:"TRAVIS ↓+K シング・タイム中は台すり抜け不可に",
+  items:["↓+K シング・タイム：歌っている間（3.6秒）は、浮いた台の上でも S の2回押しによる台すり抜けができなくなりました（歌唱中に押した分は歌い終わった直後のすり抜け予約にもなりません）",
+         "歌唱そのもの（5ダメージ×最大12ヒット・KB300・判定 左右210×102・被弾硬直0.2秒）と、歌っている間の移動・ジャンプ・ダッシュ不可、歌い終わった後の後硬直2.5秒（完全硬直）は変更なし",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
+ {date:"2026/11/14",times:["18:20"],tag:"修正・調整",title:"TRAVIS ↓+K シング・タイムの後硬直を2.5秒（完全硬直）に変更",
+  items:["↓+K シング・タイム：歌い終わった後の後硬直を 1.3秒 → 2.5秒 に変更し、あわせてその2.5秒間を完全硬直にしました（移動・ジャンプ・ダッシュ・ワザのすべてができません）",
+         "歌唱そのもの（3.6秒・5ダメージ×最大12ヒット・KB300・判定 左右210×102・被弾硬直0.2秒）は変更なし。歌っている間の移動・ジャンプ・ダッシュ不可もそのままです",
+         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
+ {date:"2026/11/14",times:["18:10"],tag:"見た目変更",title:"SMILEYの技モーション・エフェクトを一新（Jチェーン／刺突／アンダーダガー／回転ダガー／連続斬り／ロースイープ／Berserker）",
+  items:["Jチェーンの見た目を変更しました：1段目は上から下へ切り裂く斬撃、2段目（返し）は下から上へ切り裂く斬撃、3段目（三連）は3回の刺突を繰り返すモーション、4段目（フィニッシュ）は大きな一突きで相手の心臓を貫く演出になりました",
+         "前+J 刺突：瞬間移動後の突き刺しに閃光のバーストと火花を追加し、より素早く豪華な見た目にしました",
+         "↓+J アンダーダガー：しゃがみ込んだ低い姿勢で、下段に包丁を切り入れる見た目に変更しました",
+         "空中J 回転ダガー：包丁を体の周りで高速で一回転させる見た目に変更しました（判定は前後両側のまま）",
+         "J+K 連続斬り：1段目が上から下への切り裂き、2段目が心臓を貫く刺突の演出になりました",
+         "↓+K ロースイープ：足払いの弧ではなく、足元で包丁を2回突き刺す見た目に変更しました",
+         "L Berserker：発動した瞬間、背後に大鎌を持った死神が1秒間出現するエフェクトを追加しました",
+         "いずれも見た目だけの変更で、ダメージ・KB・判定・タイミングなどの数値は一切変更していません"]},
  {date:"2026/11/14",times:["17:57"],tag:"修正・調整",title:"TRAVIS メテオソング：弾は発動と同時に発射し、本人が0.8秒空中で静止",
   items:["空中↓+K メテオソング：弾は発動と同時に真下へ発射したまま（発生 即時は変更なし）、撃った本人がその場で0.8秒間、空中で静止して留まるように変更しました（全体 0.55→0.80秒）",
          "これまでの「発射の反動で小さく跳ねる」動きは廃止しました。弾のダメージ・KB・弾速・爆発・後硬直0.88秒は変更なし",
@@ -1127,7 +1144,7 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動と<b>同時に</b>、真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。弾を撃った本人は、その場で<b>0.8秒間、空中で静止</b>して留まる（静止が終わると落下に戻る）。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','即時')+mvS('全体','0.80秒')+mvS('静止','0.8秒（空中）')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできない</b>。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','1.3秒')+mvS('判定','左右210×102'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできず、浮いた台の上でも台すり抜けはできない</b>。さらに歌い終わった後の<b>後硬直2.5秒も完全硬直</b>で、その間は移動・ジャンプ・ダッシュ・ワザのすべてができない大きな隙になる。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','2.5秒（完全硬直）')+mvS('判定','左右210×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1120')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -1135,23 +1152,23 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>黄色いスマイリーのお面にスーツ、武器は血の付いた大きな包丁。<b>最速クラスの軽量スピードファイター</b>。HPは230と低く吹っ飛ばされやすい代わりに、地上速度456・ダッシュ1300と足が速く、斬撃の出も全体も短い。速い投げ包丁で牽制し、一気に詰めて斬り刻むキャラ。</p>'
 +mvSpec(mvS('HP','230')+mvS('地上速度','456')+mvS('空中速度','427')+mvS('受けKB','×1.12')+mvS('ダッシュ','1300')+mvS('ウルト溜まり','速め（×1.1）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — ナイフスラッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒・全4段</span><p>素早い斬撃。猶予（0.8秒）以内に J を押し続けると次段へ。出が速く全体も短い4段チェーンの起点。</p>'+mvSpec(mvS('ダメージ','7')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.15秒')+mvS('判定','72×50')+mvS('被弾硬直','0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — ナイフスラッシュ（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目から切り返す斬撃。</p>'+mvSpec(mvS('ダメージ','7')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.16秒')+mvS('判定','72×52')+mvS('被弾硬直','0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — ナイフスラッシュ（三連）</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>3段目は名前のとおり<b>3連続の斬撃</b>（3ダメージ×3）。少しだけ重くなる。</p>'+mvSpec(mvS('ダメージ','3×3')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.18秒')+mvS('判定','78×54')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 4段目 — ナイフスラッシュ（フィニッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>大きく振り抜くチェーンの締め。ここまでつなぐと吹っ飛ばしも跳ね上がる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','460')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','88×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — 刺突</b><p>約105の瞬間移動ですり抜けざまに刺す。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.73秒')+mvS('判定','80×58')+mvS('被弾硬直','0.45秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — ナイフスラッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒・全4段</span><p>包丁を<b>上から下へ切り裂く</b>斬撃。猶予（0.8秒）以内に J を押し続けると次段へ。出が速く全体も短い4段チェーンの起点。</p>'+mvSpec(mvS('ダメージ','7')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.15秒')+mvS('判定','72×50')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — ナイフスラッシュ（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目とは逆に、<b>下から上へ切り裂く</b>返しの一撃。</p>'+mvSpec(mvS('ダメージ','7')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.16秒')+mvS('判定','72×52')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — ナイフスラッシュ（三連）</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>3段目は<b>3連続の刺突</b>（3ダメージ×3）。包丁を3回まっすぐ突き刺す。少しだけ重くなる。</p>'+mvSpec(mvS('ダメージ','3×3')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.18秒')+mvS('判定','78×54')+mvS('被弾硬直','0.24秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 4段目 — ナイフスラッシュ（フィニッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p><b>大きな一突きで相手の心臓を貫く</b>チェーンの締め。ここまでつなぐと吹っ飛ばしも跳ね上がる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','460')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','88×56'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — 刺突</b><p>約105の瞬間移動ですり抜けざまに、閃光のような速さで包丁を突き刺す。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.73秒')+mvS('判定','80×58')+mvS('被弾硬直','0.45秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックステップスラッシュ</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','72×54'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングカット</b><p>上昇斬り。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','540（真上）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','62×84')+mvS('上昇','vy -520'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — アンダーダガー</b><p>低く滑って足元を刺す。出が速く、低い姿勢で滑り込む。後硬直が短くなり、吹っ飛ばしが強くなった。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.2秒')+mvS('判定','74×34')+mvS('被弾硬直','0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 回転ダガー</b><p>空中で包丁を回す素早い一閃。判定は<b>前後（左右）両側</b>に出るので、背後の相手にも当たる（重なる位置でもヒットは1回だけ）。着地すると<b>着地硬直0.18秒</b>がある。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','80×64（前後）')+mvS('被弾硬直','0.28秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — アンダーダガー</b><p>しゃがみ込んで低く滑り、下段に包丁を切り入れて足元を刺す。出が速く、低い姿勢で滑り込む。後硬直が短くなり、吹っ飛ばしが強くなった。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.2秒')+mvS('判定','74×34')+mvS('被弾硬直','0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 回転ダガー</b><p>空中で包丁を<b>体の周りに高速で一回転</b>させる一閃。判定は<b>前後（左右）両側</b>に出るので、背後の相手にも当たる（重なる位置でもヒットは1回だけ）。着地すると<b>着地硬直0.18秒</b>がある。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','80×64（前後）')+mvS('被弾硬直','0.28秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>落下しながらの斬り下ろし。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.38秒</b>がある。</p>'+mvSpec(mvS('ダメージ','本体13／着地 前10・後10')+mvS('KB','本体560／着地 560')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','本体72×60／着地120×58')+mvS('着地硬直','0.38秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。素早い二連斬りで吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。上から下への切り裂きに続き、刺突で相手の心臓を貫く二連撃で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 連続ナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>その場で包丁を振り回し続ける連続斬り。1ヒットごとに相手を0.2秒硬直させるので当て続ければ逃げられず、<b>最後の16ヒット目だけが KB 660 で吹っ飛ばす</b>。全体と後硬直はどちらも<b>完全硬直</b>（移動・ジャンプ不可）で、隙は大きい。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 連続エアナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>空中に留まって振り回す連続ナイフ。性能は地上版と同じで、最後の一撃だけが吹っ飛ばす。空中↓+Kでも出る（旧ダイブスタブは削除）。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>低い足払いが<b>2段技</b>になった。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>足元へ包丁を2回突き刺す<b>2段技</b>。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は1.1秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','1.1秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って10秒間「Berserker」状態になる。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+14%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.9秒になり、近接ヒットで「出血」を付ける（0.4秒ごとに2ダメージ、1.6秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの15%を回復</b>する。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','10秒')+mvS('移動速度','+14%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.9秒')+mvS('出血','2ダメ／0.4秒・1.6秒間')+mvS('回復','与えたダメージの15%')+mvS('無敵','なし'))+'</div></div>'
++'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って10秒間「Berserker」状態になる。発動した瞬間、背後に大鎌を持った死神が1秒間だけ姿を現す。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+14%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.9秒になり、近接ヒットで「出血」を付ける（0.4秒ごとに2ダメージ、1.6秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの15%を回復</b>する。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','10秒')+mvS('移動速度','+14%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.9秒')+mvS('出血','2ダメ／0.4秒・1.6秒間')+mvS('回復','与えたダメージの15%')+mvS('無敵','なし'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1300')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":(c==="orchid"?"ORCHID":(c==="travis"?"TRAVIS":(c==="smiley"?"SMILEY":"KAIRO"))))))}
@@ -4549,9 +4566,13 @@ function startTravisAttack(f,type,foe){
         can neither jump nor dash (user spec — the stepFighter jump
         gate and tryDash both refuse while state is "tsing"); every
         tick inflicts 被弾硬直 0.2s (the hs argument on the tick
-        hits in stepFighter). attackCd 4.83 + 0.07 tail
-        = 全体 3.6 + 後硬直 1.3 */
-     f.state="tsing";f.stateT=3.6;f.attackCd=4.83;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
+        hits in stepFighter). attackCd 6.03 + 0.07 tail
+        = 全体 3.6 + 後硬直 2.5 (user spec: 後硬直 1.3 -> 2.5), and
+        the recovery is a FULL LOCKOUT （完全硬直） — the stepFighter
+        tsing-end hook raises recLockT to the remaining attackCd the
+        moment the song ends, so he cannot move, jump, dash or act
+        for the whole 2.5s (the SARA ハンドフレア pattern) */
+     f.state="tsing";f.stateT=3.6;f.attackCd=6.03;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
      floaters.push({x:f.x,y:f.y-30,txt:"♪ シング・タイム ♪",life:1.1,col:"#e9d5ff"});
      spawnParticles(f.x,f.y+f.h*0.4,14,"#c084fc",190);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",40);
      beep(520,.18,"sine",.05);setTimeout(function(){beep(660,.18,"sine",.05)},140);setTimeout(function(){beep(780,.22,"sine",.05)},280);
@@ -4688,6 +4709,7 @@ function startSmileyAttack(f,type,foe){
      f.vx=f.face*260;
      meleeHit(f,foe,80,58,12,360,f.face,-0.28,0.45);
      spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fde047",180);
+     spawnVecBurst("smiley",f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.9);spawnSparks(f.x+f.face*32,f.y+f.h*0.45,f.face,"#fef08a",6); /* 刺突 (見た目変更): a flash burst + forward sparks the instant the blink-stab lands (presentation only) */
      beep(1500,.05,"square",.045);
    }else{
      /* ナイフスラッシュ: a 4-stage chain of quick cuts — fast out and
@@ -4721,6 +4743,7 @@ function startSmileyAttack(f,type,foe){
        f.vx+=f.face*90;capVx(f,RUN_MAX*1.2);
        meleeHit(f,foe,88,56,12,460,f.face,-0.3); /* フィニッシュ: 11 -> 12 dmg (user spec) */
        spawnParticles(f.x+f.face*24,f.y+f.h*0.45,10,"#fde047",200);
+       spawnVecBurst("smiley",f.x+f.face*46,f.y+f.h*0.42,130,0.32,0,f.face,1);spawnRing(f.x+f.face*50,f.y+f.h*0.42,"#fde047",38);shake=Math.max(shake,3); /* フィニッシュ (見た目変更): the heart-piercing thrust blooms at its tip — vec burst + ring + a small shake (presentation only) */
        beep(800,.07,"sawtooth",.05);
      }
    }
@@ -5185,6 +5208,7 @@ function stepFighter(f,dt,input,foe){
     out or he dies (killFighter / resetFighter clear awakenT) */
  if(f.char==="smiley"&&(f.awakenT||0)>0){f.awakenT=Math.max(0,f.awakenT-dt);if(f.awakenT<=0)floaters.push({x:f.x,y:f.y-30,txt:"Berserker終了",life:.9,col:"#fca5a5"});else if(Math.random()<0.35)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*(0.25+Math.random()*0.5),1,Math.random()<0.6?"#dc2626":"#7f1d1d",60)}
  if(f.char==="sara"&&f.state==="sflare"&&f.stateT===0&&f.attackCd>0)f.recLockT=Math.max(f.recLockT||0,f.attackCd); /* ハンドフレア 後硬直（完全硬直）: 技が終わった後の残り硬直の間は移動・ジャンプ不可 */
+ if(f.char==="travis"&&f.state==="tsing"&&f.stateT===0&&f.attackCd>0)f.recLockT=Math.max(f.recLockT||0,f.attackCd); /* シング・タイム 後硬直 2.5秒（完全硬直）: 歌い終わった後の残り硬直（=2.5秒）の間は移動・ジャンプ・ダッシュ・ワザのすべてが不可 (user spec) */
  if(f.stateT===0&&f.state!=="idle")f.state="idle";
  /* AMMO RELOAD (owner request): the reload timer runs whenever the
     magazine is below full and restores ONE shot each time the gun's
@@ -5215,7 +5239,7 @@ function stepFighter(f,dt,input,foe){
  if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,80,70,airB?22:24,airB?640:600,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
 if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /* AXE メテオドロップ: 空中で静止 — he hangs in the air until the hit fires at 0.34s (threshold below), then plunges */
  if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:(f.char==="axe"?0.24:0.28))){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else if(f.char==="axe"){f.meteorArm=true;f.vy=Math.max(f.vy,880);spawnParticles(f.x,f.y+f.h*0.8,12,"#fdba74",210)} /* AXE メテオドロップ (okaki rework): NO hit in mid-air any more — the plunge just arms the slam (meteorArm) and the damage (左右102x72・32 dmg / KB 700) lands on TOUCHDOWN in the landing block, butt-first */else{meleeHit(f,foe,76,72,26,700,f.face,1.05)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* SMILEY 三連 (J 3rd stage) cuts 2-3: the first cut landed on the
     press (startSmileyAttack); the remaining two tick out on spinTick
     while the 0.22s state lasts — 3 dmg each, KB 280, 被弾硬直 0.24s,
@@ -5227,7 +5251,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  /* SMILEY ロースイープ (down+K) second cut: lands partway through
     the swing (stateT 0.26 -> threshold 0.13), 5 dmg / KB 580 — the
     launcher the new two-cut sweep finishes with (user spec) */
- if(f.char==="smiley"&&f.state==="ssweep"&&!f.hitDone&&f.stateT<=0.13){f.hitDone=true;meleeHit(f,foe,78,36,5,580,f.face,0.05,0.28);spawnParticles(f.x+f.face*24,f.y+f.h-5,7,"#fef08a",150);beep(880,.06,"square",.04)}
+ if(f.char==="smiley"&&f.state==="ssweep"&&!f.hitDone&&f.stateT<=0.13){f.hitDone=true;meleeHit(f,foe,78,36,5,580,f.face,0.05,0.28);spawnParticles(f.x+f.face*24,f.y+f.h-5,7,"#fef08a",150);spawnRing(f.x+f.face*26,f.y+f.h-4,"#fde047",30);beep(880,.06,"square",.04)} /* ロースイープ 2段目 (見た目変更): the second foot-level thrust pops a small ring at the floor as it lands (presentation only) */
  /* SMILEY 連続ナイフ / 連続エアナイフ (K / air K): the flurry ticks —
     cut 1 landed on the press （発生 即時）; cuts 2-16 follow every
     0.1125s while the 1.8s state lasts (16 x 0.1125 = 1.8). Every cut
@@ -5367,8 +5391,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     被弾硬直 0.2s on the foe it catches (user spec — the hs
     argument on the tick hits below). For the whole song Travis
     himself can neither JUMP (the jump gate in the movement chain
-    refuses while state is "tsing") nor DASH (tryDash refuses) —
-    user spec. The spec does not say what being hit does to the
+    refuses while state is "tsing") nor DASH (tryDash refuses) nor
+    DROP THROUGH the ledge under him (the drop-through branch in
+    the movement chain refuses while state is "tsing") — user spec. The spec does not say what being hit does to the
     song, so it simply runs its course, like the other rooted
     channel states */
  /* TRAVIS シングソングジャンプ (up+K): during the 0.8s startup he
@@ -5716,10 +5741,16 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    }
    if(input.down){
      if(!f.onGround){f.fastfall=true;f.vy=Math.max(f.vy,FASTFALL*0.9)}
-     else if(downEdge&&f.groundPlat&&!f.groundPlat.main){
+     else if(downEdge&&f.groundPlat&&!f.groundPlat.main&&!(f.char==="travis"&&f.state==="tsing")){
        /* DROP-THROUGH needs a quick DOUBLE TAP of S: the first tap only
           arms it (you stay on the ledge); a second tap within 0.32s
-          drops through THIS ledge only — the main floor never drops */
+          drops through THIS ledge only — the main floor never drops.
+          TRAVIS シング・タイム中は台すり抜け不可 (user spec): while
+          state is "tsing" this branch never runs at all, so S taps
+          during the song neither drop him through the ledge he is
+          singing on nor arm lastDownTap for a drop the moment the
+          song ends — the same rooting as the jump gate above and
+          the dash refusal in tryDash */
        if(time-f.lastDownTap<=0.32){f.dropPlat=f.groundPlat;f.dropT=0.25;f.lastDownTap=-9}
        else f.lastDownTap=time;
      }
@@ -6463,10 +6494,51 @@ function drawTravis(f){
  ctx.restore();
  hpBar(f);
 }
+/* ==== SMILEY Berserker: 死神 (the reaper) ====
+   The instant Berserker ignites, a hooded reaper with a scythe
+   materialises BEHIND him and hangs there for exactly 1 second
+   before dissolving (user spec). Pure presentation: it follows the
+   fighter it haunts, deals nothing and blocks nothing. Spawned off
+   drawSmiley's awakenT rising edge, so it fires the same way
+   offline, vs CPU and online (where awakenT arrives by snapshot). */
+var reapers=[];
+function spawnReaper(f){reapers.push({f:f,t0:time});if(reapers.length>6)reapers.shift()}
+function drawReapers(){
+ reapers=reapers.filter(function(r){return r.f&&!r.f.dead&&(time-r.t0)<1});
+ reapers.forEach(function(r){
+  var f=r.f,age=time-r.t0,H=f.h||116;
+  var a=age<0.12?age/0.12:(age>0.62?Math.max(0,(1-age)/0.38):1);
+  ctx.save();ctx.translate(f.x-f.face*H*0.30,f.y+H*0.52+Math.sin(age*5.2)*H*0.03);ctx.scale(f.face,1);ctx.globalAlpha=0.92*a;
+  /* tattered robe: a dark bell of cloth with a ragged hem */
+  ctx.fillStyle="#171321";ctx.beginPath();
+  ctx.moveTo(0,-H*0.62);
+  ctx.quadraticCurveTo(H*0.20,-H*0.44,H*0.21,-H*0.05);
+  ctx.lineTo(H*0.24,H*0.40);ctx.lineTo(H*0.15,H*0.33);ctx.lineTo(H*0.08,H*0.44);ctx.lineTo(0,H*0.35);ctx.lineTo(-H*0.08,H*0.44);ctx.lineTo(-H*0.15,H*0.33);ctx.lineTo(-H*0.24,H*0.40);ctx.lineTo(-H*0.21,-H*0.05);
+  ctx.quadraticCurveTo(-H*0.20,-H*0.44,0,-H*0.62);ctx.closePath();ctx.fill();
+  /* hood + hollow skull face */
+  ctx.fillStyle="#241a30";ctx.beginPath();ctx.arc(0,-H*0.40,H*0.155,0,6.29);ctx.fill();
+  ctx.fillStyle="#e7e0cd";ctx.beginPath();ctx.ellipse(H*0.02,-H*0.385,H*0.085,H*0.105,0,0,6.29);ctx.fill();
+  ctx.fillStyle="#0a0714";ctx.fillRect(-H*0.045,-H*0.415,H*0.038,H*0.05);ctx.fillRect(H*0.028,-H*0.415,H*0.038,H*0.05); /* hollow eye sockets */
+  ctx.fillStyle="#ef4444";ctx.fillRect(-H*0.032,-H*0.398,H*0.014,H*0.014);ctx.fillRect(H*0.041,-H*0.398,H*0.014,H*0.014); /* faint red glints deep in the sockets */
+  ctx.fillStyle="#0a0714";ctx.fillRect(-H*0.006,-H*0.325,H*0.032,H*0.016); /* mouth */
+  /* scythe: a long haft rising past the shoulder, its blade curving forward over the hood */
+  ctx.strokeStyle="#3f2d20";ctx.lineWidth=Math.max(2,H*0.035);ctx.beginPath();ctx.moveTo(H*0.13,H*0.34);ctx.lineTo(H*0.27,-H*0.60);ctx.stroke();
+  ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(H*0.27,-H*0.60);ctx.quadraticCurveTo(H*0.52,-H*0.60,H*0.60,-H*0.44);ctx.quadraticCurveTo(H*0.44,-H*0.47,H*0.28,-H*0.50);ctx.closePath();ctx.fill();
+  ctx.fillStyle="rgba(241,245,249,.85)";ctx.beginPath();ctx.moveTo(H*0.30,-H*0.565);ctx.quadraticCurveTo(H*0.47,-H*0.565,H*0.545,-H*0.475);ctx.quadraticCurveTo(H*0.44,-H*0.50,H*0.30,-H*0.52);ctx.closePath();ctx.fill(); /* blade edge highlight */
+  ctx.fillStyle="#e7e0cd";ctx.fillRect(H*0.155,-H*0.02,H*0.05,H*0.035); /* skeletal hand gripping the haft */
+  /* dark motes rising off the hem as the figure dissolves */
+  ctx.fillStyle="rgba(23,19,33,.8)";for(var rm=0;rm<4;rm++){var rmx=Math.sin(age*7+rm*2.4)*H*0.16,rmy=H*0.36-((age*H*0.5+rm*H*0.13)%(H*0.5));ctx.fillRect(rmx,rmy,3,3)}
+  ctx.restore();
+ });
+}
 function drawSmiley(f){
  /* 本体はドット絵スプライト (KAIRO と同じテイストで描き起こし)。
     ナイフの斬撃など技のエフェクトは、従来のコード描画の流儀で
     下半分に追加してある */
+ /* Berserker ignition (見た目変更): the rising edge of awakenT —
+    however it arrived (a local press, a CPU, or an online snapshot)
+    — summons the reaper behind him for 1 second */
+ if((f.awakenT||0)>0){if(!f._reaperSeen){f._reaperSeen=true;spawnReaper(f)}}else f._reaperSeen=false;
  /* ult ready: charged-electric aura in SMILEY's yellow */
  if(f.meter>=100&&!f.dead)drawUltAura(f,253,224,71);
  /* 覚醒中: dark-red pulsing ring + rising blood dots around the body
@@ -6502,27 +6574,59 @@ function drawSmiley(f){
  if(air&&f.vy>120)ctx.rotate(0.10);
  if(f.state==="sknife1"||f.state==="sknife2"||f.state==="sknife3"||f.state==="sknife4"||f.state==="jkcombo"||f.state==="sknife"||f.state==="sairknife")ctx.translate(8,0);
  if(f.state==="sriseup")ctx.translate(2,-3);
- if(f.state==="sslide")ctx.translate(4,4);
+ if(f.state==="sslide")ctx.translate(5,9); /* ↓+J アンダーダガー (見た目変更): he crouches lower than before while he cuts in at the feet */
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"smiley","#fde047");
  /* ==== 技エフェクト (コード描画) ==== */
  function cut(x1,y1,x2,y2,w){ctx.strokeStyle=paleC;ctx.lineWidth=w||2.6;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
  function bld(x,y){ctx.fillStyle="#dc2626";ctx.fillRect(x-1.4,y-1.4,2.8,2.8);ctx.fillStyle="#991b1b";ctx.fillRect(x+2.6,y+1.8,2,2)} /* blood on the blade: two small red pixel dots at the knife's edge (dot-art, not gore) */
- if(f.state==="sknife1"){cut(30,16,50,10);cut(28,24,46,20,1.8);bld(49,10)}
- else if(f.state==="sknife2"){cut(30,36,50,42);cut(28,28,46,32,1.8);bld(49,42)}
- else if(f.state==="sknife3"){cut(28,20,52,26);cut(26,30,48,34,1.8);bld(51,26)}
- else if(f.state==="sknife4"){ctx.strokeStyle=yellC;ctx.lineWidth=3.4;ctx.beginPath();ctx.arc(14,26,36,-1.1,0.9);ctx.stroke();cut(38,8,54,4,2);bld(53,4)}
- else if(f.state==="sblink"){ctx.strokeStyle="rgba(254,240,138,.55)";ctx.lineWidth=2;for(var bl=0;bl<3;bl++){ctx.beginPath();ctx.moveTo(-34+bl*7,14+bl*10);ctx.lineTo(-8+bl*7,14+bl*10);ctx.stroke()}cut(30,22,50,26)}
+ if(f.state==="sknife1"){ /* J1 (見た目変更): 上から下へ切り裂く — a big arc tearing from above his head down past his feet, a steep near-vertical cut, and drag streaks following the blade on its way down */
+  ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(8,26,40,-1.25,1.05);ctx.stroke();
+  cut(40,-4,54,50,2.8);cut(31,0,43,44,1.7);
+  ctx.strokeStyle="rgba(254,240,138,.5)";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(22,-2);ctx.lineTo(32,20);ctx.moveTo(29,14);ctx.lineTo(39,36);ctx.stroke();
+  bld(53,49)}
+ else if(f.state==="sknife2"){ /* J2 返し (見た目変更): 下から上へ切り裂く — the return cut tears UPWARD: steep rising cut, lift streaks chasing it, blood at the top tip */
+  ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(8,28,40,-1.3,1.0);ctx.stroke();
+  cut(54,52,40,-2,2.8);cut(44,46,32,2,1.7);
+  ctx.strokeStyle="rgba(254,240,138,.5)";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(34,38);ctx.lineTo(26,16);ctx.moveTo(41,24);ctx.lineTo(33,2);ctx.stroke();
+  bld(41,-1)}
+ else if(f.state==="sknife3"){ /* J3 三連 (見た目変更): THREE repeated thrusts, one per cut of the 3x3 — the stabs stack up as stateT runs down (the delayed cuts land at stateT ~0.15 / ~0.08), each a straight stab line with a pointed tip; the older thrusts fade behind the newest */
+  var thP=f.stateT>0.15?1:(f.stateT>0.08?2:3);
+  for(var th=0;th<thP;th++){var thy=16+th*9,thx=th*3;ctx.globalAlpha=th===thP-1?1:0.42;cut(24+thx,thy,55+thx,thy,th===thP-1?2.8:2);ctx.fillStyle=paleC;ctx.beginPath();ctx.moveTo(55+thx,thy-3.2);ctx.lineTo(64+thx,thy);ctx.lineTo(55+thx,thy+3.2);ctx.closePath();ctx.fill()}
+  ctx.globalAlpha=1;
+  var nly=16+(thP-1)*9;ctx.strokeStyle="rgba(254,240,138,.55)";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(0,nly-4.5);ctx.lineTo(19,nly-4.5);ctx.moveTo(-3,nly+4.5);ctx.lineTo(16,nly+4.5);ctx.stroke();
+  bld(62,nly)}
+ else if(f.state==="sknife4"){ /* J4 フィニッシュ (見た目変更): ONE huge thrust that pierces the heart — a long white-hot stab line punching far past the usual reach, starburst + blood at the piercing tip (its ring / vec burst / shake land in startSmileyAttack) */
+  ctx.strokeStyle="rgba(253,224,71,.45)";ctx.lineWidth=6.4;ctx.beginPath();ctx.moveTo(16,24);ctx.lineTo(76,24);ctx.stroke();
+  cut(18,24,78,24,3);ctx.fillStyle="#fff7ed";ctx.fillRect(24,22.9,50,2.2);
+  ctx.strokeStyle=yellC;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(80,24);ctx.lineTo(90,24);ctx.moveTo(78,17);ctx.lineTo(84,10);ctx.moveTo(78,31);ctx.lineTo(84,38);ctx.moveTo(74,15);ctx.lineTo(76,7);ctx.moveTo(74,33);ctx.lineTo(76,41);ctx.stroke();
+  bld(79,24);bld(72,29)}
+ else if(f.state==="sblink"){ /* 前+J 刺突 (見た目変更): a blink-fast stab dressed up — longer afterimage streaks behind him, a glowing thrust line with a white-hot core and a starburst tip in front (its vec burst + sparks land in startSmileyAttack) */
+  ctx.strokeStyle="rgba(254,240,138,.55)";ctx.lineWidth=2;for(var bl=0;bl<4;bl++){ctx.beginPath();ctx.moveTo(-42+bl*6,11+bl*9);ctx.lineTo(-6+bl*6,11+bl*9);ctx.stroke()}
+  ctx.strokeStyle="rgba(253,224,71,.5)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(15,24);ctx.lineTo(60,24);ctx.stroke();
+  cut(17,24,62,24,2.6);ctx.fillStyle="#fff7ed";ctx.fillRect(22,23,34,2);
+  ctx.strokeStyle=yellC;ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(64,24);ctx.lineTo(72,24);ctx.moveTo(62,18);ctx.lineTo(67,12);ctx.moveTo(62,30);ctx.lineTo(67,36);ctx.stroke();
+  bld(61,24)}
  else if(f.state==="sback"){cut(28,18,48,12);ctx.strokeStyle="rgba(254,240,138,.5)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-16,30);ctx.lineTo(-30,30);ctx.stroke()}
  else if(f.state==="sriseup"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(10,26,32,-2.4,-1.2);ctx.stroke();cut(26,4,34,-6,2)}
- else if(f.state==="sslide"){cut(28,44,48,48);ctx.fillStyle="rgba(254,240,138,.4)";ctx.beginPath();ctx.ellipse(14,52,24,4.5,0,0,6.29);ctx.fill()}
- else if(f.state==="sairj"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(12,24,34,-1,0.8);ctx.stroke();ctx.beginPath();ctx.arc(12,24,34,Math.PI-0.8,Math.PI+1);ctx.stroke();cut(36,10,52,6,2);bld(51,6);cut(-12,10,-28,6,2);bld(-27,6)} /* 回転ダガー: spin arc + dagger flash on BOTH sides now, mirroring the two-sided （前後左右） hitbox */
+ else if(f.state==="sslide"){ /* ↓+J アンダーダガー (見た目変更): crouched right down (the state translate above drops him lower than before), the hocho rakes in at ankle height — two low cuts along the floor with dust kicked up under the blade */
+  cut(24,49,54,45,2.8);cut(22,54,48,52,1.8);bld(53,45);
+  ctx.fillStyle="rgba(254,240,138,.4)";ctx.beginPath();ctx.ellipse(12,57,27,4.5,0,0,6.29);ctx.fill();
+  ctx.fillStyle="rgba(254,249,195,.55)";ctx.fillRect(30,51,3,2);ctx.fillRect(43,53,2.4,1.8);ctx.fillRect(17,54,2,1.6)}
+ else if(f.state==="sairj"){ /* 空中J 回転ダガー (見た目変更): the hocho whips around his WHOLE body in one fast revolution — a full faint ring with four blade flashes chasing each other around it (front AND back, matching the two-sided 前後左右 hitbox) and a bright leading edge at the head of the spin */
+  ctx.strokeStyle="rgba(253,224,71,.38)";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(12,26,37,0,6.29);ctx.stroke();
+  for(var spk=0;spk<4;spk++){var spa=time*44+spk*1.571,spx=12+Math.cos(spa)*37,spy=26+Math.sin(spa)*37,stx2=-Math.sin(spa),sty2=Math.cos(spa);ctx.strokeStyle=spk===0?paleC:"rgba(254,249,195,.7)";ctx.lineWidth=spk===0?3:2.1;ctx.beginPath();ctx.moveTo(spx-stx2*8,spy-sty2*8);ctx.lineTo(spx+stx2*8,spy+sty2*8);ctx.stroke();if(spk===0)bld(spx+stx2*8,spy+sty2*8)}
+  ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(12,26,37,time*44-0.75,time*44+0.3);ctx.stroke()}
  else if(f.state==="sjail"){ctx.strokeStyle="#94a3b8";ctx.lineWidth=2.2;for(var chn=-1;chn<=1;chn+=2){for(var chl=0;chl<4;chl++){ctx.beginPath();ctx.arc(chn*17,10+chl*13,3.6,0,6.29);ctx.stroke()}}ctx.strokeStyle=yellC;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(0,58);ctx.lineTo(0,44);ctx.stroke()} /* チェーンジェイル: chain links hang on both sides of him as he rockets straight up */
  else if(f.state==="diveclaw"){cut(22,34,34,54);cut(14,30,24,48,1.8);bld(33,53)}
- else if(f.state==="jkcombo"){cut(30,18,50,12);cut(28,32,48,38,2);bld(49,12)}
+ else if(f.state==="jkcombo"){ /* J+K 連続斬り (見た目変更): the 1st hit tears top-to-bottom like the new J1; the moment the delayed 2nd hit fires (stateT<=0.26) the art swaps to the heart-piercing thrust (its vec burst + ring + shake land in stepFighter) */
+  if(f.stateT>0.26){ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(8,26,40,-1.25,1.05);ctx.stroke();cut(40,-4,54,50,2.8);cut(31,0,43,44,1.7);bld(53,49)}
+  else{ctx.strokeStyle="rgba(253,224,71,.5)";ctx.lineWidth=5.6;ctx.beginPath();ctx.moveTo(17,24);ctx.lineTo(72,24);ctx.stroke();cut(19,24,74,24,2.8);ctx.fillStyle="#fff7ed";ctx.fillRect(24,23,46,2);ctx.strokeStyle=yellC;ctx.lineWidth=1.9;ctx.beginPath();ctx.moveTo(76,24);ctx.lineTo(85,24);ctx.moveTo(74,17);ctx.lineTo(80,11);ctx.moveTo(74,31);ctx.lineTo(80,37);ctx.stroke();bld(75,24)}}
  else if(f.state==="sknife"||f.state==="sairknife"){var flPh=(f.spinHits||1)%2;if(flPh){cut(28,12,53,8,2.8);cut(26,25,49,29,1.8);bld(52,8)}else{cut(28,40,53,44,2.8);cut(26,27,49,23,1.8);bld(52,44)}ctx.strokeStyle="rgba(253,224,71,.45)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(14,26,37,0,6.29);ctx.stroke()} /* 連続ナイフ／連続エアナイフ: alternating high / low cuts strobing with each tick (spinHits), wrapped in a thin flurry ring */
  else if(f.state==="taildrop"){cut(6,36,10,56,3);ctx.strokeStyle="rgba(254,240,138,.6)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-4,20);ctx.lineTo(0,44);ctx.stroke();bld(9,55)}
- else if(f.state==="ssweep"){ctx.strokeStyle=yellC;ctx.lineWidth=3;ctx.beginPath();ctx.arc(8,46,30,0.2,1.2);ctx.stroke()}
+ else if(f.state==="ssweep"){ /* ↓+K ロースイープ (見た目変更): no more sweeping foot arc — the hocho STABS in twice at ground level, one thrust per cut of the two-hit move (the 2nd thrust lands at stateT<=0.13, ring in stepFighter) */
+  if(f.stateT>0.13){cut(22,50,52,47,2.8);ctx.fillStyle=paleC;ctx.beginPath();ctx.moveTo(52,43.8);ctx.lineTo(60,47);ctx.lineTo(52,50.2);ctx.closePath();ctx.fill();bld(51,47);ctx.fillStyle="rgba(254,240,138,.35)";ctx.beginPath();ctx.ellipse(10,57,22,4,0,0,6.29);ctx.fill()}
+  else{cut(20,55,58,52,3);ctx.fillStyle=paleC;ctx.beginPath();ctx.moveTo(58,48.8);ctx.lineTo(67,52);ctx.lineTo(58,55.2);ctx.closePath();ctx.fill();bld(57,52);ctx.strokeStyle=yellC;ctx.lineWidth=2;ctx.beginPath();ctx.arc(28,55,21,0.15,1.25);ctx.stroke()}}
  else if(f.state==="sthrow"){ctx.fillStyle="#26221f";ctx.fillRect(28,22,6,4);ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(34,19.5);ctx.lineTo(48,19.5);ctx.quadraticCurveTo(54,20.5,57,24);ctx.quadraticCurveTo(52,27.5,46,28.2);ctx.lineTo(34,28.5);ctx.closePath();ctx.fill();ctx.fillStyle="#94a3b8";ctx.fillRect(34,19.5,14,1.8);ctx.fillStyle="#f1f5f9";ctx.fillRect(34,26.7,12,1.8);ctx.fillStyle="#dc2626";ctx.fillRect(43,23,2.4,2.4);bld(50,22)} /* the hocho leaves his hand: dark grip + long slim gyuto blade (straight spine curving down to the point, belly edge) with blood */
  else if(f.state==="srush"){ctx.strokeStyle="rgba(254,240,138,.65)";ctx.lineWidth=2.2;for(var rl=0;rl<3;rl++){var ry=14+rl*13+Math.sin(time*30+rl)*2;ctx.beginPath();ctx.moveTo(-16,ry);ctx.lineTo(-40-Math.random()*10,ry);ctx.stroke()}cut(30,16+Math.sin(time*34)*8,52,22+Math.cos(time*29)*8,3)}
  if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.5)";ctx.fillRect(-21,-6,42,62)}
@@ -6811,6 +6915,7 @@ function draw(){
    else{ctx.rotate(pr.vx>0?.78:-.78+1.57);ctx.fillStyle="#e0f7ff";ctx.fillRect(-8,-8,16,16);ctx.fillStyle="#38bdf8";ctx.fillRect(-4.5,-4.5,9,9)}
    ctx.restore();
  });
+ drawReapers(); /* SMILEY Berserker: 死神 apparitions render BEHIND the fighters they haunt */
  var drawList=fighters.length?fighters:[P1,P2];
  for(var dli=0;dli<drawList.length;dli++){var df=drawList[dli];if(!df||df.dead)continue;{var shY=null;if(df.onGround&&df.groundPlat)shY=df.groundPlat.y;else{for(var spi=0;spi<platforms.length;spi++){var spp=platforms[spi];if(df.x>spp.x-8&&df.x<spp.x+spp.w+8&&spp.y>=df.y+df.h-4&&(shY===null||spp.y<shY))shY=spp.y}}if(shY!==null){var shH=Math.max(0,shY-(df.y+df.h));ctx.fillStyle="rgba(1,4,10,"+Math.max(0.05,0.34-shH*0.0011)+")";ctx.beginPath();ctx.ellipse(df.x,shY+5,30+Math.min(16,shH*0.05),6.5,0,0,6.29);ctx.fill()}}if(df.char==="warden")drawWarden(df);else if(df.char==="kojiro")drawKojiro(df);else if(df.char==="axe")drawAxe(df);else if(df.char==="sara")drawSara(df);else if(df.char==="orchid")drawOrchid(df);else if(df.char==="travis")drawTravis(df);else if(df.char==="smiley")drawSmiley(df);else drawKairo(df);
    if(df.ultChargeT>0){ /* AXE ult: blazing invincibility ring while he charges */
