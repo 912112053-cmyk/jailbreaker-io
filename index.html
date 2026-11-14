@@ -392,6 +392,14 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/14",times:["15:14"],tag:"修正・調整",title:"空中でダメージを受けると2段ジャンプが回復するバグを修正",
+  items:["空中で攻撃（近接・飛び道具・燃焼の継続ダメージなど）を食らうと、使い切っていたはずの2段ジャンプ（空中ジャンプ）が回復してしまうバグを修正しました。被弾では2段ジャンプは回復しなくなり、着地するまで戻りません",
+         "攻撃側の仕様は変更していません：昇り斬りなどの特定の技を当てたときに攻撃側の2段ジャンプが戻る仕様や、SARAの飛翔による回復は従来どおりです",
+         "なお、この修正はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
+ {date:"2026/11/14",times:["15:04"],tag:"修正・調整",title:"アカウント削除で記録も完全削除されるように",
+  items:["アカウント削除が、ゲームサーバー経由で PlayFab のアカウント記録そのものを完全削除するようになりました（これまではフレンド解除＋ログイン停止マーカーのみで、記録自体は残っていました）",
+         "削除が完了すれば、同じユーザーネームで新規登録できるようになります（PlayFab 側の反映まで少し時間がかかる場合があります）",
+         "完全削除が完了できなかった場合は、これまで通りログインできない状態でアカウントを残します"]},
  {date:"2026/11/14",times:["14:54"],tag:"修正・調整",title:"SARAを上方・下方調整（ラッシュ／燃焼／ジャベリン装填制／火炎放射ほか）",
 items:["ウルト溜まりを下方修正：与ダメージでの溜まりが 約1.07倍 → 0.7倍",
 "Jラッシュを調整：1段目 KB 290→250・後硬直 0.34→0.22秒・被弾硬直0.26秒を追加／2段目 KB 270→180・後硬直 0.41→0.22秒・被弾硬直0.3秒と燃焼2.0秒を追加／3段目 ダメージ 9→10・KB 340→300・後硬直 0.43→0.28秒・判定 64×80→80×94・被弾硬直0.3秒を追加／4段目 ダメージ 前20→22・後10→11、KB 前640→720、判定 前102×72→118×76",
@@ -1550,12 +1558,19 @@ function jbServerBase(){
     name / room code / inputs) at a stranger's WebSocket server */
  return JB_SERVER_URL;
 }
+/* HTTP(S) base of the same Worker — used for plain HTTPS endpoints
+   (account deletion) rather than the match WebSocket */
+function jbHttpBase(){
+ return JB_SERVER_URL.replace(/^wss:\/\//,"https://").replace(/^ws:\/\//,"http://");
+}
 var net={role:null,ws:null,code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
-/* FX spawn helpers call fxRec on every spawn; effects are produced
-   locally on every client (prediction + snapshot-derived), so there
-   is nothing to forward — fxRec stays a no-op so the spawn helpers'
-   call sites do not need to change. */
+/* FX spawn helpers call fxRec on every spawn. On the SERVER sim the
+   same hook records each spawn into an FX event the Room forwards to
+   every client ({t:"ev"} — replayed by svOnEv below through these
+   very helpers), so online matches show exactly the effects the sim
+   produced. Here on the client fxRec stays a no-op: local spawns are
+   already on screen, and replayed ones must not be re-recorded. */
 function fxRec(ev){}
 function fxImgKey(img){for(var k in FXIMG){if(FXIMG[k]===img)return k}return null}
 /* seeded RNG kept for parity with the shared simulation code paths
@@ -1687,7 +1702,7 @@ function svOnMsg(m){
    return;
  }
  if(m.t==="snap"){svOnSnap(m);return}
- if(m.t==="ev"){return} /* server event banners are KO notices only; the client renders the same banners from snapshot death transitions (below), so these are intentionally not double-shown */
+ if(m.t==="ev"){svOnEv(m.ev);return} /* server FX events: the sim records every effect spawn (particles / rings / sparks / bursts / floaters / shake) and the Room forwards them — svOnEv replays them through the same spawn helpers the local sim uses, so online matches show the exact effects offline matches do. "banner" events inside are still skipped: the client renders KO banners itself from snapshot death transitions (svOnDeathFx), so they are not double-shown */
  if(m.t==="cpu"){
    if(running&&mode==="online")showCenter((m.name||"プレイヤー")+" さんが退出しました\nCPUが引き継ぎます",2600);
    return;
@@ -1988,7 +2003,7 @@ function svApplySnapP1(s,hist){
  f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
  f.dead=!!s.dead;f.guarding=!!s.gd;f.hitstun=s.hs;f.frozen=s.fr;f.invuln=s.inv;
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
- f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;
+ f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
 }
@@ -2007,7 +2022,7 @@ function svApplySnapRemote(f,sf){
  f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
  f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
- f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.onGround=!!sf.og;
+ f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
  f.comboHits=sf.cmb;f.comboDmg=sf.cdg;f.groundPlat=null;
  if(sf.grb)f.grabT=Math.max(f.grabT||0,0.15);
 }
@@ -2022,15 +2037,44 @@ function svOnDeathFx(i,preDead){
  /* the caller only invokes this on the _svDead false->true edge of
     the snapshot stream, so it fires exactly once per death for every
     fighter, our own included */
- spawnParticles(f.x,f.y+f.h/2,46,"#fda4af",330);
- spawnRing(f.x,f.y+f.h/2,"#fda4af",124);spawnSparks(f.x,f.y+f.h/2,0,"#fda4af",12);
- spawnFxBurst(FXIMG.hit,f.x,f.y+f.h/2,265,0.5,Math.random()*0.8-0.4,1,1);
- spawnCharBurst(f.char,f.x,f.y+f.h/2,225,0.55,Math.random()*6.28,1,0.85);
- shake=Math.max(shake,12);
+ /* the death burst itself (46 particles / ring / sparks / hit +
+    char bursts / shake 16) is NOT spawned here any more: the sim's
+    killFighter spawns it and it arrives as FX events via svOnEv —
+    spawning it here too would double every death effect online.
+    This handler keeps only the banner. */
  var killer=(sv.lastScorer&&(performance.now()-sv.lastScorer.at)<500)?fighters[sv.lastScorer.i]:null;
  var gainTxt=(killer&&typeof sv.lastScorer.gain==="number")?(" +"+sv.lastScorer.gain):""; /* unknown gain (no score diff seen): show the name with NO points rather than a wrong number */
  if(i===net.myIdx)showBanner("DOWN…",killer?cname(killer.char)+gainTxt:"","");
  else if(killer&&killer!==P1)showBanner("DOWN…",cname(killer.char)+gainTxt,"");
+}
+/* ---- server FX events: replay the sim's own effect spawns ----
+   The server sim runs the same attack / hit code as the local game
+   and records every presentation spawn through its fxRec hook —
+   attack one-shots, hit sparks and bursts, projectile trails, zone
+   ambience, damage / heal floaters and screen shake. The Room
+   forwards them as {t:"ev"} and this replays each one through the
+   client's own spawn helpers, so the LOOK is the game's existing
+   effects verbatim (nothing redesigned, nothing approximated).
+   Before this, online matches only had the snapshot-edge guesses in
+   svOnSnap (a generic puff per hit / attack), and everything the
+   execution code spawns — per-move bursts, damage numbers, KO heal
+   sparkles, mine detonations… — simply never appeared online. */
+var SVFX_COUNT=null; /* debug: set to {} to count replayed spawns by kind */
+function svOnEv(evs){
+ if(!evs||!sv.active||mode!=="online")return;
+ for(var i=0;i<evs.length;i++){var e=evs[i];if(!e||!e.k)continue;
+  if(SVFX_COUNT)SVFX_COUNT[e.k]=(SVFX_COUNT[e.k]||0)+1;
+  if(e.k==="p")spawnParticles(e.x,e.y,e.n,e.c,e.s);
+  else if(e.k==="r")spawnRing(e.x,e.y,e.c,e.m);
+  else if(e.k==="s")spawnSparks(e.x,e.y,e.d,e.c,e.n);
+  else if(e.k==="b"){var bim=FXIMG[e.i];if(bim)spawnFxBurst(bim,e.x,e.y,e.z,e.l,e.r,e.f,e.a)}
+  else if(e.k==="v")spawnVecBurst(e.kd,e.x,e.y,e.z,e.l,e.r,e.f,e.a);
+  else if(e.k==="fl")floaters.push({x:e.x,y:e.y,txt:e.t,life:e.l,col:e.c});
+  else if(e.k==="pt"){var pp={x:e.x,y:e.y,vx:e.vx,vy:e.vy,life:e.l,col:e.c,size:e.s};if(e.st)pp.streak=1;if(e.amb)pp.amb=1;particles.push(pp)}
+  else if(e.k==="shk")shake=Math.max(shake,e.v||0);
+  /* "banner" events are not replayed: the client renders the same KO
+     banners itself from snapshot death transitions (svOnDeathFx) */
+ }
 }
 function svOnSnap(m){
  if(!sv.active||!m||!m.fs)return;
@@ -2052,13 +2096,13 @@ function svOnSnap(m){
    var preDead=f.dead;
    if(f._svScore!==undefined&&sf.sc>f._svScore)sv.lastScorer={i:i,at:now,gain:sf.sc-f._svScore}; /* v99: the snapshot score DIFF is the real gain (damage-proportional), shown on the death banner instead of the old fixed +100 */
    if(true){ /* snapshot-derived effects + authoritative apply run for EVERY fighter now, our own included */
-     if(f._svHp!==undefined&&sf.hp<f._svHp-0.01){f.flash=0.15;spawnParticles(f.x,f.y+f.h*0.45,6,charFX(f),170)}
+     if(f._svHp!==undefined&&sf.hp<f._svHp-0.01)f.flash=0.15; /* hit flash only — the real hit dressing (sparks / bursts / damage floater) arrives as FX events via svOnEv; the old generic 6-particle guess here would double it */
      if(f._svDcd!==undefined&&sf.dcd>f._svDcd+1.2){f.dashT=0.15;f.dashDir=sf.fc}
      if(sf.og&&!f._svOg)f.landT=0.14;
      if(!sf.grb){f.grabT=0;f.grabBy=null}
      else if(!f.grabBy)f.grabBy=svFindWarden();
      if(sf.st==="ultcharge")f.ultChargeT=0.12;
-     if(f._svState!==undefined&&sf.st!==f._svState&&svIsAttackState(sf.st))spawnParticles(f.x+sf.fc*26,f.y+f.h*0.45,7,charFX(f),190);
+     /* attack-state entries no longer spawn a generic puff here: each move's own start effects arrive as FX events via svOnEv, exactly as the sim spawned them */
      svApplySnapRemote(f,sf);
    }
    if(sf.dead&&!f._svDead)svOnDeathFx(i,preDead);
@@ -2198,6 +2242,13 @@ function svAdvance(dtms){
    if(f.trail&&f.trail.length)f.trail=f.trail.filter(function(tr){tr.life-=dt;return tr.life>0});
    if(f.onGround&&Math.abs(f.vx)>30)f.runPhase+=Math.abs(f.vx)*dt*0.052;
  }
+ /* screen shake decays HERE, at render rate, with the same curve the
+    offline logic step uses (x0.001 per second of elapsed time, snap
+    to 0 below 0.25). The decay used to exist ONLY inside the offline
+    fixed-step loop, so online the first shake (e.g. a death burst)
+    NEVER decayed and the view kept jittering in place forever —
+    the owner's "camera vibrates in place" bug. */
+ shake*=Math.pow(0.001,dt);if(shake<0.25)shake=0;
  /* visual-only particle / floater / burst clocks (they used to ride
     the rollback step; here they simply run at render rate) */
  particles=particles.filter(function(p){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.amb?-4:300)*dt;p.vx*=Math.pow(0.97,dt*60);return(p.life-=dt)>0});
@@ -2791,26 +2842,44 @@ function logoutAccount(){
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
 }
 /* ================= ACCOUNT DELETION =================
-   PlayFab's CLIENT API has no "delete this player" call — full
-   deletion of the account record itself is an admin/server-API
-   operation. What the client CAN do, and what deleteAccount does,
-   is the strongest deletion available from here:
+   Real deletion goes through the game server: PlayFab's CLIENT API
+   has no "delete this player" call, but the match Worker exposes
+   POST /delete-account (see jbHttpBase) which calls PlayFab's
+   server-side DeletePlayer with the title secret key. PlayFab
+   queues the deletion job; once it runs, the account record itself
+   — login Username / Email included — is fully deleted, and the
+   same user name can be registered again. The request carries only
+   the player's own current session ticket, which the server uses to
+   identify the account asking to be deleted.
+   What deleteAccount does:
+   0. BEFORE any teardown, the current session ticket is captured
+      (PlayFab._internalSettings.sessionTicket, falling back to the
+      stored session) so it can be sent to the server afterwards —
+      teardown clears it, so it must be grabbed first.
    1. every friend is removed on my side (RemoveFriend for the whole
       PlayFab friend list) and notified over PeerJS ({t:"fdel"}), so
       online friends drop me from their lists immediately;
-   2. all of my user data (friend records, requests, inbox, player
+   2. the server endpoint is asked to delete the account record —
+      only an HTTP 200 with {ok:true} counts as real deletion having
+      been accepted;
+   3. all of my user data (friend records, requests, inbox, player
       name) is wiped, and a PUBLIC jb_deleted="1" tombstone is left
       behind: any friend whose client next resolves my data purges me
       from their list automatically (pfPurgeDeletedFriend), even if
-      they were offline at deletion time;
-   3. the tombstone is checked at every sign-in (startPfSession), on
-      every device, so this account can never log in to the game
-      again; the local session is destroyed like a logout.
-   Known limits (stated honestly in the completion message too):
-   the PlayFab account record itself remains on PlayFab's side, and
-   because the login Username / Email are derived from the user name
-   and cannot be changed from the client, the same user name cannot
-   be re-registered afterwards. */
+      they were offline at deletion time. (When real deletion later
+      completes, the tombstone goes away with the record itself —
+      it exists for the window until the job runs, and as the
+      fallback below.)
+   4. the tombstone is checked at every sign-in (startPfSession), on
+      every device, and the local session is destroyed like a logout.
+   FALLBACK (only when the server path fails — no ticket, network
+   error, a non-200 / not-ok reply, or the server secret key not yet
+   configured): the account record itself remains on PlayFab's side,
+   and because the login Username / Email are derived from the user
+   name, the same user name cannot be re-registered afterwards; the
+   tombstone then does all the work above and this account can never
+   log in to the game again. The completion message says honestly
+   which path ran. */
 var acctDelArm=false;
 function deleteAccount(){
  if(!PF_OK||!social.loggedIn||!social.name)return;
@@ -2818,6 +2887,12 @@ function deleteAccount(){
  var typed=cleanName(inp?inp.value:"");
  if(typed!==social.name){acctDelArm=true;openFriends("確認のため、自分のユーザーネーム「"+social.name+"」を正確に入力してください。");return}
  var myName=social.name,myId=social.uid;
+ /* 0) capture the session ticket BEFORE any teardown — the local
+    teardown below clears it, and the server deletion request needs
+    it to identify this account */
+ var delTicket="";
+ try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings&&PlayFab._internalSettings.sessionTicket)delTicket=PlayFab._internalSettings.sessionTicket}catch(e){}
+ if(!delTicket){try{var storedSess=pfLoadSession();if(storedSess&&storedSess.ticket)delTicket=storedSess.ticket}catch(e){}}
  var friendIds={};
  Object.keys(social.est).forEach(function(id){friendIds[id]=1});
  Object.keys(social.pfListById||{}).forEach(function(id){friendIds[id]=1});
@@ -2830,10 +2905,27 @@ function deleteAccount(){
     user name stops resolving in friend search (titles that forbid
     client display-name changes simply ignore this) */
  try{if(typeof PlayFabClientApi.UpdateUserTitleDisplayName==="function")PlayFabClientApi.UpdateUserTitleDisplayName({DisplayName:"削除済み"},function(){},function(){})}catch(e){}
- /* 4) wipe my data + leave the public tombstone, then sign out for
-    good. The tombstone write is the point of no return, so the
-    local teardown runs in its callback (and on its error too — the
-    friend removals above already happened either way). */
+ /* 3.5) ask the game server to REALLY delete the account record
+    (PlayFab server-side DeletePlayer, proxied by the Worker — see
+    the block comment above). Only HTTP 200 with {ok:true} counts as
+    real deletion. Any other outcome (no ticket, network error,
+    non-200, ok not true) falls back to the tombstone-only path in
+    step 4, and the completion message says so honestly. A watchdog
+    guarantees the flow can never hang waiting on this fetch. */
+ var realDeleted=false;
+ function step4(){
+  /* 4) wipe my data + leave the public tombstone, then sign out for
+     good. The tombstone write is the point of no return, so the
+     local teardown runs in its callback (and on its error too — the
+     friend removals above already happened either way). On the
+     real-deletion path the tombstone only covers the window until
+     PlayFab's deletion job runs (and keeps friends' lists clean);
+     on the fallback path it is what blocks this account forever. */
+  try{
+   PlayFabClientApi.UpdateUserData({Data:{jb_deleted:"1",jb_est:"{}",jb_out:"{}",jb_inbox:"{}",jb_pname:"削除済み"},Permission:"Public"},function(){finish()},function(){finish()});
+  }catch(e){finish()}
+  setTimeout(finish,4000);
+ }
  var finished=false;
  function finish(){
    if(finished)return;finished=true;
@@ -2842,12 +2934,32 @@ function deleteAccount(){
    social.loggedIn=false;social.name="";social.pname="";social.friendPnames={};social.pnameAt={};social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};social.pfListById={};
    pfClearSession();
    try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
-   openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消され、このアカウントでは二度とログインできません。※PlayFab の仕様上、アカウントの記録自体の完全消去は管理者側でしか行えないため、同じユーザーネームでの再登録はできません。新しい名前でなら、新規アカウントを作成できます。");
+   if(realDeleted)openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消されました。アカウントの記録は完全に削除されます（PlayFab 側の反映まで少し時間がかかる場合があります）。削除が完了すれば、同じユーザーネームで新規登録できるようになります。");
+   else openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消され、このアカウントでは二度とログインできません。※サーバー側の完全削除が完了できなかったため、アカウントの記録自体は残っています（同じユーザーネームでの再登録はできません）。新しい名前でなら、新規アカウントを作成できます。");
  }
- try{
-  PlayFabClientApi.UpdateUserData({Data:{jb_deleted:"1",jb_est:"{}",jb_out:"{}",jb_inbox:"{}",jb_pname:"削除済み"},Permission:"Public"},function(){finish()},function(){finish()});
- }catch(e){finish()}
- setTimeout(finish,4000);
+ if(delTicket){
+  var fetchSettled=false;
+  var fetchWatchdog=setTimeout(function(){
+    if(fetchSettled)return;fetchSettled=true;
+    step4();
+  },6000);
+  try{
+   fetch(jbHttpBase()+"/delete-account",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionTicket:delTicket})}).then(function(res){
+     return res.json().then(function(j){return{status:res.status,json:j}},function(){return{status:res.status,json:null}});
+   }).then(function(r){
+     if(fetchSettled)return;fetchSettled=true;clearTimeout(fetchWatchdog);
+     if(r.status===200&&r.json&&r.json.ok===true)realDeleted=true;
+     step4();
+   }).catch(function(){
+     if(fetchSettled)return;fetchSettled=true;clearTimeout(fetchWatchdog);
+     step4();
+   });
+  }catch(e){
+   if(!fetchSettled){fetchSettled=true;clearTimeout(fetchWatchdog);step4()}
+  }
+ }else{
+  step4();
+ }
 }
 /* change my player name: 1-20 chars (unlike the username, which
    stays 3-20 chars — the player name lives only in PlayFab user
@@ -2965,10 +3077,10 @@ function friendsHTML(msg){
    /* ---- account deletion (two-step: arm, then type-to-confirm) ---- */
    if(!acctDelArm){
      rows+='<h3 style="margin:18px 0 2px;color:#fda4af;font-size:15px">アカウント削除</h3>'
-     +'<div class="bindRow"><div><span class="bname">アカウントを削除する</span><br><span class="bnote">フレンド関係がすべて解消され、このアカウントでは二度とログインできなくなります。元には戻せません</span></div><button class="bindKey" id="deleteAcctBtn" style="min-width:104px;border-color:#fb7185;color:#fda4af">削除手続きへ</button></div>';
+     +'<div class="bindRow"><div><span class="bname">アカウントを削除する</span><br><span class="bnote">フレンド関係がすべて解消され、アカウントの記録も完全に削除されます。元には戻せません</span></div><button class="bindKey" id="deleteAcctBtn" style="min-width:104px;border-color:#fb7185;color:#fda4af">削除手続きへ</button></div>';
    }else{
      rows+='<h3 style="margin:18px 0 2px;color:#fda4af;font-size:15px">アカウント削除 — 最終確認</h3>'
-     +'<p style="color:#fda4af">本当にアカウント「'+escHtml(social.name)+'」を削除しますか？<br>・フレンド関係はすべて解消され、相手のフレンド一覧からも消えます<br>・このアカウントでは二度とログインできません（元には戻せません）<br>・PlayFab の仕様上、同じユーザーネームでの再登録はできません</p>'
+     +'<p style="color:#fda4af">本当にアカウント「'+escHtml(social.name)+'」を削除しますか？<br>・フレンド関係はすべて解消され、相手のフレンド一覧からも消えます<br>・このアカウントでは二度とログインできません（元には戻せません）<br>・アカウントの記録は完全に削除されます<br>・削除が完了すれば、同じユーザーネームで新規登録できるようになります</p>'
      +'<div class="bindRow"><div><span class="bname">確認のため、自分のユーザーネームを入力してください</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="delNameInput" maxlength="20" placeholder="ユーザーネーム" autocomplete="off" style="'+FRIEND_INPUT_STYLE+'"></span></div>'
      +'<p style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="delDoBtn" style="min-width:140px;background:#7f1d1d;border-color:#fb7185;color:#fff">本当に削除する</button><button class="bindKey" id="delCancelBtn" style="min-width:96px">やめる</button></p>';
    }
@@ -4691,7 +4803,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*(def.kbMul||1); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
- else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false;if(def.jumps<1)def.jumps=1} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5) */
+ else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
  hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011);
  spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  floaters.push({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
