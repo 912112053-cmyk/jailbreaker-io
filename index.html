@@ -430,6 +430,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["19:09"],tag:"修正",title:"入力同期：入力変化時の即時送信",
+  items:["オンライン対戦（入力同期）で、自分の入力に変化があった時（方向キーの保持状態が変わった時、ジャンプや攻撃などのボタンを押した時）は、毎秒30回の定期送信を待たず、その場で入力バンドルを即時送信するようにしました。相手の端末は、まだ届いていない入力を直前の入力の継続として予測して計算を進めるため、変化が早く届くほど予測外れの巻き戻し補正が小さくなり、ホストから見たゲストの動きのブレや瞬間移動が抑えられます",
+         "定期送信は従来どおり毎秒30回を続け、各バンドルには直近30フレーム分の入力を重ねて載せています（冗長範囲は変更なし）。入力に変化がない間は、追加の送信は一切しません",
+         "即時送信には最小間隔（約1フレーム＝16ms）と、1秒あたりの送信回数の上限を設けました。入力が毎フレーム変わり続けるような極端な場面でも、2人対戦時の総送信量が Supabase 無料枠（プロジェクト全体で毎秒100メッセージ）の範囲内に収まることを確認しています",
+         "試合ログの巻き戻し回数の数え方を監査し、ホスト側・ゲスト側とも同じ基準（巻き戻し処理が実行されるたびに1回）であることを確認しました。前回の実機ログでホスト321回・ゲスト1回と開きがあったのは、数え方の差ではなく、相手の入力が固まって届いた間にどれだけ入力が変化したかという実挙動の差です",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["18:51"],tag:"修正",title:"試合ログの保存改善と自動再接続",
   items:["試合ログを、試合中ずっと端末内（localStorage）へ随時保存するようにしました。切断などで結果画面まで行けずに試合が終わってしまっても、ログは端末に残ります",
          "タイトル画面に「前回の試合ログをダウンロード」ボタンを追加しました。前回のログが残っていれば、いつでもそこから取り出せます（切断でタイトル画面に戻された場合も同様です）。新しい試合が始まると、前回のログは新しい試合のものに上書きされます。結果画面のダウンロードボタンは従来どおり使えます",
@@ -518,11 +524,7 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["13:06"],tag:"調整",title:"MIMI&SHADEの↓+J「こけちゃうよ／こけロ」を調整",
   items:["SHADEのKBを520→660に上げました（吹き飛ばし方向は真上のままです）",
          "SHADEの発生を0.16秒→0.2秒に遅くしました",
-         "MIMI側（ダメージ6／KB 680／発生 即時）など、その他の性能に変更はありません"]},
- {date:"2026/11/15",times:["13:04"],tag:"修正",title:"MIMI&SHADE：U「助けて！」の次のKが「いってらっしゃいSHADE」になるように",
-  items:["MIMI&SHADEのU「助けて！」でSHADEのそばへワープした後は、K「助けてSHADE！！」の呼び戻しと同じくSHADEが「そばにいる」状態になるよう修正しました",
-         "これまでは、前方へ送り出したSHADEへワープした後にKを押すと、すでにそばにいるのに「助けてSHADE！！」（呼び戻し）になってしまいました。これからは次にKを押すと「いってらっしゃいSHADE」（送り出し）になります",
-         "ワープの着地点・クールタイム・硬直など、その他の性能に変更はありません"]}
+         "MIMI側（ダメージ6／KB 680／発生 即時）など、その他の性能に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1488,7 +1490,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v212";
+var BUILD_ID="v213";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3725,12 +3727,19 @@ function svReset(){
      input. Nothing state-affecting was left to remove.
    Message budget (free plan, 100/s project-wide): input bundles
    30/s per participant + chk 1/s + heartbeats — a 2-player match
-   peaks near 62/s, well under the old snap+fx ~92/s. */
+   peaks near 62/s, well under the old snap+fx ~92/s. The v213
+   change-triggered immediate bundles share the same per-end
+   ledger and are bounded by LS_IMM_MIN_MS plus the LS_SEND_CAP
+   rate cap, so even a pathological every-frame change stream
+   keeps a 2-player match under the 100/s cap (~82/s worst
+   case). */
 var LS_RESIM_MAX=30; /* re-simulation cap, frames (v206: raised from 12 — on real links a peer's inputs can arrive in bursts ~250ms / ~15 frames apart, which silently blew past the old cap and dropped the match into the snapshot fallback) */
 var LS_RING=60; /* per-frame state saves kept (v206: raised from 40 so a 30-frame rollback always finds its save, with margin for checkpoints) */
 var LS_CHK_EVERY=60; /* host checksum cadence, frames (~1/s) */
 var LS_HELD_MASK=28687; /* held bits repeated by prediction (move / jump-hold + J / U / L held) */
-var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},cpuEnd:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0,rsTimes:[],rsCount:0,rsWait:false,rsWaitAt:0,rsCode:"",rsLastAt:0}; /* rs* = the v208 resync bookkeeping: rsTimes / rsLastAt are the HOST's loop-guard stamps, rsCount the match-wide resync total, rsWait a guest's unanswered resync request. cpuEnd (v210) is the return counterpart of cpuAt: the frame from which a slot handed to the CPU belongs to its player again (see lsOnReturn) */
+var LS_IMM_MIN_MS=16; /* v213: floor between an immediate (change-triggered) bundle and the previous bundle from this end — about one sim frame (16.7ms), so a change sampled on the frame right after a send still ships at once instead of waiting for the next 30/s tick */
+var LS_SEND_CAP=40; /* v213: the immediate path additionally obeys a per-end rate cap — at most this many bundles (of either kind) in any 1s window. Human input changes at most ~15 times a second, so the cap never bites in real play; it exists so that even a pathological every-frame change stream cannot push a 2-player match past the free plan's 100/s project-wide budget (worst case: 40/s x 2 ends + chk / heartbeats ≈ 82/s). A change throttled by the cap is never lost — it rides the next periodic bundle's 30-frame window */
+var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},cpuEnd:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,prevBits:null,lastSendAt:0,immPend:false,sendLog:[],curRow:null,curF:0,resimCount:0,maxResim:0,rsTimes:[],rsCount:0,rsWait:false,rsWaitAt:0,rsCode:"",rsLastAt:0}; /* rs* = the v208 resync bookkeeping: rsTimes / rsLastAt are the HOST's loop-guard stamps, rsCount the match-wide resync total, rsWait a guest's unanswered resync request. cpuEnd (v210) is the return counterpart of cpuAt: the frame from which a slot handed to the CPU belongs to its player again (see lsOnReturn). prevBits / lastSendAt / immPend / sendLog (v213) drive the change-triggered immediate bundle: the previous sampled frame's bits, when this end last shipped any bundle, whether a change is still owed a bundle, and the last second's send stamps for the rate cap (see lsSampleAndStep / lsSendBundle) */
 /* ---- rollback correction render smoothing (v206) ----
    When a rollback re-simulation moves a REMOTE fighter a long way
    (more than LS_SMOOTH_MIN px), the simulation state itself snaps
@@ -3766,7 +3775,7 @@ function lsSyncModeLabel(){
  if(on&&tx._hv!==want){tx._hv=want;tx.textContent=want}
 }
 function lsReset(){
- ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.cpuEnd={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
+ ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.cpuEnd={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.prevBits=null;ls.lastSendAt=0;ls.immPend=false;ls.sendLog=[];ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
  lsSmooth={};
  if(sbRoom)sbRoom.lsMode=false;
  lsSyncModeLabel();
@@ -3951,7 +3960,27 @@ function lsSampleAndStep(){
  sv.inpHist[F]=bits;sv.sampleFrame=F+1;
  lsStepFrame(F);
  ls.frame=F+1;
- if(F%2===1)lsSendBundle();
+ /* v213: an input CHANGE ships immediately. Prediction on every
+    peer repeats this player's last confirmed HELD bits, so a peer
+    can only mispredict from the frame a change lands on — the
+    sooner the change is on the wire, the shallower the rollback
+    that corrects it. A change is: any press bit in this frame
+    (jump / J / K / L / ult / dash — bits 4080), or the held mask
+    differing from the previous sampled frame (a direction or a
+    hold-to-continue button started, stopped or reversed). The
+    immediate bundle is the same shape as a periodic one (newest
+    30 frames), fired from here instead of waiting for the 30/s
+    tick; the tick itself is unchanged and keeps running, and an
+    unchanged input never triggers an extra send. A change that
+    lands within LS_IMM_MIN_MS of the previous bundle is not
+    dropped either: immPend remembers it is owed, and the bundle
+    leaves on the first frame the floor (and the LS_SEND_CAP rate
+    cap) allows — still ahead of, or exactly on, the next tick. */
+ var changed=(bits&4080)!==0||(ls.prevBits!==null&&((bits^ls.prevBits)&LS_HELD_MASK)!==0);
+ ls.prevBits=bits;
+ if(changed)ls.immPend=true;
+ if(ls.immPend)lsSendBundle(true);
+ if(F%2===1)lsSendBundle(false);
  if(F%300===299){ /* prune history well behind the save ring */
   var cut=F-LS_RING-30;
   for(var a in ls.saves)if(+a<cut)delete ls.saves[a];
@@ -3964,15 +3993,32 @@ function lsSampleAndStep(){
    window was 12; real links can deliver a peer's bundles in
    ~250ms bursts, and a 12-frame window left the frames between
    bursts unrecoverable. The send rate is unchanged — only the
-   overlap grew — so the message budget is untouched) */
-function lsSendBundle(){
- var endF=ls.frame;
- if(endF-ls.sbF<2)return;
+   overlap grew — so the message budget is untouched)
+   v213: the same bundle ALSO leaves immediately when the local
+   input just changed (imm=true, from lsSampleAndStep). The
+   immediate path skips the 2-frame cadence gate but obeys
+   LS_IMM_MIN_MS since this end's last successful send of either
+   kind, plus the LS_SEND_CAP rate cap; both paths share the
+   sbF / lastSendAt / sendLog ledger, so an immediate bundle
+   simply becomes the newest baseline and the periodic tick
+   resumes from it. Any successful send clears immPend: the
+   owed change rode that bundle's window. A change throttled by
+   the floor or the cap is never lost either — worst case it
+   rides the next periodic bundle's 30-frame window like any
+   other frame. */
+function lsSendBundle(imm){
+ var endF=ls.frame,now=performance.now();
+ if(imm){
+  if(now-(ls.lastSendAt||0)<LS_IMM_MIN_MS)return;
+  var log0=ls.sendLog;while(log0.length&&now-log0[0]>1000)log0.shift();
+  if(log0.length>=LS_SEND_CAP)return;
+ }
+ else if(endF-ls.sbF<2)return;
  var startF=Math.max(0,endF-30),fr=[];
  for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
  if(!fr.length)return;
  var msg={t:"in",cid:sbCid,pid:net.myId,fr:fr};
- if(sbSendInput(msg))ls.sbF=endF;
+ if(sbSendInput(msg)){ls.sbF=endF;ls.lastSendAt=now;ls.immPend=false;ls.sendLog.push(now)}
 }
 /* ---- rollback execution ---- */
 function lsProcessRollback(){
