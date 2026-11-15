@@ -428,6 +428,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["14:22"],tag:"調整",title:"直接接続（P2P）：スナップショットの送信を毎秒30回に変更",
+  items:["P2P対戦で、ホストからゲストへ送るスナップショット（対戦の状態データ）を、毎フレーム（毎秒60回）から1フレームおき（毎秒30回）に変更しました。サーバー経由モードと同じ送信回数になります",
+         "ゲストからホストへの入力送信は、これまで通り毎フレーム（毎秒60回）のままです。エフェクト・チャット・試合開始／終了などのイベント送信のタイミングにも変更はありません",
+         "ゲスト側の描画バッファはスナップショットの到着間隔に合わせて自動調整されるため、間隔が約33msになっても表示はそのまま追随します。サーバー経由モード・ゲーム内容・技やエフェクトに変更はありません"]},
  {date:"2026/11/15",times:["14:10"],tag:"修正",title:"直接接続（P2P）：相手キャラのワープを防ぐ描画バッファの改善",
   items:["P2P対戦（ゲスト側）で、相手キャラが凍ってから瞬間移動（ワープ）して見える問題を改善しました。スナップショットの到着間隔を常に観測し、描画バッファの大きさを自動調整するようにしました。到着が安定している間はこれまで通り小さく保ち、到着が荒れている時だけ最大200msまで自動で広げて、バッファ切れによるワープを防ぎます（サーバー経由モードの描画にも同じ仕組みを適用しました）",
          "それでもバッファが空になってしまった場合は、相手を最新位置へ即座に飛ばさず、約100msかけて滑らかに追いつかせるようにしました。凍結→瞬間移動の見た目がなくなります",
@@ -491,10 +495,7 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["11:16"],tag:"調整",title:"SHADEの闇ゲージ回復に4.5秒の待機を追加（下方修正）",
   items:["SHADEの闇ゲージは、これまでMIMIの近くにいる間すぐ毎秒10ずつ回復していましたが、近くに来てから4.5秒たたないと回復が始まらないよう下方修正しました",
          "4.5秒たった後はこれまで通り毎秒10ずつ回復します。途中でMIMIから離れるとタイマーはリセットされ、次に近づいてからまた4.5秒必要です",
-         "回復量（毎秒10）・ゲージ上限（190）・消失時間（18秒）など、その他の数値に変更はありません"]},
- {date:"2026/11/15",times:["10:59"],tag:"調整",title:"SHADEの闇ゲージ上限を190に変更・表示を「SHADE」に",
-  items:["MIMI&SHADEのSHADEの闇ゲージの上限を250から190に変更しました",
-         "ゲーム中の闇ゲージの表示を「闇」から「SHADE」に変更しました（SHADEの頭上のゲージ表示と、画面下のピル表示）"]}
+         "回復量（毎秒10）・ゲージ上限（190）・消失時間（18秒）など、その他の数値に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -2446,18 +2447,20 @@ function p2pSyncMines(room){
 /* called from loop() after the local step processing (before the
    render interpolation factor is computed) while hosting: sample
    the screen-shake peak into the FX queue, stream a snapshot on
-   EVERY sim frame (60/s — guest heaviness fix: the match server's
-   30/s rate exists for a hosted hop the direct WebRTC link does
-   not have; at 30/s a guest waited up to a full extra frame for
-   the next state and interpolated across 33ms gaps, which read as
-   heaviness next to the host's zero-latency local play. The
-   guest's adaptive buffer keys off the measured arrival interval,
-   so the denser stream also lets its render delay settle at the
-   floor), flush the queued FX events, sync each guest's own
+   every SECOND sim frame (30/s — the same rate the match server
+   streams at; snapshots are full-state and superseding, so the
+   skipped frame loses nothing: the next snapshot carries the
+   complete current state, and the guest's adaptive buffer keys
+   off the measured arrival interval, which now settles around
+   33ms), flush the queued FX events, sync each guest's own
    mines, and — once, when the local match ends — send the results
    and close the match phase. The host's own results screen is the
    local flow's (TIME UP banner + showLocalResults), not this
-   message.
+   message. Only the snapshot state message is thinned to 30/s:
+   the FX flush below, the mines sync and the end message still
+   run on EVERY pump call, and guest -> host input still ships
+   every frame, so effects and events are never held back by the
+   snapshot cadence.
    BACKPRESSURE (guest ~3s delay fix): snapshots are delivered
    per guest through p2pGuestLagging — a guest that is behind,
    by the channel-queue check OR by its own stream acks (the
@@ -2472,7 +2475,7 @@ function p2pSyncMines(room){
    neither pile ahead of the state stream nor be held up by
    another guest's clog. Without this, the ordered,
    never-dropping PeerJS / WebRTC channel turned any shortfall
-   of delivery under the 60/s production rate into a FIFO
+   of delivery under the 30/s production rate into a FIFO
    backlog that guests experienced as seconds of delay. */
 function p2pPump(){
  if(!p2pHostLive||!p2pRoom)return;
@@ -2480,7 +2483,7 @@ function p2pPump(){
  if(room.phase!=="match")return;
  if(shake>room.shkPeak)room.shkPeak=shake;
  if(room.shkPeak>0){p2pQueueEv(room,{k:"shk",v:room.shkPeak});room.shkPeak=0}
- if(room.frame!==room.lastSnapF){
+ if(room.frame-room.lastSnapF>=2){ /* snapshot cadence: every second sim frame (30/s) — the >= form (not a parity test) so a pump that lands after a multi-step catch-up still sends as soon as two frames have passed, and never more often than every other frame */
    room.lastSnapF=room.frame;
    var snap=p2pBuildSnap(room);snap.t="snap";
    for(var sgi=0;sgi<room.players.length;sgi++){var sp=room.players[sgi];
