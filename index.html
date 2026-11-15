@@ -434,6 +434,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["23:57"],tag:"調整",title:"KAIRO：L「アブソリュート・ゼロ」のエフェクトを元に戻しました",
+  items:["23:14の「全技のエフェクトを判定に合わせて調整」で変更した L「アブソリュート・ゼロ」のエフェクトだけを、変更前の見た目に戻しました。判定（270×250）いっぱいに広がる氷の輪・判定の縁まで伸びる回転する氷の腕・逆回転する内側の輪はなくなり、体の周りを回る4本の氷の腕だけの従来の演出に戻っています。あわせて、ウルト中に重ねて表示される氷のテクスチャも、判定サイズに合わせた262から従来の205（胸の高さ・少し前方）に戻しました",
+         "他の技のエフェクト（23:14に判定へ合わせた J チェーン・フロストテイル・アイスエッジなど）はそのままです。ダメージ48・KB900・判定 横135×縦125 などの数値にも変更はありません"]},
  {date:"2026/11/15",times:["23:42"],tag:"調整",title:"KAIRO：バランス調整（上方・下方修正）",
   items:["J 1段目「横払い」：KB 270→250、判定 64×58→70×62、被弾硬直 0.24秒→0.34秒",
          "J 2段目「返し斬り」：KB 330→250、判定 66×60→72×64、被弾硬直 0.26秒→0.36秒",
@@ -9835,7 +9838,7 @@ function drawKairo(f){
   }
  }
  else if(f.state==="shard"){ctx.fillStyle="#bae6fd";ctx.save();ctx.translate(21,24.5);ctx.rotate(.78);ctx.fillRect(-6,-6,12,12);ctx.restore()}
- else if(f.state==="ult"){var upr=Math.min(1,(0.62-f.stateT)/0.62*4.5);ctx.strokeStyle="rgba(165,243,252,"+(0.85-0.45*upr)+")";ctx.lineWidth=5;ctx.beginPath();ctx.ellipse(0,0,112*upr,104*upr,0,0,6.29);ctx.stroke();ctx.fillStyle="rgba(125,211,252,"+(0.10*(1-upr)+0.03)+")";ctx.beginPath();ctx.ellipse(0,0,112*upr,104*upr,0,0,6.29);ctx.fill();var sp=time*22;ctx.save();ctx.rotate(sp);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=5;for(var b=0;b<4;b++){ctx.save();ctx.rotate(b*1.57);ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(102,0);ctx.stroke();ctx.fillStyle="#e0f7ff";ctx.save();ctx.translate(108,0);ctx.rotate(.78);ctx.fillRect(-5,-5,10,10);ctx.restore();ctx.restore()}ctx.restore();ctx.save();ctx.translate(0,26);ctx.rotate(-sp*0.7);ctx.strokeStyle="rgba(224,242,254,.8)";ctx.lineWidth=3.5;for(var b9=0;b9<4;b9++){ctx.save();ctx.rotate(b9*1.57);ctx.beginPath();ctx.moveTo(7,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore()}
+ else if(f.state==="ult"){var sp=time*22;ctx.save();ctx.translate(0,26);ctx.rotate(sp);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=5;for(var b=0;b<4;b++){ctx.save();ctx.rotate(b*1.57);ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(40,0);ctx.stroke();ctx.fillStyle="#e0f7ff";ctx.save();ctx.translate(44,0);ctx.rotate(.78);ctx.fillRect(-4.5,-4.5,9,9);ctx.restore();ctx.restore()}ctx.restore()}
  if(f.state==="tail"){
   /* K フロストテイル: 氷のトゲを生やした太い尻尾の弧と先端の氷結晶、散らばる氷片 */
   ctx.strokeStyle="rgba(103,232,249,.32)";ctx.lineWidth=20;ctx.beginPath();ctx.arc(14,26,52,-.62,.72);ctx.stroke();
@@ -11116,14 +11119,13 @@ function draw(){
    if(f.ultChargeT>0){drawFxTex(FXIMG.fire,f.x,f.y+f.h*0.46,220,time*2.6,f.face,0.5)}
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
-     if(f.char==="kairo"&&f.state==="ult")drawCharFxOverlay(f,f.x,f.y,262,time*3.2,f.face,0.52);
-     else if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
+     if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
      else if(f.char==="kojiro")drawFxTex(FXIMG.slash,f.x+f.face*38,f.y+f.h*0.42,132,-0.55*f.face,f.face,0.55);
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
      else if(f.char==="warden"&&f.state==="wbash")drawFxTex(FXIMG.hit,f.x+f.face*46,f.y+f.h*0.46,98,0,f.face,0.5); /* K: a blunt burst at the shield, no slash texture */
-     else if(f.char==="kairo"){var kfx={claw:[35,118],clawrev:[36,120],backclaw:[35,104],clawup:[31,140],dashclaw:[44,126],clawspin:[44,136],lowclaw:[40,104],diveclaw:[34,106],jkcombo:[38,124],tail:[44,128]}[f.state];if(f.state==="iceedge"){var ieO3=[40,95,150],ieH3=[140,120,90];for(var ie3=0;ie3<(f.spinHits||0);ie3++){for(var ied=-1;ied<=1;ied+=2)drawFxTex(FXIMG.ice,f.x+ied*ieO3[ie3],f.y+f.h-ieH3[ie3]*0.5,ieH3[ie3]*1.02,0,ied,0.45)}}else if(f.state==="airclaw"||f.state==="fspin")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,150,0.3*f.face,f.face,0.46);else if(f.state==="taildrop")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,205,0.3*f.face,f.face,0.46);else if(kfx)drawCharFxOverlay(f,f.x+f.face*kfx[0],f.y+f.h*0.45,kfx[1],0.3*f.face,f.face,0.46);else drawCharFxOverlay(f,f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46)}
+     else if(f.char==="kairo"){var kfx={claw:[35,118],clawrev:[36,120],backclaw:[35,104],clawup:[31,140],clawspin:[44,136],lowclaw:[40,104],diveclaw:[34,106],jkcombo:[38,124],tail:[44,128]}[f.state];if(f.state==="dashclaw"){/* 前+J ブリンク斬り: 後から付け加えたFXテクスチャの重ね描きは削除 (user request) — この技は元のコード描画の氷の爪のみで表示する */}else if(f.state==="iceedge"){var ieO3=[40,95,150],ieH3=[140,120,90];for(var ie3=0;ie3<(f.spinHits||0);ie3++){for(var ied=-1;ied<=1;ied+=2)drawFxTex(FXIMG.ice,f.x+ied*ieO3[ie3],f.y+f.h-ieH3[ie3]*0.5,ieH3[ie3]*1.02,0,ied,0.45)}}else if(f.state==="airclaw"||f.state==="fspin")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,150,0.3*f.face,f.face,0.46);else if(f.state==="taildrop")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,205,0.3*f.face,f.face,0.46);else if(kfx)drawCharFxOverlay(f,f.x+f.face*kfx[0],f.y+f.h*0.45,kfx[1],0.3*f.face,f.face,0.46);else drawCharFxOverlay(f,f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46)}
      else drawCharFxOverlay(f,f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46);
    }
  });
