@@ -429,6 +429,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["15:18"],tag:"大型更新",title:"オンライン対戦をSupabase経由のみに整理",
+  items:["オンライン対戦の接続方式を Supabase 経由のみに整理しました。これまで選べた「サーバー経由」（専用サーバー方式）を削除し、オンライン対戦は Supabase 経由だけになりました",
+         "ルーム作成・ロビー・対戦・チャット・フレンド招待の仕様はこれまで通りです。招待で参加する場合も Supabase 経由のルームに入ります",
+         "ゲーム内容・技・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["14:53"],tag:"大型更新",title:"オンライン対戦の標準方式をSupabase経由に変更",
   items:["オンライン対戦の標準の接続方式を、直接接続（P2P）から Supabase 経由に変更しました。ホストの端末が試合を計算する進め方はこれまで通りで、通信が Supabase の Realtime を経由して全員に届くようになります",
          "直接接続（P2P）は選択肢から外しました。サーバー経由はこれまで通り選べます。フレンド機能・招待の仕組みに変更はありません",
@@ -500,8 +504,6 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["11:40"],tag:"調整",title:"MIMI&SHADEの↓+Kを作り替え",
   items:["MIMI&SHADEの↓+Kを作り替えました。MIMIは地面に沿って進む光の衝撃波を放つ技になりました",
          "SHADEは後方に拳が3回振り下りる技になりました"]},
- {date:"2026/11/15",times:["11:25"],tag:"調整",title:"KO判定を左右に拡大（ステージ端から320→500）",
-  items:["KO判定の範囲を左右に拡大しました。ステージ端からの距離が320から500になりました"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1424,68 +1426,38 @@ function showCenter(t,hold){if(typeof svMute!=="undefined"&&svMute)return;var c=
 var bannerTO=null;
 function showBanner(big,pts,sub,ms){if(typeof svMute!=="undefined"&&svMute)return;$("bannerBig").textContent=big;$("bannerPts").textContent=pts||"";$("bannerSub").textContent=sub||"";$("banner").style.display="block";if(bannerTO)clearTimeout(bannerTO);bannerTO=setTimeout(hideBanner,ms||2100)}
 function hideBanner(){$("banner").style.display="none"}
-/* ================= ONLINE VS (dedicated match server) =================
-   VS CPU / TRAINING stay fully offline. ONLINE VS now runs on a
-   dedicated match server (Cloudflare Workers + Durable Objects, one
-   room object per room code): the SERVER runs the real simulation at
-   a fixed 60fps and broadcasts one identical state snapshot to every
-   client at 30/s. Clients send nothing but packed inputs (the same
-   bit layout rbApplyInput has always used), bundled at 30/s as
-   {t:"in", seq, ins:[i0,i1]} — see the server's PROTOCOL.md.
-   Rendering model:
-   - your own fighter is predicted locally: the same stepFighter /
-     rbApplyInput code steps it at 60fps from your inputs, and every
-     snapshot reconciles it (restore the authoritative state at the
-     snapshot frame, then re-step your buffered inputs up to the
-     present with effects muted). Small errors are absorbed by the
-     replay; large ones snap straight to the server state.
-   - everyone else (and projectiles) is rendered by interpolating
-     between the two snapshots that bracket an ADAPTIVE render delay
-     sized from the snapshot stream's own arrival statistics
-     (svAdaptDelay: EMA of the arrival interval + 1.5x the jitter
-     EMA + 9ms, clamped to 24..100ms, so a bunched stream is
-     absorbed without one bad gap pinning the delay); when the buffer starves anyway,
-     fighters hold at the newest snapshot's real position — no
-     velocity extrapolation — and then glide back onto the bracket
-     over ~100ms instead of teleporting (catch-up interpolation in
-     svRenderWorld), and your own fighter uses a ~42ms shorter
-     delay — see svAdaptDelay / svRenderWorld).
-   - effects for remote fighters are derived from the snapshot stream
-     (state changes, HP drops, dash cooldown jumps, deaths), the same
-     information the old guest rendering ultimately displayed.
-   The host is only the room's manager (creates the room, presses
-   試合開始): the server is the authority, so a player leaving
-   mid-match — host included — simply hands their fighter to the CPU
-   on the server. The host leaving the LOBBY still dissolves the room.
-   The STANDARD online transport is the Supabase one in the next
-   section (host-authoritative, relayed over Supabase Realtime
-   Broadcast); this server transport stays selectable unchanged.
-   PeerJS survives ONLY as the friend-presence / invite channel in
-   the accounts section below; it carries no match traffic. */
-/* Supabase connection for the standard online transport (Realtime
+/* ================= ONLINE VS (Supabase relay) =================
+   VS CPU / TRAINING stay fully offline. ONLINE VS runs ONLY over
+   the Supabase transport in the next section (host-authoritative,
+   relayed over Supabase Realtime Broadcast): the host's device
+   runs the real simulation on the local engine and streams state
+   snapshots to every guest at 30/s; guests send nothing but packed
+   inputs, bundled at 30/s. Rendering (snapshot interpolation,
+   adaptive render delay, local prediction of your own fighter and
+   reconciliation) lives in the SERVER-CLIENT MATCH ENGINE section
+   below and is shared by this transport unchanged.
+   The former dedicated match server transport (Cloudflare) and
+   the former direct PeerJS P2P transport have been REMOVED: there
+   is no transport selection anymore. PeerJS survives ONLY as the
+   friend-presence / invite channel in the accounts section below;
+   it carries no match traffic. */
+/* Supabase connection for the online transport (Realtime
    Broadcast): the project URL and the PUBLISHABLE key (the public
    key meant to be embedded in browser code — not the secret /
    service_role key). While either value is empty, sbConfigured()
-   is false, the ONLINE VS sheet shows the Supabase option as
-   未設定 and it cannot be selected (the server transport remains
-   available). */
+   is false and the ONLINE VS sheet reports Supabase as 未設定. */
 var SUPABASE_URL="https://ehffjfvrbjaacclwftfq.supabase.co";
 var SUPABASE_ANON_KEY="sb_publishable_YAg6Zy5z8L5u2LuG5I3vDg_ORgBtH6g";
 function sbConfigured(){return !!(SUPABASE_URL&&SUPABASE_ANON_KEY)}
-var JB_SERVER_URL="wss://jailbreaker-io-server.jailbreaker-io.workers.dev";
-function jbServerBase(){
- /* the game server is fixed to the project's own deployment — a
-    ?server= query override was removed (security audit): a crafted
-    link could otherwise point a viewer's client (and their display
-    name / room code / inputs) at a stranger's WebSocket server */
- return JB_SERVER_URL;
-}
-/* HTTP(S) base of the same Worker — used for plain HTTPS endpoints
-   (account deletion) rather than the match WebSocket */
+/* Base URL of the Supabase Edge Functions for this project: the
+   account-deletion endpoint lives there now (POST
+   <base>/delete-account — see deleteAccount). Returns "" while
+   SUPABASE_URL is unset, and deleteAccount then takes its
+   existing tombstone fallback path. */
 function jbHttpBase(){
- return JB_SERVER_URL.replace(/^wss:\/\//,"https://").replace(/^ws:\/\//,"http://");
+ return SUPABASE_URL?SUPABASE_URL.replace(/\/+$/,"")+"/functions/v1":"";
 }
-var net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
+var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
 /* FX spawn helpers call fxRec on every spawn. On the SERVER sim the
    same hook records each spawn into an FX event the Room forwards to
@@ -1497,8 +1469,8 @@ var guestChar=null,hostChar=null,forceP2Char=null;
    transport match (see the Supabase section below): the local
    engine's spawns are then also recorded into the host room's FX
    event queue and forwarded to the guests, exactly like the
-   server sim's fxRec stream. With no sink (VS CPU / TRAINING /
-   server-mode online / Supabase guest) fxRec stays a no-op and
+   host sim's fxRec stream. With no sink (VS CPU / TRAINING /
+   Supabase guest) fxRec stays a no-op and
    every spawn behaves exactly as before. pushFloater /
    pushParticle are the recording twins of the engine's direct
    floaters.push / particles.push sites (sim parity): they push the
@@ -1524,10 +1496,9 @@ function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦。接続方式は2つあります。<b style="color:#fff">Supabase経由</b>（標準）はホストの端末が試合を計算し、通信を Supabase の Realtime 経由で全員に届ける方式です（ホストが抜けると試合は終了します）。<b style="color:#fff">サーバー経由</b>は従来の方式で、専用サーバーが試合を60fpsで計算して全員に配信します。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。ホストの端末が試合を計算し、通信を Supabase の Realtime 経由で全員に届ける方式です（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
- +'<p style="color:var(--muted)">※ サーバー経由では、試合中に誰かが抜けるとそのキャラはCPUが引き継いで対戦が続きます。Supabase経由では、ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。どちらの方式でも、ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
- +'<div class="bindRow"><div><span class="bname">接続方式</span><br><span class="bnote">Supabase経由が標準です。「サーバー経由」に切り替えることもできます（招待で参加する場合は、相手の方式に自動で合います）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="modeSbBtn" style="min-width:118px">Supabase経由</button><button class="bindKey" id="modeSvBtn" style="min-width:118px">サーバー経由</button></span></div>'
+ +'<p style="color:var(--muted)">※ ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
  +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
  +'<p id="bindMsg">'+(msg||"")+'</p>';
@@ -1536,10 +1507,6 @@ function wireOnlineBtns(){
  var mk=$("makeRoomBtn"),jn=$("joinRoomBtn");
  if(mk)mk.onclick=createRoom;
  if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
- var mb=$("modeSbBtn"),ms=$("modeSvBtn");
- if(mb)mb.onclick=function(){if(!sbConfigured())return;onlineTransport="supabase";beep(660,.05);sbSyncModeBtns()};
- if(ms)ms.onclick=function(){onlineTransport="server";beep(660,.05);sbSyncModeBtns()};
- sbSyncModeBtns();
 }
 function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
@@ -1548,8 +1515,7 @@ $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
 function cleanupNet(){
  sbCleanup();
  clearRematchWatch();
- if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
- net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
+ net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
  chatReset();
@@ -1557,12 +1523,9 @@ function cleanupNet(){
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
 }
 function svSend(o){
- /* the single send choke point for every room message: on the
-    Supabase transport the same messages are re-routed to the
-    Realtime room layer (sbSend, below) instead of the match-server
-    WebSocket — no caller changes either way */
- if(net.transport==="supabase"){sbSend(o);return}
- if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}
+ /* the single send choke point for every room message: everything
+    goes to the Supabase Realtime room layer (sbSend, below) */
+ sbSend(o);
 }
 /* ================= SUPABASE (REALTIME) TRANSPORT =================
 The standard online transport: Supabase Realtime Broadcast, with
@@ -1571,12 +1534,12 @@ the HOST's device running the match itself on the local engine
 message shapes the match server uses ({t:"joined" / "roster" /
 "start" / "snap" / "ev" / "mymines" / "cpu" / "end" / "tolobby" /
 "dissolved" / "error" / "chat"}), so guests render through the
-existing svOnMsg / svOnSnap / svOnEv paths unchanged. The server
-transport above is untouched and stays selectable. (This replaced
-the direct PeerJS P2P transport: players no longer connect to
-each other — every message is relayed by Supabase. PeerJS now
-survives ONLY as the friend-presence / invite channel in the
-accounts section below.)
+existing svOnMsg / svOnSnap / svOnEv paths unchanged. This is
+now the ONLY online transport: the former dedicated match server
+transport and the former direct PeerJS P2P transport have been
+removed. Players no longer connect to each other — every message
+is relayed by Supabase. PeerJS now survives ONLY as the
+friend-presence / invite channel in the accounts section below.
 Room = one Realtime channel "jb-room-<room code>", joined by
 every participant. Broadcast events:
 - "snap" host -> all: the match snapshot, 30/s (the same
@@ -1620,7 +1583,7 @@ are inherent to hosting on a player device: the host's own
 fighter is played locally with zero added latency (its world
 IS the match), and if the host goes away the match is over —
 guests are told so by the hostleft message / heartbeat loss. */
-var onlineTransport=sbConfigured()?"supabase":"server"; /* "supabase" (standard, once configured) | "server" — picked on the ONLINE VS sheet, kept across re-renders */
+/* online play is Supabase-only: there is no transport selection */
 var sbClient=null; /* the supabase-js client, created lazily by sbEnsureClient */
 var sbChan=null; /* the room channel (jb-room-<code>) while a Supabase room is live */
 var sbPriv=null; /* guest side: our own private channel (jb-room-<code>-<pid>), mymines only */
@@ -1693,20 +1656,11 @@ return sbChanSend(event,payload);
 function sbEventFor(t){return t==="snap"?"snap":(t==="ev"?"fx":(t==="chat"?"chat":"sys"))}
 /* one guest input bundle over the input event (svSendBundle) */
 function sbSendInput(msg){return sbChanSend("input",msg)}
-function sbSyncModeBtns(){
-var a=$("modeSbBtn"),b=$("modeSvBtn");
-if(a){var conf=sbConfigured();var onA=conf&&onlineTransport==="supabase";
-a.textContent=conf?"Supabase経由":"Supabase経由（未設定）";
-a.disabled=!conf;
-a.style.opacity=onA?"1":"0.45";a.style.borderColor=onA?"#67e8f9":"";a.style.boxShadow=onA?"0 0 0 1.5px #67e8f9 inset":""}
-if(b){var onB=onlineTransport==="server";b.style.opacity=onB?"1":"0.45";b.style.borderColor=onB?"#67e8f9":"";b.style.boxShadow=onB?"0 0 0 1.5px #67e8f9 inset":""}
-}
 /* teardown for the Supabase layer, run at the top of every
 cleanupNet(): hooks off, room dissolved (guests are told via
 hostleft, best effort before unsubscribing), channels
 unsubscribed, timers cleared. Safe to call when no Supabase
-session exists (every server-mode cleanup passes through here
-as a no-op). */
+session exists (every cleanup passes through here as a no-op). */
 function sbCleanup(){
 if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
 if(sbHbTimer){clearInterval(sbHbTimer);sbHbTimer=null}
@@ -1836,8 +1790,8 @@ frames at or below player.inHi were already applied (or
 superseded past recovery) and are dropped, so the same guest
 frame is NEVER scheduled twice — not within one bundle and
 not across the redundant repeats. The surviving fresh frames,
-in ascending order, enter the very same intake a server-mode
-bundle uses: reserved from the next frame onward
+in ascending order, enter the very same intake the shared
+bundle path uses: reserved from the next frame onward
 (base = max(cursor, frame+1)) and chained forward by the
 cursor, so everything downstream (realIn scheduling,
 rbPendBits press parking, the held-repeat fallback in
@@ -2032,8 +1986,8 @@ if(sbGuestJoined&&performance.now()-sbLastHostHb>6000)sbGuestHostGone();
 function sbCreateRoom(){
 net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();net.transport="supabase";
 net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
-if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、この方式はまだ使えません。「サーバー経由」を選んでください。");return}
-if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、Supabase経由は使えません。「サーバー経由」を試してください。");return}
+if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、オンライン対戦はまだ使えません。");return}
+if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、オンライン対戦は使えません。通信環境を確認して、もう一度お試しください。");return}
 openOnline("接続を準備しています…");
 sbCid="c"+Math.random().toString(36).slice(2,10);
 var chan=null;
@@ -2059,8 +2013,8 @@ cleanupNet();openOnline("接続に失敗しました。通信環境を確認し�
 function sbJoinRoom(code){
 net.role="guest";net.expectHost=false;net.code=code;net.transport="supabase";
 sbGuestJoined=false;
-if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、この方式はまだ使えません。「サーバー経由」を選んでください。");return}
-if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、Supabase経由は使えません。「サーバー経由」を試してください。");return}
+if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、オンライン対戦はまだ使えません。");return}
+if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、オンライン対戦は使えません。通信環境を確認して、もう一度お試しください。");return}
 openOnline("ルーム "+code+" に接続しています…");
 sbCid="c"+Math.random().toString(36).slice(2,10);
 sbLastHostHb=performance.now();
@@ -2118,7 +2072,7 @@ svOnMsg(m);
 }
 /* our own private channel (see header): the host sends ONLY our
 fighter's mine list here, as {t:"mymines"} — fed into the same
-svOnMsg branch the server transport uses */
+svOnMsg branch the shared room protocol uses */
 function sbGuestPrivSubscribe(pid){
 if(!pid||!sbClient)return;
 if(sbPriv){try{sbPriv.unsubscribe()}catch(e){}sbPriv=null}
@@ -2130,9 +2084,8 @@ try{ch.subscribe()}catch(e){}
 }
 /* the host is gone (its hostleft message arrived, or its
 heartbeat has been silent ~6s): the host IS the match on this
-transport, so losing it ends the match — the one behavioural
-difference from the server transport. In the lobby / after the
-match it reads as the room dissolving. */
+transport, so losing it ends the match. In the lobby / after
+the match it reads as the room dissolving. */
 function sbGuestHostGone(){
 if(net.leaving||net.dissolved)return;
 if(!sbGuestJoined)return;
@@ -2299,8 +2252,8 @@ for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)sbDe
 }
 }
 /* ================= ONLINE CHAT (bottom-left, bandit.rip style) =====
-   Room chat rides the same match-server WebSocket as everything
-   else: the client sends {t:"chat", text} and the server broadcasts
+   Room chat rides the same Supabase room channel as everything
+   else: the client sends {t:"chat", text} and the host broadcasts
    {t:"chat", name, text} (or {t:"chat", sys:1, text} for join/leave
    notices) to everyone in the room — handled in svOnMsg below. The
    UI lives inside #gameScreen, so it is present on the lobby, in
@@ -2339,7 +2292,7 @@ function chatAdd(name,text,sys){
  chatRender();
 }
 function chatVisible(){
- return !!($("gameScreen").classList.contains("on")&&(net.ws||net.transport==="supabase")&&net.myId);
+ return !!($("gameScreen").classList.contains("on")&&net.transport==="supabase"&&net.myId);
 }
 function chatSyncVis(){
  var ui=$("chatUI");if(!ui)return;
@@ -2402,57 +2355,14 @@ $("chatOpenBtn").addEventListener("click",function(){chatOpenInput()});
 /* visibility follows the room connection (covers lobby / char
    select / match / results / disconnect without hooking each one) */
 setInterval(chatSyncVis,400);
-function svConnect(){
- var url=jbServerBase().replace(/\/+$/,"")+"/room/"+encodeURIComponent(net.code||"");
- var ws=null;
- try{ws=new WebSocket(url)}catch(e){openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
- net.ws=ws;
- ws.onopen=function(){
-   if(net.ws!==ws)return;
-   /* the display name is fixed at join time (the protocol has no
-      rename): the PLAYER NAME (jb_pname) when signed in — falling
-      back to the username when none is set — otherwise the server
-      assigns ゲスト+join-order number */
-   svSend({t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
- };
- ws.onmessage=function(ev){
-   if(net.ws!==ws)return;
-   var m=null;try{m=JSON.parse(ev.data)}catch(e){return}
-   svOnMsg(m);
- };
- ws.onclose=function(){
-   if(net.ws!==ws)return;
-   net.ws=null;
-   if(net.leaving||net.dissolved)return;
-   if(running&&mode==="online"&&net.started){
-     /* mid-match disconnect: the server hands our fighter to the CPU
-        and plays the match out; locally we just show the notice */
-     sv.active=false;drawAlpha=1;
-     showCenter("接続が切れました",99999);$("endBtns").classList.add("on");
-     return;
-   }
-   if(net.myId){
-     if(net.isHost){cleanupNet();toMenu();openOnline("接続が切れました。")}
-     else roomDissolved();
-   }
- };
- ws.onerror=function(){};
-}
 function createRoom(){
  cleanupNet();
- if(onlineTransport==="supabase"){sbCreateRoom();return}
- net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();
- net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
- openOnline("接続を準備しています…");
- svConnect();
+ sbCreateRoom();
 }
 function joinRoom(code){
  if(!code||code.length<4){openOnline("コードを入力してください。");return}
  cleanupNet();
- if(onlineTransport==="supabase"){sbJoinRoom(code);return}
- net.role="guest";net.expectHost=false;net.code=code;
- openOnline("ルーム "+code+" に接続しています…");
- svConnect();
+ sbJoinRoom(code);
 }
 function roomDissolved(){
  if(net.dissolved)return;net.dissolved=true;
@@ -2463,22 +2373,11 @@ function svOnMsg(m){
  if(!m||!m.t)return;
  if(m.t==="joined"){
    net.myId=m.pid;net.isHost=!!m.host;
-   if(net.expectHost&&!net.isHost){
-     /* the code we generated was already a live room: we landed as a
-        guest in someone else's room — back out and mint a fresh code */
-     if(net.createRetry<3){
-       net.createRetry++;
-       var w=net.ws;net.ws=null;if(w){try{w.close()}catch(e){}}
-       net.code=genRoomCode();svConnect();return;
-     }
-   }
-   if(!net.expectHost&&net.isHost){
-     /* joining an unknown code made us host of a brand-new empty
-        room: that code's room does not exist */
-     net.leaving=true;cleanupNet();
-     openOnline("そのコードのルームが見つかりませんでした。コードを確認してください。");
-     return;
-   }
+   /* on the Supabase transport the host creates its own room (its
+      joined reply always carries host:true via the loopback) and a
+      guest's joined reply always carries host:false from the real
+      host — the old server-transport code-collision retries cannot
+      occur here */
    net.role=net.isHost?"host":"guest";
    $("modal").classList.remove("on");
    openCharSelect(net.isHost?"online-host":"online-guest");
@@ -2961,13 +2860,12 @@ function svSendBundle(){
     one (the window overlaps by 10 frames), and the host dedupes
     by frame number (sbRoomInputFast), so no frame is ever applied
     twice. The stream ack rides every bundle exactly as it did on
-    the older transports (the host's flow control counts from it).
+    the shared protocol (the host's flow control counts from it).
     30 bundles/s per guest is also what keeps the transport inside
     the free plan's project-wide 100 messages/second (see the
     Supabase section header). If a send fails (channel not live),
     sentFrame stays put and the unsent frames ride the next
-    bundle's window while they are still inside it. The server
-    transport below is unchanged. */
+    bundle's window while they are still inside it. */
  if(net.transport==="supabase"){
    var endF=sv.sampleFrame;
    if(endF-(sv.sbBundleF||0)<2)return; /* 30/s cadence */
@@ -2979,23 +2877,6 @@ function svSendBundle(){
    if(typeof sv.lastSnapF==="number")sbMsg.ack=sv.lastSnapF;
    if(sbSendInput(sbMsg)){sv.sbBundleF=endF;sv.sentFrame=endF}
    return;
- }
- /* ship every unsent sampled frame, oldest first, in protocol-sized
-    chunks of at most 4 (the server schedules each bundle at
-    max(its cursor, server frame + 2) and chains the rest, so chunk
-    boundaries do not change which frame an input lands on) */
- var guard=0;
- while(sv.sentFrame<sv.sampleFrame&&guard<8){
-   guard++;
-   var ins=[];
-   while(ins.length<4&&sv.sentFrame+ins.length<sv.sampleFrame){
-     var b=sv.inpHist[sv.sentFrame+ins.length];
-     ins.push(b===undefined?0:b);
-   }
-   if(!ins.length)break;
-   var inMsg={t:"in",seq:sv.seq++,ins:ins};
-   svSend(inMsg);
-   sv.sentFrame+=ins.length;
  }
 }
 function svApplySnapP1(s,hist){
@@ -3398,11 +3279,9 @@ function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;sv.sbBundleF=0; /* Supabase input bundles restart with sampleFrame (see svSendBundle) */
  /* The host-authoritative (Supabase) transport starts at its own
     operating point (30/s stream: 33.3ms interval EMA is set below,
-    render delay at the 24ms floor) instead of easing down from
-    the server transport's 66ms / 33.3ms start — the opening
-    seconds of a match are exactly when a guest judges the lag,
-    and the old start spent them at server depth */
- sv.renderDelay=(net.transport==="supabase")?24:66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06; /* interval EMA starts at the 30/s cadence both transports now stream at (the host pump has streamed snapshots at 30/s since v201; the old 16.7 start under-read the first gaps and starved the opening bracket) */
+    render delay at the 24ms floor) — the opening seconds of a
+    match are exactly when a guest judges the lag */
+ sv.renderDelay=24;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06; /* interval EMA starts at the 30/s cadence both transports now stream at (the host pump has streamed snapshots at 30/s since v201; the old 16.7 start under-read the first gaps and starved the opening bracket) */
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
@@ -3504,7 +3383,7 @@ function svRenderWorld(now){
     predicting; only our own locally predicted fighter runs ahead). */
  var brR=svBracket(now-sv.renderDelay);
  if(!brR)return;
- var brL=svBracket(now-Math.max(net.transport==="supabase"?10:20,sv.renderDelay-42));
+ var brL=svBracket(now-Math.max(10,sv.renderDelay-42));
  /* bracket discontinuity, for the catch-up glide below: the
     previous render was starved (render time past the newest
     snapshot, fighters holding) and this one is not — the new
@@ -3609,14 +3488,12 @@ function svAdvance(dtms){
       is bundle-size independent), so nothing about scheduling
       changes — and the stream ACK that rides every bundle
       (sv.lastSnapF, the host's flow-control signal) stays fresh,
-      so a healthy guest is not misread as lagging. The server
-      transport keeps the 30/s cadence its protocol was tuned
-      around. */
+      so a healthy guest is not misread as lagging. */
    sv.acc+=dt;
    var n=0;
    while(sv.acc>=SIM_STEP&&n<8){sv.acc-=SIM_STEP;n++;svSampleStep()}
    if(sv.acc>=SIM_STEP)sv.acc=SIM_STEP;
-   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||net.transport==="supabase"||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
+   if(sv.sampleFrame>sv.sentFrame){
      var sentBefore=sv.sentFrame;
      svSendBundle();
      if(sv.sentFrame!==sentBefore){sv.lastSendAt=now;sv.pressPending=false}
@@ -3968,7 +3845,7 @@ function onSocialData(from,m){
       invite carries one (fromName, validated like every other
       remote name); older clients send none and keep the username */
    var invName=(typeof m.fromName==="string"&&validDisplayName(cleanName(m.fromName)))?cleanName(m.fromName):from;
-   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");onlineTransport=(m.mode==="server")?"server":"supabase";joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
+   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
    return;
  }
  /* friend-request signals carry a PlayFab id + display name from a
@@ -4264,9 +4141,11 @@ function logoutAccount(){
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
 }
 /* ================= ACCOUNT DELETION =================
-   Real deletion goes through the game server: PlayFab's CLIENT API
-   has no "delete this player" call, but the match Worker exposes
-   POST /delete-account (see jbHttpBase) which calls PlayFab's
+   Real deletion goes through a Supabase Edge Function: PlayFab's
+   CLIENT API has no "delete this player" call, but the project's
+   Edge Function exposes POST /delete-account (see jbHttpBase),
+   reached with the Supabase apikey / Authorization headers, and
+   calls PlayFab's
    server-side DeletePlayer with the title secret key. PlayFab
    queues the deletion job; once it runs, the account record itself
    — login Username / Email included — is fully deleted, and the
@@ -4327,9 +4206,9 @@ function deleteAccount(){
     user name stops resolving in friend search (titles that forbid
     client display-name changes simply ignore this) */
  try{if(typeof PlayFabClientApi.UpdateUserTitleDisplayName==="function")PlayFabClientApi.UpdateUserTitleDisplayName({DisplayName:"削除済み"},function(){},function(){})}catch(e){}
- /* 3.5) ask the game server to REALLY delete the account record
-    (PlayFab server-side DeletePlayer, proxied by the Worker — see
-    the block comment above). Only HTTP 200 with {ok:true} counts as
+ /* 3.5) ask the Supabase Edge Function to REALLY delete the
+    account record (PlayFab server-side DeletePlayer, proxied by
+    the function — see the block comment above). Only HTTP 200 with {ok:true} counts as
     real deletion. Any other outcome (no ticket, network error,
     non-200, ok not true) falls back to the tombstone-only path in
     step 4, and the completion message says so honestly. A watchdog
@@ -4359,14 +4238,14 @@ function deleteAccount(){
    if(realDeleted)openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消されました。アカウントの記録は完全に削除されます（PlayFab 側の反映まで少し時間がかかる場合があります）。削除が完了すれば、同じユーザーネームで新規登録できるようになります。");
    else openFriends("アカウント「"+myName+"」を削除しました。フレンド関係はすべて解消され、このアカウントでは二度とログインできません。※サーバー側の完全削除が完了できなかったため、アカウントの記録自体は残っています（同じユーザーネームでの再登録はできません）。新しい名前でなら、新規アカウントを作成できます。");
  }
- if(delTicket){
+ if(delTicket&&jbHttpBase()){
   var fetchSettled=false;
   var fetchWatchdog=setTimeout(function(){
     if(fetchSettled)return;fetchSettled=true;
     step4();
   },6000);
   try{
-   fetch(jbHttpBase()+"/delete-account",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionTicket:delTicket})}).then(function(res){
+   fetch(jbHttpBase()+"/delete-account",{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_ANON_KEY,"Authorization":"Bearer "+SUPABASE_ANON_KEY},body:JSON.stringify({sessionTicket:delTicket})}).then(function(res){
      return res.json().then(function(j){return{status:res.status,json:j}},function(){return{status:res.status,json:null}});
    }).then(function(r){
      if(fetchSettled)return;fetchSettled=true;clearTimeout(fetchWatchdog);
@@ -9632,7 +9511,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 on the server transport and whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
