@@ -9179,7 +9179,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     ハンドフレア, 火炎放射, 空中上J breath and direct javelin hits. */
  if(f.burnT>0){
    f.burnT-=dt;f.burnTick-=dt;
-   if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*26,f.y+f.h*0.45,1,Math.random()<0.5?"#fb923c":"#ef4444",80);
    if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB;applyShadeDot(bb,f,3)} /* 【闇ゲージ】 burn is a status on the pair: each tick also thins SHADE's darkness by the same 3 */ /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
  }
  /* POISON (ORCHID's toxin DoT): while poisonT lasts, the victim takes
@@ -9189,7 +9188,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     the usual per-hit freeze would stutter the whole match. */
  if(f.poisonT>0){
    f.poisonT-=dt;f.poisonTick-=dt;
-   if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*24,f.y+f.h*0.5,1,Math.random()<0.5?"#a3e635":"#c084fc",70);
    if(f.poisonTick<=0){f.poisonTick=0.2;var pbq=f.poisonBy;if(pbq&&pbq!==f&&!f.dead&&f.invuln<=0){var hsSv=hitstop,shSv=shake;applyHit(pbq,f,2,0,pbq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv;shake=shSv;applyShadeDot(pbq,f,2)}} /* 【闇ゲージ】 poison ticks drain SHADE's darkness by the same 2 per tick */
  }
  /* BLEED (SMILEY Berserker's rider): while bleedT lasts, the victim
@@ -11192,17 +11190,11 @@ function draw(){
      ctx.strokeStyle="rgba(254,202,202,.42)";ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(bcx,bcy,bR-5,Math.PI*1.08,Math.PI*1.52);ctx.stroke();
      ctx.strokeStyle="rgba(255,70,70,.78)";ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(bcx,bcy,bR-1,(df.guardDir>0?-1.02:Math.PI-1.02),(df.guardDir>0?1.02:Math.PI+1.02));ctx.stroke();
    }
-   if(df.poisonT>0){ /* poisoned (ORCHID's toxin DoT): green-purple bubbles wobbling up the victim's body */
-     for(var psi=0;psi<4;psi++){var px3=df.x+Math.sin(time*9+psi*2.2+df.x)*14,py3=df.y+44-((time*26+psi*17)%52),ps3=2.6+((psi*7)%3);ctx.fillStyle=psi%2?"rgba(163,230,53,.8)":"rgba(192,132,252,.8)";ctx.beginPath();ctx.arc(px3,py3,ps3,0,6.29);ctx.fill()}
-   }
    if(df.bleedT>0){ /* bleeding (SMILEY 覚醒's rider): red pixel specks beading and dripping off the body — SMILEY's own red-dot expression */
      for(var bli=0;bli<4;bli++){var blx=df.x+Math.sin(time*7+bli*2.6+df.x)*13,bly=df.y+14+bli*13+((time*34+bli*19)%16),bls=2.2+((bli*5)%3);ctx.fillStyle=bli%2?"rgba(220,38,38,.9)":"rgba(153,27,27,.9)";ctx.fillRect(blx-bls/2,bly,bls,bls*1.5)}
    }
    if(df.slowT>0){ /* slowed (ORCHID ポイズンショット): heavy purple drips dragging at the legs */
      ctx.fillStyle="rgba(168,85,247,.55)";for(var sli=0;sli<3;sli++){var slx=df.x-14+sli*14,sly=df.y+df.h-8+Math.sin(time*7+sli*2)*2;ctx.beginPath();ctx.ellipse(slx,sly,4.5,7,0,0,6.29);ctx.fill()}
-   }
-   if(df.burnT>0){ /* burning (SARA's fire DoT): little flame licks crawling over the victim */
-     for(var bni=0;bni<4;bni++){var bx2=df.x+Math.sin(time*15+bni*1.9+df.x)*15,by2=df.y+16+bni*13+Math.sin(time*19+bni)*3,bs2=4.5+Math.sin(time*21+bni*2.4)*1.4;ctx.fillStyle="rgba(249,115,22,.85)";ctx.beginPath();ctx.moveTo(bx2-bs2,by2);ctx.quadraticCurveTo(bx2,by2-bs2*1.7,bx2+bs2,by2);ctx.quadraticCurveTo(bx2,by2+bs2*0.5,bx2-bs2,by2);ctx.fill();ctx.fillStyle="rgba(253,230,138,.9)";ctx.beginPath();ctx.moveTo(bx2-bs2*0.5,by2);ctx.quadraticCurveTo(bx2,by2-bs2*0.9,bx2+bs2*0.5,by2);ctx.closePath();ctx.fill()}
    }
    if(df.hitstun>0){ /* STUN (被弾硬直中): the classic dizzy display, shown for exactly as long as hitstun lasts and nothing else — three gold stars orbiting the head (the crawling dashed gold ring around the body was removed per user request) on a tilted ellipse (front stars bigger/brighter, back stars smaller/dimmer, so the orbit reads in 3D). hitstun is synced in every mode (local step, rollback state, server snapshots), and this block lives in the shared fighter pass of draw(), so local / CPU / online all show it identically. Full strength for the whole stun; only the last 0.07s fades out so even the shortest 0.13s stuns pop at full brightness first */
      var stFade=Math.min(1,df.hitstun/0.07);
