@@ -426,6 +426,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["10:24"],tag:"新機能",title:"SHADEに「闇ゲージ」を追加",
+  items:["MIMI&SHADEのSHADEに、上限250の「闇ゲージ」を追加しました",
+         "ゲージが残っている間、SHADEはノックバックを完全に受けません（KB完全無効）",
+         "ゲージが0になるとSHADEは18秒間消失し、18秒後にMIMIの位置でゲージ全回復して復活します",
+         "SHADEがMIMIの近くにいる間は、ゲージが毎秒10ずつ回復します"]},
+ {date:"2026/11/15",times:["09:54"],tag:"新機能",title:"新システム：掴み技を追加",
+  items:["掴み技がヒットすると相手を目の前に固定し0.4秒間完全硬直、その後向いている方向へ投げ飛ばす",
+         "適用技はAXEのJ2段目『ヘッドロック』（30ダメージ／KB770）と、MIMI&SHADEの空中JでSHADEが掴む投げ（12ダメージ／KB760）",
+         "ダメージ・スコア・コンボ・ウルトゲージ・キル判定は通常ヒットと同じ。掴み中は黄色い拘束リングとラインで表示。WARDENウルトのSKYHOOK掴みとは相互排他"]},
  {date:"2026/11/15",times:["09:00"],tag:"修正",title:"オンライン対戦：自分のキャラに状態異常の表示が出ない問題を修正",
   items:["オンライン対戦（直接接続（P2P）／サーバー経由の両方）で、自分のキャラが受けた状態異常の見た目が自分の画面にだけ出ない問題を修正しました。燃焼の炎、毒の泡、出血（SMILEY覚醒の追加効果）、スローの滴といった表示が、相手のキャラには出るのに自分のキャラには出ていませんでした",
          "原因は、自分のキャラの「予測表示」（入力した瞬間に手元で先行して動く方式）が、ホスト（サーバー）から届く状態と照合する際に、状態異常の残り時間を丸ごと取り込んでいなかったことです。状態異常は相手の攻撃で付けられるものなので、自分の手元の予測だけでは発生させられず、照合で受け取るしかありませんでした。あわせて、SMILEYの覚醒表示や無敵時間の点滅も、ホスト側の状態を確実に反映するようになりました",
@@ -511,13 +520,6 @@ var UPDATE_LOG=[
          "回線が安定している時は、相手キャラの描画遅延の下限を約52msから約44msに、自分のキャラの描画遅延の下限を30msから20msに下げました。回線が不安定な時は今までどおり自動で遅延を広げるので、カクつきは抑えたままです",
          "回線が回復した時は、広がっていた描画遅延が素早く縮むようになりました（以前は広がった遅延がしばらく残っていました）",
          "技のダメージや判定などの対戦バランス数値に変更はありません"]},
- {date:"2026/11/15",times:["01:02"],tag:"修正",title:"オンラインで再戦を選んだ後に3人目が参加できない問題を修正",
-  items:["オンライン対戦の試合後に「もう一度たたかう」や「キャラ変更」を選んでも、ロビーへ戻る合図が届かず結果画面で止まってしまう場合があり、その間は新しい人がルームコードで接続しても試合に入れなくなっていました。再戦のリクエストを送っても合図が返ってこない時は、自動で再送し、それでも戻れない場合はその場でキャラ選択へ進むようになりました",
-         "これにより、再戦を選んだ後は必ず次の試合の準備（キャラ選択→ロビー）に進めるようになり、3人目以降の人も今までどおりルームコードや招待からロビーに参加して、次の試合から一緒に遊べます",
-         "通常の再戦の流れ（全員がキャラを選び直してロビーに戻り、ホストの「試合開始」で全員同時に開始）は変更ありません"]},
- {date:"2026/11/15",times:["01:02"],tag:"修正",title:"対戦中に表示される名前をプレイヤーネームに変更",
-  items:["オンライン対戦中、キャラの頭上と画面の順位表に表示される名前が、キャラクター名からプレイヤーネーム（設定している人はいわゆる表示名、未設定の人はユーザーネームやゲスト名）に変わりました。ロビーや結果画面の表示と揃っています",
-         "VS CPU・トレーニングなどオフラインの対戦では、これまでどおりキャラクター名が表示されます。技や数値への変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -763,6 +765,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.12')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','遅め（×0.44）'))
 +mvLegend
++'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限250</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るが、<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くにいる間</b>は毎秒10ずつ回復する（K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','250')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くで毎秒10'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、少し遅れてSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 5／SHADE 12')+mvS('KB','180／300')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.4秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 68×62／SHADE 116×74')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
@@ -1069,7 +1072,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",fieldCd:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:250,shGoneT:0,shFlash:0,fieldCd:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1079,7 +1082,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=250;f.shGoneT=0;f.shFlash=0;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -2017,7 +2020,7 @@ function p2pBuildSnap(room){
     atk:p2pR2(f.attackCd),dcd:p2pR2(f.dashCd),spc:p2pR2(f.specCd||0),mcd:p2pR2(f.mistCd||0),fcd:p2pR2(f.flyCd||0),
     uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:p2pR2(f.poisonT||0),brn:p2pR2(f.burnT||0),bld:p2pR2(f.bleedT||0),slo:p2pR2(f.slowT||0),
     sph:f.spinHits||0,flm:p2pR2(f.flameT||0),fld:p2pR2(f.flameDelay||0),ven:f.venom?1:0,bft:p2pR2(f.buffT||0),
-    shx:f.char==="mimi"?p2pR2(f.shX):undefined,shy:f.char==="mimi"?p2pR2(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,
+    shx:f.char==="mimi"?p2pR2(f.shX):undefined,shy:f.char==="mimi"?p2pR2(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,shp:f.char==="mimi"?p2pR1(f.shHp==null?250:f.shHp):undefined,shg:f.char==="mimi"?p2pR2(f.shGoneT||0):undefined,
     grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:f.comboDmg,ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
    };
   }),
@@ -2514,7 +2517,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shFlash","fieldCd"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0};
 var svPressQ=[];
 var svMute=false;
@@ -2808,7 +2811,7 @@ function svApplySnapP1(s,hist){
  if(hist)svRestoreP1(hist); /* fields the snapshot does not carry (jump state, combo step, press buffers…) come from the predicted state at the same frame */
  f.char=s.c;applyCharStats(f);
  f.x=s.x;f.y=s.y;f.px=s.px;f.py=s.py;f.vx=s.vx;f.vy=s.vy;
- f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf;if(typeof s.shs==="string")f.shState=s.shs;if(typeof s.sht==="number")f.shStateT=s.sht} /* forward-compat: MIMI&SHADE's second body (shx/shy/sha/shf) — once the server sim carries SHADE, its position / sent-away state / facing come from the snapshot; until then the fields are absent and the local follow / draw fallback covers it */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
+ f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf;if(typeof s.shs==="string")f.shState=s.shs;if(typeof s.sht==="number")f.shStateT=s.sht}if(typeof s.shp==="number")f.shHp=s.shp;if(typeof s.shg==="number")f.shGoneT=s.shg; /* 【闇ゲージ】 forward-compat: SHADE's darkness gauge (shp) and vanish countdown (shg) ride the same snapshot once the host sim carries them; absent = the local sim's values stand */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
  f.dead=!!s.dead;f.guarding=!!s.gd;f.hitstun=s.hs;f.frozen=s.fr;f.invuln=s.inv;
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
  f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
@@ -2864,6 +2867,7 @@ function svReconcileP1(s,snap){
  f.hp=s.hp;f.hpGhost=s.hg;f.score=s.sc;
  if(typeof s.kl==="number")f.kills=s.kl;
  if(typeof s.dt==="number")f.deaths=s.dt;
+ if(typeof s.shp==="number")f.shHp=s.shp;if(typeof s.shg==="number")f.shGoneT=s.shg; /* 【闇ゲージ】 P1's own SHADE gauge / vanish timer are host-authoritative when the snapshot carries them (the prediction cannot deal SHADE damage to itself) */
  if(!sv.predStepped){svHardResyncP1(s);return}
  var hard=false;
  if(!!s.dead!==!!f.dead)hard=true;
@@ -2949,7 +2953,7 @@ function svReconcile(snap){
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
- f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht} /* MIMI&SHADE second body (shx/shy/sha/shf) — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
+ f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht}if(typeof sf.shp==="number")f.shHp=sf.shp;if(typeof sf.shg==="number")f.shGoneT=sf.shg; /* 【闇ゲージ】 snapshot darkness gauge / vanish countdown — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
  f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
@@ -5844,11 +5848,57 @@ function shadeHit(att,cx,cy,w,h,dmg,kb,dir,up,hs,grab){
  var hitAny=false;
  for(var i=0;i<fighters.length;i++){var t=fighters[i];if(t===att||t.dead)continue;
   var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
+  if(!grab&&t.char==="mimi"&&shadeAlive(t)&&Math.abs(t.shX-cx)<w/2+58&&Math.abs((t.shY-52)-cy)<h/2+54){if(applyShadeHit(att,t,dmg,cx,cy,false))hitAny=true} /* 【闇ゲージ】 a box that reaches SHADE's body drains its darkness gauge (no knockback) — independent of whether it also reaches MIMI herself */
   if(Math.abs(dx)<w/2+t.w/2&&Math.abs(dy)<h/2+t.h/2){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,1):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs);if(landed)hitAny=true}
  }
  return hitAny;
 }
 function shadeBurst(f,n){spawnParticles(f.shX,f.shY-52,n||8,"#7e22ce",170);spawnParticles(f.shX,f.shY-52,Math.ceil((n||8)/2),"#f9a8d4",130)}
+/* ---- SHADE 【闇ゲージ】 (user spec) ----
+   SHADE has its own HP-like pool, the darkness gauge: max 250.
+   Enemy attacks whose hit box reaches SHADE's BODY (not MIMI's)
+   drain it through applyShadeHit — damage lands exactly like HP
+   damage (attacker damage boosts, combo count and ult meter all
+   behave as on a normal hit), but knockback is COMPLETELY nullified:
+   SHADE never moves, never staggers. The gauge is NOT part of MIMI's
+   HP and never enters the v99 score ledger (that pays out on her HP
+   at KO); it is a separate pool with its own fate. At 0 the gauge
+   breaks: SHADE vanishes for 18 seconds (no body, no hits, no
+   counterpart moves — K / up+K / U / ult all need it present), then
+   revives AT MIMI'S POSITION with the gauge full. While SHADE is
+   NEAR MIMI (beside her after a K recall / up+K swing / U warp, or
+   simply standing close) the gauge refills 10 per second. */
+var SHADE_HP_MAX=250,SHADE_VANISH_TIME=18,SHADE_REGEN_RATE=10;
+function shadeAlive(f){return !!f&&f.char==="mimi"&&(f.shGoneT||0)<=0}
+function shadeNearMimi(f){return Math.abs(f.shX-f.x)<170&&Math.abs(f.shY-(f.y+f.h))<130}
+function shadeVanish(owner){
+ owner.shHp=0;owner.shGoneT=SHADE_VANISH_TIME;owner.shState="idle";owner.shStateT=0;owner.shHitT=0;owner.shHitKind="";
+ for(var i=0;i<fighters.length;i++){var hf=fighters[i];if(hf.heldBy===owner&&(hf.heldKind||0)===1){hf.heldT=0;hf.heldBy=null;hf.heldKb=0;hf.heldUlt=false}} /* a foe SHADE was holding is let go — no throw from a vanished hand */
+ spawnParticles(owner.shX,owner.shY-52,30,"#7e22ce",280);spawnParticles(owner.shX,owner.shY-52,16,"#0d0817",200);
+ spawnRing(owner.shX,owner.shY-52,"#a855f7",62);
+ pushFloater({x:owner.x,y:owner.y-30,txt:"SHADEが消えた…",life:1.2,col:"#e879f9"});
+ shake=Math.max(shake,5);beep(90,.3,"sawtooth",.07);
+}
+function applyShadeHit(att,owner,dmg,cx,cy,isUlt){
+ if(!att||!owner||att===owner||owner.char!=="mimi"||owner.dead||owner.invuln>0||(owner.shGoneT||0)>0)return false;
+ if(att.char==="sara"&&att.chaos)dmg=Math.round(dmg*1.3); /* the same attacker-side damage boosts applyHit pays (SARA chaos / SMILEY Berserker) — the gauge is HP-like */
+ if(att.char==="smiley"&&(att.awakenT||0)>0)dmg=Math.round(dmg*1.20);
+ if(owner.shHp==null)owner.shHp=SHADE_HP_MAX;
+ owner.shHp=Math.max(0,owner.shHp-dmg);owner.shFlash=0.14;
+ /* NO knockback, NO hitstun, NO state change on SHADE or MIMI — the
+    darkness simply thins. Feedback stays small: a violet burst, a
+    ring, the damage number over SHADE and a brief hitstop */
+ hitstop=Math.max(hitstop,isUlt?0.05:0.02);shake=Math.min(13,Math.max(shake,2));
+ spawnParticles(cx,cy,10,"#a855f7",190);spawnParticles(cx,cy,6,"#2e1065",150);
+ spawnRing(cx,cy,"#7e22ce",30);
+ pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.7,col:"#d8b4fe"});
+ if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
+ att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
+ if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg));
+ beep(150+Math.random()*70,.06,"square",.05);
+ if(owner.shHp<=0)shadeVanish(owner);
+ return true;
+}
 function startMimiAttack(f,type,foe){
  /* MIMI&SHADE — a two-body fighter (okaki spec; numbers provisional,
     chosen to sit mid-roster, to be tuned later). MIMI is a small girl
@@ -5871,7 +5921,7 @@ function startMimiAttack(f,type,foe){
    f.state="mlight";f.stateT=0.48;f.attackCd=0.55;f.comboWin=0;f.spinHits=2;f.spinTick=0;
    f.vx+=f.face*120;capVx(f,RUN_MAX*1.25);
    meleeHit(f,foe,70,62,9,720,f.face,-0.3);
-   f.shState="supper2";f.shStateT=0.55;f.shHitT=0.28;f.shHitKind="supper";
+   if(shadeAlive(f)){f.shState="supper2";f.shStateT=0.55;f.shHitT=0.28;f.shHitKind="supper"} /* 【闇ゲージ】 while SHADE is vanished, MIMI's blast still fires but no counterpart upper is wound up */
    spawnParticles(f.x+f.face*26,f.y+f.h*0.4,10,"#fef9c3",180);spawnRing(f.x+f.face*30,f.y+f.h*0.4,"#fde68a",26);
    beep(1500,.06,"sine",.05);
  }else if(type==="j"){
@@ -5893,7 +5943,7 @@ function startMimiAttack(f,type,foe){
      f.state="mdrop";f.stateT=0.32;f.attackCd=0.29;f.comboWin=0;f.spinHits=1;f.spinTick=0;
      f.vx=0;f.vy=0;f.fastfall=false;
      shadeHit(f,f.x,f.y+f.h+16,98,68,5,560,f.face,0.85,0.32);
-     f.shState="smeteor";f.shStateT=0.66;f.shHitT=0.36;f.shHitKind="smeteor";
+     if(shadeAlive(f)){f.shState="smeteor";f.shStateT=0.66;f.shHitT=0.36;f.shHitKind="smeteor"} /* 【闇ゲージ】 no SHADE meteor while it is vanished */
      spawnParticles(f.x,f.y+f.h+10,8,"#fbcfe8",150);
      beep(880,.06,"square",.045);
    }else if(!f.onGround){
@@ -5909,10 +5959,10 @@ function startMimiAttack(f,type,foe){
      f.state="mairspin";f.stateT=0.38;f.attackCd=0.42;f.comboWin=0;
      f.spinHits=0;f.spinTick=0.05;
      if(f.vy>30)f.vy=30;
-     f.shState="sgrab";f.shStateT=0.4;
      var grabbed=false;
+     if(shadeAlive(f)){f.shState="sgrab";f.shStateT=0.4;
      for(var gi=0;gi<fighters.length;gi++){var gt=fighters[gi];if(gt===f||gt.dead||gt.invuln>0)continue;if(Math.abs(gt.x-f.shX)<124&&Math.abs((gt.y+gt.h/2)-scy)<107){if(applyGrabHit(f,gt,12,760,-0.5,false,f.shX,scy,1))grabbed=true}} /* SHADE grab reach 周囲110 -> 周囲124 (user balance spec; vertical scaled to match). 【掴み】 (grab system): the foe is pinned in front of SHADE for 0.4s in complete stun, then thrown with the same 12 dmg / KB 760 toward shFace — which always points back at MIMI, so the throw still goes MIMI's way, exactly as the old instant hit's direction (f.x>=gt.x) did */
-     if(grabbed){shadeBurst(f,10);shake=Math.max(shake,3)}
+     if(grabbed){shadeBurst(f,10);shake=Math.max(shake,3)}} /* 【闇ゲージ】 while SHADE is vanished there is no hand to grab with — MIMI's spin alone still works */
      spawnParticles(f.x,f.y+f.h*0.45,10,"#f9a8d4",180);
      beep(1350,.07,"square",.045);
    }else if(downHeld){
@@ -5924,7 +5974,7 @@ function startMimiAttack(f,type,foe){
      f.state="mlowj";f.stateT=0.32;f.attackCd=0.23;f.comboWin=0;
      f.vx=f.face*300;
      meleeHit(f,foe,68,34,6,680,f.face,0.06,0.32);
-     f.shState="slow";f.shStateT=0.32;f.shHitT=0.16;f.shHitKind="low";
+     if(shadeAlive(f)){f.shState="slow";f.shStateT=0.32;f.shHitT=0.16;f.shHitKind="low"}
      spawnParticles(f.x+f.face*22,f.y+f.h-6,8,"#fbcfe8",140);
      beep(760,.07,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
@@ -5938,7 +5988,7 @@ function startMimiAttack(f,type,foe){
      f.x+=f.face*40;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
      meleeHit(f,foe,80,62,10,800,f.face,-0.3,0.22);
-     f.shState="ssweep";f.shStateT=0.52;f.shHitT=0.18;f.shHitKind="sweep";
+     if(shadeAlive(f)){f.shState="ssweep";f.shStateT=0.52;f.shHitT=0.18;f.shHitKind="sweep"}
      spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fbcfe8",170);
      beep(1100,.06,"square",.05);
    }else{
@@ -5955,7 +6005,7 @@ function startMimiAttack(f,type,foe){
        f.comboWin=0.9;
        f.state="mbun1";f.stateT=0.40;f.attackCd=0.13;
        meleeHit(f,foe,68,62,5,180,f.face,-0.24,0.32);
-       f.shState="sclaw";f.shStateT=0.40;f.shHitT=0.18;f.shHitKind="claw";
+       if(shadeAlive(f)){f.shState="sclaw";f.shStateT=0.40;f.shHitT=0.18;f.shHitKind="claw"}
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        /* J2 (user balance spec): MIMI 6 dmg / KB 220, box 68x62,
@@ -5964,7 +6014,7 @@ function startMimiAttack(f,type,foe){
        f.comboWin=0.9;
        f.state="mbun2";f.stateT=0.42;f.attackCd=0.15;
        meleeHit(f,foe,68,62,6,220,f.face,-0.3,0.34);
-       f.shState="supper";f.shStateT=0.42;f.shHitT=0.16;f.shHitKind="upper1";
+       if(shadeAlive(f)){f.shState="supper";f.shStateT=0.42;f.shHitT=0.16;f.shHitKind="upper1"}
        spawnParticles(f.x+f.face*18,f.y+f.h*0.4,7,"#fbcfe8",150);
        beep(1350,.06,"square",.045);
      }else{
@@ -5976,7 +6026,7 @@ function startMimiAttack(f,type,foe){
        f.x+=f.face*40;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
        f.vx+=f.face*84;capVx(f,RUN_MAX*1.15);
        meleeHit(f,foe,86,72,10,320,f.face,-0.42);
-       f.shState="sfist";f.shStateT=0.6;f.shHitT=0.2;f.shHitKind="fist";
+       if(shadeAlive(f)){f.shState="sfist";f.shStateT=0.6;f.shHitT=0.2;f.shHitKind="fist"}
        spawnParticles(f.x,f.y+f.h*0.45,12,"#f9a8d4",200);
        beep(900,.09,"square",.05);setTimeout(function(){beep(240,.1,"sawtooth",.05)},60);
      }
@@ -5990,6 +6040,7 @@ function startMimiAttack(f,type,foe){
         here so ground starts pay it too). Balance (requester spec):
         ジャンプ回復 — riding the swing restores the double jump
         (f.jumps=1, the same refresh the riser hits grant) */
+     if(!shadeAlive(f)){beep(200,.07);return} /* 【闇ゲージ】 the swing ride needs SHADE present — while it is vanished, up+K does nothing */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.4;f.state="mswing";f.stateT=0.34;f.attackCd=0.38;f.comboWin=0;f.airLag=Math.max(f.airLag||0,0.3);f.jumps=1;
      f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="sswing";f.shStateT=0.5;
@@ -6004,7 +6055,7 @@ function startMimiAttack(f,type,foe){
         SHADE brings an arm down from above to crush whoever is under
         IT (~0.22s later, shHitT "sslam") */
      f.state="mdk";f.stateT=0.42;f.attackCd=0.53;f.comboWin=0;f.spinHits=0;f.spinTick=0;
-     f.shState="sslam";f.shStateT=0.5;f.shHitT=0.22;f.shHitKind="sslam";
+     if(shadeAlive(f)){f.shState="sslam";f.shStateT=0.5;f.shHitT=0.22;f.shHitKind="sslam"} /* 【闇ゲージ】 MIMI's light pillar still fires while SHADE is vanished; the crush arm does not */
      spawnParticles(f.x+f.face*20,f.y+f.h*0.3,9,"#fef9c3",160);spawnRing(f.x+f.face*24,f.y+f.h*0.3,"#fde68a",22);
      beep(1400,.07,"sine",.05);
    }else{
@@ -6017,6 +6068,7 @@ function startMimiAttack(f,type,foe){
         original values (全体 0.3s, attackCd 0.45 so the listed
         後硬直 is 0.52s) and the 後硬直 is 完全硬直 (applyFullLock:
         no movement / jump / dash / moves until she can act again) */
+     if(!shadeAlive(f)){beep(200,.07);return} /* 【闇ゲージ】 nothing to send out or call back while SHADE is vanished */
      f.state="mswap";f.stateT=0.3;f.attackCd=0.45;f.comboWin=0;applyFullLock(f);
      if(!f.shAway&&Math.abs(f.shX-f.x)<150&&Math.abs(f.shY-(f.y+f.h))<110){
        f.shAway=true;f.shX+=f.face*300;if(f.shX<60)f.shX=60;if(f.shX>WORLD_W-60)f.shX=WORLD_W-60;
@@ -6037,6 +6089,7 @@ function startMimiAttack(f,type,foe){
       Balance (requester spec): 全体 0.25s stays, but the recovery
       is now 完全硬直 (applyFullLock: rooted — no movement / jump /
       dash — for the whole 0.62s span until she can act again) */
+   if(!shadeAlive(f)){beep(200,.07);return} /* 【闇ゲージ】 no warp target while SHADE is vanished */
    if(f.specCd>0){beep(200,.07);return}
    f.specCd=1.0;f.state="mwarp";f.stateT=0.25;f.attackCd=0.55;f.comboWin=0;applyFullLock(f);
    spawnParticles(f.x,f.y+f.h*0.45,14,"#f9a8d4",190);spawnParticles(f.shX,f.shY-52,12,"#7e22ce",180);
@@ -6050,6 +6103,7 @@ function startMimiAttack(f,type,foe){
       together (52 dmg / KB 920, 152x130, speed 620, life 2.5s —
       the "mimiball" projectile; damage / KB / box / life buffed,
       requester balance spec). NO chain recharge */
+   if(!shadeAlive(f))return; /* 【闇ゲージ】 the ult is fired by the reunited pair — while SHADE is vanished it cannot fire and the meter is kept */
    if(f.meter<100)return;f.meter=0;f.state="mult";f.stateT=0.7;f.attackCd=0.85;f.comboWin=0;shake=10;
    f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="sult";f.shStateT=0.8;
    projectiles.push({x:f.x+f.face*42,y:f.y+f.h*0.42,vx:f.face*620,vy:0,owner:f,life:2.5,kind:"mimiball",hitSet:[]}); /* hitSet: fighters this orb has already struck — it pierces, so each foe takes the hit exactly once while the orb flies on */
@@ -6259,6 +6313,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
+   if(!grab&&t.char==="mimi"&&shadeAlive(t)&&Math.abs(t.shX-cx)<range*0.72+58&&Math.abs((t.shY-52)-cy)<h*0.5+54){if(applyShadeHit(att,t,dmg,cx,cy,false)){hitAny=true;if(hitList)hitList.push(t)}} /* 【闇ゲージ】 a swing that reaches SHADE's body drains its darkness gauge (KB fully nullified) — a separate body, so it can be struck alongside MIMI herself; a shared hitList still caps one move at one strike per pair */
    if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
  }
  return hitAny;
@@ -6557,12 +6612,22 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     down+K light pillar */
  if(f.char==="mimi"){
    f.fieldCd=Math.max(0,(f.fieldCd||0)-dt);
+   /* 【闇ゲージ】 vanish countdown / revival / proximity regen */
+   if(f.shHp==null)f.shHp=SHADE_HP_MAX;if(f.shGoneT==null)f.shGoneT=0;if(f.shFlash==null)f.shFlash=0;
+   if(f.shFlash>0)f.shFlash-=dt;
+   if(f.shGoneT>0){
+     f.shGoneT-=dt;
+     if(f.shGoneT<=0){f.shGoneT=0;f.shHp=SHADE_HP_MAX;f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="ssend";f.shStateT=0.4;f._shPX=f.x;f._shPY=f.y+f.h;shadeBurst(f,16);spawnRing(f.shX,f.shY-52,"#a855f7",46);pushFloater({x:f.x,y:f.y-26,txt:"SHADE復活！",life:1,col:"#d8b4fe"});beep(520,.14,"sine",.05)} /* 18s after the gauge broke, SHADE returns at MIMI's position with the gauge full */
+   }else if(shadeNearMimi(f)&&f.shHp<SHADE_HP_MAX){
+     f.shHp=Math.min(SHADE_HP_MAX,f.shHp+SHADE_REGEN_RATE*dt); /* beside MIMI (K recall / up+K / U warp all leave it at her side) the darkness refills 10/s */
+   }
    if(f.shStateT>0){f.shStateT-=dt;if(f.shStateT<=0)f.shState="idle"}
    /* SHADE always faces MIMI (user request): it turns toward
       whichever side of it she stands on — beside her that is her
       own facing (it rides behind her); sent away, it turns back
       toward her, and its counterpart hits aim the same way */
    if(f.x>f.shX)f.shFace=1;else if(f.x<f.shX)f.shFace=-1;
+   if(shadeAlive(f)){
    if(!f.shAway){
      /* beside MIMI it glides to the anchor behind her at her own
         pace — fast enough to keep up with her run, a touch faster
@@ -6602,6 +6667,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      else if(shk==="smeteor"){shadeHit(f,f.shX,f.shY-16,112,92,24,700,0,1.05);shadeBurst(f,12);spawnRing(f.shX,f.shY-4,"#a855f7",46);shake=Math.max(shake,5);beep(140,.14,"sawtooth",.06)} /* 落として！！ SHADE meteor fist: 24 dmg / KB 700 STRAIGHT DOWN (meteor: dir 0, up 1.05 — the same downward launch the other meteor hits use), box 下方向112x92 centred low over SHADE's feet, 発生 0.36s */
      else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,520,0,-1.0,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 520 straight up (dir 0, up -1.0), box 92x40, stun 0.32s — KB 320 -> 520 and launch direction changed to 真上 (user spec) */
    }}
+   } /* 【闇ゲージ】 while SHADE is vanished the whole block above (follow movement + delayed hits) is skipped — there is no body to move and no hand to strike with */
    /* 回るよ！ ticks: a hit on both sides every 0.11s, up to 3 — a
       shared hitList per tick so one foe is never double-hit.
       (user balance spec: 5 -> 4 dmg per hit, KB 260 -> 300, box
@@ -7529,6 +7595,7 @@ function hpBar(f){
     name the player joined with — their プレイヤーネーム when set),
     not the character name; local modes keep the character name */
  ctx.fillText(((fighters.indexOf(f)>=0?fighters.indexOf(f):0)+1)+" "+(mode==="online"?fighterDispName(f):cname(f.char))+(f.isPlayer?" (YOU)":""),f.x,y-5);
+ if(f.char==="mimi"&&(f.shGoneT||0)>0){ctx.fillStyle="#e879f9";ctx.font="11px 'DotGothic16'";ctx.textAlign="center";ctx.fillText("SHADE復活まで "+Math.ceil(f.shGoneT)+"秒",f.x,y+17);ctx.textAlign="left"} /* 【闇ゲージ】 while SHADE is vanished, its revival countdown rides under MIMI's HP bar */
  ctx.textAlign="left";
 }
 function auraRand(n){var x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x)}
@@ -8205,6 +8272,7 @@ function drawShadeHand(x,y,dir,pose,prog,s){
 }
 function drawShade(f){
  var sx=f.shX,sy=f.shY;
+ if((f.shGoneT||0)>0)return; /* 【闇ゲージ】 SHADE is vanished — nothing is drawn until it revives at MIMI's side */
  if(f.remote&&!f.shAway){sx=f.x-f.face*54;sy=f.y+f.h} /* online fallback until the server carries SHADE: a remote SHADE hugs its MIMI */
  var dir=f.shFace||f.face,st=f.shState||"idle";
  if(sx<f.x)dir=1;else if(sx>f.x)dir=-1; /* SHADE always faces MIMI (user request): the drawing turns toward wherever she stands relative to it, whatever shFace last held (covers remote fighters too) */
@@ -8254,6 +8322,15 @@ function drawShade(f){
    ctx.fillStyle="rgba(216,180,254,.75)";pxArc(sx+dir*44,sy-56,30,-0.9*dir,0.7*dir,2.6);
    ctx.fillStyle="rgba(126,34,206,.6)";pxArc(sx+dir*44,sy-56,38,-0.8*dir,0.6*dir,2);
  }
+ /* 【闇ゲージ】 a pale flash washes the mass while it soaks a hit,
+    and the darkness gauge itself rides above it (violet on deep
+    purple; it flashes brighter once the pool runs low) */
+ if((f.shFlash||0)>0){ctx.globalAlpha=Math.min(.45,f.shFlash*3);ctx.fillStyle="#e9d5ff";pxEll(sx,sy-42+bob*0.4,42,40);ctx.globalAlpha=1}
+ var shpR=Math.max(0,(f.shHp==null?SHADE_HP_MAX:f.shHp))/SHADE_HP_MAX,gw=68,gx=sx-gw/2,gy=sy-126+bob*0.4;
+ ctx.fillStyle="rgba(4,2,12,.72)";ctx.fillRect(gx-1,gy-1,gw+2,8);
+ ctx.fillStyle="#2e1065";ctx.fillRect(gx,gy,gw,6);
+ ctx.fillStyle=shpR<=0.25?"#e879f9":"#a855f7";ctx.fillRect(gx,gy,Math.max(0,gw*shpR),6);
+ ctx.fillStyle="#d8b4fe";ctx.font="10px 'DotGothic16'";ctx.textAlign="center";ctx.fillText("闇",sx,gy-3);ctx.textAlign="left";
 }
 function drawMimi(f){
  /* ult ready: charged-electric aura in MIMI pink */
@@ -8786,7 +8863,7 @@ function syncHUD(){
  var lbEl=$("lbRows");if(lbEl&&lbEl._hv!==lbHtml){lbEl._hv=lbHtml;lbEl.innerHTML=lbHtml}
  hudTxt($("scoreText"),P1.score);
  $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / 2"+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / 6"+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+(P1.char==="warden"?4:3)+(P1.reloadT>0?"…":"")))))));
- if(P1.char==="mimi")$("ammoText").textContent="WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY"); /* MIMI&SHADE: U is the warp to SHADE, gated by specCd — the pill shows its cooldown instead of an ammo count */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
+ if(P1.char==="mimi")$("ammoText").textContent=(P1.shGoneT||0)>0?("SHADE あと"+Math.ceil(P1.shGoneT)+"秒"):("闇 "+Math.ceil(P1.shHp==null?250:P1.shHp)+" · WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")); /* MIMI&SHADE: the pill carries the 【闇ゲージ】 value (or SHADE's revival countdown while it is vanished) next to the U warp cooldown */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
  else{db.textContent="DASH";db.classList.remove("cooling")}
@@ -8920,9 +8997,10 @@ function loop(ts){
      }
    }
    /* projectiles */
-   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))))){foe=qf;break}}
+   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))))){foe=qf;break}}
      if(foe){
-       if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
+       if(shadeFoe){var shDmg=(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:13)))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       else if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,220,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 235 -> 220 (user spec) */
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
