@@ -428,6 +428,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["14:38"],tag:"修正",title:"直接接続（P2P）：描画遅延の計算を戻し、スナップショットを軽量化",
+  items:["描画遅延の計算を、直近の最大到着間隔に合わせる方式（実機で約150〜237msに張り付いていました）から、到着間隔の平均（EMA）＋ばらつき（ジッター）の平均×1.5＋9msで求める方式に戻しました。下限24ms・上限100msで、遅延が縮む方向には速く、広がる方向には少し遅く追随します。到着が安定すれば遅延は下限側へ戻ります（P2Pゲスト・サーバー経由の両方に適用）",
+         "バッファが空になった時に約100msかけて滑らかに追いつく補間はそのまま維持しています。自分のキャラの描画・予測には変更はありません",
+         "ホストが送るスナップショット内の位置・速度・HPなどの数値を整数に丸めて送信するようにし、1回あたりの送信データ量を減らしました（フィールドの構成や送信回数・毎秒30回は変更なし。補間で描画するため見た目への影響はありません）。あわせて、描画遅延の計算で使っていた到着間隔の記録処理も軽くし、ゲスト側の処理負荷を下げました。開始直後の到着間隔の想定も現在の送信間隔（約33ms）に合わせ、試合開始直後の表示の乱れを抑えました",
+         "スナップショットは、専用チャネル（jb-snap）が一度でも使えると確認できた相手については、そのチャネルでのみ送るように徹底しました。途中でチャネルが使えなくなった場合は、再送ありの従来チャネルへ回さず、その回のスナップショットを捨てます（次のスナップショットで最新の状態が届きます）。jb-snapが最初から開かない相手（旧バージョン等）では、従来通り従来チャネルで送る互換動作を維持します。入力用チャネル（jb-input）も同じ再送なし設定であることを確認しました",
+         "ゲーム内容・技・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["14:22"],tag:"調整",title:"直接接続（P2P）：スナップショットの送信を毎秒30回に変更",
   items:["P2P対戦で、ホストからゲストへ送るスナップショット（対戦の状態データ）を、毎フレーム（毎秒60回）から1フレームおき（毎秒30回）に変更しました。サーバー経由モードと同じ送信回数になります",
          "ゲストからホストへの入力送信は、これまで通り毎フレーム（毎秒60回）のままです。エフェクト・チャット・試合開始／終了などのイベント送信のタイミングにも変更はありません",
@@ -492,10 +498,6 @@ var UPDATE_LOG=[
   items:["KO判定の範囲を左右に拡大しました。ステージ端からの距離が320から500になりました"]},
  {date:"2026/11/15",times:["11:20"],tag:"調整",title:"タイトルの一文を「— 戦え。脱獄者たちよ —」に変更",
   items:["タイトル画面の一文を「— 戦え。脱獄者たちよ —」に変更しました"]},
- {date:"2026/11/15",times:["11:16"],tag:"調整",title:"SHADEの闇ゲージ回復に4.5秒の待機を追加（下方修正）",
-  items:["SHADEの闇ゲージは、これまでMIMIの近くにいる間すぐ毎秒10ずつ回復していましたが、近くに来てから4.5秒たたないと回復が始まらないよう下方修正しました",
-         "4.5秒たった後はこれまで通り毎秒10ずつ回復します。途中でMIMIから離れるとタイマーはリセットされ、次に近づいてからまた4.5秒必要です",
-         "回復量（毎秒10）・ゲージ上限（190）・消失時間（18秒）など、その他の数値に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1435,10 +1437,10 @@ function hideBanner(){$("banner").style.display="none"}
      replay; large ones snap straight to the server state.
    - everyone else (and projectiles) is rendered by interpolating
      between the two snapshots that bracket an ADAPTIVE render delay
-     sized from the snapshot stream's own recent arrival gaps
-     (svAdaptDelay: ~20ms floor while arrivals are steady, widening
-     up to 200ms to cover the worst recent gap, so a bunched stream
-     no longer starves the buffer); when the buffer starves anyway,
+     sized from the snapshot stream's own arrival statistics
+     (svAdaptDelay: EMA of the arrival interval + 1.5x the jitter
+     EMA + 9ms, clamped to 24..100ms, so a bunched stream is
+     absorbed without one bad gap pinning the delay); when the buffer starves anyway,
      fighters hold at the newest snapshot's real position — no
      velocity extrapolation — and then glide back onto the bracket
      over ~100ms instead of teleporting (catch-up interpolation in
@@ -1581,6 +1583,7 @@ var p2pHostLive=false;     /* host match hooks are active: this device is runnin
 var P2P_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi","no66"];
 function p2pR1(n){return Math.round(n*10)/10}
 function p2pR2(n){return Math.round(n*100)/100}
+function p2pRI(n){return Math.round(n)} /* snapshot-only integer quantization (v202): positions / velocities / HP / meter and other large-magnitude continuous values ride the P2P snapshot as integers, shortening every JSON number (no ".xx" tail) so each snapshot is fewer bytes and queues less on the link. Sub-second timers (hitstun / frozen / invuln / cooldowns / countdown / patch timers) keep their R1/R2 precision: rounding those to integers would erase states that are almost always between 0 and 1 (a display / state bug on guests), and interpolation — which makes integer positions invisible — does not apply to them. p2pR1/p2pR2 themselves are unchanged, so non-snapshot messages that use them (mines) are byte-for-byte untouched. */
 /* name cleanup with the match server's cleanName rule (control
    characters stripped, whitespace collapsed, more than 20 code
    points falls back instead of truncating) */
@@ -1701,9 +1704,14 @@ function p2pDeliver(player,msg){
    back (ordered===false && maxRetransmits===0, checked at
    creation and again at open): a browser that silently upgrades
    the channel to reliable leaves the holder empty and the
-   fallback stays in force. Every failure path here is contained:
-   a dead or dying snap channel just marks its holder unusable
-   and delivery falls back — it can never stop the game.
+   fallback stays in force. Once a channel HAS verified and
+   opened for a peer (snapEverOk), the rule hardens (v202): a
+   dead or dying snap channel marks its holder unusable and
+   snapshots for that peer are DROPPED, never rerouted onto the
+   reliable channel — see p2pDeliverSnap. It can never stop the
+   game either way: the reliable channel keeps carrying every
+   non-snapshot message, and the next snapshot that gets through
+   carries the full current state.
    Creation timing (both side channels): attach is called the
    moment each end has its PeerJS connection object — before
    the connection is open — and again from the connection's
@@ -1716,8 +1724,9 @@ var p2pGuestSnap={snapDc:null,snapOk:false}; /* guest-side holder; host side: sn
 /* is a match (as opposed to the lobby) running on either side
    right now? Host side: p2pHostLive. Guest side: the snapshot
    session (sv) is active. The side channels below rebuild a
-   pre-match close exactly once; a mid-match close is left to
-   the reliable-channel fallback, which already covers it. */
+   pre-match close exactly once; a mid-match snap close drops
+   snapshots for a proven peer instead of rerouting them (see
+   p2pDeliverSnap), while jb-input keeps its own fallback. */
 function p2pMatchRunning(){
  if(typeof p2pHostLive!=="undefined"&&p2pHostLive)return true;
  if(typeof sv!=="undefined"&&sv&&sv.active)return true;
@@ -1736,7 +1745,7 @@ function p2pSnapAttach(conn,holder,onMsg){
     per-connection bookkeeping lives on the holder under _s*
     fields (a host player object is also the jb-input holder,
     which keeps its own _i* fields). */
- if(holder._sConn!==conn){holder._sConn=conn;holder._sRe=false}
+ if(holder._sConn!==conn){holder._sConn=conn;holder._sRe=false;holder.snapEverOk=false} /* a new connection starts unproven: the reliable fallback applies again until THIS connection's jb-snap has verified + opened */
  if(onMsg)holder._sMsg=onMsg;
  if(holder._sHook!==conn){
    holder._sHook=conn;
@@ -1759,6 +1768,8 @@ function p2pSnapAttach(conn,holder,onMsg){
      if(dc.ordered!==false||dc.maxRetransmits!==0){
        if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}
        try{dc.close()}catch(e){}
+     }else{
+       holder.snapEverOk=true; /* verified AND open at least once for this peer: from now on snapshots for this peer NEVER fall back to the reliable channel (see p2pDeliverSnap) — position/state data must not ride a retransmitting, ordered path once a UDP-mode path has been proven to work */
      }
    }catch(e){}
  };
@@ -1775,20 +1786,30 @@ function p2pSnapAttach(conn,holder,onMsg){
  dc.onerror=function(){if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}};
  if(holder._sMsg)dc.onmessage=holder._sMsg;
 }
-/* the pump's snapshot delivery: over jb-snap while that guest's
-   channel is verified and open, over the reliable channel
-   otherwise (older build / channel unavailable / channel died —
-   the automatic per-guest fallback). A snap channel whose send
-   buffer is stuffed drops this snapshot outright instead of
-   queueing it: snapshots are full-state and superseding, and
-   rerouting a clogged guest's snapshot onto the ordered channel
-   would rebuild the very backlog this channel exists to avoid.
-   Out-of-order or duplicated arrivals on the unordered channel
-   are discarded by the existing svOnSnap frame check
-   (m.f <= sv.lastSnapF), and a lost snapshot self-heals with
-   the next one, which carries the complete current state. */
+/* the pump's snapshot delivery (v202, jb-snap-only rule):
+   snapshots ride jb-snap ONLY, once that channel has been
+   verified and open for this guest (holder.snapEverOk, set in
+   p2pSnapAttach's onopen). If jb-snap later becomes unusable
+   for such a guest — closed, closing, errored, send failed —
+   the snapshot is DROPPED, never rerouted onto the reliable
+   (ordered + retransmitted) channel: putting position/state
+   data back on a retransmitting path rebuilds the head-of-line
+   backlog jb-snap exists to avoid, and snapshots are full-state
+   and superseding, so the next one that does get through (or
+   the guest's rejoin) carries the complete current state.
+   Compatibility is preserved for a guest whose jb-snap NEVER
+   opened (older build / channel never created / settings not
+   verified): snapEverOk stays false for them and every snapshot
+   keeps flowing over the reliable channel, byte-for-byte the
+   previous behaviour. A snap channel whose send buffer is
+   stuffed likewise drops this snapshot outright instead of
+   queueing it. Out-of-order or duplicated arrivals on the
+   unordered channel are discarded by the existing svOnSnap
+   frame check (m.f <= sv.lastSnapF), and a lost snapshot
+   self-heals with the next one. */
 function p2pDeliverSnap(player,msg){
- var dc=player?player.snapDc:null;
+ if(!player)return;
+ var dc=player.snapDc;
  if(dc&&player.snapOk){
    if(dc.readyState==="open"){
      try{
@@ -1799,6 +1820,7 @@ function p2pDeliverSnap(player,msg){
      player.snapDc=null;player.snapOk=false;
    }
  }
+ if(player.snapEverOk)return; /* jb-snap was proven for this peer: drop rather than reroute position data onto the reliable channel */
  p2pDeliver(player,msg);
 }
 /* ---- guest-input side channel ("jb-input") ----
@@ -2399,25 +2421,25 @@ function p2pKillHook(def,att,gain,heal){
    engine state (ck is 0: the client never verifies a checksum) */
 function p2pBuildSnap(room){
  return{
-  f:room.frame,tm:p2pR1(timer),cd:p2pR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0,
+  f:room.frame,tm:p2pRI(timer),cd:p2pR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0,
   fs:fighters.map(function(f,i){
    return{
-    c:f.char,x:p2pR2(f.x),y:p2pR2(f.y),px:p2pR2(f.px),py:p2pR2(f.py),vx:p2pR1(f.vx),vy:p2pR1(f.vy),
-    hp:p2pR1(f.hp),hg:p2pR1(f.hpGhost),sc:f.score,kl:f.kills||0,awk:p2pR2(f.awakenT||0),mt:p2pR1(f.meter),fc:f.face,st:f.state,sT:p2pR2(f.stateT),
+    c:f.char,x:p2pRI(f.x),y:p2pRI(f.y),px:p2pRI(f.px),py:p2pRI(f.py),vx:p2pRI(f.vx),vy:p2pRI(f.vy),
+    hp:p2pRI(f.hp),hg:p2pRI(f.hpGhost),sc:f.score,kl:f.kills||0,awk:p2pR2(f.awakenT||0),mt:p2pRI(f.meter),fc:f.face,st:f.state,sT:p2pR2(f.stateT),
     dead:f.dead?1:0,gd:f.guarding?1:0,hs:p2pR2(f.hitstun),fr:p2pR2(f.frozen),inv:p2pR2(f.invuln),
     atk:p2pR2(f.attackCd),dcd:p2pR2(f.dashCd),spc:p2pR2(f.specCd||0),mcd:p2pR2(f.mistCd||0),fcd:p2pR2(f.flyCd||0),
     uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:p2pR2(f.poisonT||0),brn:p2pR2(f.burnT||0),bld:p2pR2(f.bleedT||0),slo:p2pR2(f.slowT||0),
     sph:f.spinHits||0,flm:p2pR2(f.flameT||0),fld:p2pR2(f.flameDelay||0),ven:f.venom?1:0,bft:p2pR2(f.buffT||0),
-    shx:f.char==="mimi"?p2pR2(f.shX):undefined,shy:f.char==="mimi"?p2pR2(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,shp:f.char==="mimi"?p2pR1(f.shHp==null?190:f.shHp):undefined,shg:f.char==="mimi"?p2pR2(f.shGoneT||0):undefined,
-    ht:f.char==="no66"?p2pR1(f.heat||0):undefined,hst:f.char==="no66"?p2pR2(f.heatStun||0):undefined, /* No.66 【熱量】: the heat gauge and the overheat lock ride the snapshot so guests see the steam / scorching state and the HUD value */
-    grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:f.comboDmg,ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
+    shx:f.char==="mimi"?p2pRI(f.shX):undefined,shy:f.char==="mimi"?p2pRI(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,shp:f.char==="mimi"?p2pRI(f.shHp==null?190:f.shHp):undefined,shg:f.char==="mimi"?p2pR2(f.shGoneT||0):undefined,
+    ht:f.char==="no66"?p2pRI(f.heat||0):undefined,hst:f.char==="no66"?p2pR2(f.heatStun||0):undefined, /* No.66 【熱量】: the heat gauge and the overheat lock ride the snapshot so guests see the steam / scorching state and the HUD value */
+    grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:p2pRI(f.comboDmg||0),ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
    };
   }),
-  pr:projectiles.map(function(p){return{x:p2pR2(p.x),y:p2pR2(p.y),vx:p2pR1(p.vx),vy:p2pR1(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
-  ip:icePatches.map(function(p){return{x:p2pR2(p.x),y:p2pR2(p.y),w:p.w,t:p2pR1(p.t)}}),
-  fo:fireOrbs.map(function(o){return{x:p2pR2(o.x),y:p2pR2(o.y),t:p2pR1(o.t)}}),
-  pm:poisonMists.map(function(o){return{x:p2pR2(o.x),y:p2pR2(o.y),t:p2pR1(o.t)}}),
-  df:darkFields.map(function(d){return{x:p2pR2(d.x),y:p2pR2(d.y),w:d.w,t:p2pR1(d.t)}})
+  pr:projectiles.map(function(p){return{x:p2pRI(p.x),y:p2pRI(p.y),vx:p2pRI(p.vx),vy:p2pRI(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
+  ip:icePatches.map(function(p){return{x:p2pRI(p.x),y:p2pRI(p.y),w:p2pRI(p.w),t:p2pR1(p.t)}}),
+  fo:fireOrbs.map(function(o){return{x:p2pRI(o.x),y:p2pRI(o.y),t:p2pR1(o.t)}}),
+  pm:poisonMists.map(function(o){return{x:p2pRI(o.x),y:p2pRI(o.y),t:p2pR1(o.t)}}),
+  df:darkFields.map(function(d){return{x:p2pRI(d.x),y:p2pRI(d.y),w:p2pRI(d.w),t:p2pR1(d.t)}})
  };
 }
 /* the server's results(): per-fighter rows sorted by score, then
@@ -3467,50 +3489,50 @@ function svSyncPlaced(arr,list,mk){
  if(arr.length>n)arr.length=n;
  return arr;
 }
-/* ---- arrival-jitter adaptive render buffer ----
+/* ---- arrival-jitter adaptive render buffer (EMA, v202) ----
    Sizes the render delay svRenderWorld uses from the snapshot
-   stream's own RECENT arrival gaps. sv.gapWin keeps the gaps of
-   the last ~2.5s; the target delay is the largest of them + 10ms
-   of headroom, clamped to 20..200ms, and sv.renderDelay eases
-   toward it (fast up, slower down) so the render time itself
-   never jumps. While arrivals are steady, the largest recent
-   gap is barely above the stream's own interval, so the delay
-   sits near the ~20ms floor and adds no latency. When arrivals
-   bunch and stall — the reported P2P case: gaps opening to
-   100-276ms on a stream whose nominal spacing is 16.7ms — the
-   target widens to cover the worst recent gap, so the render
-   bracket keeps a snapshot on both sides of the render time
-   instead of starving. A starved buffer was the warp: the
-   opponent froze at the newest snapshot, then teleported to
-   the next one the moment it landed. Once arrivals settle, the
-   big gaps age out of the window and the target falls back to
-   the floor on its own. The same sizing serves both transports
-   (P2P guest and server mode): they differ only in the gaps
-   they actually produce. A stall over 400ms (tab switch, long
-   hitch, network drop) still clears the buffer entirely —
-   interpolating across a hole that big would drag fighters
-   through walls — and the P2P stream-age anchor is voided with
-   it (the host's frame clock paused with the stream, so the
-   next snapshot re-anchors instead of reading as seconds
-   stale); the catch-up glide in svRenderWorld softens even
-   that resync landing. Called from svOnSnap on every accepted
-   snapshot, before lastArrival is updated. */
+   stream's arrival statistics, kept as two EMAs so a single bad
+   gap can never pin the delay the way the v200 rule did:
+     target = intervalEMA + jitterEMA * 1.5 + 9ms
+   where intervalEMA tracks the mean arrival gap and jitterEMA
+   tracks the mean absolute deviation from it. The v200 rule —
+   "largest gap in the last ~2.5s + 10ms, clamped to 200ms" —
+   was reverted here: on a real link one 150-280ms stall every
+   couple of seconds kept the MAX at that level permanently, so
+   the delay sat at ~150-237ms for whole matches (confirmed on
+   device video). An EMA forgets a spike exponentially instead:
+   one gap moves the target by a fraction of its deviation, and
+   steady arrivals pull it straight back down. The target is
+   clamped to 24..100ms, and sv.renderDelay eases toward it —
+   shrinking FAST (factor 0.45) so recovered links shed delay
+   immediately, growing a little slower (factor 0.18) so one
+   rough patch does not yank the render time around. The same
+   sizing serves both transports (P2P guest and server mode):
+   they differ only in the gaps they actually produce. Removing
+   the old 2.5s gap window also removes a per-snapshot object
+   allocation + array shift on the guest, which matters on the
+   weaker guest devices this path runs on. A stall over 400ms
+   (tab switch, long hitch, network drop) still clears the
+   buffer entirely — interpolating across a hole that big would
+   drag fighters through walls — and the P2P stream-age anchor
+   is voided with it (the host's frame clock paused with the
+   stream, so the next snapshot re-anchors instead of reading
+   as seconds stale); the catch-up glide in svRenderWorld
+   (~100ms smoothstep back onto the bracket) softens even that
+   resync landing and is unchanged. Called from svOnSnap on
+   every accepted snapshot, before lastArrival is updated. */
 function svAdaptDelay(now){
  if(!sv.lastArrival)return;
  var gap=now-sv.lastArrival;
- if(gap>400){sv.snaps.length=0;sv.intervalEMA=33.3;sv.gapWin.length=0;sv.anchorF=null;sv.snapAgeMs=0;return}
+ if(gap>400){sv.snaps.length=0;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.anchorF=null;sv.snapAgeMs=0;return}
  if(gap<=0)return;
  sv.intervalEMA+=(gap-sv.intervalEMA)*0.2;
  var dev=Math.abs(gap-sv.intervalEMA);
  sv.jitterEMA+=(dev-sv.jitterEMA)*0.15;
- sv.gapWin.push({g:gap,at:now});
- while(sv.gapWin.length>1&&now-sv.gapWin[0].at>2500)sv.gapWin.shift();
- if(sv.gapWin.length>120)sv.gapWin.shift();
- var gmax=0;
- for(var gi=0;gi<sv.gapWin.length;gi++)if(sv.gapWin[gi].g>gmax)gmax=sv.gapWin[gi].g;
- var target=gmax+10;
- if(target<20)target=20;else if(target>200)target=200;
- sv.renderDelay+=(target-sv.renderDelay)*(target>sv.renderDelay?0.45:0.12);
+ var target=sv.intervalEMA+sv.jitterEMA*1.5+9;
+ if(target<24)target=24;else if(target>100)target=100;
+ sv.renderDelay+=(target-sv.renderDelay)*(target<sv.renderDelay?0.45:0.18);
+ if(sv.renderDelay<24)sv.renderDelay=24;else if(sv.renderDelay>100)sv.renderDelay=100;
 }
 function svOnSnap(m){
  if(!sv.active||!m||!m.fs)return;
@@ -3625,12 +3647,12 @@ function svOnSnap(m){
 }
 function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;sv.relFloor=0; /* jb-input: guest frame numbers restart with sampleFrame, and no frame has ridden the reliable channel yet in this match (see svSendBundle) */
- /* P2P starts at its own operating point (60/s stream: 16.7ms
-    interval EMA, render delay already near the 20ms floor) instead
+ /* P2P starts at its own operating point (30/s stream: 33.3ms
+    interval EMA is set below, render delay at the 24ms floor) instead
     of easing down from the server transport's 66ms / 33.3ms start —
     the opening seconds of a match are exactly when a guest judges
     the lag, and the old start spent them at server depth */
- sv.renderDelay=(net.transport==="p2p")?24:66;sv.intervalEMA=(net.transport==="p2p")?16.7:33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06;
+ sv.renderDelay=(net.transport==="p2p")?24:66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06; /* interval EMA starts at the 30/s cadence both transports now stream at (v201 thinned P2P snapshots to 30/s; the old 16.7 P2P start under-read the first gaps and starved the opening bracket) */
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
@@ -3706,9 +3728,8 @@ function svBracket(rt){
 function svRenderWorld(now){
  /* Interpolate every fighter + projectile between the two snapshots
     bracketing an arrival-jitter ADAPTIVE render delay (see
-    svAdaptDelay: ~20ms floor while arrivals are steady, widening
-    up to 200ms to cover the worst recent arrival gap, on both
-    transports). Even a rightly-sized buffer can starve on a bad
+    svAdaptDelay: interval EMA + jitter EMA x1.5 + 9ms, clamped to
+    24..100ms, on both transports). Even a rightly-sized buffer can starve on a bad
     enough stretch; when it does — the render time was past the
     newest snapshot, or the buffer was cleared and re-based — a
     remote fighter does NOT jump to the position the new bracket
