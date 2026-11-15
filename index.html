@@ -434,6 +434,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["23:14"],tag:"調整",title:"KAIRO：全技のエフェクトを判定に合わせて調整",
+  items:["KAIROのすべての技について、エフェクトのサイズ・位置・タイミングを実際の当たり判定に重なるよう調整しました（判定・ダメージ・KBなどの数値は一切変更していません）",
+         "Jチェーン（1〜3段目）・ブリンク斬り・ライジングアッパー・アイスフット・ダイブクロー・J+Kの拳は、爪痕や拳が判定の前端・上下幅まで届くよう拡大しました。ホバースピン／フロストスピンは回転する氷が両側の判定いっぱいに広がり、フロストテイルは尻尾の弧とトゲの先端が判定の縁に沿うようになりました",
+         "メテオドロップは判定（左右122×84）が出る瞬間に合わせて左右いっぱいの氷の衝撃波が広がるようになり、アイスエッジの氷柱は判定の柱（中心±40/95/150・幅52・高さ140/120/90）とまったく同じ位置・大きさで生えるようになりました",
+         "氷弾（L）は判定（60×78）に近い大きさの氷の槍になり、発射位置の閃光も実際の出現位置に合わせました。ウルトは判定（270×250）の中心に合わせて氷の輪が広がり、回転する氷の腕も判定の縁まで届くようになりました。アイスフットの氷床には凍結範囲内に収まる氷の結晶を追加しました"]},
  {date:"2026/11/15",times:["21:43"],tag:"調整",title:"No.66を開発中として一部ユーザーネーム専用に",
   items:["No.66は開発中のため、ユーザーネーム「おかき」「yabaiya2」でのみ使用できるようになりました。それ以外のユーザーネーム（ゲスト・未ログインを含む）では、キャラ選択でNo.66を選べません",
          "キャラ選択画面のNo.66のカードに「開発中」の札を表示しました。使用できない場合はカードがグレー表示になって選べなくなり、CPUのキャラ指定と「おまかせ」の候補からもNo.66が外れます",
@@ -9775,56 +9780,66 @@ function drawKairo(f){
   ctx.fillStyle="#e0f2fe";ctx.fillRect(-19,41,38,5);
   ctx.strokeStyle="rgba(224,242,254,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-13,26);ctx.lineTo(-17,6);ctx.moveTo(13,26);ctx.lineTo(17,4);ctx.moveTo(0,36);ctx.lineTo(0,14);ctx.stroke();
  }
+ if(f.state==="taildrop"&&f.hitDone&&f.stateT<=0.28&&f.stateT>0.13){
+  /* メテオドロップの判定 (左右122x84 = 中心から左右±146・縦±84) が
+     出る瞬間だけ、判定どおり左右いっぱいに氷の衝撃波を広げる:
+     描画座標では中心 (0,26) から ±129、縦は -44..96 の帯 */
+  ctx.fillStyle="rgba(165,243,252,.10)";ctx.fillRect(-129,-44,258,140);
+  ctx.fillStyle="rgba(165,243,252,.9)";
+  for(var mb=-1;mb<=1;mb+=2){for(var ms=0;ms<3;ms++){var myA=[-20,26,72][ms],mlA=[118,129,118][ms];ctx.beginPath();ctx.moveTo(mb*8,myA-13);ctx.lineTo(mb*mlA,myA);ctx.lineTo(mb*8,myA+13);ctx.closePath();ctx.fill()}}
+  ctx.fillStyle="rgba(224,242,254,.95)";for(var mq=0;mq<5;mq++){var mx2=-96+mq*48;ctx.beginPath();ctx.moveTo(mx2-7,96);ctx.lineTo(mx2,64);ctx.lineTo(mx2+7,96);ctx.closePath();ctx.fill()}
+ }
  if(f.state==="fspin"){
   /* 空中↑+K フロストスピン: 体の周りを周回する5本の小氷柱と軌道の輪 */
-  for(var ic2=0;ic2<5;ic2++){var ia=time*14+ic2*1.2566,ix2=Math.cos(ia)*37,iy2=28+Math.sin(ia)*29;
+  for(var ic2=0;ic2<5;ic2++){var ia=time*14+ic2*1.2566,ix2=Math.cos(ia)*62,iy2=26+Math.sin(ia)*44;
    ctx.save();ctx.translate(ix2,iy2);ctx.rotate(ia);
    ctx.fillStyle="rgba(165,243,252,.92)";ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(-4,-4.5);ctx.lineTo(-4,4.5);ctx.closePath();ctx.fill();
    ctx.fillStyle="rgba(255,255,255,.85)";ctx.fillRect(-1,-1.4,6,2.8);ctx.restore()}
-  ctx.strokeStyle="rgba(165,243,252,.4)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,28,38,0,6.29);ctx.stroke();
+  ctx.strokeStyle="rgba(165,243,252,.4)";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,26,68,50,0,0,6.29);ctx.stroke();
  }
  if(isGuardK){ctx.fillStyle=accC;ctx.beginPath();ctx.arc(24,28,4.6,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(20,24,3.6,0,6.29);ctx.fill()}
- else if(f.state==="claw"||f.state==="backclaw"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s=0;s<3;s++){ctx.beginPath();ctx.moveTo(37,15+s*6);ctx.lineTo(50,12+s*6);ctx.stroke()}}
- else if(f.state==="clawrev"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s7=0;s7<3;s7++){ctx.beginPath();ctx.moveTo(36,42-s7*5);ctx.lineTo(50,36-s7*5);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(4,34,36,0.3,1.25);ctx.stroke()}
- else if(f.state==="clawup"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s2=0;s2<3;s2++){ctx.beginPath();ctx.moveTo(20+s2*5,-2);ctx.lineTo(24+s2*5,-14);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(8,22,30,-1.25,-0.35);ctx.stroke()}
- else if(f.state==="clawspin"||f.state==="airclaw"||f.state==="fspin"){var sp3=time*26;ctx.save();ctx.translate(0,27);ctx.rotate(sp3);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=4.5;for(var b2=0;b2<3;b2++){ctx.save();ctx.rotate(b2*2.09);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore()}
+ else if(f.state==="claw"||f.state==="backclaw"){ctx.strokeStyle="rgba(165,243,252,.35)";ctx.lineWidth=7;ctx.beginPath();ctx.arc(16,26,42,-0.95,0.95);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s=0;s<3;s++){ctx.beginPath();ctx.moveTo(28,-6+s*30);ctx.lineTo(57,-11+s*32);ctx.stroke()}}
+ else if(f.state==="clawrev"){ctx.strokeStyle="rgba(165,243,252,.35)";ctx.lineWidth=7;ctx.beginPath();ctx.arc(14,27,45,-1.05,0.85);ctx.stroke();ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s7=0;s7<3;s7++){ctx.beginPath();ctx.moveTo(28,58-s7*30);ctx.lineTo(58,46-s7*32);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(10,27,52,0.25,1.2);ctx.stroke()}
+ else if(f.state==="clawup"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s2=0;s2<3;s2++){ctx.beginPath();ctx.moveTo(12+s2*13,34);ctx.lineTo(20+s2*13,-33+s2*5);ctx.stroke()}ctx.strokeStyle="#a5f3fc";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(4,26,56,-1.45,-0.3);ctx.stroke()}
+ else if(f.state==="clawspin"){ctx.save();ctx.beginPath();ctx.rect(-11,-30,96,113);ctx.clip();var spc=time*26;ctx.translate(0,27);ctx.rotate(spc);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=4.5;for(var b2=0;b2<3;b2++){ctx.save();ctx.rotate(b2*2.09);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(82,0);ctx.stroke();ctx.restore()}ctx.restore();ctx.strokeStyle="rgba(165,243,252,.45)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(8,26,74,-1.15,1.15);ctx.stroke()}
+ else if(f.state==="airclaw"||f.state==="fspin"){ctx.save();ctx.beginPath();ctx.rect(-72,-25,144,103);ctx.clip();var sp3=time*26;ctx.translate(0,26);ctx.rotate(sp3);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=4.5;for(var b3=0;b3<3;b3++){ctx.save();ctx.rotate(b3*2.09);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(68,0);ctx.stroke();ctx.restore()}ctx.restore();ctx.strokeStyle="rgba(165,243,252,.4)";ctx.lineWidth=2.5;ctx.beginPath();ctx.ellipse(0,26,70,50,0,0,6.29);ctx.stroke()}
  else if(f.state==="dashclaw"){
   /* 前+J ブリンク斬り: 大きな氷の爪 (3本の氷刃) と爪痕の弧、氷片、残像の風切り線 */
-  ctx.fillStyle="rgba(165,243,252,.96)";for(var bc=0;bc<3;bc++){var by=14+bc*9;ctx.beginPath();ctx.moveTo(38,by);ctx.lineTo(72-bc*4,by+3);ctx.lineTo(40,by+8);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(255,255,255,.9)";ctx.beginPath();ctx.moveTo(42,by+1.5);ctx.lineTo(62-bc*4,by+3);ctx.lineTo(42,by+5);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(165,243,252,.96)"}
-  ctx.strokeStyle="rgba(103,232,249,.5)";ctx.lineWidth=5.5;for(var bs3=0;bs3<3;bs3++){ctx.beginPath();ctx.moveTo(48,9+bs3*11);ctx.quadraticCurveTo(70,15+bs3*11,65,29+bs3*9);ctx.stroke()}
-  ctx.strokeStyle="rgba(224,242,254,.95)";ctx.lineWidth=3;for(var bs2=0;bs2<3;bs2++){ctx.beginPath();ctx.moveTo(50,8+bs2*11);ctx.quadraticCurveTo(74,14+bs2*11,68,30+bs2*9);ctx.stroke()}
-  ctx.fillStyle="#e0f2fe";for(var bd=0;bd<4;bd++){ctx.save();ctx.translate(58+bd*6,10+bd*9);ctx.rotate(.78+bd);ctx.fillRect(-2.4,-2.4,4.8,4.8);ctx.restore()}
-  ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-14,20);ctx.lineTo(-36,20);ctx.moveTo(-12,32);ctx.lineTo(-32,32);ctx.moveTo(-10,14);ctx.lineTo(-24,14);ctx.stroke()}
- else if(f.state==="diveclaw"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s4=0;s4<3;s4++){ctx.beginPath();ctx.moveTo(26+s4*5,44);ctx.lineTo(32+s4*5,56);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-6,6);ctx.lineTo(-14,-8);ctx.moveTo(6,4);ctx.lineTo(0,-10);ctx.stroke()}
- else if(f.state==="lowclaw"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s5=0;s5<3;s5++){ctx.beginPath();ctx.moveTo(40,38+s5*5);ctx.lineTo(54,36+s5*5);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,50);ctx.lineTo(-32,50);ctx.moveTo(-10,42);ctx.lineTo(-26,42);ctx.stroke()}
+  ctx.fillStyle="rgba(165,243,252,.96)";for(var bc=0;bc<3;bc++){var by=2+bc*17;ctx.beginPath();ctx.moveTo(36,by);ctx.lineTo(78-bc*3,by+4);ctx.lineTo(38,by+9);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(255,255,255,.9)";ctx.beginPath();ctx.moveTo(40,by+2);ctx.lineTo(68-bc*3,by+4);ctx.lineTo(40,by+6.5);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(165,243,252,.96)"}
+  ctx.strokeStyle="rgba(103,232,249,.5)";ctx.lineWidth=5.5;for(var bs3=0;bs3<3;bs3++){ctx.beginPath();ctx.moveTo(46,0+bs3*17);ctx.quadraticCurveTo(72,7+bs3*17,66,20+bs3*15);ctx.stroke()}
+  ctx.strokeStyle="rgba(224,242,254,.95)";ctx.lineWidth=3;for(var bs2=0;bs2<3;bs2++){ctx.beginPath();ctx.moveTo(48,-1+bs2*17);ctx.quadraticCurveTo(78,6+bs2*17,70,21+bs2*15);ctx.stroke()}
+  ctx.fillStyle="#e0f2fe";for(var bd=0;bd<4;bd++){ctx.save();ctx.translate(56+bd*6,2+bd*13);ctx.rotate(.78+bd);ctx.fillRect(-2.4,-2.4,4.8,4.8);ctx.restore()}
+  ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-14,20);ctx.lineTo(-36,20);ctx.moveTo(-12,32);ctx.lineTo(-32,32);ctx.moveTo(-10,14);ctx.lineTo(-24,14);ctx.moveTo(40,-10);ctx.lineTo(62,-14);ctx.moveTo(40,58);ctx.lineTo(62,63);ctx.stroke()}
+ else if(f.state==="diveclaw"){ctx.strokeStyle=accC;ctx.lineWidth=3.5;for(var s4=0;s4<3;s4++){ctx.beginPath();ctx.moveTo(22+s4*8,8+s4*5);ctx.lineTo(70+s4*5,36+s4*5);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-6,6);ctx.lineTo(-14,-8);ctx.moveTo(6,4);ctx.lineTo(0,-10);ctx.stroke()}
+ else if(f.state==="lowclaw"){ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s5=0;s5<3;s5++){ctx.beginPath();ctx.moveTo(32,9+s5*15);ctx.lineTo(68,6+s5*16);ctx.stroke()}ctx.strokeStyle="rgba(165,243,252,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,36);ctx.lineTo(-30,36);ctx.moveTo(-10,20);ctx.lineTo(-26,20);ctx.stroke()}
  else if(f.state==="jkcombo"){
   /* J+K アイスファング・コンボ: 氷を纏った拳の2連打 (1打目は正拳、2打目は大きな氷の拳＋氷片) */
   if(f.stateT>0.26){
-   ctx.fillStyle="#7dd3fc";ctx.fillRect(36,15,17,17);
-   ctx.fillStyle="#e0f2fe";ctx.fillRect(36,15,17,5);ctx.fillRect(49,15,4,17);
-   ctx.fillStyle="#bae6fd";ctx.beginPath();ctx.moveTo(53,17);ctx.lineTo(61,23);ctx.lineTo(53,27);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#7dd3fc";ctx.fillRect(34,4,20,30);
+   ctx.fillStyle="#e0f2fe";ctx.fillRect(34,4,20,6);ctx.fillRect(50,4,4,30);
+   ctx.fillStyle="#bae6fd";ctx.beginPath();ctx.moveTo(54,10);ctx.lineTo(68,19);ctx.lineTo(54,28);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(37,4);ctx.lineTo(45,-14);ctx.lineTo(52,4);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(37,34);ctx.lineTo(45,54);ctx.lineTo(52,34);ctx.closePath();ctx.fill();
    ctx.strokeStyle="rgba(224,242,254,.8)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-12,20);ctx.lineTo(-26,20);ctx.moveTo(-10,30);ctx.lineTo(-22,30);ctx.stroke();
   }else{
-   ctx.fillStyle="#7dd3fc";ctx.fillRect(33,24,21,21);
-   ctx.fillStyle="#e0f2fe";ctx.fillRect(33,24,21,6);ctx.fillRect(50,24,4,21);
-   ctx.fillStyle="#bae6fd";ctx.beginPath();ctx.moveTo(54,27);ctx.lineTo(64,34);ctx.lineTo(54,40);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(40,24);ctx.lineTo(44,14);ctx.lineTo(48,24);ctx.closePath();ctx.fill();
-   ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s6=0;s6<3;s6++){ctx.beginPath();ctx.moveTo(58,16+s6*9);ctx.lineTo(68,13+s6*9);ctx.stroke()}
+   ctx.fillStyle="#7dd3fc";ctx.fillRect(31,6,24,36);
+   ctx.fillStyle="#e0f2fe";ctx.fillRect(31,6,24,7);ctx.fillRect(51,6,4,36);
+   ctx.fillStyle="#bae6fd";ctx.beginPath();ctx.moveTo(55,14);ctx.lineTo(76,24);ctx.lineTo(55,34);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(35,6);ctx.lineTo(44,-16);ctx.lineTo(52,6);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(35,42);ctx.lineTo(44,64);ctx.lineTo(52,42);ctx.closePath();ctx.fill();
+   ctx.strokeStyle=accC;ctx.lineWidth=3;for(var s6=0;s6<3;s6++){ctx.beginPath();ctx.moveTo(60,-2+s6*22);ctx.lineTo(73,-6+s6*22);ctx.stroke()}
   }
  }
- else if(f.state==="shard"){ctx.fillStyle="#bae6fd";ctx.save();ctx.translate(38,22);ctx.rotate(.78);ctx.fillRect(-5,-5,10,10);ctx.restore()}
- else if(f.state==="ult"){var sp=time*22;ctx.save();ctx.translate(0,26);ctx.rotate(sp);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=5;for(var b=0;b<4;b++){ctx.save();ctx.rotate(b*1.57);ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(40,0);ctx.stroke();ctx.fillStyle="#e0f7ff";ctx.save();ctx.translate(44,0);ctx.rotate(.78);ctx.fillRect(-4.5,-4.5,9,9);ctx.restore();ctx.restore()}ctx.restore()}
+ else if(f.state==="shard"){ctx.fillStyle="#bae6fd";ctx.save();ctx.translate(21,24.5);ctx.rotate(.78);ctx.fillRect(-6,-6,12,12);ctx.restore()}
+ else if(f.state==="ult"){var upr=Math.min(1,(0.62-f.stateT)/0.62*4.5);ctx.strokeStyle="rgba(165,243,252,"+(0.85-0.45*upr)+")";ctx.lineWidth=5;ctx.beginPath();ctx.ellipse(0,0,112*upr,104*upr,0,0,6.29);ctx.stroke();ctx.fillStyle="rgba(125,211,252,"+(0.10*(1-upr)+0.03)+")";ctx.beginPath();ctx.ellipse(0,0,112*upr,104*upr,0,0,6.29);ctx.fill();var sp=time*22;ctx.save();ctx.rotate(sp);ctx.strokeStyle="#a5f3fc";ctx.lineWidth=5;for(var b=0;b<4;b++){ctx.save();ctx.rotate(b*1.57);ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(102,0);ctx.stroke();ctx.fillStyle="#e0f7ff";ctx.save();ctx.translate(108,0);ctx.rotate(.78);ctx.fillRect(-5,-5,10,10);ctx.restore();ctx.restore()}ctx.restore();ctx.save();ctx.translate(0,26);ctx.rotate(-sp*0.7);ctx.strokeStyle="rgba(224,242,254,.8)";ctx.lineWidth=3.5;for(var b9=0;b9<4;b9++){ctx.save();ctx.rotate(b9*1.57);ctx.beginPath();ctx.moveTo(7,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore()}
  if(f.state==="tail"){
   /* K フロストテイル: 氷のトゲを生やした太い尻尾の弧と先端の氷結晶、散らばる氷片 */
-  ctx.strokeStyle="rgba(103,232,249,.32)";ctx.lineWidth=20;ctx.beginPath();ctx.arc(5,29,44,-.55,1.2);ctx.stroke();
-  ctx.strokeStyle="#7dd3fc";ctx.lineWidth=12;ctx.beginPath();ctx.arc(5,29,44,-.55,1.2);ctx.stroke();
-  ctx.strokeStyle="#e0f2fe";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(5,29,44,-.45,1.05);ctx.stroke();
-  ctx.fillStyle="rgba(165,243,252,.95)";for(var tk=0;tk<6;tk++){var ta=-.45+tk*.3,txk=5+Math.cos(ta)*53,tyk=29+Math.sin(ta)*53;ctx.beginPath();ctx.moveTo(txk-4.5,tyk);ctx.lineTo(5+Math.cos(ta)*68,29+Math.sin(ta)*68);ctx.lineTo(txk+4.5,tyk+3);ctx.closePath();ctx.fill()}
-  ctx.save();ctx.translate(5+Math.cos(1.15)*53,29+Math.sin(1.15)*53);ctx.rotate(.78);ctx.fillStyle="#bae6fd";ctx.fillRect(-6.5,-6.5,13,13);ctx.fillStyle="#fff";ctx.fillRect(-6.5,-6.5,13,4.5);ctx.restore();
-  ctx.fillStyle="#e0f2fe";for(var td=0;td<4;td++){ctx.save();ctx.translate(5+Math.cos(.1+td*.3)*62,29+Math.sin(.1+td*.3)*62);ctx.rotate(td*1.3);ctx.fillRect(-2.2,-2.2,4.4,4.4);ctx.restore()}
+  ctx.strokeStyle="rgba(103,232,249,.32)";ctx.lineWidth=20;ctx.beginPath();ctx.arc(14,26,52,-.62,.72);ctx.stroke();
+  ctx.strokeStyle="#7dd3fc";ctx.lineWidth=12;ctx.beginPath();ctx.arc(14,26,52,-.62,.72);ctx.stroke();
+  ctx.strokeStyle="#e0f2fe";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(14,26,52,-.5,.6);ctx.stroke();
+  ctx.fillStyle="rgba(165,243,252,.95)";for(var tk=0;tk<6;tk++){var ta=-.7+tk*.296,txk=14+Math.cos(ta)*58,tyk=26+Math.sin(ta)*58;ctx.beginPath();ctx.moveTo(txk-4.5,tyk);ctx.lineTo(14+Math.cos(ta)*78,26+Math.sin(ta)*78);ctx.lineTo(txk+4.5,tyk+3);ctx.closePath();ctx.fill()}
+  ctx.save();ctx.translate(14+Math.cos(.72)*62,26+Math.sin(.72)*62);ctx.rotate(.78);ctx.fillStyle="#bae6fd";ctx.fillRect(-6.5,-6.5,13,13);ctx.fillStyle="#fff";ctx.fillRect(-6.5,-6.5,13,4.5);ctx.restore();
+  ctx.fillStyle="#e0f2fe";for(var td=0;td<4;td++){ctx.save();ctx.translate(14+Math.cos(.02+td*.26)*72,26+Math.sin(.02+td*.26)*72);ctx.rotate(td*1.3);ctx.fillRect(-2.2,-2.2,4.4,4.4);ctx.restore()}
  }
  if(f.state==="tailsweep"){ctx.strokeStyle="#7dd3fc";ctx.lineWidth=8;ctx.beginPath();ctx.arc(0,48,44,.15,2.6);ctx.stroke();ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,48,50,.4,2.3);ctx.stroke()}
- if(f.state==="iceedge"){ctx.fillStyle="rgba(165,243,252,.85)";var ieO2=[40,95,150],ieH2=[140,120,90];for(var is2=0;is2<(f.spinHits||0);is2++){for(var isd2=-1;isd2<=1;isd2+=2){var sx2=isd2*ieO2[is2];ctx.beginPath();ctx.moveTo(sx2-13,68);ctx.lineTo(sx2,68-ieH2[is2]);ctx.lineTo(sx2+13,68);ctx.closePath();ctx.fill()}}} /* アイスエッジ: erupted spike waves stay drawn for the rest of the move */
- if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.45)";ctx.fillRect(-27,-25,54,90)}
+ if(f.state==="iceedge"){ctx.fillStyle="rgba(165,243,252,.85)";var ieO2=[40,95,150],ieH2=[140,120,90];for(var is2=0;is2<(f.spinHits||0);is2++){for(var isd2=-1;isd2<=1;isd2+=2){var sx2=isd2*(ieO2[is2]/1.2)-7,sy2=55.3,sh2=ieH2[is2]/1.2;ctx.beginPath();ctx.moveTo(sx2-21.7,sy2);ctx.lineTo(sx2,sy2-sh2);ctx.lineTo(sx2+21.7,sy2);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(224,242,254,.9)";ctx.beginPath();ctx.moveTo(sx2-7,sy2);ctx.lineTo(sx2,sy2-sh2*0.72);ctx.lineTo(sx2+7,sy2);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(165,243,252,.85)"}}} /* アイスエッジ: 判定の柱 (中心 ±40/95/150・幅52・高さ140/120/90) と同じ位置・大きさで描く (描画座標 = 判定 ÷ 1.2、足元は local 58.3) */
+ if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.45)";ctx.fillRect(-21,-3,42,63)}
  ctx.restore();
  hpBar(f);
 }
@@ -10989,7 +11004,7 @@ function draw(){
     centre, rings ~124, poison banks ~182) — so its draw is skipped
     entirely. Anything inside the bounds is drawn exactly as before. */
  var cX0=cam.x-340,cX1=cam.x+viewW+340,cY0=cam.y-340,cY1=cam.y+viewH+340;
- icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2)});ctx.globalAlpha=1;
+ icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2);ctx.fillStyle="rgba(186,230,253,.85)";for(var icx=-3;icx<=3;icx++){var ipx=p.x+icx*(p.w/7),iph=6+Math.abs(icx*37)%4;ctx.beginPath();ctx.moveTo(ipx-4,p.y-4);ctx.lineTo(ipx,p.y-4-iph);ctx.lineTo(ipx+4,p.y-4);ctx.closePath();ctx.fill()}});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
  fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,92*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
@@ -11028,7 +11043,7 @@ function draw(){
    ctx.fillStyle="#dc2626";ctx.fillRect(12,0.8,3.2,3.2);ctx.fillRect(5,2.4,2.4,2.4);ctx.fillRect(19,-3,2.4,2.4);ctx.fillStyle="#991b1b";ctx.fillRect(9,3.6,2,2);ctx.fillRect(22,0.4,2,2); /* blood dots across the slim blade face + a smear at the edge (dot-art, matches the sprite) */
    ctx.restore()} /* SMILEY スローイングナイフ: the projectile is drawn as the bloodied hocho from his sprite */
    else if(pr.kind==="sonic"){var spul=1+Math.sin(time*22)*0.05;ctx.save();ctx.scale(spul,spul);ctx.strokeStyle="rgba(192,132,252,.55)";ctx.lineWidth=10;ctx.beginPath();ctx.arc(0,0,46,0,6.29);ctx.stroke();ctx.strokeStyle="#c084fc";ctx.lineWidth=7;ctx.beginPath();ctx.arc(0,0,36,0,6.29);ctx.stroke();ctx.strokeStyle="#fcd34d";ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,0,25,0,6.29);ctx.stroke();ctx.strokeStyle="rgba(255,247,237,.9)";ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(0,0,15,0,6.29);ctx.stroke();ctx.restore()} /* TRAVIS ult ワールドツアー: a huge ringed sound wave (the 150x110 hitbox reads off this) */
-   else{ctx.rotate(pr.vx>0?.78:-.78+1.57);ctx.fillStyle="#e0f7ff";ctx.fillRect(-8,-8,16,16);ctx.fillStyle="#38bdf8";ctx.fillRect(-4.5,-4.5,9,9)}
+   else{var shsgn=pr.vx>0?1:-1;ctx.scale(shsgn,1);ctx.fillStyle="rgba(165,243,252,.92)";ctx.beginPath();ctx.moveTo(-2,-9);ctx.lineTo(-8,-34);ctx.lineTo(12,-11);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(-2,9);ctx.lineTo(-8,34);ctx.lineTo(12,11);ctx.closePath();ctx.fill();ctx.fillStyle="#e0f7ff";ctx.beginPath();ctx.moveTo(28,0);ctx.lineTo(6,-13);ctx.lineTo(-16,-7);ctx.lineTo(-27,0);ctx.lineTo(-16,7);ctx.lineTo(6,13);ctx.closePath();ctx.fill();ctx.fillStyle="#38bdf8";ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(2,-6.5);ctx.lineTo(-12,-3.4);ctx.lineTo(-19,0);ctx.lineTo(-12,3.4);ctx.lineTo(2,6.5);ctx.closePath();ctx.fill()}
    ctx.restore();
  });
  drawReapers(); /* SMILEY Berserker: 死神 apparitions render BEHIND the fighters they haunt */
@@ -11093,12 +11108,14 @@ function draw(){
    if(f.ultChargeT>0){drawFxTex(FXIMG.fire,f.x,f.y+f.h*0.46,220,time*2.6,f.face,0.5)}
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
-     if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
+     if(f.char==="kairo"&&f.state==="ult")drawCharFxOverlay(f,f.x,f.y,262,time*3.2,f.face,0.52);
+     else if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
      else if(f.char==="kojiro")drawFxTex(FXIMG.slash,f.x+f.face*38,f.y+f.h*0.42,132,-0.55*f.face,f.face,0.55);
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
      else if(f.char==="warden"&&f.state==="wbash")drawFxTex(FXIMG.hit,f.x+f.face*46,f.y+f.h*0.46,98,0,f.face,0.5); /* K: a blunt burst at the shield, no slash texture */
+     else if(f.char==="kairo"){var kfx={claw:[35,118],clawrev:[36,120],backclaw:[35,104],clawup:[31,140],dashclaw:[44,126],clawspin:[44,136],lowclaw:[40,104],diveclaw:[34,106],jkcombo:[38,124],tail:[44,128]}[f.state];if(f.state==="iceedge"){var ieO3=[40,95,150],ieH3=[140,120,90];for(var ie3=0;ie3<(f.spinHits||0);ie3++){for(var ied=-1;ied<=1;ied+=2)drawFxTex(FXIMG.ice,f.x+ied*ieO3[ie3],f.y+f.h-ieH3[ie3]*0.5,ieH3[ie3]*1.02,0,ied,0.45)}}else if(f.state==="airclaw"||f.state==="fspin")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,150,0.3*f.face,f.face,0.46);else if(f.state==="taildrop")drawCharFxOverlay(f,f.x,f.y+f.h*0.45,205,0.3*f.face,f.face,0.46);else if(kfx)drawCharFxOverlay(f,f.x+f.face*kfx[0],f.y+f.h*0.45,kfx[1],0.3*f.face,f.face,0.46);else drawCharFxOverlay(f,f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46)}
      else drawCharFxOverlay(f,f.x+f.face*34,f.y+f.h*0.42,124,0.3*f.face,f.face,0.46);
    }
  });
