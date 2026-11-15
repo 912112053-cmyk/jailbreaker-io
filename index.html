@@ -347,7 +347,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div id="centerMsg"><div id="centerText">3</div></div>
   <div id="finalCount" aria-hidden="true"><div class="fcWrap"><div class="fcLabel">TIME LIMIT</div><div class="fcNum" id="finalNum">5</div></div></div>
   <div id="endBtns"><button class="gbtn primary" id="againBtn" style="font-size:15px;padding:10px 22px">もう一度たたかう</button><button class="gbtn" id="endCharBtn" style="font-size:15px;padding:10px 22px">キャラ変更</button><button class="gbtn" id="endMenuBtn" style="font-size:15px;padding:10px 22px">メニューへ</button></div>
-  <div id="resultsPanel"><div class="resTitle">RESULTS</div><table class="resTable"><thead><tr><th>NAME</th><th>SCORE</th><th>ASSISTS</th><th>KILLS</th><th>DEATHS</th></tr></thead><tbody id="resRows"></tbody></table><div id="resWin">🏆 YOU WON! CONGRATULATIONS!</div></div>
+  <div id="resultsPanel"><div class="resTitle">RESULTS</div><table class="resTable"><thead><tr><th>NAME</th><th>SCORE</th><th>ASSISTS</th><th>KILLS</th><th>DEATHS</th></tr></thead><tbody id="resRows"></tbody></table><div id="resWin">🏆 YOU WON! CONGRATULATIONS!</div><div id="resLogRow" style="display:none;text-align:center;margin-top:10px"><button class="gbtn" id="resLogBtn" style="font-size:13px;padding:8px 18px">ログをダウンロード</button></div></div>
   <div id="charSelect">
     <div class="csTitle brush" id="csTitle">キャラを選んでください</div>
     <div id="csNote" style="display:none;color:#fda4af;font-weight:900;font-size:14px;text-align:center">倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）</div>
@@ -429,6 +429,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["16:48"],tag:"修正",title:"入力同期：直接送信化と試合ログ記録",
+  items:["オンライン対戦の入力は、各プレイヤーの端末から全員へ直接送られ、全員の端末が各自で全員分の入力を組み立てて計算を進める形に統一しました。ホストの役割は、試合の開始・終了の制御、チェックサムの配布、退出時のCPU引き継ぎ宣言だけです",
+         "オンライン対戦の試合ログを記録するようにしました。結果画面に「ログをダウンロード」ボタンが表示され、押すと版数・役割・方式の切り替わり（時刻・フレーム・理由）・チェックサム照合の結果・巻き戻しの回数と最大深度・相手入力の到着間隔・自分のフレーム時間などを記録したテキストファイルを保存できます",
+         "ログはボタンを押した時だけ保存されます。押さずに結果画面を離れる（再戦・キャラ変更・メニューへ戻る等）と、記録はどこにも保存されず破棄されます",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["16:05"],tag:"修正",title:"入力同期：版数チェックと巻き戻し許容量を拡大",
   items:["オンライン対戦で、ビルドの版数（v206）が一致しない相手はロビーに入れなくなりました。版数が違う相手が参加しようとすると「バージョンが違います。全員がページを再読み込みしてください」と表示され、全員の版数が揃っていない場合は試合も開始しません",
          "オンライン対戦中、画面右上に現在の方式を表示するようにしました。入力同期で進んでいる間は「入力同期」、ズレ検出などで保険のスナップショット方式に切り替わった場合は「写真（保険）」と表示され、切り替わった瞬間に表示も変わります",
@@ -506,10 +511,6 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["12:00"],tag:"調整",title:"カメラがKO判定のラインまで自分のキャラを追うように",
   items:["画面外に出た自分のキャラを追う範囲を広げ、KO判定のラインを越える瞬間まで体全体が画面内に残るようになりました",
          "左右・下のどの方向のKOでも同様です。ステージ内の通常のカメラ挙動に変更はありません"]},
- {date:"2026/11/15",times:["11:53"],tag:"修正",title:"直接接続（P2P）：ゲストの遅延を軽減",
-  items:["P2P対戦でゲスト側の遅延を軽減しました。ゲスト側の描画遅延を引き締め、遅延の推定方法をホストの実測ペースに合わせる方式に変更しました",
-         "長押し入力が途中で欠落してしまう問題を修正しました",
-         "ゲストの入力送信を毎フレーム行うように変更しました"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1465,7 +1466,7 @@ function sbConfigured(){return !!(SUPABASE_URL&&SUPABASE_ANON_KEY)}
 function jbHttpBase(){
  return SUPABASE_URL?SUPABASE_URL.replace(/\/+$/,"")+"/functions/v1":"";
 }
-/* BUILD VERSION HANDSHAKE (v206): every participant carries this
+/* BUILD VERSION HANDSHAKE (v207): every participant carries this
    build's id and exchanges it at lobby join (the join message's v)
    and again at match start (the roster's per-player b and the start
    message's bv). A participant whose build differs is refused at
@@ -1473,7 +1474,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v206";
+var BUILD_ID="v207";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -1533,6 +1534,7 @@ $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
 function cleanupNet(){
  sbCleanup();
  clearRematchWatch();
+ mrecDiscard(); /* match recorder: leaving the session discards any un-downloaded log */
  net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
  lsReset();
@@ -1864,7 +1866,8 @@ if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
 if(m.t==="desync"){
 /* a guest's rollback layer detected a desync (or a rollback it
 could not perform): switch the whole match to the snapshot mode */
-if(room.lsMode)lsHostFallback();
+if(mrec.on)mrec.chkReport++; /* match recorder (host): a guest reported a mismatch / unrecoverable rollback */
+if(room.lsMode)lsHostFallback(m.r==="cap"?"cap":"chk",true);
 return;
 }
 if(m.t==="chat"){
@@ -2465,7 +2468,7 @@ function svOnMsg(m){
  }
  if(m.t==="chk"){lsOnChk(m);return} /* rollback layer: host state checksum for a confirmed frame */
  if(m.t==="lsai"){lsOnTakeover(m);return} /* rollback layer: CPU takeover of a departed slot from frame f, on every end at once */
- if(m.t==="lsfb"){lsOnFallback();return} /* rollback layer: the host switched this match to the snapshot mode */
+ if(m.t==="lsfb"){lsOnFallback(m);return} /* rollback layer: the host switched this match to the snapshot mode (m.r carries the detection reason, for the match log) */
  if(m.t==="snap"){svOnSnap(m);return}
  if(m.t==="mymines"){ if(mode==="online"){ mines = (m.mn||[]).map(function(s){ return {x:s.x, y:s.y, owner:P1}; }); } return; } /* targeted per-connection: only the WARDEN who placed them ever receives this list (it changes only when their own mines change), so the existing draw loop (owner===P1 only: gold body + detection ellipse) renders our own mines exactly like local play while no other player ever sees them */
  if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
@@ -3468,6 +3471,7 @@ function lsBegin(){
     exactly like on every other end */
  if(sbRoom)sbRoom.lsMode=true;
  lsSyncModeLabel(); /* the mode label flips to 入力同期 the moment the match starts */
+ mrecStart(); /* match recorder (v207): a fresh in-memory record for this match */
 }
 /* ---- per-frame state saves (the rollback substrate) ---- */
 function lsCloneObj(o){
@@ -3538,6 +3542,7 @@ function lsCollect(m){
  var idx=-1;
  for(var i=0;i<net.match.length;i++){if(net.match[i].id===m.pid)idx=i}
  if(idx<0||idx===net.myIdx)return;
+ mrecArrive(idx); /* match recorder: one arrival stamp per sender bundle (gap summary) */
  var fr=Array.isArray(m.fr)?m.fr:[];
  for(var j=0;j<fr.length;j++){var e=fr[j];
   if(Array.isArray(e)&&e.length>=2)lsSetConf(idx,e[0]|0,(e[1]|0)&0xffff,false);
@@ -3656,7 +3661,7 @@ function lsProcessRollback(){
  var F0=ls.rbFrom;ls.rbFrom=-1;
  var target=ls.frame,depth=target-F0;
  var save=ls.saves[F0];
- if(depth>LS_RESIM_MAX||!save||save.f!==F0){lsFallbackStart();return}
+ if(depth>LS_RESIM_MAX||!save||save.f!==F0){lsFallbackStart("cap");return}
  /* re-running frames must not re-fire presentation side effects:
    pure-visual lists are swapped out for the duration (placed
    objects are state and stay live), the FX sink / KO banner hook
@@ -3706,8 +3711,8 @@ function lsChkProcess(){
   if(!s){ls.chkNext+=LS_CHK_EVERY;continue} /* save already gone: this checkpoint can no longer be verified — skip it */
   if(!lsAllConfirmed(F))break; /* inputs still in flight: wait */
   var h=lsChecksumOf(s);ls.chkM[F]=h;
-  if(net.isHost){if(sbRoom&&sbRoom.lsMode)sbSendGuests(sbRoom,{t:"chk",f:F,h:h})}
-  else if(ls.chkH[F]!==undefined&&ls.chkH[F]!==h){lsDesync();return}
+  if(net.isHost){mrecChkDist(F);if(sbRoom&&sbRoom.lsMode)sbSendGuests(sbRoom,{t:"chk",f:F,sum:h})} /* the hash rides as "sum", NOT "h": sbHostSend stamps every host message with h:1 (the host mark the guest wire filters on), which used to overwrite the hash itself — every guest then compared 1 against its own hex hash, mismatched at the first checkpoint (~1s in) and fell back to the snapshot insurance. Found by the v207 bus-level mock, which sends through the real sbHostSend path the older stubbed mocks bypassed */
+  else if(ls.chkH[F]!==undefined){mrecChk(F,ls.chkH[F]===h,h,ls.chkH[F]);if(ls.chkH[F]!==h){lsDesync("chk");return}}
   ls.chkNext+=LS_CHK_EVERY;
  }
  for(var k in ls.chkM){if(+k<ls.chkNext-600)delete ls.chkM[k]}
@@ -3715,41 +3720,44 @@ function lsChkProcess(){
 }
 function lsOnChk(m){
  if(net.isHost||!ls.active)return;
- ls.chkH[m.f]=m.h;
- if(ls.chkM[m.f]!==undefined&&ls.chkM[m.f]!==m.h){lsDesync();return}
+ ls.chkH[m.f]=m.sum;
+ if(ls.chkM[m.f]!==undefined){mrecChk(m.f,ls.chkM[m.f]===m.sum,ls.chkM[m.f],m.sum);if(ls.chkM[m.f]!==m.sum){lsDesync("chk");return}}
  lsChkProcess();
 }
 /* ---- snapshot fallback (the insurance) ---- */
 /* a guest that detects a desync (checksum mismatch, or a rollback
    it cannot perform) falls back locally at once and reports it;
    the host then switches the whole match over */
-function lsDesync(){
+function lsDesync(code){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ mrecTransition(mrecReasonBase(code)+(code==="chk"?"（自端末で検出）":"")); /* match recorder: the switch, its frame and its reason */
  lsSyncModeLabel(); /* the mode label flips to 写真（保険） at the switch, never silently */
- svSend({t:"desync"});
+ svSend({t:"desync",r:code||"chk"}); /* r: why this end fell back (chk = checksum mismatch, cap = rollback cap exceeded) — the host records it and relays it in lsfb so every end's match log names the same reason */
 }
-function lsOnFallback(){
+function lsOnFallback(m){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ mrecTransition("ホストが保険への切替を宣言（理由: "+mrecReasonBase(m&&m.r)+"）");
  lsSyncModeLabel();
  /* the loop's snapshot branch takes over from the next frame:
     sv counters were kept in step by lsSampleAndStep, so the
     guest's input bundles resume with continuous frame numbers */
 }
-function lsHostFallback(){
+function lsHostFallback(code,peer){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ mrecTransition(peer?("相手端末で検出: "+mrecReasonBase(code)):mrecReasonBase(code));
  lsSyncModeLabel();
  var room=sbRoom;if(!room)return;
  room.lsMode=false;room.frame=ls.frame;room.lastSnapF=-9999;
- sbSendGuests(room,{t:"lsfb"});
+ sbSendGuests(room,{t:"lsfb",r:code||"chk"});
  /* sbHostLive stays on: back in the normal loop path sbPump
     streams snapshots built from this device's sim (the reference
     state) and guests reconcile onto them via svOnSnap */
 }
-function lsFallbackStart(){
- if(net.isHost)lsHostFallback();else lsDesync();
+function lsFallbackStart(code){
+ if(net.isHost)lsHostFallback(code,false);else lsDesync(code);
 }
 /* ---- CPU takeover on leave ---- */
 /* host: from a few frames ahead of the host's current frame the
@@ -3830,6 +3838,131 @@ function fighterDispName(f){
  if(f.isPlayer)return myDispName()||"YOU";
  return cname(f.char);
 }
+/* ================= MATCH RECORDER (v207) =================
+   While an online match runs, this device keeps an in-memory
+   diagnostic record of the input-sync layer: the participants'
+   build ids and this end's role, the mode transitions (with
+   time / frame / reason), the checkpoint checksum verdicts,
+   the rollback count and max depth, the remote input arrival
+   gaps, and this device's own frame-time max. NOTHING is
+   written anywhere during the match. When the results screen
+   shows, the record is rendered to text and held in memory
+   only; the results panel's 「ログをダウンロード」 button is
+   the ONLY way it leaves the device, and only when the player
+   presses it. Leaving the results screen without pressing it
+   (rematch / character select / menu — every such path runs
+   hideResults, and session teardown runs cleanupNet) discards
+   the record unconditionally: an un-downloaded log is gone.
+   No addresses or connection data are ever recorded — player
+   names and build ids only. */
+var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false};
+function mrecReset(){
+ mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;
+}
+function mrecStart(){
+ mrecReset();
+ mrec.on=true;mrec.startAt=performance.now();mrec.wall=new Date();
+ var roster=net.roster||[];
+ for(var i=0;i<(net.match||[]).length;i++){
+  var mm=net.match[i],b=null;
+  for(var j=0;j<roster.length;j++){if(roster[j].id===mm.id)b=roster[j].build}
+  mrec.parts.push({name:mm.name||"PLAYER",build:(i===net.myIdx)?BUILD_ID:(b||"不明"),me:i===net.myIdx,host:i===0});
+ }
+ mrec.trans.push({el:0,f:0,txt:"入力同期で開始"});
+}
+function mrecElapsed(){return mrec.startAt?((performance.now()-mrec.startAt)/1000):0}
+function mrecArrive(idx){
+ if(!mrec.on)return;
+ var now=performance.now(),last=mrec.arrLast[idx];
+ mrec.arrLast[idx]=now;
+ if(last===undefined)return;
+ var gap=now-last;
+ if(gap>mrec.arrMax)mrec.arrMax=gap;
+ if(gap>100)mrec.arrOver++;
+}
+function mrecChk(F,ok,mine,host){
+ if(!mrec.on||mrec.chkSeen[F])return;
+ mrec.chkSeen[F]=1;
+ if(mrec.chk.length<600)mrec.chk.push({f:F,ok:ok,mine:mine,host:host});
+ if(ok)mrec.chkOk++;else mrec.chkNg++;
+}
+function mrecChkDist(F){
+ if(!mrec.on||mrec.chkSeen[F])return;
+ mrec.chkSeen[F]=1;
+ if(mrec.chk.length<600)mrec.chk.push({f:F,ok:null});
+ mrec.chkDist++;
+}
+function mrecReasonBase(code){
+ if(code==="cap")return "巻き戻し上限超過（相手入力の遅れが30フレームを超えた、または巻き戻し先の保存状態がなかった）";
+ if(code==="chk")return "チェックサム不一致";
+ return "ズレ検出";
+}
+function mrecTransition(reason){
+ if(!mrec.on||mrec.fb)return;
+ mrec.fb=true;
+ mrec.trans.push({el:mrecElapsed(),f:ls.frame,txt:"写真（保険）へ切替 — "+reason});
+ mrec.fbWhy[reason]=(mrec.fbWhy[reason]||0)+1;
+}
+function mrecPad(n){return (n<10?"0":"")+n}
+function mrecBuildText(){
+ var L=[],i,c,e;
+ L.push("jailbreaker.io オンライン対戦 試合ログ");
+ L.push("========================================");
+ var w=mrec.wall||new Date();
+ L.push("試合開始: "+w.getFullYear()+"/"+mrecPad(w.getMonth()+1)+"/"+mrecPad(w.getDate())+" "+mrecPad(w.getHours())+":"+mrecPad(w.getMinutes())+":"+mrecPad(w.getSeconds()));
+ L.push("試合時間: "+mrecElapsed().toFixed(1)+" 秒（フレーム "+ls.frame+"）");
+ L.push("自分のビルド: "+BUILD_ID);
+ L.push("役割: "+(net.isHost?"ホスト":"ゲスト"));
+ L.push("参加者と版数:");
+ for(i=0;i<mrec.parts.length;i++){var p=mrec.parts[i];L.push("  - "+p.name+(p.me?"（自分）":(p.host?"（ホスト）":""))+" — "+p.build)}
+ L.push("方式の遷移:");
+ for(i=0;i<mrec.trans.length;i++){var tr=mrec.trans[i];L.push("  "+tr.el.toFixed(1)+"s / frame "+tr.f+" — "+tr.txt)}
+ L.push("チェックサム照合:");
+ if(net.isHost){
+  for(c=0;c<mrec.chk.length;c++)L.push("  frame "+mrec.chk[c].f+" — チェックサムを配布");
+  L.push("  配布回数: "+mrec.chkDist+" / 不一致の報告: "+mrec.chkReport+" 回");
+ }else{
+  for(c=0;c<mrec.chk.length;c++){e=mrec.chk[c];L.push("  frame "+e.f+" — "+(e.ok?"一致":"不一致（自分: "+e.mine+" / ホスト: "+e.host+"）"))}
+  L.push("  照合回数: "+(mrec.chkOk+mrec.chkNg)+" / 一致: "+mrec.chkOk+" / 不一致: "+mrec.chkNg);
+ }
+ L.push("巻き戻し:");
+ L.push("  発生回数: "+ls.resimCount+" 回");
+ L.push("  最大深度: "+ls.maxResim+" フレーム");
+ L.push("相手入力の到着間隔（入力同期中の集計）:");
+ L.push("  最大: "+Math.round(mrec.arrMax)+" ms");
+ L.push("  100msを超えた回数: "+mrec.arrOver+" 回");
+ L.push("自分のフレーム時間:");
+ L.push("  最大: "+mrec.frameMax.toFixed(1)+" ms");
+ L.push("フォールバック理由の内訳:");
+ if(mrec.fb){for(var r in mrec.fbWhy)L.push("  "+r+": "+mrec.fbWhy[r]+" 回")}
+ else L.push("  フォールバックは発生しませんでした");
+ return L.join("\n");
+}
+function mrecFinalize(){
+ if(!mrec.on||mrec.fin)return;
+ mrec.fin=true;mrec.on=false; /* the record is frozen; hooks stop here */
+ mrec.text=mrecBuildText();
+ var row=$("resLogRow");if(row)row.style.display=mrec.text?"":"none";
+}
+function mrecDiscard(){
+ mrecReset();
+ var row=$("resLogRow");if(row)row.style.display="none";
+}
+function mrecDownload(){
+ if(!mrec.text)return;
+ try{
+  var w=mrec.wall||new Date();
+  var fn="jailbreaker-match-log-"+w.getFullYear()+mrecPad(w.getMonth()+1)+mrecPad(w.getDate())+"-"+mrecPad(w.getHours())+mrecPad(w.getMinutes())+mrecPad(w.getSeconds())+".txt";
+  var blob=new Blob([mrec.text],{type:"text/plain;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;a.download=fn;
+  document.body.appendChild(a);a.click();
+  if(a.remove)a.remove();
+  setTimeout(function(){try{URL.revokeObjectURL(url)}catch(e){}},4000);
+ }catch(e){}
+}
+var resLogBtnEl=$("resLogBtn");
+if(resLogBtnEl)resLogBtnEl.onclick=function(){beep(700,.06);mrecDownload()};
 function showResults(rows){
  var sorted=rows.slice().sort(function(a,b){return (b.score-a.score)||(b.kills-a.kills)||(b.hp-a.hp)});
  var html="";
@@ -3837,8 +3970,9 @@ function showResults(rows){
  $("resRows").innerHTML=html;
  $("resWin").style.display=(sorted.length&&sorted[0].me)?"block":"none";
  $("resultsPanel").classList.add("on");
+ if(mode==="online")mrecFinalize(); /* match recorder: freeze the record and offer the download button — nothing is saved unless the player presses it */
 }
-function hideResults(){var p=$("resultsPanel");if(p)p.classList.remove("on")}
+function hideResults(){var p=$("resultsPanel");if(p)p.classList.remove("on");mrecDiscard()} /* leaving the results screen discards any un-downloaded match log, for good */
 function showLocalResults(){
  showResults(fighters.map(function(f){return{name:fighterDispName(f),score:f.score||0,assists:f.assists||0,kills:f.kills||0,deaths:f.deaths||0,hp:Math.max(0,Math.round(f.hp)),me:f===P1}}));
 }
@@ -10119,6 +10253,7 @@ function loop(ts){
  frameNo++;
  if(!lastTs)lastTs=ts;
  var dtms=ts-lastTs;lastTs=ts;
+ if(mrec.on&&dtms>mrec.frameMax)mrec.frameMax=dtms; /* match recorder: this device's own frame-time max (recording only — no behavior change) */
  /* PERF round 3: the fps meter and the quality driver below run on a
     CLAMPED frame time (pdt). A single long frame (tab restore, a GC
     pause, a notification) used to drag the EMA down for a second and
