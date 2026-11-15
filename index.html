@@ -429,6 +429,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["17:11"],tag:"修正",title:"入力同期：ズレ時の再同期で継続",
+  items:["オンライン対戦の入力同期で、端末間の計算のズレ（チェックサム不一致や、巻き戻しできない入力の遅れ）を検出しても、試合終了まで写真方式に固定されることがなくなりました。ホストがその時点の完全な状態（全ファイター・弾・設置物・各種タイマー・乱数状態）とフレーム番号を全員に配り、全端末がその状態を採用して入力同期を再開します",
+         "再開のたびに、予測・巻き戻し用の保存状態はリセットされます。短時間（10秒以内）に再同期が3回必要になった場合だけ、再同期の無限ループ防止のため、その試合の残りは写真（保険）方式になります",
+         "試合ログに、再同期の発生（時刻・フレーム・回数・理由）と、恒久的に写真方式へ切り替わった場合の理由が記録されるようになりました。保存方式（結果画面の「ログをダウンロード」を押した時だけ保存）は従来どおりです",
+         "計算の決定性をコード全体で監査し、シミュレーションの状態に影響する経路にシード付き乱数以外の非決定要素（Math.random・現在時刻など）が残っていないことを確認しました。描画専用の乱数は対象外です",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["16:48"],tag:"修正",title:"入力同期：直接送信化と試合ログ記録",
   items:["オンライン対戦の入力は、各プレイヤーの端末から全員へ直接送られ、全員の端末が各自で全員分の入力を組み立てて計算を進める形に統一しました。ホストの役割は、試合の開始・終了の制御、チェックサムの配布、退出時のCPU引き継ぎ宣言だけです",
          "オンライン対戦の試合ログを記録するようにしました。結果画面に「ログをダウンロード」ボタンが表示され、押すと版数・役割・方式の切り替わり（時刻・フレーム・理由）・チェックサム照合の結果・巻き戻しの回数と最大深度・相手入力の到着間隔・自分のフレーム時間などを記録したテキストファイルを保存できます",
@@ -508,9 +514,6 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["12:01"],tag:"調整",title:"MIMI&SHADE：ウルト発動でSHADEの闇ゲージが40回復（上方修正）",
   items:["MIMI&SHADEのウルト「大好きだよSHADE」を発動すると、SHADEの闇ゲージが40回復するよう上方修正しました",
          "回復は闇ゲージの上限（190）を超えません。ウルト自体のダメージ・KB・弾の性能に変更はありません"]},
- {date:"2026/11/15",times:["12:00"],tag:"調整",title:"カメラがKO判定のラインまで自分のキャラを追うように",
-  items:["画面外に出た自分のキャラを追う範囲を広げ、KO判定のラインを越える瞬間まで体全体が画面内に残るようになりました",
-         "左右・下のどの方向のKOでも同様です。ステージ内の通常のカメラ挙動に変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1474,7 +1477,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v207";
+var BUILD_ID="v208";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -1863,9 +1866,20 @@ if(n){player.cursor=base+n;player.inHi=lastF}
 }
 function sbRoomHandle(room,player,m){
 if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
+if(m.t==="rsync"){
+/* a guest's rollback layer detected a divergence (checksum
+mismatch, or a rollback it could not perform): the host heals
+it with a full-state resync and the match STAYS on input sync —
+the gate falls back to the snapshot insurance only when
+resyncs loop (v208) */
+if(mrec.on)mrec.chkReport++; /* match recorder (host): a guest reported a mismatch / unrecoverable rollback */
+if(room.lsMode)lsHostResyncGate(m.r==="cap"?"cap":"chk",true);
+return;
+}
 if(m.t==="desync"){
-/* a guest's rollback layer detected a desync (or a rollback it
-could not perform): switch the whole match to the snapshot mode */
+/* a guest gave up waiting for a resync (or a pre-v208 build
+reported the old way): switch the whole match to the snapshot
+mode */
 if(mrec.on)mrec.chkReport++; /* match recorder (host): a guest reported a mismatch / unrecoverable rollback */
 if(room.lsMode)lsHostFallback(m.r==="cap"?"cap":"chk",true);
 return;
@@ -2469,6 +2483,7 @@ function svOnMsg(m){
  if(m.t==="chk"){lsOnChk(m);return} /* rollback layer: host state checksum for a confirmed frame */
  if(m.t==="lsai"){lsOnTakeover(m);return} /* rollback layer: CPU takeover of a departed slot from frame f, on every end at once */
  if(m.t==="lsfb"){lsOnFallback(m);return} /* rollback layer: the host switched this match to the snapshot mode (m.r carries the detection reason, for the match log) */
+ if(m.t==="lsrs"){lsOnResync(m);return} /* rollback layer (v208): the host's full-state resync — adopt the state and resume input sync from its frame */
  if(m.t==="snap"){svOnSnap(m);return}
  if(m.t==="mymines"){ if(mode==="online"){ mines = (m.mn||[]).map(function(s){ return {x:s.x, y:s.y, owner:P1}; }); } return; } /* targeted per-connection: only the WARDEN who placed them ever receives this list (it changes only when their own mines change), so the existing draw loop (owner===P1 only: gold body + detection ellipse) renders our own mines exactly like local play while no other player ever sees them */
  if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
@@ -3388,8 +3403,8 @@ function svReset(){
      timers / the seeded PRNG state, so a re-run is bit-exact.
      Re-simulation is capped at LS_RESIM_MAX frames: a real input
      arriving older than that, or one whose state save is already
-     gone, switches the match to the snapshot mode instead (the
-     same insurance as a checksum desync, below).
+     gone, asks for a resync instead (the same heal as a checksum
+     desync, below).
    - Determinism: the host picks the seed in the start message
      (net.seed, already distributed) and svReset seeds simRand
      from it on every end; every state-affecting random in the
@@ -3407,16 +3422,35 @@ function svReset(){
      host's last confirmed frame / bits for the slot, so every
      end re-derives the still-unconfirmed predictions in between
      from the same base). The host leaving still ends the match.
-   - Desync insurance: every LS_CHK_EVERY frames (60, ~1/s), once
-     a checkpoint frame's inputs are confirmed on all ends, the
-     host broadcasts its quantized state checksum for that frame
-     ({t:"chk"}); each end compares it with its own checksum of
-     the same (by then fully confirmed) frame. A mismatch — or a
-     rollback that would exceed the cap — switches the REST of
-     the match to the snapshot mode: the host broadcasts
-     {t:"lsfb"} and its normal loop path resumes streaming
-     snapshots via sbPump, guests fall back to the svAdvance
-     snapshot client. The snapshot code is kept intact for this.
+   - Desync healing (v208): every LS_CHK_EVERY frames (60, ~1/s),
+     once a checkpoint frame's inputs are confirmed on all ends,
+     the host broadcasts its quantized state checksum for that
+     frame ({t:"chk"}); each end compares it with its own checksum
+     of the same (by then fully confirmed) frame. A mismatch — or
+     a rollback that would exceed the cap — is healed IN PLACE:
+     the host distributes its complete current state and frame
+     number ({t:"lsrs"}) and every end adopts it and resumes
+     input sync from that frame, with the prediction / rollback
+     substrate reset (see the resync section below). Only a
+     resync loop (a 3rd resync need inside 10 seconds) switches
+     the REST of the match to the snapshot mode: the host
+     broadcasts {t:"lsfb"} and its normal loop path resumes
+     streaming snapshots via sbPump, guests fall back to the
+     svAdvance snapshot client. The snapshot code is kept intact
+     for this.
+   - Determinism audit (v208): the whole simulation path was
+     re-audited for non-seeded nondeterminism. Every
+     state-affecting random goes through rnd() (the seeded
+     simRand while online — the AI's decisions, the No.66
+     gatling spread). The remaining Math.random calls inside
+     simulation functions gate ONLY visual spawns (particles /
+     floaters / shake / beep pitch) whose outputs are neither
+     saved, checksummed nor restored, and are swapped out
+     entirely during re-simulation. Date.now / performance.now
+     appear in the sim region only in the OFFLINE input assembly
+     (gatherPlayerInput / consume), which the rollback layer
+     never calls: online, the frame-numbered input rows are the
+     input. Nothing state-affecting was left to remove.
    Message budget (free plan, 100/s project-wide): input bundles
    30/s per participant + chk 1/s + heartbeats — a 2-player match
    peaks near 62/s, well under the old snap+fx ~92/s. */
@@ -3424,7 +3458,7 @@ var LS_RESIM_MAX=30; /* re-simulation cap, frames (v206: raised from 12 — on r
 var LS_RING=60; /* per-frame state saves kept (v206: raised from 40 so a 30-frame rollback always finds its save, with margin for checkpoints) */
 var LS_CHK_EVERY=60; /* host checksum cadence, frames (~1/s) */
 var LS_HELD_MASK=28687; /* held bits repeated by prediction (move / jump-hold + J / U / L held) */
-var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0};
+var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0,rsTimes:[],rsCount:0,rsWait:false,rsWaitAt:0,rsCode:"",rsLastAt:0}; /* rs* = the v208 resync bookkeeping: rsTimes / rsLastAt are the HOST's loop-guard stamps, rsCount the match-wide resync total, rsWait a guest's unanswered resync request */
 /* ---- rollback correction render smoothing (v206) ----
    When a rollback re-simulation moves a REMOTE fighter a long way
    (more than LS_SMOOTH_MIN px), the simulation state itself snaps
@@ -3459,7 +3493,7 @@ function lsSyncModeLabel(){
  if(on&&tx._hv!==want){tx._hv=want;tx.textContent=want}
 }
 function lsReset(){
- ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;
+ ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
  lsSmooth={};
  if(sbRoom)sbRoom.lsMode=false;
  lsSyncModeLabel();
@@ -3479,7 +3513,15 @@ function lsCloneObj(o){
  for(var k in o){var v=o[k];c[k]=(v&&typeof v==="object"&&Array.isArray(v))?v.slice():v}
  return c;
 }
-function lsSaveState(F){
+/* build the complete save for frame F out of the LIVE state
+   (every fighter, projectile and placed object, the match
+   timers and the seeded PRNG state). Called with the frame
+   about to be stepped, the live state IS that frame's pre-step
+   state; the resync flow also calls it with ls.frame between
+   steps, where the same identity holds for the host's current
+   frame — that is what makes a captured live state a valid
+   distribution point */
+function lsBuildSave(F){
  var s={f:F,time:time,timer:timer,cd:countdown,hs:hitstop,over:matchOver,seed:simSeedState,
   fs:fighters.map(function(f){
    var o=svSaveFighter(f);
@@ -3488,6 +3530,10 @@ function lsSaveState(F){
   }),
   pr:projectiles.map(lsCloneObj),ip:icePatches.map(lsCloneObj),fo:fireOrbs.map(lsCloneObj),
   pm:poisonMists.map(lsCloneObj),mn:mines.map(lsCloneObj),df:darkFields.map(lsCloneObj)};
+ return s;
+}
+function lsSaveState(F){
+ var s=lsBuildSave(F);
  ls.saves[F]=s;
  return s;
 }
@@ -3724,13 +3770,178 @@ function lsOnChk(m){
  if(ls.chkM[m.f]!==undefined){mrecChk(m.f,ls.chkM[m.f]===m.sum,ls.chkM[m.f],m.sum);if(ls.chkM[m.f]!==m.sum){lsDesync("chk");return}}
  lsChkProcess();
 }
-/* ---- snapshot fallback (the insurance) ---- */
-/* a guest that detects a desync (checksum mismatch, or a rollback
-   it cannot perform) falls back locally at once and reports it;
-   the host then switches the whole match over */
-function lsDesync(code){
+/* ---- resync wire encoding ----
+   A saved state holds live object references (fighter refs for
+   lastAttacker / grabBy / DoT attribution / projectile owners /
+   hit sets, platform refs for groundPlat / dropPlat). On the
+   wire they travel as fighter / platform INDICES and are
+   rebuilt against the receiving end's own fighters / platforms,
+   so an adopted state is the same object graph lsRestoreState
+   consumes from a local save. Everything else in a save is
+   already plain data (the RB_FSTATE scalars, dmgBy ledgers,
+   trails, timers, the PRNG state). */
+function lsEncodeFighterSave(o){
+ var c={};
+ for(var k in o){
+  var v=o[k];
+  if(k==="la"||k==="gb"||k==="hb"||k==="bb"||k==="psb"||k==="pb"||k==="blb"||k==="feb")c[k]=v?fighters.indexOf(v):-1;
+  else if(k==="gp"||k==="dp")c[k]=v?platforms.indexOf(v):-1;
+  else if(k==="dmgBy"){c[k]={};if(v)for(var d in v)c[k][d]=v[d]}
+  else if(k==="trail"){c[k]=[];if(v)for(var t=0;t<v.length;t++){var te=v[t],tc={};for(var tk in te)tc[tk]=te[tk];c[k].push(tc)}}
+  else c[k]=v;
+ }
+ return c;
+}
+function lsDecodeFighterSave(w){
+ var o={};
+ for(var k in w){
+  var v=w[k];
+  if(k==="la"||k==="gb"||k==="hb"||k==="bb"||k==="psb"||k==="pb"||k==="blb"||k==="feb")o[k]=(typeof v==="number"&&v>=0&&v<fighters.length)?fighters[v]:null;
+  else if(k==="gp"||k==="dp")o[k]=(typeof v==="number"&&v>=0&&v<platforms.length)?platforms[v]:null;
+  else o[k]=v;
+ }
+ return o;
+}
+function lsEncodeObjList(list){
+ var out=[];
+ for(var i=0;i<list.length;i++){
+  var o=list[i],c={};
+  for(var k in o){
+   var v=o[k];
+   if(v&&typeof v==="object"){
+    if(Array.isArray(v)){var a=[];for(var j=0;j<v.length;j++){var e=v[j];a.push((e&&typeof e==="object"&&fighters.indexOf(e)>=0)?{f:fighters.indexOf(e)}:e)}c[k]=a}
+    else if(fighters.indexOf(v)>=0)c[k]={f:fighters.indexOf(v)};
+    else{var oc={};for(var ok in v)oc[ok]=v[ok];c[k]=oc}
+   }else c[k]=v;
+  }
+  out.push(c);
+ }
+ return out;
+}
+function lsDecodeObjList(list){
+ var out=[];
+ for(var i=0;i<(list||[]).length;i++){
+  var w=list[i],o={};
+  for(var k in w){
+   var v=w[k];
+   if(v&&typeof v==="object"){
+    if(Array.isArray(v)){var a=[];for(var j=0;j<v.length;j++){var e=v[j];a.push((e&&typeof e==="object"&&typeof e.f==="number")?(fighters[e.f]||null):e)}o[k]=a}
+    else if(typeof v.f==="number")o[k]=fighters[v.f]||null;
+    else{var oc={};for(var ok in v)oc[ok]=v[ok];o[k]=oc}
+   }else o[k]=v;
+  }
+  out.push(o);
+ }
+ return out;
+}
+function lsEncodeState(s){
+ return {f:s.f,time:s.time,timer:s.timer,cd:s.cd,hs:s.hs,over:s.over,seed:s.seed,
+  fs:s.fs.map(lsEncodeFighterSave),
+  pr:lsEncodeObjList(s.pr),ip:lsEncodeObjList(s.ip),fo:lsEncodeObjList(s.fo),
+  pm:lsEncodeObjList(s.pm),mn:lsEncodeObjList(s.mn),df:lsEncodeObjList(s.df)};
+}
+function lsDecodeState(w){
+ if(!w||typeof w!=="object"||typeof w.f!=="number"||!Array.isArray(w.fs))return null;
+ return {f:w.f,time:w.time,timer:w.timer,cd:w.cd,hs:w.hs,over:w.over,seed:w.seed,
+  fs:w.fs.map(lsDecodeFighterSave),
+  pr:lsDecodeObjList(w.pr),ip:lsDecodeObjList(w.ip),fo:lsDecodeObjList(w.fo),
+  pm:lsDecodeObjList(w.pm),mn:lsDecodeObjList(w.mn),df:lsDecodeObjList(w.df)};
+}
+/* ---- resync (v208): heal a divergence in place ----
+   A detected divergence (checksum mismatch, or a rollback this
+   end cannot perform because the input arrived older than the
+   save ring) no longer ends input sync for the match. The
+   detecting guest asks the host ({t:"rsync"}); a host that
+   detects one itself (its own impossible rollback) enters the
+   same gate directly. The host captures its CURRENT complete
+   state (lsBuildSave at its current frame: every fighter,
+   projectile and placed object, the match timers, the seeded
+   PRNG state) and broadcasts it with the frame number
+   ({t:"lsrs"}); every end adopts it wholesale and resumes
+   input sync from that frame. Adoption resets the prediction /
+   rollback substrate (frame saves, used rows, any pending
+   rollback, checkpoint bookkeeping), drops confirmed inputs
+   older than the adopted frame, and restarts bundle numbering
+   there; inputs for newer frames are re-filed by the ordinary
+   bundle stream (its 30-frame redundancy re-covers them, and a
+   stale old-timeline entry is overwritten and rolled back as
+   usual when the fresh bundle lands).
+   The snapshot insurance is now only the LAST resort: if
+   resyncs are needed again and again in a short window (the
+   3rd need inside 10 seconds), the host gives up on input sync
+   for the rest of the match ({t:"lsfb"}, r:"freq") instead of
+   looping forever. A guest whose request goes unanswered for
+   ~3s also gives up (lsForceFallback, the pre-v208 path). */
+var LS_RSYNC_WINDOW_MS=10000; /* frequency window of the loop guard */
+var LS_RSYNC_MAX_IN_WINDOW=3; /* the 3rd resync need inside the window falls back instead of resyncing */
+var LS_RSYNC_COOLDOWN_MS=600; /* a resync that just went out already heals requests raised about the same divergence */
+var LS_RSYNC_WAIT_MS=3000; /* guest give-up timeout when neither lsrs nor lsfb answers a request */
+/* the bookkeeping half of a resync, shared by the host (whose
+   live state IS the distributed state, so nothing is restored)
+   and every adopting end */
+function lsAdoptResync(F){
+ ls.saves={};ls.used={};ls.rbFrom=-1;ls.chkH={};ls.chkM={};
+ ls.chkNext=(Math.floor(F/LS_CHK_EVERY)+1)*LS_CHK_EVERY; /* the next checkpoint is the first cadence frame past the adopted one; its save is rebuilt by stepping */
+ ls.sbF=F; /* bundle numbering resumes at the adopted frame */
+ var n=(net.match&&net.match.length)||0;
+ for(var i=0;i<n;i++){
+  var c=ls.conf[i];
+  if(c)for(var cf in c)if(+cf<F)delete c[cf]; /* inputs older than the adopted frame are settled by the adopted state itself */
+  ls.confHi[i]=F-1; /* everything before F counts as confirmed: the adopted state replaces it */
+  if(c)while(c[ls.confHi[i]+1]!==undefined)ls.confHi[i]++;
+ }
+ lsSmooth={};
+ ls.rsWait=false;
+}
+/* host: the single gate every resync passes through — a guest's
+   request (sbRoomHandle) or the host's own detection
+   (lsDesync). Applies the cooldown and the frequency guard,
+   then captures, adopts and broadcasts the state. */
+function lsHostResyncGate(code,peer){
+ if(!ls.active||!net.isHost)return;
+ var now=performance.now();
+ if(now-ls.rsLastAt<LS_RSYNC_COOLDOWN_MS)return; /* the resync that just went out already heals this divergence */
+ ls.rsTimes=ls.rsTimes.filter(function(t){return now-t<LS_RSYNC_WINDOW_MS});
+ if(ls.rsTimes.length+1>=LS_RSYNC_MAX_IN_WINDOW){lsHostFallback("freq",peer);return} /* loop guard: a 3rd resync need inside 10s ends input sync for this match */
+ ls.rsTimes.push(now);ls.rsLastAt=now;ls.rsCount++;
+ var F=ls.frame,wire=lsEncodeState(lsBuildSave(F));
+ lsAdoptResync(F); /* the host's live state IS the distributed state: only the bookkeeping resets */
+ if(sbRoom)sbSendGuests(sbRoom,{t:"lsrs",f:F,st:wire,n:ls.rsCount,r:code||"chk"});
+ mrecResync(F,ls.rsCount,code); /* match recorder: the resync, its frame and its running count */
+}
+/* guest (any non-host end): adopt the host's distributed state
+   and resume input sync from its frame */
+function lsOnResync(m){
  if(!ls.active)return;
- ls.active=false;ls.fb=true;
+ if(!m||typeof m.f!=="number"||!m.st)return;
+ var s=lsDecodeState(m.st);
+ if(!s||s.f!==m.f)return;
+ lsRestoreState(s);
+ ls.frame=m.f;
+ lsAdoptResync(m.f);
+ if(typeof m.n==="number")ls.rsCount=m.n;
+ mrecResync(m.f,ls.rsCount,m.r); /* match recorder: the resync, its frame and its running count */
+}
+/* a divergence detected on THIS end (checksum mismatch, or a
+   rollback that cannot be performed): never an instant
+   fallback — the host resyncs the match through the gate, a
+   guest asks it to. While a request is unanswered the end
+   keeps simulating on predictions; the adopted state
+   overwrites whatever the divergence produced. */
+function lsDesync(code){
+ if(!ls.active||ls.rsWait)return;
+ if(net.isHost){lsHostResyncGate(code,false);return}
+ ls.rsWait=true;ls.rsWaitAt=performance.now();ls.rsCode=code||"chk";
+ svSend({t:"rsync",r:code||"chk",f:ls.frame});
+}
+/* the give-up path, kept for exactly one case: a guest asked
+   for a resync and neither lsrs nor lsfb came back in time —
+   it falls back locally at once and reports it ({t:"desync"}),
+   and the host then switches the whole match over, exactly as
+   every divergence behaved before v208 */
+function lsForceFallback(code){
+ if(!ls.active)return;
+ ls.active=false;ls.fb=true;ls.rsWait=false;
  mrecTransition(mrecReasonBase(code)+(code==="chk"?"（自端末で検出）":"")); /* match recorder: the switch, its frame and its reason */
  lsSyncModeLabel(); /* the mode label flips to 写真（保険） at the switch, never silently */
  svSend({t:"desync",r:code||"chk"}); /* r: why this end fell back (chk = checksum mismatch, cap = rollback cap exceeded) — the host records it and relays it in lsfb so every end's match log names the same reason */
@@ -3757,7 +3968,7 @@ function lsHostFallback(code,peer){
     state) and guests reconcile onto them via svOnSnap */
 }
 function lsFallbackStart(code){
- if(net.isHost)lsHostFallback(code,false);else lsDesync(code);
+ lsDesync(code); /* v208: a divergence (host- or guest-detected) goes to the resync flow first; the snapshot fallback is only the loop guard's / give-up path's last resort */
 }
 /* ---- CPU takeover on leave ---- */
 /* host: from a few frames ahead of the host's current frame the
@@ -3802,6 +4013,7 @@ function lsDrive(dtms){
  if(!running||!P1||paused)return;
  lsProcessRollback();
  if(!ls.active)return; /* a fallback was triggered: the normal paths own the match from here */
+ if(ls.rsWait&&performance.now()-ls.rsWaitAt>LS_RSYNC_WAIT_MS){var rc=ls.rsCode;ls.rsWait=false;lsForceFallback(rc);return} /* resync requested but unanswered too long: give up to the snapshot insurance (the host is told via {t:"desync"} and switches everyone) */
  ls.acc+=Math.min(100,Math.max(0,dtms));
  var steps=0;
  while(ls.acc>=1000/60&&steps<3){
@@ -3855,9 +4067,9 @@ function fighterDispName(f){
    the record unconditionally: an un-downloaded log is gone.
    No addresses or connection data are ever recorded — player
    names and build ids only. */
-var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false};
+var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[]};
 function mrecReset(){
- mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;
+ mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];
 }
 function mrecStart(){
  mrecReset();
@@ -3895,7 +4107,16 @@ function mrecChkDist(F){
 function mrecReasonBase(code){
  if(code==="cap")return "巻き戻し上限超過（相手入力の遅れが30フレームを超えた、または巻き戻し先の保存状態がなかった）";
  if(code==="chk")return "チェックサム不一致";
+ if(code==="freq")return "再同期が10秒以内に3回必要になったため、恒久的に写真方式へ切替（再同期の無限ループ防止）";
  return "ズレ検出";
+}
+/* one healed divergence (v208): its time / frame, its running
+   count for this match and what triggered it. A permanent
+   fallback, when the loop guard causes one, is recorded by
+   mrecTransition with the "freq" reason above, as before. */
+function mrecResync(F,n,code){
+ if(!mrec.on)return;
+ if(mrec.rs.length<50)mrec.rs.push({el:mrecElapsed(),f:F,n:n,code:code||"chk"});
 }
 function mrecTransition(reason){
  if(!mrec.on||mrec.fb)return;
@@ -3928,6 +4149,11 @@ function mrecBuildText(){
  L.push("巻き戻し:");
  L.push("  発生回数: "+ls.resimCount+" 回");
  L.push("  最大深度: "+ls.maxResim+" フレーム");
+ L.push("再同期:");
+ if(mrec.rs.length){
+  for(i=0;i<mrec.rs.length;i++){var rs=mrec.rs[i];L.push("  "+rs.el.toFixed(1)+"s / frame "+rs.f+" — 再同期 #"+rs.n+"（理由: "+mrecReasonBase(rs.code)+"）")}
+  L.push("  再同期の合計: "+mrec.rs.length+" 回");
+ }else L.push("  再同期は発生しませんでした");
  L.push("相手入力の到着間隔（入力同期中の集計）:");
  L.push("  最大: "+Math.round(mrec.arrMax)+" ms");
  L.push("  100msを超えた回数: "+mrec.arrOver+" 回");
