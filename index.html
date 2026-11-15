@@ -426,6 +426,19 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["11:53"],tag:"修正",title:"直接接続（P2P）：ゲストの遅延を軽減",
+  items:["P2P対戦でゲスト側の遅延を軽減しました。ゲスト側の描画遅延を引き締め、遅延の推定方法をホストの実測ペースに合わせる方式に変更しました",
+         "長押し入力が途中で欠落してしまう問題を修正しました",
+         "ゲストの入力送信を毎フレーム行うように変更しました"]},
+ {date:"2026/11/15",times:["11:44"],tag:"調整",title:"カメラが画面端の外に出た自分のキャラを少しだけ追うように",
+  items:["自分のキャラが画面端の外に出てしまったとき、カメラがそのキャラを少しだけ追いかけるようになりました"]},
+ {date:"2026/11/15",times:["11:40"],tag:"調整",title:"MIMI&SHADEの↓+Kを作り替え",
+  items:["MIMI&SHADEの↓+Kを作り替えました。MIMIは地面に沿って進む光の衝撃波を放つ技になりました",
+         "SHADEは後方に拳が3回振り下りる技になりました"]},
+ {date:"2026/11/15",times:["11:25"],tag:"調整",title:"KO判定を左右に拡大（ステージ端から320→500）",
+  items:["KO判定の範囲を左右に拡大しました。ステージ端からの距離が320から500になりました"]},
+ {date:"2026/11/15",times:["11:20"],tag:"調整",title:"タイトルの一文を「— 戦え。脱獄者たちよ —」に変更",
+  items:["タイトル画面の一文を「— 戦え。脱獄者たちよ —」に変更しました"]},
  {date:"2026/11/15",times:["11:16"],tag:"調整",title:"SHADEの闇ゲージ回復に4.5秒の待機を追加（下方修正）",
   items:["SHADEの闇ゲージは、これまでMIMIの近くにいる間すぐ毎秒10ずつ回復していましたが、近くに来てから4.5秒たたないと回復が始まらないよう下方修正しました",
          "4.5秒たった後はこれまで通り毎秒10ずつ回復します。途中でMIMIから離れるとタイマーはリセットされ、次に近づいてからまた4.5秒必要です",
@@ -496,29 +509,6 @@ var UPDATE_LOG=[
          "到着の揺れ（ジッター）への追随も弱めました。60fps配信ではスナップショットの間隔が約16.7msあり、多少の到着の乱れはその範囲で吸収できるため、揺れに引っ張られて遅延が大きくなることはほぼ無くなります。下限の約34msはこれまで通りです",
          "回線の乱れが収まった時は、遅延が素早く低い値へ戻るようになりました（以前は広がった遅延がしばらく残っていました）。画面右上の遅延ms表示もこれまで通りです",
          "自分のキャラの予測表示と、相手キャラの補間処理そのものには変更はありません。技・数値への変更もありません"]},
- {date:"2026/11/15",times:["02:12"],tag:"修正",title:"ONLINE VS：KOバナー・自分の地雷・一部の状態表示がオンラインで出ない問題を修正",
-  items:["オンライン対戦で、KOした時・された時のバナー（KNOCKOUT!／DOWN…、倒した相手のプレイヤーネームと獲得ポイント、KO時の回復表示）が出ていなかった問題を修正しました。サーバーから死ごとに1回だけ届くKO通知をもとに表示するようになり、スコア表示もそのライフで与えた実ダメージ分がそのまま出ます",
-         "WARDENが設置した地雷が、設置した本人にも見えなかった問題を修正しました。自分の地雷の位置だけが本人に届くようになり、金色の本体と探知範囲の楕円がローカル対戦と同じ見た目で表示されます（他のプレイヤーには今までどおり一切見えません）",
-         "オンライン対戦で一部の状態がキャラに反映されていなかった問題もあわせて修正しました。スナップショットで届く描画用の状態（回転ヒットの残り・炎の状態・毒・バフの残り時間）を受け取るようになり、オンラインでもローカルと同じ見た目になります",
-         "技・数値への変更はありません"]},
- {date:"2026/11/15",times:["02:00"],tag:"修正",title:"ONLINE VS：再戦後にロビーが閉じなくなる問題を修正",
-  items:["オンライン対戦で再戦したあと、ロビー画面が閉じなくなることがある問題を修正しました。原因は、再戦では前回のキャラ選択が引き継がれて全員が最初から「準備OK」になるため、まだキャラを選び直している途中の人がいてもホストが試合を開始できてしまうことでした。その状態で試合が始まると、選び直し中の人の画面ではキャラ選択が試合の上に残ったままになり、そのボタンを押すとロビーが試合の上に開いて、二度と閉じなくなっていました",
-         "試合開始の合図を受け取った時に、ロビーだけでなくキャラ選択画面も必ず閉じるようにしました。あわせて、すでに試合が始まっている時にキャラ選択のボタンを押しても、ロビーが開かないようにしました",
-         "再戦でキャラを引き継ぐ仕様（選び直さなくてもそのまま開始できる）や、通常のロビー→開始の流れはこれまで通りです。技・数値への変更はありません"]},
- {date:"2026/11/15",times:["01:57"],tag:"修正",title:"ONLINE VS：相手キャラの表示から「外挿（速度による先読み）」を廃止しました",
-  items:["オンライン対戦の相手キャラの表示から「外挿」をやめました。これまでは、最新のスナップショットより先の時刻を描く場面で、キャラの速度から先の位置を推測して描いていましたが、今後は最新の実位置でそのまま止めて描き、次のスナップショットが届いたら補間で滑らかに繋ぎます。相手の表示は予測ではなく、実際の遅延を詰める方針に統一しました",
-         "スナップショット同士の補間そのものと、描画遅延の自動調整（約34〜120ms）はこれまで通りです。60fps配信・東京配置とあわせて、相手の動きは「実在する位置だけ」で表示されます",
-         "自分のキャラの予測表示（入力した瞬間に手元で先行して動く方式）はこれまで通り維持しています。あれは自分の入力が分かっている自分のキャラ専用の仕組みで、今回外した相手向けの外挿とは別物です",
-         "技・数値・その他の機能への変更はありません"]},
- {date:"2026/11/15",times:["01:51"],tag:"修正",title:"ONLINE VS：自分のキャラを予測表示にして操作の遅延をほぼ無くしました",
-  items:["オンライン対戦で、自分のキャラだけを「予測表示」にしました：入力した瞬間に、自分のキャラが手元の計算（VS CPUと同じシミュレーション）で先行して動き出すので、サーバーの結果が返ってくるのを待つ分の遅延がほぼ無くなります。キーボードでもスマホのタッチ操作でも同じ予測が働きます",
-         "サーバーが正であることは変わりません：HP・当たり判定・KO・スコアはサーバーの結果が絶対で、自分のキャラの状態が届くたびに予測と照合します。ズレが小さい間は少しずつ滑らかに寄せ、被弾の吹き飛ばし・KO・リスポーンなど大きくズレた時だけ、短いブレンドでサーバーの状態へ合わせ直すので、ワープしたような見え方にはなりにくくなっています",
-         "相手キャラの表示はこれまで通り（スナップショットの補間＋外挿）です。攻撃の命中結果やエフェクトもこれまで通りサーバーのイベントで再生され、予測側で二重に当てることはありません。入力の送信（60fps・連番・即時送信）、ロビー・チャット・再戦・画面右上の遅延ms表示もそのままです",
-         "自分のキャラがCPU引き継ぎ状態のときや観戦時は、従来のスナップショット表示に自動で戻ります。VS CPU・トレーニングなどローカル対戦の動作と、技・数値への変更はありません"]},
- {date:"2026/11/15",times:["01:38"],tag:"修正",title:"試合中にフレンド画面が勝手に開く問題を修正",
-  items:["VS CPU・トレーニング・オンライン対戦の試合中に、フレンド画面が勝手に開いて操作の邪魔になることがあった問題を修正しました。原因は、フレンド画面を一度開いて閉じた後も、閉じたはずの画面が内部に残ったままになっていて、フレンドのオンライン状態の変化や定期更新のたびに「開いている」と誤判定して再表示していたことです",
-         "試合中は、フレンド申請の受信・オンライン状態の変化・接続の再試行など裏側のイベントでは、フレンド画面が自動で開かないようにしました。申請や招待の受信自体はこれまで通り行われ、試合が終わってから FRIENDS を開けば届いた内容をそのまま確認・参加できます（申請件数のバッジ表示もこれまで通り更新されます）",
-         "タイトル画面などで FRIENDS ボタンを自分で押して開く操作はこれまで通り使えます。技・数値・その他の機能への変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -775,7 +765,7 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・完全硬直</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。後硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュ・他のワザは一切できない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.52秒（完全硬直）')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒・ジャンプ回復</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。使うと<b>ジャンプ回復</b>：二段ジャンプが回復する。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — これならできるよ！／つぶしてやル</b><p>MIMIは<b>相手の足元に光の魔法</b>を撃つ（約0.25秒後、相手のいる場所に光の柱。当たらなければ空振り）。同時にSHADEは上から腕を出して<b>相手を踏み潰す</b>（約0.22秒後、SHADEの位置の真下へ腕が落ちる）。</p>'+mvSpec(mvS('ダメージ','MIMI 14／SHADE 18')+mvS('KB','620（真上寄り）／820')+mvS('発生','約0.25秒／約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.6秒')+mvS('判定','MIMI 相手の足元 84×90／SHADE 120×110')+mvS('射程','MIMI 約460以内'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — これならできるよ！／つぶしてやル</b><p>MIMIは<b>地面に沿って進む光の衝撃波</b>を前方へ放つ。衝撃波は地形に沿って進み、台の端では下の地面へ落ちながら進み続ける（ジャンプで回避できる）。同時にSHADEは<b>自分の後ろ側</b>に、上から拳を<b>下がりながら3回</b>振り下ろす（1回ごとに出現位置が後ろへずれていく）。</p>'+mvSpec(mvS('ダメージ','MIMI 12／SHADE 14＋14＋16')+mvS('KB','420／760・760・880')+mvS('発生','MIMI 即時／SHADE 約0.22秒・0.50秒・0.78秒')+mvS('全体','0.42秒')+mvS('後硬直','0.6秒')+mvS('判定','MIMI 幅72の地面波／SHADE 118×104')+mvS('弾速','560')+mvS('射程','MIMI 約640'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 助けて！／おいでMIMI</b> <span style="color:#38bdf8;font-weight:900">ワープ・ダメージなし・クールタイム1.0秒・完全硬直</span><p>MIMIが<b>SHADEの位置へワープ</b>する。SHADEを前方へ送り出しておけば、一瞬でそこまで逃げたり攻め込んだりできる。ワープ後の硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュはできない。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.25秒')+mvS('後硬直','0.62秒（完全硬直）')+mvS('再使用','1.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 大好きだよSHADE／大好きだよMIMI（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・貫通・キーボードは L</span><p>SHADEがMIMIの位置へ移動し、二人で<b>光と闇の巨大な弾</b>を前方へ射出する。弾は<b>貫通</b>する：敵に当たっても消えずにそのまま飛び続け、並んだ敵全員に当たる（同じ敵には1回だけ命中）。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体にピンク色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','52')+mvS('KB','920')+mvS('発生','即時')+mvS('全体','0.7秒')+mvS('後硬直','0.92秒')+mvS('判定','152×130')+mvS('弾速','620')+mvS('寿命','2.5秒')+mvS('追加効果','貫通'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。SHADEも同じ速度で追随する。</p>'+mvSpec(mvS('速度','1080')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -1161,6 +1151,10 @@ function clampCam(){
       barely lift the view while falls and ledge drops still track.
    4) teleport snap — if P1 reappears far away (respawn), the
       camera cuts straight there instead of swooping the stage.
+   5) off-screen chase — once P1's centre leaves the clamped view
+      (launched past a side, falling below, knocked above), the
+      camera pans a little past its clamp (≤200u x / ≤170u y) to
+      keep following him while he is still alive out there.
    Frame-rate independent: driven by real dt, fed with P1's
    render-interpolated position by the callers, as before. */
 function camSmoothDamp(cur,target,vel,smoothTime,dt){
@@ -1172,6 +1166,25 @@ function camSmoothDamp(cur,target,vel,smoothTime,dt){
  if((target-cur>0)===(out>target)){out=target;nv=0}
  return{pos:out,vel:nv};
 }
+/* off-screen chase (owner request): once P1's centre slips past
+   the edge of the clamped view — launched out past a stage side,
+   spiked below it, or knocked high above it — the camera keeps
+   following a little way past its normal clamp (up to CAM_OVER_X
+   sideways / CAM_OVER_Y vertically) instead of stopping dead at
+   the limit and losing him while he is still alive and could
+   still recover. The shift is exactly the part of P1 that is
+   outside the view, capped, so while he is on screen nothing
+   changes at all, and the view eases back on its own as he
+   returns (the damped follow pulls it back inside the clamp and
+   this shift simply shrinks to zero). */
+var CAM_OVER_X=200,CAM_OVER_Y=170;
+function camOffscreenChase(ipX,ipY){
+ var pcx=ipX+(P1?P1.w/2:0),pcy=ipY+(P1?P1.h/2:0);
+ if(pcx<cam.x)cam.x+=Math.max(pcx-cam.x,-CAM_OVER_X);
+ else if(pcx>cam.x+viewW)cam.x+=Math.min(pcx-(cam.x+viewW),CAM_OVER_X);
+ if(pcy<cam.y)cam.y+=Math.max(pcy-cam.y,-CAM_OVER_Y);
+ else if(pcy>cam.y+viewH)cam.y+=Math.min(pcy-(cam.y+viewH),CAM_OVER_Y);
+}
 function updateCamera(dtms,ipX,ipY){
  var dt=Math.min(0.05,Math.max(0.001,dtms/1000));
  var lookT=Math.max(-52,Math.min(52,(P1?P1.vx:0)*0.11));
@@ -1180,7 +1193,7 @@ function updateCamera(dtms,ipX,ipY){
  var fx=ipX+camLook,fy=ipY;
  var dx=fx-(cam.x+anchorX),dy=fy-(cam.y+anchorY);
  if(dx>460||dx<-460||dy>340||dy<-340){
-  cam.x=fx-anchorX;cam.y=fy-anchorY;camVel.x=0;camVel.y=0;clampCam();return;
+  cam.x=fx-anchorX;cam.y=fy-anchorY;camVel.x=0;camVel.y=0;clampCam();camOffscreenChase(ipX,ipY);return;
  }
  var DEAD_X=46,DEAD_Y=54,tx=cam.x,ty=cam.y;
  if(dx>DEAD_X)tx=cam.x+(dx-DEAD_X);else if(dx<-DEAD_X)tx=cam.x+(dx+DEAD_X);
@@ -1194,6 +1207,7 @@ function updateCamera(dtms,ipX,ipY){
  var sy=camSmoothDamp(cam.y,ty,camVel.y,stY,dt);cam.y=sy.pos;camVel.y=sy.vel;
  var bx=cam.x,by=cam.y;clampCam();
  if(cam.x!==bx)camVel.x=0;if(cam.y!==by)camVel.y=0;
+ camOffscreenChase(ipX,ipY);
 }
 /* character select (spawn screen): PLAY / TRAINING first open this big,
    unobstructed picker inside the game screen — this is the only place a
@@ -1961,7 +1975,7 @@ function p2pStepHook(){
      if(i===net.myIdx)continue;
      var slot=room.matchSlots[i];if(!slot||slot.ai)continue;
      var f=fighters[i];if(!f)continue;
-     var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&15);
+     var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* fallback repeats the full HELD mask (28687 = move / jump-hold + the v105 J / U / L hold-to-continue bits), not just &15: masking to 15 dropped a guest's held J / U / L whenever a bundle arrived late, cutting multi-stage hold moves out mid-swing — the same fix as p2pInputFor below */
      slot.used[F]=bits;svParkPresses(f,bits,F);
    }
  }
@@ -1988,7 +2002,7 @@ function p2pInputFor(f,foe){
    return inp;
  }
  var F=room.fNow;
- var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&15);
+ var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* held-mask repeat: 28687 is svSampleStep's held mask (1|2|4|8 move + jump-hold, 4096|8192|16384 J / U / L held). The old &15 repeated only movement, so on any frame a guest's bundle had not landed yet, a held J / U / L silently released on the host — hold-to-continue chains stuttered exactly when the link was busy, which guests felt as input lag / dropped moves. Press bits are never in the mask, so nothing can re-fire */
  slot.used[F]=bits;
  svParkPresses(f,bits,F);
  if(F>900){delete slot.used[F-900];delete slot.realIn[F-900]}
@@ -2517,7 +2531,7 @@ $("lobbyLeaveBtn").onclick=function(){
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
 var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","fieldCd"];
-var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0};
+var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
 function svSampleLocal(){
@@ -3047,6 +3061,7 @@ function svSyncPlaced(arr,list,mk){
 function svOnSnap(m){
  if(!sv.active||!m||!m.fs)return;
  var now=performance.now();
+ var prevSnapF=sv.lastSnapF,prevArrival=sv.lastArrival; /* pre-update stream markers: the P2P host-cadence estimate below reads the frame / arrival pair this snapshot completes, before lastSnapF / lastArrival are overwritten with it */
  /* drop a duplicated / out-of-order snapshot outright: TCP already
     orders the stream, so a frame at or below the newest one can only
     be a retransmit artifact, and bracketing against it would judder */
@@ -3097,8 +3112,26 @@ function svOnSnap(m){
       deliberately: a little judder beats a large, warping delay.
       Prediction of our own fighter and the interpolation itself are
       untouched — only this target/clamp/easing changed. */
-   var target=sv.intervalEMA+sv.jitterEMA*0.8+9;
-   if(target<34)target=34;else if(target>56)target=56;
+   /* P2P GUEST TUNING (guest-lag fix): on the direct transport the
+      stream is 60/s from a nearby host over a direct WebRTC link, so
+      the server transport's 34ms floor / 9ms headroom / 56ms cap
+      buffer deeper than the link needs and every opponent action
+      reads that much older. The P2P branch runs a 20ms floor, 5ms
+      headroom and a 40ms cap instead: at 16.7ms snapshot spacing a
+      ~20ms delay still brackets cleanly (the bracket's A snapshot is
+      1-2 frames back), and when jitter starves the buffer the
+      fighters hold at the newest snapshot exactly as before — a
+      brief judder on a bad stretch, never a ballooning delay. The
+      server transport keeps its existing tuning untouched (its
+      stream cadence is the server's own). */
+   var target;
+   if(net.transport==="p2p"){
+    target=sv.intervalEMA+sv.jitterEMA*0.8+5;
+    if(target<20)target=20;else if(target>40)target=40;
+   }else{
+    target=sv.intervalEMA+sv.jitterEMA*0.8+9;
+    if(target<34)target=34;else if(target>56)target=56;
+   }
    sv.renderDelay+=(target-sv.renderDelay)*(target<sv.renderDelay?0.6:0.2);
   }
  }
@@ -3106,7 +3139,11 @@ function svOnSnap(m){
     The host's frame counter advances at a fixed 60fps in real
     time, so anchoring the first received frame to its arrival
     time predicts every later frame's arrival: expected =
-    anchorF + elapsed x 0.06. A snapshot whose frame lags that
+    anchorF + elapsed x rate, where rate is the stream's measured
+    cadence (sv.rateEMA — see the HOST CADENCE ESTIMATE note in the
+    block below; it replaces the originally hard-coded 0.06, which
+    misread any host that could not hold a perfect 60fps cadence
+    as permanent stream lag). A snapshot whose frame lags that
     expectation spent the difference QUEUED inside the ordered,
     never-dropping PeerJS / WebRTC channel (the host now also
     skips sending into a backed-up queue — see p2pQueueBytes —
@@ -3124,14 +3161,35 @@ function svOnSnap(m){
     never enters here: its snapshots carry no such queue (and
     its frame clock is the server's own). */
  if(net.transport==="p2p"&&typeof m.f==="number"){
+  /* HOST CADENCE ESTIMATE (guest-lag fix): the age math below used
+     to expect the host's frame clock to advance at exactly
+     0.06 frames/ms. A host device that cannot hold a perfect 60fps
+     step cadence (a loaded phone stepping in bursts, a 30Hz display
+     stepping two frames per rAF) then read as PERMANENT stream lag:
+     snapAgeMs inflated without bound, the interpolation buffer was
+     wiped and re-anchored over and over (opponents teleporting),
+     and reconciliation compared our prediction at a seconds-old
+     shifted time (our own fighter dragged backwards / hard-resynced
+     by phantom errors). So the expectation now uses the stream's
+     OWN measured cadence: a heavily smoothed EMA of frames arrived
+     per wall-clock millisecond, clamped to a sane band. A genuinely
+     queued stream still reads as lag — its frames arrive BEHIND
+     even the host's real cadence, and a draining backlog arrives in
+     a burst the slow EMA barely notices — so the fast-forward below
+     keeps working exactly as before; only the phantom lag is gone. */
+  if(typeof prevSnapF==="number"&&prevArrival&&m.f>prevSnapF&&now>prevArrival){
+   var instRate=(m.f-prevSnapF)/(now-prevArrival);
+   if(instRate<0.02)instRate=0.02;else if(instRate>0.075)instRate=0.075;
+   sv.rateEMA+=(instRate-sv.rateEMA)*0.03;
+  }
   if(sv.anchorF===null||sv.anchorF===undefined){sv.anchorF=m.f;sv.anchorAt=now;sv.snapAgeMs=0}
   else{
-   var lagF=sv.anchorF+(now-sv.anchorAt)*0.06-m.f;
+   var lagF=sv.anchorF+(now-sv.anchorAt)*sv.rateEMA-m.f;
    if(lagF>18){
-    sv.snapAgeMs=Math.min(4500,Math.round(lagF*1000/60));
+    sv.snapAgeMs=Math.min(4500,Math.round(lagF/sv.rateEMA));
     sv.snaps.length=0;
     sv.anchorF=m.f;sv.anchorAt=now;
-   }else sv.snapAgeMs=lagF>0?Math.round(lagF*1000/60):0;
+   }else sv.snapAgeMs=lagF>0?Math.round(lagF/sv.rateEMA):0;
   }
  }
  sv.lastArrival=now;
@@ -3177,7 +3235,12 @@ function svOnSnap(m){
 }
 function svReset(){
  sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
- sv.renderDelay=66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
+ /* P2P starts at its own operating point (60/s stream: 16.7ms
+    interval EMA, render delay already near the 20ms floor) instead
+    of easing down from the server transport's 66ms / 33.3ms start —
+    the opening seconds of a match are exactly when a guest judges
+    the lag, and the old start spent them at server depth */
+ sv.renderDelay=(net.transport==="p2p")?24:66;sv.intervalEMA=(net.transport==="p2p")?16.7:33.3;sv.jitterEMA=6;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06;
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
@@ -3254,6 +3317,8 @@ function svRenderWorld(now){
  /* Interpolate every fighter + projectile between the two snapshots
     bracketing an ADAPTIVE render delay (see svOnSnap: ~34ms on a
     clean 60fps connection, widening to at most ~56ms as jitter demands (latency-first cap) —
+    on the P2P transport the tuning is tighter still (~20ms floor /
+    ~40ms cap: the stream there is 60/s from a nearby host) —
     replacing the old fixed 80ms, which starved whenever arrivals
     bunched and made remote fighters freeze, then teleport).
     Your own fighter is NOT rendered from these timelines while
@@ -3336,12 +3401,23 @@ function svAdvance(dtms){
       or when the oldest queued frame has waited 50ms (low-fps safety).
       The sample accumulator clamps its leftover to one step instead of
       zeroing it, so a hitch can no longer silently swallow a sample
-      slot and shift every later input by a frame. */
+      slot and shift every later input by a frame.
+      P2P GUEST CADENCE (guest-lag fix): on the direct transport a
+      bundle leaves EVERY sampled frame (60/s), not every two. The
+      host chains 1-frame bundles onto the exact same frames (its
+      cursor rule is bundle-size independent), so nothing about
+      scheduling changes — but the guest's held stream reaches the
+      host up to a frame sooner, and the stream ACK that rides every
+      bundle (sv.lastSnapF, the host's flow-control signal) is up to
+      a frame fresher too, so a healthy guest is far less likely to
+      be misread as lagging and have its snapshots withheld by the
+      pump's backpressure. The server transport keeps the 30/s
+      cadence its protocol was tuned around. */
    sv.acc+=dt;
    var n=0;
    while(sv.acc>=SIM_STEP&&n<8){sv.acc-=SIM_STEP;n++;svSampleStep()}
    if(sv.acc>=SIM_STEP)sv.acc=SIM_STEP;
-   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
+   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||net.transport==="p2p"||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
      var sentBefore=sv.sentFrame;
      svSendBundle();
      if(sv.sentFrame!==sentBefore){sv.lastSendAt=now;sv.pressPending=false}
@@ -6078,14 +6154,19 @@ function startMimiAttack(f,type,foe){
      spawnParticles(f.x,f.y+f.h,12,"#f9a8d4",170);shadeBurst(f,8);
      beep(980,.1,"sine",.05);
    }else if(downHeld){
-     /* これならできるよ！／つぶしてやル: MIMI blasts the ground at
-        the FOE's feet with light magic — the pillar lands ~0.25s
-        later in stepFighter (state "mdk" ticks), aimed at wherever
-        the foe stands when it fires, reach ~460. At the same moment
-        SHADE brings an arm down from above to crush whoever is under
-        IT (~0.22s later, shHitT "sslam") */
+     /* これならできるよ！／つぶしてやル (reworked, user request):
+        MIMI fires a LIGHT SHOCKWAVE that races along the ground in
+        front of her — an "lwave" projectile (12 dmg / KB 420, speed
+        560, life 1.15s = range ~640; it hugs the floor in the
+        projectile filter, dropping to lower ground at ledge edges).
+        At the same moment SHADE slams a fist down from above THREE
+        times, each fist appearing further BEHIND SHADE (36 / 100 /
+        164 back) as it steps back — landings at 0.22 / 0.50 / 0.78s
+        through the shHitKind chain sslam -> sslam2 -> sslam3
+        (14 / 14 / 16 dmg, KB 760 / 760 / 880, box 118x104) */
      f.state="mdk";f.stateT=0.42;f.attackCd=0.53;f.comboWin=0;f.spinHits=0;f.spinTick=0;
-     if(shadeAlive(f)){f.shState="sslam";f.shStateT=0.5;f.shHitT=0.22;f.shHitKind="sslam"} /* 【闇ゲージ】 MIMI's light pillar still fires while SHADE is vanished; the crush arm does not */
+     projectiles.push({x:f.x+f.face*40,y:f.y+f.h-12,vx:f.face*560,vy:0,owner:f,life:1.15,kind:"lwave"});
+     if(shadeAlive(f)){f.shState="sslam";f.shStateT=1.15;f.shHitT=0.22;f.shHitKind="sslam"} /* 【闇ゲージ】 MIMI's light wave still fires while SHADE is vanished; the crush fists do not */
      spawnParticles(f.x+f.face*20,f.y+f.h*0.3,9,"#fef9c3",160);spawnRing(f.x+f.face*24,f.y+f.h*0.3,"#fde68a",22);
      beep(1400,.07,"sine",.05);
    }else{
@@ -6683,14 +6764,15 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    }
    f._shPX=f.x;f._shPY=f.y+f.h;
    /* SHADE delayed hits: the J+K sky upper (0.28s), the down+K
-      overhead crush (0.22s), and — since the balance pass gave
+      triple crush behind SHADE (0.22s, then every 0.28s), and —
+      since the balance pass gave
       SHADE's J-chain / push / low hits their own startup — the
       claw (J1, 0.18s), chain upper (J2, 0.16s), fist (J3, 0.2s),
       arm sweep (fwd+J, 0.18s) and low slide (down+J, 0.16s). Each
       fires from wherever SHADE stands when the timer expires */
    if(f.shHitT>0){f.shHitT-=dt;if(f.shHitT<=0){var shk=f.shHitKind;f.shHitKind="";
      if(shk==="supper"){shadeHit(f,f.shX+f.shFace*42,f.shY-60,102,102,28,1130,f.shFace,-1.25);shadeBurst(f,12);spawnRing(f.shX+f.shFace*42,f.shY-70,"#a855f7",40);shake=Math.max(shake,4);beep(300,.12,"sawtooth",.055)} /* J+K upper (user balance spec): 24 -> 28 dmg / KB 1050 -> 1130, box 96x96 -> 周囲102 */
-     else if(shk==="sslam"){shadeHit(f,f.shX,f.shY-40,120,110,18,820,f.shFace,0.3);shadeBurst(f,12);spawnRing(f.shX,f.shY-4,"#a855f7",44);shake=Math.max(shake,5);beep(150,.13,"sawtooth",.06)}
+     else if(shk==="sslam"||shk==="sslam2"||shk==="sslam3"){var slN=shk==="sslam"?1:(shk==="sslam2"?2:3);var slCx=f.shX-f.shFace*(slN===1?36:(slN===2?100:164));if(slCx<60)slCx=60;if(slCx>WORLD_W-60)slCx=WORLD_W-60;shadeHit(f,slCx,f.shY-40,118,104,slN===3?16:14,slN===3?880:760,f.shFace,0.3);shadeBurst(f,12);spawnRing(slCx,f.shY-4,"#a855f7",44);shake=Math.max(shake,5);beep(150,.13,"sawtooth",.06);if(slN<3){f.shHitT=0.28;f.shHitKind=slN===1?"sslam2":"sslam3"}} /* つぶしてやル (reworked): three crush fists step out BEHIND SHADE — 36 / 100 / 164 behind it, landing 0.28s apart (14 / 14 / 16 dmg, KB 760 / 760 / 880, box 118x104); each slam re-arms the next through shHitKind */
      else if(shk==="claw"){shadeHit(f,f.shX+f.shFace*58,f.shY-52,116,74,12,300,f.shFace,-0.24,0.32);shadeBurst(f,8);beep(1250,.05,"square",.04)} /* J1 claw: 12 dmg / KB 300, box 116x74, stun 0.32s */
      else if(shk==="upper1"){shadeHit(f,f.shX+f.shFace*60,f.shY-58,120,94,14,320,f.shFace,-1.0,0.34);shadeBurst(f,9);beep(1350,.06,"square",.045)} /* J2 upper: 14 dmg / KB 320, box 120x94, stun 0.34s */
      else if(shk==="fist"){shadeHit(f,f.shX+f.shFace*68,f.shY-52,136,88,20,1000,f.shFace,-0.35);shadeBurst(f,12);shake=Math.max(shake,4);beep(240,.1,"sawtooth",.05)} /* J3 fist: 20 dmg / KB 1000, box 136x88 */
@@ -6717,16 +6799,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    /* 一人でもやれるもん！ is a SINGLE blast since the balance pass
       (9 dmg / KB 720 on the press in startMimiAttack) — state
       "mlight" no longer ticks out any follow-up bolts */
-   /* これならできるよ！: the light pillar erupts at the foe's feet
-      0.25s after the press, aimed at where the foe stands NOW
-      (reach ~460 — beyond that the light fizzles where it falls) */
-   if(f.state==="mdk"){
-     f.spinTick+=dt;
-     if(f.spinTick>=0.25&&f.spinHits<1){f.spinHits=1;var pfoe=nearestOpponent(f);
-       if(pfoe&&Math.abs(pfoe.x-f.x)<460){shadeHit(f,pfoe.x,pfoe.y+pfoe.h-45,84,90,14,620,pfoe.x>=f.x?1:-1,-0.9);spawnParticles(pfoe.x,pfoe.y+pfoe.h-20,14,"#fef9c3",220);spawnRing(pfoe.x,pfoe.y+pfoe.h-4,"#fde68a",36);beep(1650,.08,"sine",.05)}
-       else{spawnParticles(f.x+f.face*150,f.y+f.h-16,8,"#fef9c3",150)}
-     }
-   }
+   /* これならできるよ！ no longer ticks here: the light shockwave
+      is an "lwave" projectile spawned on the press in
+      startMimiAttack — state "mdk" is just MIMI's casting pose */
  }
  /* SMILEY 三連 (J 3rd stage) cuts 2-3: the first cut landed on the
     press (startSmileyAttack); the remaining two tick out on spinTick
@@ -8347,9 +8422,12 @@ function drawShade(f){
    drawShadeHand(sx,sy-150+Math.min(pr,0.55)*190,dir,"slam",pr,1.6);
    ctx.fillStyle="rgba(168,85,247,.5)";pxLine(sx-12,sy-150+Math.min(pr,0.55)*190-50,sx-8,sy-196+Math.min(pr,0.55)*190,PXU*0.8);pxLine(sx+11,sy-150+Math.min(pr,0.55)*190-48,sx+15,sy-190+Math.min(pr,0.55)*190,PXU*0.8);
  }
- if(st==="sslam"){ /* つぶしてやル: a third arm falls from above SHADE */
-   drawShadeHand(sx,sy-196+pr*86,dir,"slam",pr,1.65);
-   ctx.fillStyle="rgba(168,85,247,.5)";pxLine(sx-14,sy-196+pr*86-52,sx-10,sy-236+pr*86,PXU*0.8);pxLine(sx+13,sy-196+pr*86-50,sx+17,sy-230+pr*86,PXU*0.8);
+ if(st==="sslam"){ /* つぶしてやル (reworked): THREE fists in a row — each one appears above a point further BEHIND SHADE (36 / 100 / 164 back) and slams down; the schedule mirrors the sim (landings at 0.22 / 0.50 / 0.78s of the 1.15s state, each fist falling through its lead time, holding a beat on impact, then sinking away) */
+   var slEl=1.15-(f.shStateT||0),slLand=[0.22,0.50,0.78],slOff=[36,100,164],slLead=[0.22,0.28,0.28];
+   for(var sli=0;sli<3;sli++){var slSt=slLand[sli]-slLead[sli];if(slEl<slSt)continue;var slCx3=sx-dir*slOff[sli],slP=Math.min(1,(slEl-slSt)/slLead[sli]),slY=sy-196+slP*92,slA=1;
+     if(slEl>slLand[sli]+0.13){slA=1-(slEl-slLand[sli]-0.13)/0.12;if(slA<=0)continue;slY=sy-104+(1-slA)*12}
+     ctx.globalAlpha=slA;drawShadeHand(slCx3,slY,dir,"slam",1,1.65);
+     ctx.fillStyle="rgba(168,85,247,.5)";pxLine(slCx3-14,slY-52,slCx3-10,slY-92,PXU*0.8);pxLine(slCx3+13,slY-50,slCx3+17,slY-88,PXU*0.8);ctx.globalAlpha=1}
  }
  /* attack arcs for the claw / sweep: dotted pixel arcs */
  if((st==="sclaw"||st==="ssweep")&&pr>0.25&&pr<0.9){
@@ -8747,6 +8825,7 @@ function draw(){
    if(pr.kind==="bolt"){ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,8,0,6.29);ctx.fill();ctx.fillStyle="#fdf4ff";ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill()}
    else if(pr.kind==="javelin"){ctx.fillStyle="rgba(249,115,22,.45)";ctx.beginPath();ctx.arc(0,0,13,0,6.29);ctx.fill();ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.5,0,6.29);ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-(pr.vx>0?1:-1)*10,-3);ctx.lineTo(-(pr.vx>0?1:-1)*22,0);ctx.lineTo(-(pr.vx>0?1:-1)*10,3);ctx.closePath();ctx.fill()}
    else if(pr.kind==="wave"){ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.ellipse(0,6,21,10,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,6,12,6,0,Math.PI,0);ctx.fill()}
+   else if(pr.kind==="lwave"){ctx.fillStyle="rgba(253,230,138,.35)";ctx.beginPath();ctx.ellipse(0,7,31,16,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,7,23,12,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fef9c3";ctx.beginPath();ctx.ellipse(0,7,14,7.5,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fffbeb";var lwSg=pr.vx>0?1:-1;ctx.fillRect(lwSg*15-2,-3,4,4);ctx.fillRect(lwSg*7-1.5,0,3,3)} /* MIMI ↓+K これならできるよ！: a dome of light racing along the ground — layered gold-white arcs with bright sparks at the leading edge */
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
@@ -9031,9 +9110,9 @@ function loop(ts){
      }
    }
    /* projectiles */
-   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56))))))){foe=qf;break}}
+   projectiles=projectiles.filter(function(pr){pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav)pr.vy+=980*STEP; /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back */if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
-       if(shadeFoe){var shDmg=(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:13)))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?12:13))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 12 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,220,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 235 -> 220 (user spec) */
@@ -9045,10 +9124,11 @@ function loop(ts){
        else if(pr.kind==="knife"){applyHit(pr.owner,foe,10,240,pr.vx>0?1:-1,-0.14,false,pr.x,pr.y)} /* SMILEY スローイングナイフ: 10 dmg / KB 240 — fast (弾速 900 -> 1060, user spec) and light */
        else if(pr.kind==="sonic"){applyHit(pr.owner,foe,34,660,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y)} /* TRAVIS ult ワールドツアー (user spec): each giant wave = 34 dmg / KB 660 (was 17 / 520), box 150x110 via the hit test above */
        else if(pr.kind==="mimiball"){applyHit(pr.owner,foe,52,920,pr.vx>0?1:-1,-0.35,true,pr.x,pr.y);(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,16,"#f9a8d4",240);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#fde68a",44)} /* MIMI&SHADE ult 大好きだよSHADE: the giant light-and-dark orb = 52 dmg / KB 920, PIERCING — the foe is recorded in hitSet (one hit per foe) and the orb is NOT consumed below, so it flies on through everyone in its path; box 152x130 via the hit test above (was 46 / 880 / 130x110, requester balance spec) */
+       else if(pr.kind==="lwave"){applyHit(pr.owner,foe,12,420,pr.vx>0?1:-1,-0.28,false,pr.x,pr.y);spawnParticles(pr.x,pr.y-4,10,"#fef9c3",200);spawnRing(pr.x,pr.y+6,"#fde68a",30)} /* MIMI ↓+K これならできるよ！: the ground-hugging light shockwave = 12 dmg / KB 420 */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,0.85)} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s (movement x0.45) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
      if(pr.kind==="msong"){var msGrounded=false;for(var gi=0;gi<platforms.length;gi++){var gp=platforms[gi];if(pr.x>gp.x-4&&pr.x<gp.x+gp.w+4&&pr.y+30>=gp.y&&pr.y<gp.y+26){msGrounded=true;break}}if(msGrounded){explodeMsong(pr);return false}} /* メテオソング: explodes the moment it touches the ground (接地と同時に爆発) — a swept band instead of the generic 10px test, since at 1020 speed it crosses ~17px per step and could tunnel */
-     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
+     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.kind!=="lwave"&&pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){ /* lwave is exempt: its own ground-hug logic in the filter above lands it on floors instead of dying on contact */if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
    if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (a fixed ceiling of 460, independent of the quality tier) */
