@@ -429,6 +429,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["17:34"],tag:"修正",title:"技一覧：SHADEへのダメージはスコア対象外と明記",
+  items:["MIMI&SHADEの技一覧にある「SHADE — 闇ゲージ」の説明に、SHADEへのダメージはスコアには入らない旨を追記しました。MIMIを倒した時にスコアへ換算されるのは、MIMI本体へ与えたダメージのみです（これまでも仕様は同じで、説明がなかったため明記したものです）",
+         "表示のみの変更で、ゲームの挙動・数値に変更はありません"]},
  {date:"2026/11/15",times:["17:11"],tag:"修正",title:"入力同期：ズレ時の再同期で継続",
   items:["オンライン対戦の入力同期で、端末間の計算のズレ（チェックサム不一致や、巻き戻しできない入力の遅れ）を検出しても、試合終了まで写真方式に固定されることがなくなりました。ホストがその時点の完全な状態（全ファイター・弾・設置物・各種タイマー・乱数状態）とフレーム番号を全員に配り、全端末がその状態を採用して入力同期を再開します",
          "再開のたびに、予測・巻き戻し用の保存状態はリセットされます。短時間（10秒以内）に再同期が3回必要になった場合だけ、再同期の無限ループ防止のため、その試合の残りは写真（保険）方式になります",
@@ -511,9 +514,6 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["12:31"],tag:"修正",title:"直接接続（P2P）：スナップショット専用チャネルでゲストの遅延をさらに軽減",
   items:["P2P対戦で、ホストからゲストへのスナップショットを専用チャネル（再送なし・順序なし）で送るようにしました。配送が遅れても古いスナップショットが溜まらなくなります",
          "専用チャネルが使えない環境や旧バージョンとの対戦では、従来のチャネルに自動で切り替わります。その他の通信・ゲーム内容に変更はありません"]},
- {date:"2026/11/15",times:["12:01"],tag:"調整",title:"MIMI&SHADE：ウルト発動でSHADEの闇ゲージが40回復（上方修正）",
-  items:["MIMI&SHADEのウルト「大好きだよSHADE」を発動すると、SHADEの闇ゲージが40回復するよう上方修正しました",
-         "回復は闇ゲージの上限（190）を超えません。ウルト自体のダメージ・KB・弾の性能に変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -759,7 +759,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.12')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','遅め（×0.44）'))
 +mvLegend
-+'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限190</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るほか、<b>燃焼・毒・出血などの継続ダメージを受けている間も、MIMIへのダメージと同じぶん減る</b>（炎のビームや毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけ減る）。ただし<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くに来てから4.5秒たつと</b>、毎秒10ずつ回復し始める（途中で離れるとタイマーがリセットされ、次に近づいてからまた4.5秒必要。さらに、<b>ダメージを受けてから1.2秒間は回復しない</b>：ダメージを受け続ける間は、その都度1.2秒を数え直す。K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','190')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くに4.5秒いてから毎秒10・被弾後1.2秒は回復しない'))+'</div></div>'
++'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限190</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るほか、<b>燃焼・毒・出血などの継続ダメージを受けている間も、MIMIへのダメージと同じぶん減る</b>（炎のビームや毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけ減る）。ただし<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くに来てから4.5秒たつと</b>、毎秒10ずつ回復し始める（途中で離れるとタイマーがリセットされ、次に近づいてからまた4.5秒必要。さらに、<b>ダメージを受けてから1.2秒間は回復しない</b>：ダメージを受け続ける間は、その都度1.2秒を数え直す。K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。なお、<b>SHADEへのダメージはスコアには入らない</b>（MIMIを倒しても、スコアに換算されるのはMIMI本体へ与えたダメージのみで、SHADEの闇ゲージを削ったぶんは対象外）。</p>'+mvSpec(mvS('上限','190')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くに4.5秒いてから毎秒10・被弾後1.2秒は回復しない'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、少し遅れてSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 5／SHADE 12')+mvS('KB','180／300')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.4秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 68×62／SHADE 116×74')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
@@ -1477,7 +1477,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v208";
+var BUILD_ID="v209";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6944,7 +6944,7 @@ function applyShadeHit(att,owner,dmg,cx,cy,isUlt){
  pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.7,col:"#d8b4fe"});
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
  att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
- if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg));
+ if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* CPU fighters gain meter too (user request) — same gate removal as applyHit below */
  beep(150+Math.random()*70,.06,"square",.05);
  if(owner.shHp<=0)shadeVanish(owner);
  return true;
@@ -7569,7 +7569,7 @@ function startAttack(f,type){
       death): the meter stays spent and must be re-earned from 0, and the
       next landed ult starts a fresh chain. A miss also breaks the chain,
       and dying resets the count (killFighter / resetFighter zero it). */
-   if(f.char==="kairo"&&(f.isPlayer||f.remote)){
+   if(f.char==="kairo"){ /* the ult chain recharge applies to CPU KAIRO too (user request): the gauge rules no longer distinguish human from CPU fighters */
      if(ultHit){
        f.ultChain++;
        if(f.ultChain<5){f.meter=100;pushFloater({x:f.x,y:f.y-30,txt:"ULT RECHARGE "+f.ultChain+"/5",life:.95,col:"#7dd3fc"})}
@@ -7726,7 +7726,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
      spawnRing(def.x,def.y+def.h*0.45,"#a5f3fc",40);spawnSparks(def.x,def.y+def.h*0.45,dir,"#a5f3fc",5);spawnFxBurst(FXIMG.hit,def.x+(def.guardDir||def.face)*24,def.y+def.h*0.45,72,0.18,(Math.random()-0.5)*0.8,dir,0.75);
      pushFloater({x:def.x,y:def.y-16,txt:"GUARD -"+gd,life:.7,col:"#a5f3fc"});
      beep(980,.05,"square",.045);
-     if(att){if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}att.comboHits++;att.comboDmg+=gd;att.comboT=0.95;if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,gd))}
+     if(att){if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}att.comboHits++;att.comboDmg+=gd;att.comboT=0.95;if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,gd))}
      if(def.hp<=0)killFighter(def,att);
      return true;
    }
@@ -7749,7 +7749,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  }
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
  att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
- if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* meter gain is for HUMAN fighters: the local player (isPlayer) and, in online matches, the guest fighter simulated on the host (remote) — gating on isPlayer alone left the guest's ult gauge stuck at 0 forever. Rates live in meterGainFor (overall 1/1.5, KOJIRO a further 1/1.2, WARDEN x0.69 for x0.46 total, Kairo 1/1.6); ult hits never feed the meter — the recharge is governed only by the capped chain rule above */
+ if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* meter gain is for EVERY fighter, CPU included (user request): it used to be gated to human fighters only (the local player isPlayer and, in online matches, the guest fighter simulated on the host, remote), which left every CPU's ult gauge stuck at 0 forever — the gate is gone, so all fighters earn at the same rates. Rates live in meterGainFor (overall 1/1.5, KOJIRO a further 1/1.2, WARDEN x0.69 for x0.46 total, Kairo 1/1.6); ult hits never feed the meter — the recharge is governed only by the capped chain rule above */
  beep(180+Math.random()*120,.07,"square",.06);
  if(def.hp<=0)killFighter(def,att);
  return true;
@@ -7818,7 +7818,14 @@ function aiControl(f,foe){
    return input;
  }
  f.aiT-=1/60;
- if(f.aiT<=0){f.aiT=0.2+rnd()*0.25;f.aiMove=rnd()}
+ if(f.aiT<=0){f.aiT=0.2+rnd()*0.25;f.aiMove=rnd();
+   /* CPU ult (user request): the gauge now fills for CPU fighters too,
+      so on a decision beat a CPU holding a full gauge fires its ult
+      when the foe is within reach and roughly level with it.
+      startAttack re-checks the gauge and each character's own firing
+      conditions (MIMI needs SHADE present, and so on) — a refused ult
+      simply stays charged for the next beat */
+   if(f.meter>=100&&f.attackCd<=0&&adx<560&&Math.abs(foe.y-f.y)<200&&rnd()<0.65){f.face=dx>0?1:-1;startAttack(f,"ult");return input}}
  if(foe.y<f.y-120&&adx<170&&f.onGround&&rnd()<0.5)input.jump=true;
  if(adx>86){
    input[dx>0?"right":"left"]=true;
