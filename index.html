@@ -430,6 +430,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["20:34"],tag:"調整",title:"ORCHID：バランス調整（上方・下方修正）",
+  items:["基本性能：HP 250→260、ダッシュ速度 1200→1100、ウルトの溜まり 約0.59倍→約0.49倍に変更しました",
+         "J 1段目「ツタ2連撃」：2発目の判定 68×50→78×60、被弾硬直0.3秒を追加しました",
+         "J 2段目「ツタアッパー」：KB 330（上吹き強）→310（真上）、判定 62×82→72×92、被弾硬直0.33秒を追加しました",
+         "J 3段目「噛みつき」：ダメージ 13→15、KB 430→560、判定 64×58→102×80 に強化しました",
+         "ダッシュ中J：「タックル」→「ツタックル」に変更。ダメージ 21→19、KB 700→720、全体 0.34秒→0.44秒、後硬直 0.73秒→0.8秒、判定 78×68→前132×72、突進速度 vx 550→420",
+         "↓+J：「スパイラルポイズン」→「ニーダウン」に差し替え。相手の足元へツタを鞭のように忍び込ませる即時発生の単発技になりました（ダメージ8／KB 640／全体0.33秒／後硬直0.22秒／判定 前98×44／被弾硬直0.32秒）。旧技の両側への継続毒ダメージ・再使用1.35秒は廃止です",
+         "空中J「ツタフック」：ダメージ 7＋7→10＋10、KB 300／320→660、判定 124×56→160×76／148×58→172×66 に強化しました",
+         "技一覧の表示もすべて実装の数値に合わせて更新しました"]},
  {date:"2026/11/15",times:["20:12"],tag:"修正",title:"MIMI&SHADE：送り出したSHADEが他のプレイヤーに引っ張られる問題を修正",
   items:["MIMI&SHADEのK「いってらっしゃいSHADE」でSHADEを前方へ送り出して追尾状態（SHADEがMIMIと同じ動きをする状態）にした後、他のプレイヤーがSHADEの近くに行くと、SHADEの動きがそのプレイヤーに引っ張られるように乱れる問題を修正しました",
          "原因は、追尾の基準点（前回の計算時点でのMIMIの位置）が、オンライン対戦の巻き戻し（ロールバック）・再同期・スナップショット採用で状態を復元する際の保存対象に入っていなかったことです。復元されるたびに基準点だけが復元前の位置に残り、次の計算で「MIMIが移動した」と誤認したぶんがSHADEへコピーされていました。他のプレイヤーの入力が届いて巻き戻しや補正が起きるたびにSHADEが引きずられていたのはこのためです。基準点を保存・復元の対象に含め、スナップショット採用時と強制再同期時には採用した位置へ基準点を置き直すようにしました",
@@ -708,16 +717,16 @@ var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','980')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 
-var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>ウツボカズラの見た目をした木の精霊。<b>毒やHP吸収を使ってデバフをばらまいて戦うデバッファー</b>。HPは250。地上390・空中430と<b>空中寄りの機動力</b>で、ダッシュは1200と速い。その代わり<b>ふっとばされやすさ1.08倍</b>、<b>ウルトゲージの溜まり×0.88</b>、<b>落下速度+11%</b>という癖のあるステータス。<b>毒</b>にかかった相手は<b>0.2秒ごとに2ダメージ</b>を受け続ける（ノックバック・ヒットストゥンなし）。</p>'
-+mvSpec(mvS('HP','250')+mvS('地上速度','390')+mvS('空中速度','430')+mvS('受けKB','×1.08（吹っ飛びやすい）')+mvS('ダッシュ','1200')+mvS('ウルト溜まり','遅め（約0.59倍）')+mvS('落下速度','+11%'))
+var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>ウツボカズラの見た目をした木の精霊。<b>毒やHP吸収を使ってデバフをばらまいて戦うデバッファー</b>。HPは260。地上390・空中430と<b>空中寄りの機動力</b>で、ダッシュは1100。その代わり<b>ふっとばされやすさ1.08倍</b>、<b>ウルトゲージの溜まり×0.49</b>、<b>落下速度+11%</b>という癖のあるステータス。<b>毒</b>にかかった相手は<b>0.2秒ごとに2ダメージ</b>を受け続ける（ノックバック・ヒットストゥンなし）。</p>'
++mvSpec(mvS('HP','260')+mvS('地上速度','390')+mvS('空中速度','430')+mvS('受けKB','×1.08（吹っ飛びやすい）')+mvS('ダッシュ','1100')+mvS('ウルト溜まり','遅め（約0.49倍）')+mvS('落下速度','+11%'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — ツタ2連撃（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.7秒・全3段</span><p>ツタを素早く2回振る小ダメージ×2（2発目は少し遠くまで届く）。</p>'+mvSpec(mvS('ダメージ','6＋6')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','56×50 → 68×50'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — ツタアッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.7秒</span><p>ツタで下から突き上げ、相手を空へ浮かせる。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','330（上吹き強）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.41秒')+mvS('判定','62×82'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 噛みつき</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>ウツボカズラの口で噛みつき、<b>毒2.5秒を付与</b>。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','430')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.63秒')+mvS('判定','64×58')+mvS('追加効果','毒2.5秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>ダッシュ中J — タックル</b><p>体ごと突進する。</p>'+mvSpec(mvS('ダメージ','21')+mvS('KB','700')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.73秒')+mvS('判定','78×68')+mvS('突進','vx 550'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — ツタ2連撃（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.7秒・全3段</span><p>ツタを素早く2回振る小ダメージ×2（2発目は少し遠くまで届く）。</p>'+mvSpec(mvS('ダメージ','6＋6')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','56×50 → 78×60')+mvS('被弾硬直','0.3秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — ツタアッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.7秒</span><p>ツタで下から突き上げ、相手を真上へ浮かせる。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','310（真上）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.41秒')+mvS('判定','72×92')+mvS('被弾硬直','0.33秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 噛みつき</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>ウツボカズラの口で噛みつき、<b>毒2.5秒を付与</b>。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.63秒')+mvS('判定','102×80')+mvS('追加効果','毒2.5秒'))+'</div></div>'
++'<div class="moveRow"><div><b>ダッシュ中J — ツタックル</b><p>ツタを纏って体ごと突進する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.8秒')+mvS('判定','前132×72')+mvS('突進','vx 420'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングバイン</b><p>ツタで斬り上げて浮かせ、当てると<b>2段ジャンプ回復</b>。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('判定','60×82')+mvS('上昇','vy -460'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — スパイラルポイズン</b> <span style="color:#c084fc;font-weight:900">継続・毒</span><p>毒の渦を両側にまき散らし続ける継続攻撃。<b>溜め0.38秒</b>の後に、<b>0.22秒間隔</b>で<b>両側へ6ダメージ＋毒0.8秒</b>を出し続ける（約1秒間）。<b>技中は自分の移動速度×0.3</b>。</p>'+mvSpec(mvS('ダメージ','6／tick（両側）')+mvS('KB','110')+mvS('発生','約0.38秒')+mvS('全体','1.05秒')+mvS('後硬直','0.37秒（終了後）／次の技まで1.42秒')+mvS('判定','88×58（両側）')+mvS('再使用','1.35秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.22秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','7＋7')+mvS('KB','300／320')+mvS('発生','即時／2発目 約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.35秒')+mvS('判定','124×56 → 148×58')+mvS('着地硬直','0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.22秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','660')+mvS('発生','即時／2発目 約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.35秒')+mvS('判定','160×76 → 172×66')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J／空中↓+K — ドロップポーション</b> <span style="color:#c084fc;font-weight:900">落下攻撃・毒</span><p>毒の実を抱えて真下へ落下する。着地時に衝撃波が出て、当たった相手に<b>毒1.2秒</b>。</p>'+mvSpec(mvS('ダメージ','本体12／着地 前8・後5')+mvS('KB','本体480／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.51秒')+mvS('判定','本体68×60／着地96×58')+mvS('追加効果','着地で毒1.2秒')+mvS('着地硬直','0.25秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','600／560')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','80×60／86×74'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — ポイズンショット</b> <span style="color:#f59e0b;font-weight:900">毒・鈍化デバフ</span><p>毒液を前方の中距離まで即座に撃ち出す。当たると毒に加えて<b>移動速度12%減少を2.0秒</b>。空中でも同じショットが出る。</p>'+mvSpec(mvS('ダメージ','5')+mvS('KB','490')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.57秒')+mvS('判定','104×54')+mvS('追加効果','毒1.4秒＋鈍化12%／2.0秒')+mvS('着地硬直','空中で出した場合0.24秒'))+'</div></div>'
@@ -725,7 +734,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム6.0秒</span><p><b>vy-120で5秒かけて真上へ上昇し続ける</b>。上昇中は回転しながらツタを振り、<b>0.3秒ごとに両側へ6ダメージ</b>の攻撃が出る。横移動は通常どおり可能。地上・空中どちらでも出せる。</p>'+mvSpec(mvS('ダメージ','6／0.3秒（両側）')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.50秒（上昇は5秒継続）')+mvS('後硬直','0.57秒')+mvS('判定','72×66（両側）')+mvS('再使用','6.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム14秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+7%を8秒間</b>得る。発動時に<b>0.6秒自身がスタン</b>する代わりに、以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（うち自スタン0.6秒）')+mvS('再使用','14秒')+mvS('追加効果','速度+7%／8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — サンフラワー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、頭上の大輪の花から光のブレスを前方へ放射し続ける。<b>ノックバックは一切なし</b>、発動中は<b>ほぼ移動速度0</b>。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体にライム色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','9／tick（0.16秒間隔）')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','1.50秒')+mvS('後硬直','約0.22秒（放射後）')+mvS('判定','前方6〜670'))+'</div></div>'
-+'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1200')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1100')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>ラッパー。マイクと音波がテーマの<b>中量級オールラウンダー</b>。HPは260。マイクの突き出し→振り上げ→音波パンチの3段チェーン、その場で歌って周囲を制圧する「シング・タイム」、真下へ撃ち落として爆発する「メテオソング」、6発装填の飛び道具と、間合いを選ばず戦える技が揃っている。ウルトは前方への巨大音波3連射。</p>'
 +mvSpec(mvS('HP','260')+mvS('地上速度','432')+mvS('空中速度','407')+mvS('受けKB','×1.06')+mvS('ダッシュ','1120')+mvS('ウルト溜まり','遅め（×0.45）'))
@@ -1061,7 +1070,7 @@ function charStats(c){
  if(c==="warden")return{hp:280,spd:0.9,kb:0.91,dash:920}; /* WARDEN (user spec): HP 250 -> 280, knockback taken x0.86 -> x0.91; ground 360 (400x0.9) / air 349 (388x0.9) / dash 920 unchanged */
  if(c==="kojiro")return{hp:240,spd:1.16,kb:1.08,dash:1180}; /* KOJIRO (user spec): HP 250 -> 240, knockback taken x1.02 -> x1.08, dash 1080 -> 1180; ground 464 (400x1.16) / air 450 (388x1.16) unchanged */
  if(c==="sara")return{hp:270,spd:1.05,air:1.031,kb:0.89,dash:980}; /* SARA: midweight dragon girl — ground 420 (400x1.05), air 400 (388x1.031), dash 980 (nerfed from 1080), HP 270 (user spec) */
- if(c==="orchid")return{hp:250,spd:0.975,air:1.108,kb:1.08,dash:1200,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250, ground 390 (400x0.975), air 430 (388x1.108), dash 1200, knockback taken x1.08, falls 11% faster (fall) */
+ if(c==="orchid")return{hp:260,spd:0.975,air:1.108,kb:1.08,dash:1100,fall:1.11}; /* ORCHID: pitcher-plant spirit (user spec) — HP 250 -> 260, ground 390 (400x0.975), air 430 (388x1.108), dash 1200 -> 1100, knockback taken x1.08, falls 11% faster (fall) */
  if(c==="travis")return{hp:260,spd:1.08,air:1.05,kb:1.06,dash:1120}; /* TRAVIS (user spec): rapper — HP 255 -> 260, ground 432 (400x1.08), air 407 (388x1.05), knockback taken x1.02 -> x1.06, dash 1120 (duration 0.15s / CD 2.4s, the shared defaults in tryDash), ult gain x0.45 (meterGainFor) */
  if(c==="smiley")return{hp:230,spd:1.14,air:1.10,kb:1.12,dash:1300}; /* SMILEY (user spec): masked speedster — HP 235 -> 230, ground 456 (400x1.14), air 427 (388x1.10), knockback taken x1.08 -> x1.12, dash 1200 -> 1300 (CD 1.8s in tryDash), ult gain x0.5 total (meterGainFor) */
  if(c==="mimi")return{hp:240,spd:1.0,air:1.0,kb:1.12,dash:1080}; /* MIMI&SHADE: the girl is standard-footed (ground 400 / air 388, dash 1080) and light (HP 240, knockback taken x1.05 -> x1.12, user balance spec); the second body (SHADE) is what her kit is built on. Ult gain x0.44 total (meterGainFor) */
@@ -1494,7 +1503,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v215";
+var BUILD_ID="v216";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6929,9 +6938,9 @@ function startSaraAttack(f,type,foe){
 function applyPoison(att,def,dur){if(def&&!def.dead){def.poisonT=Math.max(def.poisonT||0,dur);def.poisonBy=att}}
 function startOrchidAttack(f,type,foe){
  /* ORCHID — pitcher-plant tree spirit (user spec). A debuffer who
-    spreads poison and drains. HP 250, ground 390 / air 430, dash
-    1200 (CD 2.4s shared), knockback taken x1.08, ult gauge gain
-    x0.88, and she falls 11% faster (fallMul, gravity step). Her
+    spreads poison and drains. HP 260, ground 390 / air 430, dash
+    1100 (CD 2.4s shared), knockback taken x1.08, ult gauge gain
+    x0.49 total, and she falls 11% faster (fallMul, gravity step). Her
     poison DoT ticks in stepFighter: 2 damage every 0.2s, no
     knockback, no hitstun (hitstop/shake are restored after the tick
     so a poisoned fighter never stutters the whole match). */
@@ -6957,18 +6966,24 @@ function startOrchidAttack(f,type,foe){
    }else if(!f.onGround){
      /* 空中J: ツタフック (spec) — two long-reaching vine strikes
         forward; the second one is DELAYED (fires in stepFighter at
-        stateT 0.2, longer reach). She hangs in the air briefly. */
+        stateT 0.2, longer reach). She hangs in the air briefly.
+        Buffed (user balance spec): 7+7 dmg -> 10+10, KB 300/320 ->
+        660 (both hits), boxes 124x56 -> 160x76 / 148x58 -> 172x66 */
      f.state="ohook";f.stateT=0.42;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
      if(f.vy>30)f.vy=30;
-     meleeHit(f,foe,124,56,7,300,f.face,-0.22);
+     meleeHit(f,foe,160,76,10,660,f.face,-0.22);
      spawnParticles(f.x+f.face*40,f.y+f.h*0.4,8,"#a3e635",180);beep(980,.06,"square",.04);
    }else if(downHeld){
-     /* 地上↓+J: スパイラルポイズン (spec) — after a 0.38s wind-up she
-        keeps spraying poison both sides: ticks every 0.22s for
-        6 dmg + poison 0.8s (stepFighter, state "ospiral"), her own
-        movement is cut to x0.3, CD 1.35s */
-     f.state="ospiral";f.stateT=1.05;f.attackCd=1.35;f.comboWin=0;f.flareTick=0.38;
-     spawnParticles(f.x,f.y+f.h*0.45,10,"#c084fc",130);beep(160,.18,"sawtooth",.05);
+     /* 地上↓+J: ニーダウン (user balance spec — REPLACES スパイラル
+        ポイズン): a vine sneaks low along the ground like a whip
+        into the foe's feet and strikes — a single INSTANT front hit:
+        8 dmg / KB 640, box front 98x44, 被弾硬直 0.32秒, 全体 0.33秒 /
+        後硬直 0.22秒 (attackCd 0.15 + the universal 0.07 tail). No
+        poison, no ticks, no reuse cooldown beyond the recovery */
+     f.state="oknee";f.stateT=0.33;f.attackCd=0.15;f.comboWin=0;
+     meleeHit(f,foe,98,44,8,640,f.face,-0.3,0.32);
+     spawnParticles(f.x+f.face*40,f.y+f.h-3,10,"#a3e635",180);spawnRing(f.x+f.face*50,f.y+f.h-2,"#a3e635",30);
+     beep(520,.07,"sawtooth",.05);
    }else if(upHeld){
      /* 地上↑+J: ライジングバイン (this slot was left open in the spec;
         values matched to the other risers) — vine upper launches the
@@ -6978,11 +6993,12 @@ function startOrchidAttack(f,type,foe){
      if(meleeHit(f,foe,60,82,12,360,f.face,-1.15)){f.jumps=1;spawnParticles(f.x,f.y+f.h,8,"#a3e635",140)}
      spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#a3e635",160);beep(660,.08,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330){
-     /* ダッシュJ: タックル (spec): 21 dmg, KB 700, range 78x68,
-        rushes in at vx 550, CD 0.66s */
-     f.state="otackle";f.stateT=0.34;f.attackCd=0.66;f.comboWin=0;f.dashT=0;
-     f.vx=f.face*550;
-     meleeHit(f,foe,78,68,21,700,f.face,-0.3);
+     /* ダッシュJ: ツタックル (user balance spec — was タックル):
+        19 dmg, KB 720, range front 132x72, rushes in at vx 420,
+        全体 0.44秒 / 後硬直 0.8秒 (attackCd 0.73 + the 0.07 tail) */
+     f.state="otackle";f.stateT=0.44;f.attackCd=0.73;f.comboWin=0;f.dashT=0;
+     f.vx=f.face*420;
+     meleeHit(f,foe,132,72,19,720,f.face,-0.3);
      spawnParticles(f.x+f.face*28,f.y+f.h*0.45,11,"#a3e635",200);beep(420,.08,"sawtooth",.05);
    }else{
      /* J ラッシュ (spec): 3-stage chain, 0.7s window between stages.
@@ -6992,19 +7008,19 @@ function startOrchidAttack(f,type,foe){
      if(f.comboStep===0){
        f.comboWin=0.7;
        f.state="ovine1";f.stateT=0.24;f.attackCd=0.3;
-       meleeHit(f,foe,56,50,6,240,f.face,-0.2);
-       meleeHit(f,foe,68,50,6,240,f.face,-0.2); /* second lash reaches a touch further */
+       meleeHit(f,foe,56,50,6,240,f.face,-0.2,0.3);
+       meleeHit(f,foe,78,60,6,240,f.face,-0.2,0.3); /* second lash reaches further — box 68x50 -> 78x60, and both lashes now inflict 被弾硬直 0.3秒 (user balance spec) */
        spawnParticles(f.x+f.face*26,f.y+f.h*0.42,8,"#a3e635",160);beep(1150,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.7;
        f.state="ovine2";f.stateT=0.28;f.attackCd=0.34;
-       meleeHit(f,foe,62,82,9,330,f.face,-1.15);
+       meleeHit(f,foe,72,92,9,310,0,-1.0,0.33); /* ツタアッパー (user balance spec): KB 330 (上吹き強) -> 310 (真上 — dir 0 / up -1.0, the house straight-up convention), box 62x82 -> 72x92, 被弾硬直 0.33秒 */
        spawnParticles(f.x+f.face*14,f.y+f.h*0.3,8,"#a3e635",160);beep(760,.06,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0;
        f.state="obite";f.stateT=0.34;f.attackCd=0.56;
        f.vx+=f.face*90;capVx(f,RUN_MAX*1.15);
-       if(meleeHit(f,foe,64,58,13,430,f.face,-0.3))applyPoison(f,foe,2.5);
+       if(meleeHit(f,foe,102,80,15,560,f.face,-0.3))applyPoison(f,foe,2.5); /* 噛みつき (user balance spec): 13 -> 15 dmg, KB 430 -> 560, box 64x58 -> 102x80 */
        spawnParticles(f.x+f.face*26,f.y+f.h*0.4,10,"#c084fc",180);beep(240,.1,"sawtooth",.055);
      }
    }
@@ -8212,7 +8228,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
    his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
    his ult meter gain is multiplied by a further 1.117 on top of all that
    (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.88:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.88 (user spec) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.69;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.46 total (1/1.5 x 0.69), down from ~x0.56 (was a further 1/1.2) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -8641,7 +8657,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  }
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
- if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,148,58,7,320,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)}
+ if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,172,66,10,660,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)} /* ツタフック 2発目 (user balance spec): 7 dmg -> 10, KB 320 -> 660, box 148x58 -> 172x66 */
  /* KOJIRO delayed heavy hits: 三日月斬り (ground K) and 空中三日月斬り
     (air K) land partway through their swings, not on the press —
     ~0.12s / ~0.10s after it (user spec) */
@@ -8904,18 +8920,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
          spawnParticles(f.x+f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);spawnParticles(f.x-f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);
    }
  }
- /* ORCHID ground down+J (スパイラルポイズン): after the 0.38s wind-up
-    (flareTick counts it down), poison sprays BOTH sides every 0.22s:
-    6 damage per tick, and anyone caught is poisoned for 0.8s */
- if(f.char==="orchid"&&f.state==="ospiral"){
-   f.flareTick-=dt;
-   if(Math.random()<0.6){spawnParticles(f.x+f.face*30,f.y+f.h*0.45,1,"#a3e635",140);spawnParticles(f.x-f.face*30,f.y+f.h*0.45,1,"#c084fc",140)}
-   if(f.flareTick<=0){f.flareTick=0.22;
-     var spHit=meleeHit(f,foe,88,58,6,110,f.face,-0.05);var spHit2=meleeHit(f,foe,88,58,6,110,-f.face,-0.05);
-     if(spHit||spHit2){for(var spi3=0;spi3<fighters.length;spi3++){var spt=fighters[spi3];if(spt!==f&&!spt.dead&&Math.abs(spt.x-f.x)<98&&Math.abs((spt.y+spt.h/2)-(f.y+f.h*0.45))<64)applyPoison(f,spt,0.8)}}
-     spawnParticles(f.x+f.face*36,f.y+f.h*0.45,5,"#a3e635",170);spawnParticles(f.x-f.face*36,f.y+f.h*0.45,5,"#c084fc",170);
-   }
- }
+ /* ORCHID ground down+J is ニーダウン now (user balance spec): a
+    single instant hit resolved entirely in startOrchidAttack — the
+    old スパイラルポイズン both-sides tick block was removed with it */
  /* ORCHID 飛翔 (up+K): while flyDur lasts she rises at vy -120 (the
     gravity step below holds it) and spins her vines: a both-sides
     6-damage lash every 0.3s. Flight ends when flyDur runs out. */
@@ -9105,7 +9112,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.guarding){f.guardDir=input.left?1:-1;f.face=f.guardDir;f.state="guard"}
  var RMAX=RUN_MAX*(f.speedMul||1),AMAX=AIR_MAX*(f.airMul||f.speedMul||1),RACC=RUN_ACC*(f.speedMul||1),AACC=AIR_ACC*(f.speedMul||1); /* per-character speed (AXE is much slower; SARA has separate ground/air caps) */
  if(f.char==="sara"&&f.state==="sflare"){RMAX*=0.4;AMAX*=0.4} /* ハンドフレア: her own movement crawls while both hands are jetting flame */
- if(f.char==="orchid"&&f.state==="ospiral"){RMAX*=0.3;AMAX*=0.3} /* スパイラルポイズン: her own movement is cut to x0.3 while spraying (user spec) */
  if(f.char==="kojiro"&&f.state==="sweep"){RMAX=0;AMAX=0} /* 風波: rooted — cannot move at all while the tornado lasts (user spec) */
  if(f.slowT>0){RMAX*=0.88;AMAX*=0.88} /* ORCHID ポイズンショット slow debuff: -12% movement for 2.0s (user spec) */
  if(f.frozen>0){RMAX*=0.45;AMAX*=0.45} /* 凍結 (user spec): while frozen the movement-speed CAPS themselves drop to x0.45 (ground and air) — together with the frozenFactor on acceleration above, a frozen fighter's movement speed is 0.45x for the whole duration, even if they were already running at full speed when the freeze landed (the over-cap bleed in the movement branches drags them down to the lowered cap) */
@@ -9780,6 +9786,7 @@ function drawOrchid(f){
  if(air&&f.vy>120)ctx.rotate(0.10);
  if(f.state==="ovine1"||f.state==="jkcombo")ctx.translate(9,0);
  if(f.state==="ohook")ctx.translate(10,0);
+ if(f.state==="oknee")ctx.translate(4,3); /* ニーダウン: she dips low as the vine slips out along the ground */
  if(f.state==="orise")ctx.translate(2,-3);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"orchid","#65a30d");
@@ -9788,7 +9795,7 @@ function drawOrchid(f){
  if(f.state==="ovine1"){thornVine(28,20,58,15)}
  else if(f.state==="ovine2"){ctx.strokeStyle="rgba(163,230,53,.7)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(8,22,30,-1.3,-0.4);ctx.stroke()}
  else if(f.state==="ohook"){thornVine(30,23,92,19)}
- else if(f.state==="ospiral"){for(var sm=0;sm<3;sm++){var sa2=time*9+sm*2.1;ctx.fillStyle=sm%2?"#c084fc":"#a3e635";ctx.beginPath();ctx.arc(43+Math.cos(sa2)*6,26+Math.sin(sa2)*6,2.2,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-43+Math.cos(sa2+3)*6,26+Math.sin(sa2+3)*6,2.2,0,6.29);ctx.fill()}}
+ else if(f.state==="oknee"){thornVine(8,56,62,53);ctx.strokeStyle=leafL;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(66,50,7,-0.9,0.7);ctx.stroke()} /* ニーダウン: a vine sneaks low along the ground and whips up at the foe's feet */
  else if(f.state==="odive"){ctx.fillStyle=purpC;ctx.beginPath();ctx.arc(23,55,6,0,6.29);ctx.fill();ctx.fillStyle=leafL;ctx.beginPath();ctx.arc(23,50,3,0,6.29);ctx.fill()} /* the poison fruit, held low */
  else if(f.state==="jkcombo"){thornVine(28,21,60,17)}
  else if(f.state==="oshot"){ctx.fillStyle="rgba(192,132,252,.8)";ctx.beginPath();ctx.arc(45,24,4.5+Math.sin(time*30)*1.2,0,6.29);ctx.fill();ctx.fillStyle="rgba(163,230,53,.8)";ctx.beginPath();ctx.arc(45,24,2.2,0,6.29);ctx.fill()}
