@@ -7382,8 +7382,11 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     lingers the full 1.2s after you step off it */
  if(f.onGround){for(var ip=0;ip<icePatches.length;ip++){var icp=icePatches[ip];if(icp.owner!==f&&Math.abs(f.x-icp.x)<icp.w/2&&Math.abs((f.y+f.h)-icp.y)<16)f.frozen=Math.max(f.frozen,1.2)}}
  if(f.dropT>0){f.dropT-=dt;if(f.dropT<=0)f.dropPlat=null}
- /* void / blast zones */
- if(f.y>WORLD_H+190||f.x<-320||f.x>WORLD_W+320){
+ /* void / blast zones — side blast widened (owner request): a fighter
+    launched sideways now flies 500u past the world edge before the KO
+    (was 320u each side), giving hard horizontal launches a little more
+    room to recover; the bottom blast line is unchanged */
+ if(f.y>WORLD_H+190||f.x<-500||f.x>WORLD_W+500){
    var credit=(time-f.lastAttackT<4&&f.lastAttacker&&f.lastAttacker!==f)?f.lastAttacker:null;
    killFighter(f,credit);
  }
