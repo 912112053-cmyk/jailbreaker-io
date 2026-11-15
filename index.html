@@ -429,6 +429,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["18:31"],tag:"修正",title:"入力同期：自分の押下入力が巻き戻しで消える問題を修正",
+  items:["オンライン対戦（入力同期）で、ホスト側の「押した瞬間」の入力（ジャンプ・J・K・L）が計算に届かず、押しっぱなしで拾う入力（A・D・U）だけが効く問題を修正しました。原因は、ホストの押下がオンライン用の入力キューではなくオフライン用の入力バッファへ振り分けられ、入力同期の計算からは一切読まれていなかったことです",
+         "自分の押下入力は、計算に使う前にフレームごとの入力履歴へ確定記録される経路に統一しました。相手へ送る入力バンドルの内容と、自分の計算に使う入力は常に一致します。巻き戻し（ロールバック）の再計算が何度起きても、自分の押下は必ずちょうど1回だけ反映されます。二度押しダッシュの押下も同じ経路に統一しました",
+         "試合ログに、自分の各押下アクション（ジャンプ/J/K/L/U）が計算に適用された回数が記録されるようになりました。保存方式（結果画面の「ログをダウンロード」を押した時だけ保存）は従来どおりです",
+         "ゲーム内容・技・数値・エフェクト・操作体系そのものに変更はありません"]},
  {date:"2026/11/15",times:["18:02"],tag:"修正",title:"入力同期：フリーズ復帰と再参加に対応",
   items:["オンライン対戦中に端末が数秒以上止まって（フリーズして）復帰した場合、その端末の入力状態をすべてリセットし、ホストへ復帰を伝えて完全な状態の再同期を受け、入力同期を再開するようになりました。止まっている間にキー状態が壊れて、復帰後に一部のキーだけ効かなくなる問題への対策です",
          "ウィンドウのフォーカスを失った時やタブが非表示になった時にも、押されたままのキー状態をすべて解放するようになりました",
@@ -513,11 +518,7 @@ var UPDATE_LOG=[
          "ワープの着地点・クールタイム・硬直など、その他の性能に変更はありません"]},
  {date:"2026/11/15",times:["12:55"],tag:"調整",title:"MIMI&SHADEのUワープの着地点を調整",
   items:["U「助けて！」のワープ着地点を、SHADEの真上からKでSHADEがMIMIのそばへ戻る時と同じ位置関係（SHADE位置＋向き×54）に変更しました",
-         "足元の高さは従来どおりSHADEの足元に一致します"]},
- {date:"2026/11/15",times:["12:32"],tag:"調整",title:"MIMI&SHADEの↓+K「これならできるよ！／つぶしてやル」を下方修正",
-  items:["MIMIの地面波はダメージ12→6、KB 420→210、射程 約640→約600に下方修正しました（弾速560・幅72は変更なし）",
-         "SHADEの拳はダメージ14→16／14→16／16→20に変わり、3発目のKBは880→920、判定は118×104→122×130に広がりましたが、発生が約0.22秒→0.25秒・0.50秒→0.65秒・0.78秒→0.95秒と遅くなり、当たった相手はSHADEの後ろ側へ吹き飛ぶようになりました",
-         "技全体が0.42秒→0.54秒、後硬直が0.6秒→1.1秒に伸びました"]},
+         "足元の高さは従来どおりSHADEの足元に一致します"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1029,7 +1030,8 @@ var keys={},buf={};
    so a held on-screen button behaves exactly like a held key for
    the hold-to-continue rule (see rbApplyInput / gatherPlayerInput) */
 var touchHeld={j:false,k:false,l:false,ult:false};
-function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
+function press(a){if(mode==="online"&&running&&typeof ls!=="undefined"&&ls&&ls.active){svPressQ.push(a);return} /* rollback match (v211): EVERY end — the host included — samples its presses through svSampleLocal into the frame-numbered confirmed history (lsSetConf / sv.inpHist) BEFORE any calculation uses them, and re-simulation reads only that history, so a press can never be consumed or lost by a rollback and the bundles shipped to peers carry exactly the bits the local calculation used. The old routing sent the HOST's presses to the offline buf instead (sbHostLive is always true on the host), where nothing in a rollback match ever consumes them: the host's W / J / K / L presses silently died while its held inputs (A / D / U) worked. In the snapshot insurance (ls.active false) the host is back on the local engine and its presses go to buf exactly as before. */
+ if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[];
@@ -1482,7 +1484,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v210";
+var BUILD_ID="v211";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2833,7 +2835,7 @@ function rbApplyInput(f,bits,F){
  f.hBack=(f.face===1&&!!(bits&1))||(f.face===-1&&!!(bits&2));
  var inp={left:!!(bits&1),right:!!(bits&2),down:!!(bits&4),jump:false,upHeld:!!(bits&8)};
  f.rbPrevJ=!!(bits&8);
- if(bits&16)inp.jump=true;
+ if(bits&16){inp.jump=true;mrecPress(f,"jump",F)} /* match recorder (v211): this press was applied to the calculation (see mrecPress) */
  if(bits&(512|1024|2048)){var dd=(bits&512)?-1:((bits&1024)?1:(inp.right?1:(inp.left?-1:f.face)));tryDash(f,dd)}
  var guardHeld=f.onGround&&(bits&4)&&((bits&1)||(bits&2));
  if(guardHeld){f.rbBj=-999;f.rbBk=-999;f.rbBl=-999;f.rbBu=-999}
@@ -2841,12 +2843,12 @@ function rbApplyInput(f,bits,F){
   if(bits&32)f.rbBj=F;if(bits&64)f.rbBk=F;if(bits&128)f.rbBl=F;if(bits&256)f.rbBu=F;
   if(f.attackCd<=0&&f.hitstun<=0){
    var tj=f.rbBj,tk=f.rbBk;
-   if(tj>-100&&tk>-100&&Math.abs(tj-tk)<=5&&F-Math.max(tj,tk)<=21){f.rbBj=-999;f.rbBk=-999;startAttack(f,"jk")}
-   else if(tj>-100&&F-tj>=3){if(F-tj<=21)startAttack(f,"j");f.rbBj=-999}
-   else if(tk>-100&&F-tk>=3){if(F-tk<=21)startAttack(f,"k");f.rbBk=-999}
+   if(tj>-100&&tk>-100&&Math.abs(tj-tk)<=5&&F-Math.max(tj,tk)<=21){f.rbBj=-999;f.rbBk=-999;mrecPress(f,"j",tj);mrecPress(f,"k",tk);startAttack(f,"jk")} /* match recorder (v211): both presses applied */
+   else if(tj>-100&&F-tj>=3){if(F-tj<=21){mrecPress(f,"j",tj);startAttack(f,"j")}f.rbBj=-999}
+   else if(tk>-100&&F-tk>=3){if(F-tk<=21){mrecPress(f,"k",tk);startAttack(f,"k")}f.rbBk=-999}
    else if(tj<=-100&&tk<=-100){
-    if(f.rbBl>-100){if(F-f.rbBl<=21)startAttack(f,"l");f.rbBl=-999}
-    else if(f.rbBu>-100){if(F-f.rbBu<=21)startAttack(f,"ult");f.rbBu=-999}
+    if(f.rbBl>-100){var tbl=f.rbBl;if(F-tbl<=21){mrecPress(f,"l",tbl);startAttack(f,"l")}f.rbBl=-999}
+    else if(f.rbBu>-100){var tbu=f.rbBu;if(F-tbu<=21){mrecPress(f,"ult",tbu);startAttack(f,"ult")}f.rbBu=-999}
    }
    /* HOLD-TO-CONTINUE (owner request): while J / U / L stays held
       (bits 4096 / 8192 / 16384), the NEXT stage or shot of a
@@ -4265,9 +4267,9 @@ function fighterDispName(f){
    the record unconditionally: an un-downloaded log is gone.
    No addresses or connection data are ever recorded — player
    names and build ids only. */
-var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[]};
+var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[],press:{jump:0,j:0,k:0,l:0,ult:0},pressSeen:{}}; /* press / pressSeen (v211): how many of MY OWN presses the calculation actually applied, per action — internal names jump / j / k / l (= the U shoot key) / ult (= the L key); pressSeen dedupes by press frame so rollback re-simulation can never count one press twice */
 function mrecReset(){
- mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];mrec.frz=[];mrec.evt=[];
+ mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];mrec.frz=[];mrec.evt=[];mrec.press={jump:0,j:0,k:0,l:0,ult:0};mrec.pressSeen={};
 }
 function mrecStart(){
  mrecReset();
@@ -4281,6 +4283,27 @@ function mrecStart(){
  mrec.trans.push({el:0,f:0,txt:"入力同期で開始"});
 }
 function mrecElapsed(){return mrec.startAt?((performance.now()-mrec.startAt)/1000):0}
+/* one of MY OWN presses was applied to the calculation (v211):
+   called from the deterministic applier (rbApplyInput) at the
+   exact points a press fires — the jump bit reaching the step
+   input, a buffered J / K / J+K / U(l) / L(ult) press releasing
+   its move. Only my own fighter (P1) and only while input sync
+   is live are counted; hold-to-continue auto-fires are not
+   presses and are never counted. pf is the frame the press was
+   filed under in the confirmed history: rollback re-simulation
+   re-runs that same press under the same frame, so the seen-set
+   keeps the count at exactly one per press no matter how often
+   its frames are re-run. A press the game itself eats (guard
+   held, buffer expired) never reaches a firing point and is not
+   counted — the number is what the calculation truly applied. */
+function mrecPress(f,act,pf){
+ if(!mrec.on||typeof ls==="undefined"||!ls||!ls.active)return;
+ if(mode!=="online"||f!==P1)return;
+ var key=act+":"+pf;
+ if(mrec.pressSeen[key])return;
+ mrec.pressSeen[key]=1;
+ mrec.press[act]=(mrec.press[act]||0)+1;
+}
 function mrecArrive(idx){
  if(!mrec.on)return;
  var now=performance.now(),last=mrec.arrLast[idx];
@@ -4361,6 +4384,12 @@ function mrecBuildText(){
  L.push("巻き戻し:");
  L.push("  発生回数: "+ls.resimCount+" 回");
  L.push("  最大深度: "+ls.maxResim+" フレーム");
+ L.push("自分の押下が計算に適用された回数（入力同期中）:");
+ L.push("  ジャンプ: "+(mrec.press.jump||0)+" 回");
+ L.push("  J: "+(mrec.press.j||0)+" 回");
+ L.push("  K: "+(mrec.press.k||0)+" 回");
+ L.push("  L: "+(mrec.press.ult||0)+" 回");
+ L.push("  U: "+(mrec.press.l||0)+" 回");
  L.push("再同期:");
  if(mrec.rs.length){
   for(i=0;i<mrec.rs.length;i++){var rs=mrec.rs[i];L.push("  "+rs.el.toFixed(1)+"s / frame "+rs.f+" — 再同期 #"+rs.n+"（理由: "+mrecReasonBase(rs.code)+"）")}
@@ -5679,7 +5708,7 @@ window.addEventListener("keydown",function(e){
    keys[k]=true;press(k);
    if(running&&P1&&(k==="left"||k==="right")){
      var now=performance.now();
-     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
+     if(now-lastTap[k]<280){if(typeof ls!=="undefined"&&ls&&ls.active&&mode==="online"){svPressQ.push(k==="left"?"dashL":"dashR")}else if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}} /* v211: in a rollback match the double-tap dash press takes the same svPressQ route as every other press (see press()) — the host must not fire it straight into the live fighter, which the deterministic re-simulation would then not reproduce */
      lastTap[k]=now;
    }
  }
