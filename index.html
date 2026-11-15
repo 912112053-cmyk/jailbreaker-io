@@ -430,6 +430,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["20:12"],tag:"修正",title:"MIMI&SHADE：送り出したSHADEが他のプレイヤーに引っ張られる問題を修正",
+  items:["MIMI&SHADEのK「いってらっしゃいSHADE」でSHADEを前方へ送り出して追尾状態（SHADEがMIMIと同じ動きをする状態）にした後、他のプレイヤーがSHADEの近くに行くと、SHADEの動きがそのプレイヤーに引っ張られるように乱れる問題を修正しました",
+         "原因は、追尾の基準点（前回の計算時点でのMIMIの位置）が、オンライン対戦の巻き戻し（ロールバック）・再同期・スナップショット採用で状態を復元する際の保存対象に入っていなかったことです。復元されるたびに基準点だけが復元前の位置に残り、次の計算で「MIMIが移動した」と誤認したぶんがSHADEへコピーされていました。他のプレイヤーの入力が届いて巻き戻しや補正が起きるたびにSHADEが引きずられていたのはこのためです。基準点を保存・復元の対象に含め、スナップショット採用時と強制再同期時には採用した位置へ基準点を置き直すようにしました",
+         "あわせて、オンライン対戦で相手キャラの表示位置をなめらかに追随させる処理（グライド）がMIMI本体だけに効いてSHADEには効いておらず、補正のたびにSHADEだけが取り残されて見える問題も直しました。SHADEも本体と同じだけグライドします",
+         "技の性能・数値・操作に変更はありません"]},
  {date:"2026/11/15",times:["19:30"],tag:"修正",title:"相手キャラの表示を安定化",
   items:["オンライン対戦（入力同期）で、相手キャラの描画方法を変えました。これまでは相手を「予測した最新の状態」で描いていたため、相手の入力が固まって届いて予測が外れるたびに、表示位置が直されてブレ・瞬間移動・急加速に見えていました。これからは相手キャラを約8フレーム（約133ms）過去の状態から描き、その前後の状態の間を補間して滑らかに動かします。その時点の状態は入力が確定済みであることがほとんどなので、予測の当たり外れに表示が引っ張られなくなります",
          "自分のキャラは従来どおり最新の状態を遅延ゼロで描きます。計算・当たり判定・予測・巻き戻し（ロールバック）の仕組み自体には一切手を入れていません。変えたのは相手キャラの描画に使う状態だけです",
@@ -523,10 +528,7 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["13:14"],tag:"新機能",title:"新キャラ「No.66」が参戦",
   items:["両腕にガトリングガンと迫撃砲を携えた、キャタピラーメカ重機「No.66」が10人目のキャラとして参戦しました",
          "特殊ゲージ【熱量】を持ちます。ワザを振るうたび（当たらなくても）熱量が溜まり、65％を超えると灼熱状態になって体から蒸気が噴き出し、攻撃に燃焼1.2秒が追加されます。100％に到達するとオーバーヒートで2.5秒間完全硬直します（硬直後は熱量60まで冷却）。ワザをやめて3.5秒たつと、0.5秒ごとに4ずつ冷えていきます",
-         "技はガトリングの連射（J2／K／J+K）、迫撃砲の手榴弾（J3／↓+J／↓+K／空中↓+J）、突進のメタルバッシュ、真下の爆発で跳ぶブラストアップ、ホーミングミサイル（U）、背中から6発のホーミングを放つウルト「バーストエンドフォース」です。詳しくは技一覧のNo.66タブで確認できます"]},
- {date:"2026/11/15",times:["13:14"],tag:"調整",title:"MIMI&SHADE：U「助けて！」のワープ位置をSHADEより少し高く",
-  items:["MIMI&SHADEのU「助けて！」でMIMIがワープする位置を、SHADEの足元に一致する高さから、SHADEより少し高い位置（足元がSHADEの足元より40高い）に変更しました",
-         "横の位置関係（SHADEがMIMIの後ろに付く並び）・クールタイム・硬直など、その他の性能に変更はありません"]}
+         "技はガトリングの連射（J2／K／J+K）、迫撃砲の手榴弾（J3／↓+J／↓+K／空中↓+J）、突進のメタルバッシュ、真下の爆発で跳ぶブラストアップ、ホーミングミサイル（U）、背中から6発のホーミングを放つウルト「バーストエンドフォース」です。詳しくは技一覧のNo.66タブで確認できます"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1492,7 +1494,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v214";
+var BUILD_ID="v215";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2937,7 +2939,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","fieldCd","heat","heatIdle","heatTick","heatStun"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -3268,6 +3270,7 @@ function svHardResyncP1(s){
  sv.corrX=Math.max(-280,Math.min(280,shownX-f.x));
  sv.corrY=Math.max(-200,Math.min(200,shownY-f.y));
  f.x+=sv.corrX;f.y+=sv.corrY;f.px=f.x;f.py=f.y;
+ if(f.char==="mimi"){f._shPX=f.x-sv.corrX;f._shPY=f.y+f.h-sv.corrY} /* 【SHADE追尾】 re-base SHADE's follow reference on the resynced logic position (the same corr-free point predHist records below): the resync jump is an adoption, not a movement — without this the next prediction step copies it into SHADE and SHADE lurches along with whatever correction the snapshot carried */
  sv.predHist.length=0;
  sv.predHist.push({t:performance.now(),x:f.x-sv.corrX,y:f.y-sv.corrY});
  if(s.grb){if(!f.grabBy)f.grabBy=svFindWarden()}
@@ -3385,7 +3388,7 @@ function svReconcile(snap){
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
- f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht}if(typeof sf.shp==="number")f.shHp=sf.shp;if(typeof sf.shg==="number")f.shGoneT=sf.shg; /* 【闇ゲージ】 snapshot darkness gauge / vanish countdown — see svApplySnapP1 */if(typeof sf.ht==="number")f.heat=sf.ht;if(typeof sf.hst==="number")f.heatStun=sf.hst; /* No.66 【熱量】 snapshot heat gauge / overheat lock — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
+ f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=sf.sc;if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht}if(typeof sf.shp==="number")f.shHp=sf.shp;if(typeof sf.shg==="number")f.shGoneT=sf.shg;if(typeof sf.shx==="number"){f._shPX=(typeof sf.x==="number")?sf.x:f.x;f._shPY=(typeof sf.y==="number")?sf.y+f.h:f.y+f.h} /* 【SHADE追尾】 an adopted snapshot re-bases SHADE's follow reference on the adopted position, so the follow copy never measures a displacement from a pre-adoption point */ /* 【闇ゲージ】 snapshot darkness gauge / vanish countdown — see svApplySnapP1 */if(typeof sf.ht==="number")f.heat=sf.ht;if(typeof sf.hst==="number")f.heatStun=sf.hst; /* No.66 【熱量】 snapshot heat gauge / overheat lock — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
  f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
@@ -8559,8 +8562,13 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
         dash, lunge and knockback alike), so their distance holds
         and the pair still move as one. A teleport-sized jump (her
         U warp onto SHADE, a respawn) is not a movement: skip it
-        and just re-sync the reference point below */
-     if(typeof f._shPX==="number"){
+        and just re-sync the reference point below. The reference
+        point (_shPX / _shPY) is part of the saved fighter state
+        (RB_FSTATE) and is re-based by every snapshot adoption /
+        hard resync, so a rollback or a correction driven by OTHER
+        players' inputs can never leak into this copy as a phantom
+        displacement that drags SHADE toward them */
+     if(typeof f._shPX==="number"&&typeof f._shPY==="number"){
        var shMx=f.x-f._shPX,shMy=(f.y+f.h)-f._shPY;
        if(Math.abs(shMx)<=140&&Math.abs(shMy)<=140){f.shX+=shMx;f.shY+=shMy;if(f.shX<60)f.shX=60;if(f.shX>WORLD_W-60)f.shX=WORLD_W-60}
      }
@@ -10763,7 +10771,7 @@ function draw(){
            }
          }
          lsRenderPrevTgt[drp]={x:rp.x,y:rp.y};
-         var gv=lsRenderGlideVec(drp);if(gv){df4.x+=gv.x;df4.y+=gv.y}
+         var gv=lsRenderGlideVec(drp);if(gv){df4.x+=gv.x;df4.y+=gv.y;if(df4._rshx!==undefined){df4.shX+=gv.x;df4.shY+=gv.y}} /* the glide moves SHADE with its owner — gliding the body alone would leave SHADE behind at the un-glid spot, visibly dragged off the pair's formation whenever a correction moves MIMI */
        }
      }
    }
@@ -10775,7 +10783,7 @@ function draw(){
       already the corrected value and is never delayed. Your own
       fighter (net.myIdx) is excluded. */
    if(typeof ls!=="undefined"&&ls&&ls.active&&typeof lsSmooth!=="undefined"){
-     for(var dsm=0;dsm<dList.length;dsm++){var df3=dList[dsm];if(!df3||df3.px==null||dsm===net.myIdx||dDelayed[dsm])continue;var svec=lsSmoothVec(dsm);if(svec){df3.x+=svec.x;df3.y+=svec.y}}
+     for(var dsm=0;dsm<dList.length;dsm++){var df3=dList[dsm];if(!df3||df3.px==null||dsm===net.myIdx||dDelayed[dsm])continue;var svec=lsSmoothVec(dsm);if(svec){df3.x+=svec.x;df3.y+=svec.y;if(typeof df3.shX==="number"&&df3._rshx===undefined){df3._rshx=df3.shX;df3._rshy=df3.shY;df3.shX+=svec.x;df3.shY+=svec.y}} /* SHADE rides the same glide as its owner (stashed in _rshx/_rshy so the end-of-draw restore undoes it like every other render offset) */}
    }
    /* match recorder (v214): the visual-correction metric — a remote
       fighter's final drawn position (delayed interpolation + glide,
