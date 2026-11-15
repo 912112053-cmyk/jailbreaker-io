@@ -434,6 +434,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["01:30"],tag:"調整",title:"KAIRO：↓+J「アイスフット」の判定を前方向に変更",
+  items:["↓+J「アイスフット」：判定 80×34→前80×34に変更しました。判定は前方だけに出るようになり、背後の相手には当たらなくなります（判定の大きさ自体は変わりません）",
+         "吹き飛ばしはこれまで通り KB 620（真上方向）で、当たった相手は横へは飛ばず真上へ吹き飛びます。ダメージ8・被弾硬直0.36秒・氷の床（幅150・3.5秒残る／乗った相手は凍結1.2秒）など、その他の数値は変更ありません",
+         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv225に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["00:30"],tag:"調整",title:"KAIRO：前+J「ブリンク斬り」の調整（KB低下＋連続使用ペナルティ追加）",
   items:["前+J「ブリンク斬り」：KB 440→180に変更しました",
          "追加仕様：1ヒット目を当ててから2秒以内にもう一度使うと、その回の後硬直が0.6秒（完全硬直）に変化します（その間は移動・ジャンプ・ダッシュ・次の技のすべてができません）。ヒットするたびに2秒の猶予は数え直されます",
@@ -664,7 +668,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','72×64')+mvS('被弾硬直','0.36秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ<b>高速移動</b>し、移動しながら<b>大きな氷の爪でひっかく</b>。経路の間にいた相手にも当たる（ヒットは1回まで）。ダッシュ中・走行中の J でも出る。さらに、<b>1ヒット目を当ててから2秒以内にもう一度使うと、その回の後硬直が0.6秒（完全硬直）に変化する</b>（その間は移動・ジャンプ・ダッシュ・次の技のすべてができない）。ヒットするたびに2秒の猶予は数え直される。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','180')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.34秒')+mvS('判定','80×62')+mvS('被弾硬直','0.4秒')+mvS('追加効果','2秒以内の再使用で後硬直が0.6秒（完全硬直）に変化'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','620（真上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.26秒')+mvS('判定','80×34')+mvS('被弾硬直','0.36秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を前方へ突き出して足払いをする。判定は前方だけに出る（背後の相手には当たらない）。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','620（真上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.26秒')+mvS('判定','前80×34')+mvS('被弾硬直','0.36秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','66×64')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — メテオネイル</b> <span style="color:#f59e0b;font-weight:900">新技（急降下斬りから変更）</span><p>本人は突っ込まず、<b>重力が70%軽減</b>されてゆっくり落ちながら、0.26秒後に<b>真下へ氷の釘（ネイル）を叩き落とす</b>。<b>メテオ判定</b>あり（当たった相手は真下へ叩き落とされる）。旧「急降下斬り」の斜め突っ込みと着地衝撃波は削除された。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700（真下方向）')+mvS('発生','0.26秒')+mvS('全体','0.56秒（重力70%軽減）')+mvS('後硬直','0.47秒')+mvS('判定','96×70（真下方向）'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','16＋20')+mvS('KB','300／710')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','72×64／80×70')+mvS('被弾硬直','0.3秒／なし'))+'</div></div>'
@@ -1607,7 +1611,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v224";
+var BUILD_ID="v225";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -8220,7 +8224,7 @@ function startAttack(f,type){
         and chills (slows) any foe standing on it */
      f.state="lowclaw";f.stateT=0.12;f.attackCd=0.19;f.comboWin=0; /* アイスフット 後硬直 (user spec): 0.30秒 -> 0.26秒 — attackCd 0.23 -> 0.19, so the displayed recovery (attackCd + the shared 0.07) goes 0.30s -> 0.26s; 全体 (stateT) 0.12s unchanged */
      f.vx=f.face*344;
-     meleeHit(f,foe,80,34,8,620,0,-1.0,0.36); /* アイスフット (user spec): KB 560（上方向: dir f.face / up -0.6）-> 620（真上: dir 0 / up -1.0, the house straight-up convention — same as ORCHID ツタアッパー）, box 80x34 / 被弾硬直 0.36s / damage 8 unchanged */
+     meleeHit(f,foe,80,34,8,620,0,-1.0,0.36,false,0,null,false,f.face); /* アイスフット (user spec): KB 560（上方向: dir f.face / up -0.6）-> 620（真上: dir 0 / up -1.0, the house straight-up convention — same as ORCHID ツタアッパー）, box 80x34 / 被弾硬直 0.36s / damage 8 unchanged. 判定 (user spec): 80×34（中央）-> 前80×34 — the box now sits ONLY in front (boxDir f.face shifts the tested box forward) while the launch stays 真上 (dir 0 / up -1.0 unchanged, so a hit foe still flies straight up with no sideways drift) */
      icePatches.push({x:f.x+f.face*36,y:f.y+f.h,w:150,t:3.5,owner:f});
      spawnParticles(f.x+f.face*22,f.y+f.h-6,9,"#bae6fd",150);
      beep(760,.07,"square",.045);
@@ -8344,8 +8348,13 @@ function startAttack(f,type){
  }
  addRecovery(f);applyLandLag(f,wasAir);
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
- /* hitList (optional): an array shared across several meleeHit calls
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxDir){
+ /* boxDir (optional): when given, the hit BOX is centred in this
+    direction instead of dir — dir keeps driving only the knockback.
+    A move whose box sits in front while its launch stays straight up
+    (dir 0 / up -1.0) passes its facing here: KAIRO アイスフット
+    (判定 前80×34, KB 620 真上) is the current user of this split.
+    hitList (optional): an array shared across several meleeHit calls
     of ONE move — a fighter already recorded in it is skipped, so a
     two-sided move (front call + back call) never hits the same foe
     twice where the two boxes overlap.
@@ -8356,7 +8365,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
     attacker's release-time facing direction (see the grab system
     note above applyGrabHit). The burn / bleed riders below still
     apply on a grab connect, exactly as on a normal hit. */
- var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
+ var cx=att.x+(boxDir==null?dir:boxDir)*(range*0.55),cy=att.y+att.h*0.45;
  dbgBox(cx,cy,range*1.44,h*2,"255,45,120",16); /* hitbox viewer (おかき only): the exact box this call tests — half-extents range*0.72 across / h up-down from (cx,cy) */
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
