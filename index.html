@@ -426,6 +426,19 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["09:00"],tag:"修正",title:"オンライン対戦：自分のキャラに状態異常の表示が出ない問題を修正",
+  items:["オンライン対戦（直接接続（P2P）／サーバー経由の両方）で、自分のキャラが受けた状態異常の見た目が自分の画面にだけ出ない問題を修正しました。燃焼の炎、毒の泡、出血（SMILEY覚醒の追加効果）、スローの滴といった表示が、相手のキャラには出るのに自分のキャラには出ていませんでした",
+         "原因は、自分のキャラの「予測表示」（入力した瞬間に手元で先行して動く方式）が、ホスト（サーバー）から届く状態と照合する際に、状態異常の残り時間を丸ごと取り込んでいなかったことです。状態異常は相手の攻撃で付けられるものなので、自分の手元の予測だけでは発生させられず、照合で受け取るしかありませんでした。あわせて、SMILEYの覚醒表示や無敵時間の点滅も、ホスト側の状態を確実に反映するようになりました",
+         "取り込むのは表示用の残り時間だけで、ダメージの計算はこれまで通りホスト（サーバー）が行います。技の数値・物理・予測表示の動き自体には変更はありません"]},
+ {date:"2026/11/15",times:["08:52"],tag:"修正",title:"技一覧：↑+K 3技に「全体」を表示追加（表示のみの修正）",
+  items:["技一覧（技データ表示）で「全体」の表示が欠けていた3技に、実装どおりの全体時間を追加しました：TRAVIS ↑+K「シングソングジャンプ」に全体 1.14秒、SMILEY ↑+K「チェーンジェイル」に全体 0.31秒、MIMI&SHADE ↑+K「SHADEブランコ」に全体 0.34秒",
+         "これは表示だけの修正です。技の性能・数値・挙動には一切変更はありません（実装の全体時間そのままを載せました）",
+         "被弾硬直については、実装に固定値がなく相手のHPやノックバックで変わる可変値のため、これまで通り表示していません"]},
+ {date:"2026/11/15",times:["08:50"],tag:"修正",title:"直接接続（P2P）：ゲストの約3秒遅延が残る問題へ追加対策",
+  items:["前回の対策（ホストの送信待ちの量を見て、詰まっていたら見送る方式）でも、端末やブラウザによっては送信待ちの量を正しく測れず、詰まりに気づけないままゲストの遅延が約3秒まで膨らむ場合がありました。今回、詰まりの測り方そのものを変えました",
+         "ゲストが「状態をどこまで受け取ったか」を、自分の入力と一緒にホストへ知らせるようにしました。ホストはゲストごとに未達分を直接数え、約0.23秒分を超えて遅れているゲストには新しい状態を送らず、受け取りが追いついてからその時点の最新状態を送ります。端末側の計測に頼らないため、どの環境でも遅延が秒単位に育つことはなくなります。詰まりが長引いた場合も、一定間隔で最新状態を1つ送って追いつくきっかけを作るため、画面が止まったままにはなりません",
+         "エフェクト（ヒットエフェクトやKOバナーなど）の通知もゲストごとの保持に変えました。詰まっているゲストの分はそのゲスト用にためておき、流れが戻った時点でまとめて届きます。1人の詰まりで他のゲストの表示が止まることもありません",
+         "変更は直接接続（P2P）のときだけです。サーバー経由の対戦、技・数値・物理には変更はありません"]},
  {date:"2026/11/15",times:["08:10"],tag:"修正",title:"直接接続（P2P）：ゲストの遅延が約3秒まで膨らむ問題を修正",
   items:["P2P対戦でゲスト（2人目以降）の画面が約3秒遅れる問題を修正しました。原因は配信の「詰まり」でした：ホストが毎フレーム状態を送り続ける一方、接続の送信待ち行列は順番厳守で古いデータを一切捨てないため、回線の処理が少しでも追いつかないと、古い状態が秒単位で溜まってゲストに届いていました。ゲストは数秒前の世界を見続け、自分のキャラも古い状態に引き戻されていたため、遅延がどんどん大きく感じられました",
          "ホスト側の配信を「最新だけ送る」方式に変えました。ゲスト宛の送信待ちが一定量を超えている間は、その回の状態送信を見送り、次に送れるタイミングでその時点の最新状態を送ります。状態は毎回まるごと送る形式なので、見送っても情報は失われず、待ち行列が秒単位に膨らむこと自体が起きなくなりました。エフェクトの通知も、詰まっている間は捨てずに保持し、流れが戻ってから送ります",
@@ -505,22 +518,6 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["01:02"],tag:"修正",title:"対戦中に表示される名前をプレイヤーネームに変更",
   items:["オンライン対戦中、キャラの頭上と画面の順位表に表示される名前が、キャラクター名からプレイヤーネーム（設定している人はいわゆる表示名、未設定の人はユーザーネームやゲスト名）に変わりました。ロビーや結果画面の表示と揃っています",
          "VS CPU・トレーニングなどオフラインの対戦では、これまでどおりキャラクター名が表示されます。技や数値への変更はありません"]},
- {date:"2026/11/15",times:["00:33"],tag:"修正",title:"ONLINE VS のラグ・カクつきを軽減（回線適応型の補間に変更）",
-  items:["オンライン対戦の描画遅延を固定80msから「回線の揺れに合わせて自動調整（約52〜150ms）」に変更しました。回線が不安定な相手と対戦しても、キャラが止まったり瞬間移動したりしにくくなります",
-         "自分のキャラは他のキャラより少し手前（約38ms前）のタイミングで描画されるようになり、操作に対する反応が速くなりました",
-         "スナップショットが一瞬途切れた時は、速度から先の位置を予測して滑らかに繋ぐようになりました（最大約120msまで）。固まってからワープするような動きが減ります",
-         "攻撃・ダッシュ・ジャンプなどのボタン入力は、送信タイミングを待たずに即座にサーバーへ送られるようになりました（最大で約33ms早く届きます）",
-         "画面右上の表示に、オンライン中は現在の描画遅延（ms）が併記されるようになりました。技のダメージや判定などの対戦バランス数値に変更はありません"]},
- {date:"2026/11/15",times:["00:04"],tag:"修正・調整",title:"MIMI&SHADE：空中↓+J「落ちちゃう！」を削除し、新技「落として！！」に変更",
-  items:["空中↓+J「落ちちゃう！／たすけるヨ！」を削除しました：お尻から急降下するダイブ本体（16ダメージ）、着地の衝撃波2段（12＋10）、着地と同時に出ていた闇フィールド（0.5秒ごとに4ダメージ）はすべて無くなります",
-         "新技「落として！！」：MIMIは発動と同時に0.32秒間 空中で静止し、真下へぬいぐるみで2回攻撃します（ダメージ5＋5／KB560／発生 即時（2回目は0.16秒後）／判定 下方向98×68／被弾硬直0.32秒／全体0.32秒／後硬直0.36秒）。ダイブではないので着地硬直もありません",
-         "同時にSHADEは、自分のいる位置で真下へすさまじい速度で拳を振り下ろします（ダメージ24／KB700（下方向）・メテオ判定あり／発生0.36秒／全体0.66秒／判定 下方向112×92）。当たった相手は真下へ叩き落とされます",
-         "技一覧の空中↓+Jの行も「落として！！」の新しい内容・数値に合わせて更新しました",
-         "なお、この変更はこのページ内蔵の対戦計算（ローカル対戦・CPU戦）のもので、オンライン対戦のサーバー側計算への同期は別途行います"]},
- {date:"2026/11/14",times:["23:35"],tag:"見た目変更",title:"TRAVIS／SMILEYの体の大きさを他キャラと同じ背丈に統一",
-  items:["TRAVISとSMILEYは、ドット絵シートの中で体が他キャラより大きく描かれていたため（待機ポーズの体の高さで TRAVIS 約1.15倍／SMILEY 約1.2倍）、試合中の表示を縮小して、WARDENやSARAなど他キャラと同じ背丈に揃えました。SMILEYの覚醒（Berserker）時の姿も同じ大きさに揃えています",
-         "縮小は足の裏を中心に行っているので、地面や台への接地位置はこれまで通りぴったり合っています",
-         "見た目だけの変更です：当たり判定・移動や技の数値・エフェクトには変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -661,7 +658,7 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +mvSpec(mvS('HP','360')+mvS('地上速度','300')+mvS('空中速度','270')+mvS('受けKB','×0.72（とても吹っ飛びにくい）')+mvS('ダッシュ','840')+mvS('ウルト溜まり','標準（約0.6倍）'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — 壊斧</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予1.0秒・全2段</span><p>正面に斧を振りかざして攻撃する。チェーンは3段から2段に短縮され、その代わり後硬直が大幅に短くなり（0.77秒→0.36秒）、当てた相手には<b>被弾硬直0.4秒</b>が保証される。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','400')+mvS('発生','即時')+mvS('全体','0.48秒')+mvS('後硬直','0.36秒')+mvS('被弾硬直','0.4秒')+mvS('判定','106×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — ヘッドロック</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>斧ではなく<b>頭突き</b>で相手の頭を粉砕する攻撃。30ダメージ＋KB770で大きく吹っ飛ばす、チェーンの締め。</p>'+mvSpec(mvS('ダメージ','30')+mvS('KB','770')+mvS('発生','即時')+mvS('全体','0.54秒')+mvS('後硬直','0.78秒')+mvS('判定','112×72'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — ヘッドロック</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>斧ではなく<b>頭突き</b>で相手の頭を粉砕する<b>掴み技</b>。ヒットした相手を目の前に<b>0.4秒間固定（完全硬直）</b>し、その後、向いている方向へKB770で投げ飛ばす、チェーンの締め。ダメージは掴んだ瞬間に入る。</p>'+mvSpec(mvS('ダメージ','30')+mvS('KB','770（0.4秒後に発生）')+mvS('発生','即時')+mvS('全体','0.54秒')+mvS('後硬直','0.78秒')+mvS('判定','112×72')+mvS('掴み','0.4秒固定→投げ'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — 突進</b><p>前方に突進（速度720）しながら攻撃する。全体0.30秒・後硬直0.88秒に短縮され、ダメージと吹っ飛ばしも強化された。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.88秒')+mvS('判定','110×66')+mvS('突進速度','720'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — 退き薙ぎ</b><p>斬りながら後ろへ下がる。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','420')+mvS('発生','即時')+mvS('全体','0.52秒')+mvS('後硬直','0.79秒')+mvS('判定','102×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — 昇り薙ぎ</b><p>斬り上げながら跳ぶ対空。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','460（上吹き強）')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.81秒')+mvS('判定','92×92')+mvS('上昇','vy -420'))+'</div></div>'
@@ -735,7 +732,7 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>K — ボディブロー</b><p>素早い腹パン。拳から金と紫の音波が花のように咲く豪華なエフェクト。出が速く、牽制と割り込みに使える。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','680')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','102×66'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1020')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×66')+mvS('着地硬直','0.54秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動と<b>同時に</b>、真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。弾を撃った本人は、その場で<b>0.8秒間、空中で静止</b>して留まる（静止が終わると落下に戻る）。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','即時')+mvS('全体','0.80秒')+mvS('静止','0.8秒（空中）')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('全体','1.14秒')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできず、浮いた台の上でも台すり抜けはできない</b>。さらに歌い終わった後の<b>後硬直2.5秒も完全硬直</b>で、その間は移動・ジャンプ・ダッシュ・ワザのすべてができない大きな隙になる。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','2.5秒（完全硬直）')+mvS('判定','左右210×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.5秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740'))+'</div></div>'
@@ -757,7 +754,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。上から下への切り裂きに続き、刺突で相手の心臓を貫く二連撃で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 連続ナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>その場で包丁を振り回し続ける連続斬り。1ヒットごとに相手を0.2秒硬直させるので当て続ければ逃げられず、<b>最後の16ヒット目だけが KB 660 で吹っ飛ばす</b>。全体と後硬直はどちらも<b>完全硬直</b>（移動・ジャンプ不可）で、隙は大きい。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 連続エアナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>空中に留まって振り回す連続ナイフ。性能は地上版と同じで、最後の一撃だけが吹っ飛ばす。空中↓+Kでも出る（旧ダイブスタブは削除）。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.31秒')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>足元へ包丁を2回突き刺す<b>2段技</b>。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は1.1秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','1.1秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って10秒間「Berserker」状態になる。発動した瞬間、背後に大鎌を持った巨大な死神（キャラの約2.6倍の高さ）が1秒間だけ姿を現す。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+14%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.9秒になり、近接ヒットで「出血」を付ける（0.4秒ごとに2ダメージ、1.6秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの15%を回復</b>する。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','10秒')+mvS('移動速度','+14%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.9秒')+mvS('出血','2ダメ／0.4秒・1.6秒間')+mvS('回復','与えたダメージの15%')+mvS('無敵','なし'))+'</div></div>'
@@ -771,11 +768,11 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、少し遅れてSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 13')+mvS('KB','800／770')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.52秒')+mvS('後硬直','0.58秒')+mvS('判定','MIMI 80×62／SHADE 134×98')+mvS('被弾硬直','0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。SHADEの手は当たった相手を<b>真上</b>へ吹き飛ばす。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／520（真上）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んでMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（MIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んで0.4秒間固定（完全硬直）してからMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（0.4秒後にMIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落として！！</b><p>MIMIは<b>発動と同時に0.32秒間 空中で静止</b>し、そのまま真下へ<b>ぬいぐるみで2回攻撃</b>する（1回目 発生即時／2回目 0.16秒後）。同時にSHADEは<b>すさまじい速度で拳を振り下ろし</b>、真下の相手を<b>メテオ</b>で叩き落とす。旧「落ちちゃう！」のお尻ダイブ・着地衝撃波・闇フィールドは<b>削除</b>された。</p>'+mvSpec(mvS('ダメージ','MIMI 5＋5／SHADE 24')+mvS('KB','MIMI 560／SHADE 700（下方向）')+mvS('発生','MIMI 即時／SHADE 0.36秒')+mvS('全体','MIMI 0.32秒／SHADE 0.66秒')+mvS('後硬直','0.36秒')+mvS('判定','MIMI 下方向98×68／SHADE 下方向112×92')+mvS('被弾硬直','MIMI 0.32秒')+mvS('追加効果','MIMIは0.32秒間 空中で静止／SHADE メテオ判定'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K／空中K — いってらっしゃいSHADE＆助けてSHADE！！／いってくるヨMIMI＆イマいくよMIMI！！</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・完全硬直</span><p>SHADEがMIMIの<b>近くにいる時</b>は「いってらっしゃいSHADE」：SHADEが前方へ大きく移動する（送り出した後もSHADEはMIMIと同じ動きをし、この間もSHADEはワザに合わせて技を出す）。SHADEが<b>離れている時</b>は「助けてSHADE！！」：SHADEがMIMIの位置へ戻ってくる。攻撃判定はない。後硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュ・他のワザは一切できない。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.3秒')+mvS('後硬直','0.52秒（完全硬直）')+mvS('移動距離','SHADE 前方約300'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒・ジャンプ回復</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。使うと<b>ジャンプ回復</b>：二段ジャンプが回復する。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — SHADEブランコして！！／ブランコだナ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒・ジャンプ回復</span><p>SHADEがMIMIの位置まで移動してきて、MIMIを手に乗せて真上へ大きく上昇させる。離れていたSHADEも呼び戻される。攻撃判定はない。使うと<b>ジャンプ回復</b>：二段ジャンプが回復する。着地すると<b>着地硬直0.3秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.45秒')+mvS('着地硬直','0.3秒')+mvS('上昇','vy -1000')+mvS('再使用','2.4秒')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — これならできるよ！／つぶしてやル</b><p>MIMIは<b>相手の足元に光の魔法</b>を撃つ（約0.25秒後、相手のいる場所に光の柱。当たらなければ空振り）。同時にSHADEは上から腕を出して<b>相手を踏み潰す</b>（約0.22秒後、SHADEの位置の真下へ腕が落ちる）。</p>'+mvSpec(mvS('ダメージ','MIMI 14／SHADE 18')+mvS('KB','620（真上寄り）／820')+mvS('発生','約0.25秒／約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.6秒')+mvS('判定','MIMI 相手の足元 84×90／SHADE 120×110')+mvS('射程','MIMI 約460以内'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 助けて！／おいでMIMI</b> <span style="color:#38bdf8;font-weight:900">ワープ・ダメージなし・クールタイム1.0秒・完全硬直</span><p>MIMIが<b>SHADEの位置へワープ</b>する。SHADEを前方へ送り出しておけば、一瞬でそこまで逃げたり攻め込んだりできる。ワープ後の硬直は<b>完全硬直</b>：動けるようになるまで移動・ジャンプ・ダッシュはできない。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.25秒')+mvS('後硬直','0.62秒（完全硬直）')+mvS('再使用','1.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 大好きだよSHADE／大好きだよMIMI（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・貫通・キーボードは L</span><p>SHADEがMIMIの位置へ移動し、二人で<b>光と闇の巨大な弾</b>を前方へ射出する。弾は<b>貫通</b>する：敵に当たっても消えずにそのまま飛び続け、並んだ敵全員に当たる（同じ敵には1回だけ命中）。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体にピンク色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','52')+mvS('KB','920')+mvS('発生','即時')+mvS('全体','0.7秒')+mvS('後硬直','0.92秒')+mvS('判定','152×130')+mvS('弾速','620')+mvS('寿命','2.5秒')+mvS('追加効果','貫通'))+'</div></div>'
@@ -862,7 +859,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。全キャラともサーバーからの情報を補間して滑らかに表示します（自分のキャラの予測表示は現在オフになっています）。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105の瞬間移動・相手をすり抜ける。硬直長め） ／ 後ろ+<kbd>J</kbd>：バックステップ斬り ／ ↑+<kbd>J</kbd>：ライジングアッパー（当てると2段ジャンプ回復） ／ ↓+<kbd>J</kbd>：アイススライド（氷の床が残る） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大3ヒット） ／ 空中↓+<kbd>J</kbd>：急降下斬り（着地で衝撃波） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：尻尾 ／ 空中<kbd>K</kbd>：メテオ ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：テイルスイープ（前後両方）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。全キャラともサーバーからの情報を補間して滑らかに表示します（自分のキャラの予測表示は現在オフになっています）。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1072,7 +1069,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",fieldCd:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",fieldCd:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1082,7 +1079,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -1637,6 +1634,45 @@ function p2pQueueBytes(player){
  return q;
 }
 var P2P_QUEUE_CAP=16384; /* ~16KB in flight: on a healthy link the queue hovers near zero (each snapshot is ~1-2KB and drains at link speed), so this only ever bites when delivery has genuinely fallen behind — beyond it, sending more would add delay, not data */
+/* is this guest's stream behind, by EITHER signal?
+   (1) the channel queue above — direct, but not every browser
+   reports bufferedAmount honestly (some keep it at 0 while the
+   SCTP stack is seconds deep), and on those the queue check
+   alone never fired and the ~3s guest delay survived the first
+   fix; (2) the guest's own stream ACK: every input bundle now
+   carries ack = the newest snapshot frame the guest has actually
+   RECEIVED (sv.lastSnapF), so the host can count the undelivered
+   frames itself — room.frame - ackF — with no dependence on the
+   transport's self-report. Past ~14 frames (~233ms) of unacked
+   stream the guest is by definition watching queued data, and
+   the pump withholds fresh snapshots / mines / FX for it until
+   the acks catch up (the anti-starvation force-send in p2pPump
+   keeps a deeply clogged guest from locking out entirely). A
+   guest that never acks (older build) simply falls back to
+   signal (1), exactly the previous behaviour. */
+var P2P_ACK_LAG_FRAMES=14;
+function p2pGuestLagging(room,player){
+ if(!player||player.loopback)return false;
+ if(p2pQueueBytes(player)>P2P_QUEUE_CAP)return true;
+ if(room&&player.ackF>=0&&room.frame-player.ackF>P2P_ACK_LAG_FRAMES)return true;
+ return false;
+}
+/* queue one FX event for every remote guest individually (each
+   guest's queue is flushed by the pump only while that guest is
+   not lagging — see p2pGuestLagging): one clogged guest can no
+   longer hold up everyone else's effects, and a lagging guest's
+   events wait in ITS queue instead of inside the shared channel
+   backlog, then go out in one batch once its stream recovers.
+   Capped per guest; past the cap the oldest dressing is dropped
+   for that guest only (state never rides this queue). */
+function p2pQueueEv(room,ev){
+ if(!room)return;
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];
+   if(p.loopback)continue;
+   if(!p.evQ)p.evQ=[];
+   if(p.evQ.length<600)p.evQ.push(ev);
+ }
+}
 function p2pBroadcastRoom(room,msg){
  for(var i=0;i<room.players.length;i++)p2pDeliver(room.players[i],msg);
 }
@@ -1690,6 +1726,7 @@ function p2pRoomHandle(room,player,m){
    p2pRoomStartMatch(room);return;
  }
  if(m.t==="in"){
+   if(typeof m.ack==="number")player.ackF=m.ack,player.ackAt=performance.now(); /* stream ack: the newest snapshot frame this guest has received — the host's transport-independent flow-control signal (see p2pGuestLagging). Recorded before the seq filter: even a retransmitted bundle's ack is fresh delivery information */
    if(room.phase!=="match")return;
    var idx=p2pPlayerMatchIdx(room,player.pid);if(idx<0)return;
    var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
@@ -1775,7 +1812,7 @@ function p2pRoomStartMatch(room){
  room.seed=(Math.random()*0x7fffffff)|0||1;
  room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
  room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
- for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.mnJson=null}
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0;p.lastSnapSentF=-9999;p.evQ=[]}
  room.phase="match";
  var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
  p2pSendGuests(room,startMsg);
@@ -1785,7 +1822,7 @@ function p2pRoomStartMatch(room){
     hook, FX sink) arm in this same synchronous turn, below */
  p2pLoopback(startMsg);
  p2pHostLive=true;
- fxSink=function(ev){var r=p2pRoom;if(r&&r.evQ.length<1500)r.evQ.push(ev)};
+ fxSink=function(ev){p2pQueueEv(p2pRoom,ev)};
  killBannerHook=p2pKillHook;
 }
 /* ---- host: peer + room creation ---- */
@@ -1804,7 +1841,7 @@ function p2pHostPeer(retry){
    if(p2pPeer!==peer)return;
    var room={code:net.code,phase:"lobby",players:[],joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,lastSnapF:-1,dead:false,hostPlayer:null};
    p2pRoom=room;
-   var hp={pid:null,name:"",char:null,host:false,joinSeq:0,conn:null,loopback:true,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false};
+   var hp={pid:null,name:"",char:null,host:false,joinSeq:0,conn:null,loopback:true,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[]};
    room.hostPlayer=hp;
    p2pRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
  });
@@ -1832,7 +1869,7 @@ function p2pHostPeer(retry){
  });
 }
 function p2pHostAccept(room,conn){
- var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false};
+ var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[]};
  conn.on("data",function(data){
    if(p2pRoom!==room||room.dead)return;
    var m=data;
@@ -1963,7 +2000,7 @@ function p2pInputFor(f,foe){
 function p2pKillHook(def,att,gain,heal){
  var room=p2pRoom;if(!room||room.phase!=="match")return;
  var ev={k:"banner",big:"DOWN…",pts:"",sub:"",who:(att&&att!==def)?fighters.indexOf(att):-1,vic:fighters.indexOf(def),gain:gain||0,heal:heal||0};
- if(room.evQ.length<1500)room.evQ.push(ev);
+ p2pQueueEv(room,ev);
  svOnEv([ev]);
 }
 /* ---- host match: snapshot / results / mines / pump ---- */
@@ -1981,7 +2018,7 @@ function p2pBuildSnap(room){
     uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:p2pR2(f.poisonT||0),brn:p2pR2(f.burnT||0),bld:p2pR2(f.bleedT||0),slo:p2pR2(f.slowT||0),
     sph:f.spinHits||0,flm:p2pR2(f.flameT||0),fld:p2pR2(f.flameDelay||0),ven:f.venom?1:0,bft:p2pR2(f.buffT||0),
     shx:f.char==="mimi"?p2pR2(f.shX):undefined,shy:f.char==="mimi"?p2pR2(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,
-    grb:f.grabT>0?1:0,og:f.onGround?1:0,cmb:f.comboHits,cdg:f.comboDmg,ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
+    grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:f.comboDmg,ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
    };
   }),
   pr:projectiles.map(function(p){return{x:p2pR2(p.x),y:p2pR2(p.y),vx:p2pR1(p.vx),vy:p2pR1(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
@@ -2010,7 +2047,7 @@ function p2pSyncMines(room){
    var mn=mines.filter(function(m){return m.owner===f}).map(function(m){return{x:p2pR2(m.x),y:p2pR2(m.y)}});
    var j=JSON.stringify(mn);
    if(p.mnJson===j)continue;
-   if(p2pQueueBytes(p)>P2P_QUEUE_CAP)continue; /* queue backed up: do NOT mark this list as sent — it is retried on a later pump once the guest's queue drains (see p2pQueueBytes) */
+   if(p2pGuestLagging(room,p))continue; /* guest behind (channel queue or stream ack): do NOT mark this list as sent — it is retried on a later pump once the guest catches up (see p2pGuestLagging) */
    p.mnJson=j;
    p2pDeliver(p,{t:"mymines",mn:mn});
  }
@@ -2031,41 +2068,60 @@ function p2pSyncMines(room){
    local flow's (TIME UP banner + showLocalResults), not this
    message.
    BACKPRESSURE (guest ~3s delay fix): snapshots are delivered
-   per guest through the queue check in p2pQueueBytes — a guest
-   whose undelivered queue is already over P2P_QUEUE_CAP is
-   skipped for this snapshot (the next pump's snapshot carries
-   the full current state, so skipping loses nothing but
-   staleness), and the FX flush is held while any guest's queue
-   is far over the cap, so effect bytes can neither pile ahead
-   of the state stream nor be dropped: they simply go out a
-   little later, once the queue has drained. Without this, the
-   ordered, never-dropping PeerJS / WebRTC channel turned any
-   shortfall of delivery under the 60/s production rate into a
-   FIFO backlog that guests experienced as seconds of delay. */
+   per guest through p2pGuestLagging — a guest that is behind,
+   by the channel-queue check OR by its own stream acks (the
+   transport-independent signal; not every browser reports the
+   queue honestly, which is how the delay survived the first,
+   queue-only fix), is skipped for this snapshot (the next one
+   it receives carries the full current state, so skipping
+   loses nothing but staleness), with an anti-starvation force
+   send so a clogged guest always gets a fresh frame to ack and
+   recover with. FX events are queued per guest and flushed
+   only while that guest is caught up, so effect bytes can
+   neither pile ahead of the state stream nor be held up by
+   another guest's clog. Without this, the ordered,
+   never-dropping PeerJS / WebRTC channel turned any shortfall
+   of delivery under the 60/s production rate into a FIFO
+   backlog that guests experienced as seconds of delay. */
 function p2pPump(){
  if(!p2pHostLive||!p2pRoom)return;
  var room=p2pRoom;
  if(room.phase!=="match")return;
  if(shake>room.shkPeak)room.shkPeak=shake;
- if(room.shkPeak>0){if(room.evQ.length<1500)room.evQ.push({k:"shk",v:room.shkPeak});room.shkPeak=0}
+ if(room.shkPeak>0){p2pQueueEv(room,{k:"shk",v:room.shkPeak});room.shkPeak=0}
  if(room.frame!==room.lastSnapF){
    room.lastSnapF=room.frame;
    var snap=p2pBuildSnap(room);snap.t="snap";
    for(var sgi=0;sgi<room.players.length;sgi++){var sp=room.players[sgi];
      if(sp.loopback)continue;
-     if(p2pQueueBytes(sp)>P2P_QUEUE_CAP)continue; /* latest-only: never queue a fresh snapshot behind seconds of stale ones — this guest gets the next pump's instead */
-     p2pDeliver(sp,snap);
+     /* latest-only, per guest (see p2pGuestLagging): a guest that
+        is behind — channel queue over the cap OR more than
+        P2P_ACK_LAG_FRAMES of stream still unacknowledged — is
+        skipped for this snapshot; the next one it does receive
+        carries the full current state, so skipping loses nothing
+        but staleness and its backlog can never grow past the
+        bound. Anti-starvation: at least one snapshot every 30
+        frames goes out regardless (and whenever the guest's acks
+        have gone silent for 600ms — a hidden tab must not lock
+        itself out), because the guest's ack can only advance when
+        a snapshot actually arrives; each forced send hands it a
+        fresh frame to ack, its ack jumps to near-current, and
+        normal flow resumes on its own. */
+     var forceSnap=room.frame-(sp.lastSnapSentF||0)>30||!sp.ackAt||performance.now()-sp.ackAt>600;
+     if(!forceSnap&&p2pGuestLagging(room,sp))continue;
+     p2pDeliver(sp,snap);sp.lastSnapSentF=room.frame;
    }
  }
- if(room.evQ.length){
-   var evBlocked=false;
-   for(var ebi=0;ebi<room.players.length;ebi++){var ep=room.players[ebi];
-     if(!ep.loopback&&ep.conn&&ep.conn.open&&p2pQueueBytes(ep)>P2P_QUEUE_CAP){evBlocked=true;break}
-   }
-   if(!evBlocked){
-     var evs=room.evQ.splice(0,room.evQ.length);
-     p2pSendGuests(room,{t:"ev",ev:evs});
-   } /* else: hold the events in evQ until the queues drain — they are neither sent into the backlog nor discarded */
+ /* FX flush, per guest: a guest's queued events go out only
+    while that guest is not lagging; while it is behind they wait
+    in its own evQ (p2pQueueEv) instead of piling into the shared
+    channel ahead of the state stream, and one guest's clog never
+    delays another guest's effects */
+ for(var fvi=0;fvi<room.players.length;fvi++){var fp=room.players[fvi];
+   if(fp.loopback||!fp.evQ||!fp.evQ.length)continue;
+   if(p2pGuestLagging(room,fp))continue;
+   var fevs=fp.evQ.splice(0,fp.evQ.length);
+   p2pDeliver(fp,{t:"ev",ev:fevs});
  }
  p2pSyncMines(room);
  if(matchOver&&!room.endSent){
@@ -2458,7 +2514,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","fieldCd"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0};
 var svPressQ=[];
 var svMute=false;
@@ -2556,7 +2612,7 @@ function svSaveP1(){
  var f=P1,o={hs:hitstop};
  if(!f)return o;
  for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
- o.la=f.lastAttacker;o.gb=f.grabBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;
+ o.la=f.lastAttacker;o.gb=f.grabBy;o.hb=f.heldBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;
  o.dmgBy=null;if(f.dmgBy){o.dmgBy={};for(var dmk in f.dmgBy)o.dmgBy[dmk]=f.dmgBy[dmk]} /* per-life damage ledger: copied by value so a prediction rollback really restores it (a shared reference would keep the settled / re-accumulated state) */
  o.trail=f.trail?f.trail.slice():[];
  return o;
@@ -2564,7 +2620,7 @@ function svSaveP1(){
 function svRestoreP1(o){
  var f=P1;if(!f||!o)return;
  for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
- f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;
+ f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.heldBy=o.hb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;
  f.dmgBy={};if(o.dmgBy)for(var dmk2 in o.dmgBy)f.dmgBy[dmk2]=o.dmgBy[dmk2];
  f.trail=o.trail?o.trail.slice():[];
  hitstop=o.hs||0;
@@ -2619,7 +2675,7 @@ function svPredOn(){
 function svSaveFighter(f){
  var o={};
  for(var k=0;k<RB_FSTATE.length;k++)o[RB_FSTATE[k]]=f[RB_FSTATE[k]];
- o.la=f.lastAttacker;o.gb=f.grabBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;o.ax=f.axSpinT;
+ o.la=f.lastAttacker;o.gb=f.grabBy;o.hb=f.heldBy;o.bb=f.burnBy;o.psb=f.poisonBy;o.pb=f.pushBy;o.gp=f.groundPlat;o.dp=f.dropPlat;o.ax=f.axSpinT;
  o.dmgBy=null;if(f.dmgBy){o.dmgBy={};for(var dmk in f.dmgBy)o.dmgBy[dmk]=f.dmgBy[dmk]}
  o.trail=f.trail?f.trail.slice():[];
  return o;
@@ -2627,7 +2683,7 @@ function svSaveFighter(f){
 function svRestoreFighter(f,o){
  if(!f||!o)return;
  for(var k=0;k<RB_FSTATE.length;k++)f[RB_FSTATE[k]]=o[RB_FSTATE[k]];
- f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;f.axSpinT=o.ax;
+ f.lastAttacker=o.la||null;f.grabBy=o.gb||null;f.heldBy=o.hb||null;f.burnBy=o.bb||null;f.poisonBy=o.psb||null;f.pushBy=o.pb||null;f.groundPlat=o.gp||null;f.dropPlat=o.dp||null;f.axSpinT=o.ax;
  f.dmgBy={};if(o.dmgBy)for(var dmk2 in o.dmgBy)f.dmgBy[dmk2]=o.dmgBy[dmk2];
  f.trail=o.trail?o.trail.slice():[];
 }
@@ -2741,7 +2797,9 @@ function svSendBundle(){
      ins.push(b===undefined?0:b);
    }
    if(!ins.length)break;
-   svSend({t:"in",seq:sv.seq++,ins:ins});
+   var inMsg={t:"in",seq:sv.seq++,ins:ins};
+   if(net.transport==="p2p"&&typeof sv.lastSnapF==="number")inMsg.ack=sv.lastSnapF; /* P2P only: stream ack — the newest snapshot frame this guest has received, riding the input bundles the host's flow control counts from (see p2pGuestLagging). The server transport's protocol is unchanged (the field is simply never attached there) */
+   svSend(inMsg);
    sv.sentFrame+=ins.length;
  }
 }
@@ -2757,6 +2815,7 @@ function svApplySnapP1(s,hist){
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
  if(typeof s.sph==="number")f.spinHits=s.sph; if(typeof s.flm==="number")f.flameT=s.flm; if(typeof s.fld==="number")f.flameDelay=s.fld; if(typeof s.ven==="number")f.venom=!!s.ven; if(typeof s.bft==="number")f.buffT=s.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft): spin-hit count, flame timers, venom flag and buff time the draw code reads — without these they stayed at local defaults online */
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
+ if(s.hld){f.heldT=Math.max(f.heldT||0,0.15);if(typeof s.hby==="number"&&s.hby>=0&&fighters[s.hby]&&fighters[s.hby]!==f)f.heldBy=fighters[s.hby];if(typeof s.hkd==="number")f.heldKind=s.hkd} /* 【掴み】 snapshot hold flag (forward-compat, mirrors grb): the pin position itself already arrives via x/y — this only restores the held state + grabber link so the hold visual and release read correctly on guests */
 }
 /* hard resync of the predicted fighter to the authoritative
    snapshot state: everything is taken verbatim (extrapolated
@@ -2809,6 +2868,7 @@ function svReconcileP1(s,snap){
  var hard=false;
  if(!!s.dead!==!!f.dead)hard=true;
  else if(s.grb)hard=true;
+ else if(s.hld)hard=true; /* 【掴み】 held by a grab the prediction never saw — resync so the pin + throw land on this screen too */
  else if((s.hs||0)>0.03&&(f.hitstun||0)<=0.03)hard=true; /* a knockback the prediction never saw */
  else if((s.fr||0)>0.03&&(f.frozen||0)<=0.03)hard=true;
  else if(s.st==="ultcharge"&&f.state!=="ultcharge")hard=true;
@@ -2836,12 +2896,43 @@ function svReconcileP1(s,snap){
  }
  if(s.mt>f.meter)f.meter=s.mt;
  else if(f.state==="idle"&&s.mt<f.meter-20)f.meter=s.mt;
+ /* status / dressing fields the draw code reads off our own fighter
+    (burn flames, poison bubbles, bleed specks, slow drips, venom /
+    buff / flame timers, the ice-edge spike count, SMILEY's
+    awakening, the invulnerability blink): these are inflicted by
+    OTHER fighters or confirmed by the host, so the local prediction
+    can never originate them — every bystander is rolled back around
+    the prediction step — and until now the reconciliation never
+    adopted them either, so a guest's OWN fighter simply never
+    showed its burn / poison / bleed / slow online (every opponent
+    showed them fine: svApplySnapRemote takes the same fields
+    verbatim). Adopt them here, timers and flags only: the attacker
+    references (burnBy / poisonBy / bleedBy) stay local-null, so a
+    prediction step's DoT tick can never deal damage or kill with
+    them — damage and deaths remain the host's alone, exactly like
+    hit results. Awakening / invulnerability take the max instead:
+    both can ALSO be granted by our own predicted move a few frames
+    before the host's copy arrives, and a verbatim take from a
+    snapshot still in flight would blink them off and back on. */
+ if(typeof s.brn==="number")f.burnT=s.brn;
+ if(typeof s.poi==="number")f.poisonT=s.poi;
+ if(typeof s.bld==="number")f.bleedT=s.bld;
+ if(typeof s.slo==="number")f.slowT=s.slo;
+ if(typeof s.ven==="number")f.venom=!!s.ven;
+ if(typeof s.bft==="number")f.buffT=s.bft;
+ if(typeof s.flm==="number")f.flameT=s.flm;
+ if(typeof s.fld==="number")f.flameDelay=s.fld;
+ if(typeof s.sph==="number")f.spinHits=s.sph;
+ if(typeof s.awk==="number")f.awakenT=Math.max(f.awakenT||0,s.awk);
+ if(typeof s.inv==="number")f.invuln=Math.max(f.invuln||0,s.inv);
  if(f.state==="idle"&&s.st&&s.st!=="idle"&&s.st!=="guard"){
    f.state=s.st;f.stateT=s.sT;f.attackCd=s.atk;f.face=s.fc;
  }
  f.guarding=!!s.gd;
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
  else{f.grabT=0;f.grabBy=null}
+ if(s.hld){f.heldT=Math.max(f.heldT||0,0.15);if(typeof s.hby==="number"&&s.hby>=0&&fighters[s.hby]&&fighters[s.hby]!==f)f.heldBy=fighters[s.hby];if(typeof s.hkd==="number")f.heldKind=s.hkd}
+ else{f.heldT=0;f.heldBy=null}
 }
 /* snapshot entry point for our own fighter, called from svOnSnap:
    prediction + reconciliation while prediction applies, the old
@@ -2853,6 +2944,8 @@ function svReconcile(snap){
  svApplySnapRemote(P1,s);
  if(s.grb){if(!P1.grabBy)P1.grabBy=svFindWarden()}
  else{P1.grabT=0;P1.grabBy=null}
+ if(s.hld){P1.heldT=Math.max(P1.heldT||0,0.15);if(typeof s.hby==="number"&&s.hby>=0&&fighters[s.hby]&&fighters[s.hby]!==P1)P1.heldBy=fighters[s.hby];if(typeof s.hkd==="number")P1.heldKind=s.hkd}
+ else{P1.heldT=0;P1.heldBy=null}
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
@@ -2863,6 +2956,7 @@ function svApplySnapRemote(f,sf){
  f.comboHits=sf.cmb;f.comboDmg=sf.cdg;f.groundPlat=null;
  if(typeof sf.sph==="number")f.spinHits=sf.sph; if(typeof sf.flm==="number")f.flameT=sf.flm; if(typeof sf.fld==="number")f.flameDelay=sf.fld; if(typeof sf.ven==="number")f.venom=!!sf.ven; if(typeof sf.bft==="number")f.buffT=sf.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft) — see svApplySnapP1 */
  if(sf.grb)f.grabT=Math.max(f.grabT||0,0.15);
+ if(sf.hld){f.heldT=Math.max(f.heldT||0,0.15);if(typeof sf.hby==="number"&&sf.hby>=0&&fighters[sf.hby]&&fighters[sf.hby]!==f)f.heldBy=fighters[sf.hby];if(typeof sf.hkd==="number")f.heldKind=sf.hkd} /* 【掴み】 hold state from the snapshot (mirrors grb) */
 }
 function svFindWarden(){for(var i=0;i<fighters.length;i++){if(fighters[i]&&fighters[i].char==="warden")return fighters[i]}return null}
 function svIsAttackState(st){return st&&st!=="idle"&&st!=="guard"}
@@ -3060,6 +3154,8 @@ function svOnSnap(m){
      if(sf.og&&!f._svOg)f.landT=0.14;
      if(!sf.grb){if(!(i===net.myIdx&&svPredOn())){f.grabT=0;f.grabBy=null}}
      else if(!f.grabBy)f.grabBy=svFindWarden();
+     if(!sf.hld){if(!(i===net.myIdx&&svPredOn())){f.heldT=0;f.heldBy=null}}
+     else if(typeof sf.hby==="number"&&sf.hby>=0&&fighters[sf.hby]&&fighters[sf.hby]!==f)f.heldBy=fighters[sf.hby];
      if(sf.st==="ultcharge")f.ultChargeT=0.12;
      /* attack-state entries no longer spawn a generic puff here: each move's own start effects arrive as FX events via svOnEv, exactly as the sim spawned them */
      if(!(i===net.myIdx&&svPredOn()))svApplySnapRemote(f,sf);
@@ -4871,11 +4967,16 @@ function startAxeAttack(f,type,foe){
      }else{
        /* J 2段目: ヘッドロック — a skull-crushing HEADBUTT, not
           an axe swing: 30 dmg / KB 770, the chain's finisher
-          now. The chain ends here — the next J restarts at 壊斧 */
+          now. The chain ends here — the next J restarts at 壊斧.
+          【掴み】 (grab system): it is a HEADLOCK — on connect the
+          foe is pinned in front of AXE for 0.4s in complete stun
+          and only then thrown with the same 30 dmg / KB 770 /
+          up -0.32 (damage lands at the grab, the KB at release,
+          toward whichever way AXE faces at release) */
        f.comboWin=0;f.comboStep=0;
        f.state="clawrev";f.stateT=0.54;f.attackCd=0.71; /* 後硬直 0.85 -> 0.78s: attackCd 0.71 + 0.07 (user spec) */
        f.vx+=f.face*60;capVx(f,RUN_MAX*1.1);
-       meleeHit(f,foe,112,72,30,770,f.face,-0.32);
+       meleeHit(f,foe,112,72,30,770,f.face,-0.32,0,false,0,null,true); /* 【掴み】 grab flag: pin 0.4s -> throw (see applyGrabHit) */
        spawnParticles(f.x+f.face*26,f.y+f.h*0.45,12,"#fdba74",200);beep(270,.09,"sawtooth",.06);
      }
    }
@@ -5735,11 +5836,15 @@ function startSmileyAttack(f,type,foe){
    SHADE currently stands. shadeHit is meleeHit with an explicit box
    centre (SHADE's hits do not originate from MIMI's body). */
 function shadeAnchorX(f){return f.x-f.face*54}
-function shadeHit(att,cx,cy,w,h,dmg,kb,dir,up,hs){
+function shadeHit(att,cx,cy,w,h,dmg,kb,dir,up,hs,grab){
+ /* grab (optional, 【掴み】): a connecting hit routes through
+    applyGrabHit with heldKind 1 — the foe is pinned in front of
+    SHADE for 0.4s in complete stun, then thrown with this call's
+    kb / up toward SHADE's release-time facing (shFace, toward MIMI) */
  var hitAny=false;
  for(var i=0;i<fighters.length;i++){var t=fighters[i];if(t===att||t.dead)continue;
   var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
-  if(Math.abs(dx)<w/2+t.w/2&&Math.abs(dy)<h/2+t.h/2){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs))hitAny=true}
+  if(Math.abs(dx)<w/2+t.w/2&&Math.abs(dy)<h/2+t.h/2){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,1):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs);if(landed)hitAny=true}
  }
  return hitAny;
 }
@@ -5796,7 +5901,9 @@ function startMimiAttack(f,type,foe){
         stepFighter, state "mairspin", up to 3 hits on both sides,
         capped at 2 uses per airborne stint like the other spins);
         SHADE grabs whoever is close to IT and throws them TOWARD
-        MIMI (12 dmg / KB 760) */
+        MIMI (12 dmg / KB 760) — via the 【掴み】 grab system: the
+        foe is pinned in front of SHADE for 0.4s in complete stun
+        first, then thrown toward shFace (= toward MIMI) */
      if(f.airJ>=2)return;
      f.airJ++;
      f.state="mairspin";f.stateT=0.38;f.attackCd=0.42;f.comboWin=0;
@@ -5804,7 +5911,7 @@ function startMimiAttack(f,type,foe){
      if(f.vy>30)f.vy=30;
      f.shState="sgrab";f.shStateT=0.4;
      var grabbed=false;
-     for(var gi=0;gi<fighters.length;gi++){var gt=fighters[gi];if(gt===f||gt.dead||gt.invuln>0)continue;if(Math.abs(gt.x-f.shX)<124&&Math.abs((gt.y+gt.h/2)-scy)<107){applyHit(f,gt,12,760,f.x>=gt.x?1:-1,-0.5,false,f.shX,scy);grabbed=true}} /* SHADE grab reach 周囲110 -> 周囲124 (user balance spec; vertical scaled to match) */
+     for(var gi=0;gi<fighters.length;gi++){var gt=fighters[gi];if(gt===f||gt.dead||gt.invuln>0)continue;if(Math.abs(gt.x-f.shX)<124&&Math.abs((gt.y+gt.h/2)-scy)<107){if(applyGrabHit(f,gt,12,760,-0.5,false,f.shX,scy,1))grabbed=true}} /* SHADE grab reach 周囲110 -> 周囲124 (user balance spec; vertical scaled to match). 【掴み】 (grab system): the foe is pinned in front of SHADE for 0.4s in complete stun, then thrown with the same 12 dmg / KB 760 toward shFace — which always points back at MIMI, so the throw still goes MIMI's way, exactly as the old instant hit's direction (f.x>=gt.x) did */
      if(grabbed){shadeBurst(f,10);shake=Math.max(shake,3)}
      spawnParticles(f.x,f.y+f.h*0.45,10,"#f9a8d4",180);
      beep(1350,.07,"square",.045);
@@ -5952,7 +6059,7 @@ function startMimiAttack(f,type,foe){
 }
 function startAttack(f,type){
  f.jBoostT=0; /* any move (risers included) replaces the jump trajectory: a pending first-jump height decision must not fire on top of it */
- if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0||(f.recLockT||0)>0)return; /* 着地硬直中・完全硬直中はワザも不可 */
+ if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.landLagT||0)>0||(f.recLockT||0)>0||(f.heldT||0)>0)return; /* 着地硬直中・完全硬直中・掴まれ中はワザも不可 */
  if(f.ultChargeT>0||f.pushBy)return; /* the ult charge is uncontrollable; a pushed victim cannot act */
  if(f.dashT>0&&type!=="j")return; /* only J can dash-cancel */
  var wasAir=!f.onGround; /* 着地硬直: was this move started in the air? (applyLandLag hook on every exit below) */
@@ -6135,17 +6242,24 @@ function startAttack(f,type){
  }
  addRecovery(f);applyLandLag(f,wasAir);
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList){
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
  /* hitList (optional): an array shared across several meleeHit calls
     of ONE move — a fighter already recorded in it is skipped, so a
     two-sided move (front call + back call) never hits the same foe
-    twice where the two boxes overlap */
+    twice where the two boxes overlap.
+    grab (optional, 【掴み】): when true, a connecting hit routes
+    through applyGrabHit instead of applyHit — the foe takes the
+    damage, is pinned in front of the attacker for 0.4s in complete
+    stun, and only then is launched with this call's kb / up in the
+    attacker's release-time facing direction (see the grab system
+    note above applyGrabHit). The burn / bleed riders below still
+    apply on a grab connect, exactly as on a normal hit. */
  var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){if(applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce)){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
  }
  return hitAny;
 }
@@ -6170,6 +6284,70 @@ function recordDmg(att,def,amount){
  var idx=fighters.indexOf(att);if(idx<0)return;
  if(!def.dmgBy)def.dmgBy={};
  def.dmgBy[idx]=(def.dmgBy[idx]||0)+amount;
+}
+/* 【掴み】 GRAB SYSTEM (user spec): a move flagged as a grab does NOT
+   launch the foe when it connects. Instead the foe is pinned in place
+   directly in front of the grabber for 0.4 seconds in COMPLETE stun
+   （完全硬直 — no movement, jump, dash, guard or moves; enforced by the
+   held block in stepFighter, which returns before every input path,
+   and by the hitstun it keeps refreshed), and only when those 0.4s
+   run out is the stored knockback released — in the direction the
+   GRABBER IS FACING AT THE MOMENT OF RELEASE (read live in
+   releaseGrab, so turning during the hold redirects the throw).
+   The damage itself lands up front, through applyHit with noKb (no
+   launch / no stun of its own) and pierce (a throw beats guard, like
+   AXE's lariat), so damage credit, the v99 ledger, combo counting,
+   meter gain and kill credit all behave exactly like a normal hit;
+   if that damage kills outright, no pin is set at all. The release
+   launch reuses applyHit's exact knockback scaling (kb x0.8, scaled
+   by the victim's remaining-HP factor and kbMul) and its derived
+   hitstun, so a grab's listed KB number means the same thing as any
+   other move's. heldKind selects the grabbing body: 0 = the attacker
+   fighter itself (pin at its front, throw toward its face); 1 =
+   SHADE (MIMI&SHADE's second body — pin at SHADE's front, throw
+   toward shFace, which always points back at MIMI). A foe already
+   held, SKYHOOK-grabbed or AXE-ult-pinned cannot be grabbed, and a
+   grab whiffs on invulnerable foes like any hit. Death clears the
+   hold on both sides (killFighter). Any move opts in by passing the
+   grab flag to meleeHit / shadeHit, or by calling applyGrabHit
+   directly with its own damage / KB / up values. Current grab moves:
+   AXE ヘッドロック (J chain stage 2) and SHADE's 空中J掴み投げ. */
+function grabPinPos(f){
+ var hb=f.heldBy;if(!hb)return{x:f.x,y:f.y};
+ var hFace=(f.heldKind===1)?(hb.shFace||hb.face||1):(hb.face||1);
+ var hAx=(f.heldKind===1)?hb.shX:hb.x;
+ var hAy=(f.heldKind===1)?(hb.shY-f.h):hb.y;
+ var hHalf=(f.heldKind===1)?44:hb.w/2;
+ var px=hAx+hFace*(hHalf+f.w/2+4);if(px<50)px=50;if(px>WORLD_W-50)px=WORLD_W-50;
+ return{x:px,y:hAy};
+}
+function applyGrabHit(att,def,dmg,kb,up,isUlt,cx,cy,kind){
+ if(!att||!def||att===def||def.dead||def.invuln>0)return false;
+ if((def.heldT||0)>0||(def.grabT||0)>0||def.pushBy)return false; /* already held / hoisted / pinned — one hold at a time */
+ if(!applyHit(att,def,dmg,0,att.face,0,isUlt,cx,cy,true,0,true))return false; /* damage up front: noKb (no launch yet) + pierce (throws beat guard) */
+ if(def.dead)return true; /* the grab damage itself scored the KO — nothing left to hold */
+ def.heldT=0.4;def.heldBy=att;def.heldKb=kb;def.heldUp=(up==null?-0.3:up);def.heldUlt=!!isUlt;def.heldKind=kind||0;
+ def.vx=0;def.vy=0;def.dashT=0;def.fastfall=false;def.guarding=false;def.state="idle";def.stateT=0;
+ def.hitstun=Math.max(def.hitstun,0.5); /* complete stun for the whole hold (the held block in stepFighter keeps it topped up) */
+ var pp=grabPinPos(def);def.x=pp.x;def.y=pp.y;def.px=def.x;def.py=def.y; /* pinned IMMEDIATELY in front of the grabber, from the very first frame */
+ spawnParticles(def.x,def.y+def.h*0.45,10,charFX(att),170);spawnRing(def.x,def.y+def.h*0.45,"#fde047",34);
+ pushFloater({x:def.x,y:def.y-24,txt:"GRAB!",life:.7,col:"#fde047"});
+ beep(220,.09,"sawtooth",.05);
+ return true;
+}
+function releaseGrab(f){
+ var att=f.heldBy,kb=f.heldKb||0,up=(f.heldUp==null?-0.3:f.heldUp),isUlt=!!f.heldUlt,kind=f.heldKind||0;
+ f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUlt=false;
+ if(!att||att.dead||f.dead||kb<=0)return;
+ var dir=(kind===1)?(att.shFace||att.face||1):(att.face||1); /* the throw goes wherever the grabber faces NOW, at release — not where it faced when the grab connected */
+ var lowHp=1-Math.max(0,f.hp)/(f.maxHp||MAXHP);
+ var kbs=kb*0.8*(1+lowHp*1.15)*(f.kbMul||1); /* the same knockback scaling applyHit uses, so the move's listed KB is directly comparable */
+ f.vx=dir*kbs;f.vy=up*kbs-(lowHp>0.55?70:0);if(f.vy<0)f.onGround=false;
+ f.hitstun=Math.min(0.5,0.13+kbs/3600);f.dashT=0;f.fastfall=false;
+ hitstop=isUlt?0.07:0.03;shake=Math.min(11,Math.max(shake,3+kbs*0.009));
+ spawnParticles(f.x,f.y+f.h*0.45,12,charFX(att),210);spawnRing(f.x,f.y+f.h*0.45,"#fde68a",40);spawnSparks(f.x,f.y+f.h*0.45,dir,"#fde68a",6);
+ pushFloater({x:f.x,y:f.y-24,txt:"THROW!",life:.7,col:"#fde68a"});
+ beep(300,.1,"sawtooth",.05);
 }
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.dead||def.invuln>0)return false;
@@ -6232,8 +6410,8 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  return true;
 }
 function killFighter(def,att){
- def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
- for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}}
+ def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
+ for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}if(fighters[kf].heldBy===def){fighters[kf].heldT=0;fighters[kf].heldBy=null;fighters[kf].heldKb=0}} /* a dead grabber releases whoever it was holding, with no throw */
  if(def.isPlayer&&mode!=="online"&&!matchOver)respawnSelectPending=true; /* every death re-opens character select (local modes) */
  shake=16;hitstop=0.08;
  spawnParticles(def.x,def.y+def.h/2,46,"#fda4af",330);
@@ -6813,6 +6991,31 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      }
    }
    return;
+ }
+ /* 【掴み】 grab hold: while heldT runs, the victim is pinned directly
+    in front of the grabber (grabPinPos — it tracks the grabber every
+    step, so a moving / turning grabber carries the victim with it)
+    in COMPLETE stun: velocity is zeroed, dash / fastfall / guard are
+    cleared, hitstun is kept topped up above the remaining hold, and
+    this block returns before every input path (movement, jump, dash,
+    guard, moves — startAttack / tryDash also refuse on hitstun), so
+    the victim can do absolutely nothing until the throw. When the
+    0.4s run out, releaseGrab fires the stored knockback in the
+    grabber's CURRENT facing direction. If the grabber died mid-hold
+    the hold simply ends with no throw (killFighter also clears it). */
+ if(f.heldT>0){
+   var hbH=f.heldBy;
+   if(!hbH||hbH.dead){f.heldT=0;f.heldBy=null;f.heldKb=0}
+   else{
+     f.heldT-=dt;
+     var ppH=grabPinPos(f),pkH=Math.min(1,dt*26);
+     f.x+=(ppH.x-f.x)*pkH;f.y+=(ppH.y-f.y)*pkH;
+     f.vx=0;f.vy=0;f.dashT=0;f.fastfall=false;f.guarding=false;
+     f.hitstun=Math.max(f.hitstun,Math.min(0.5,f.heldT+0.06));
+     if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*0.4,1,"#fde047",60);
+     if(f.heldT<=0)releaseGrab(f);
+     return;
+   }
  }
  /* AXE ULT — pushed victims: while pushBy is set you are pinned in
     hitstun against the charging axe and carried with it, helpless —
@@ -8529,6 +8732,15 @@ function draw(){
    ctx.strokeStyle="rgba(253,230,138,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x,f.y-170);ctx.lineTo(f.x,f.y+4);ctx.stroke();
    ctx.fillStyle="#f59e0b";ctx.fillRect(f.x-15,f.y-184,30,13);
    ctx.fillStyle="#fde68a";ctx.fillRect(f.x-19,f.y-171,8,10);ctx.fillRect(f.x+11,f.y-171,8,10);
+ });
+ /* 【掴み】 hold visual: a taut line from the grabber (or SHADE) to the
+    held fighter and a pulsing binding ring around the victim for the
+    whole 0.4s, so the complete stun reads at a glance */
+ (fighters.length?fighters:[P1,P2]).forEach(function(f){
+   if(!f||f.dead||!(f.heldT>0)||!f.heldBy)return;
+   var hb=f.heldBy,hx=(f.heldKind===1)?hb.shX:hb.x,hy=(f.heldKind===1)?(hb.shY-52):(hb.y+hb.h*0.45);
+   ctx.strokeStyle="rgba(253,224,71,.8)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(f.x,f.y+f.h*0.45);ctx.stroke();
+   ctx.strokeStyle="#fde047";ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y+f.h*0.45,34+Math.sin(time*18)*3,0,6.29);ctx.stroke();
  });
  if(particles.length<430&&Math.random()<0.55)pushParticle({x:cam.x+Math.random()*viewW,y:cam.y+viewH*0.35+Math.random()*viewH*0.65,vx:(Math.random()-0.5)*16,vy:-10-Math.random()*18,life:1.1+Math.random()*0.9,col:Math.random()<0.62?"#67e8f9":"#fbbf24",size:1.3+Math.random()*1.7,amb:1}); /* ambient motes drifting up through the yard */
  particles.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.max(0,Math.min(1,p.life/0.6));if(p.streak){ctx.strokeStyle=p.col;ctx.lineWidth=Math.max(1,p.size*0.6);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);ctx.stroke()}else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size)}});ctx.globalAlpha=1;
