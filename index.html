@@ -428,6 +428,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["14:05"],tag:"修正",title:"No.66：ガトリングの発射数を仕様どおり10発／20発に修正",
+  items:["No.66のJ2「チェーンガトリング」が仕様の10発ではなく9発しか発射されていなかった問題を修正しました。発射間隔を調整し、10発すべてが発射されるようになりました（ワザ全体の時間0.62秒は変更なし）",
+         "No.66のK「ガトリング」も仕様の20発ではなく18発しか発射されていなかったため、同様に発射間隔を調整して20発すべてが発射されるようにしました（ワザ全体の時間0.95秒は変更なし）",
+         "1発のダメージ・KB・熱量など、その他の性能に変更はありません。J+K「ガトリングフック」はこれまで通り10発すべて発射されます"]},
  {date:"2026/11/15",times:["13:47"],tag:"修正",title:"直接接続（P2P）：ゲストの入力も再送なしチャンネルと冗長化に移行",
   items:["P2P対戦で、ゲストからホストへの入力も専用チャネル（再送なし・順序なし）で送るようにしました。1つの入力が届かなくても後ろの入力が止まらなくなり、ホスト側でゲストのキャラが数秒止まって見える現象が起きなくなります",
          "各入力には直近12フレーム分の入力を重ねて載せているため、途中の入力が1つ届かなくても次の入力で自動的に補われます",
@@ -490,11 +494,6 @@ var UPDATE_LOG=[
   items:["燃焼・毒・出血など、MIMI&SHADEが受けている継続ダメージのたびに、SHADEの闇ゲージもMIMIへのダメージと同じぶん減るようになりました",
          "SARAの火炎放射やORCHIDのサンフラワー、毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけゲージが減ります",
          "ゲージが0になれば通常どおりSHADEは18秒間消失します"]},
- {date:"2026/11/15",times:["10:24"],tag:"新機能",title:"SHADEに「闇ゲージ」を追加",
-  items:["MIMI&SHADEのSHADEに、上限250の「闇ゲージ」を追加しました",
-         "ゲージが残っている間、SHADEはノックバックを完全に受けません（KB完全無効）",
-         "ゲージが0になるとSHADEは18秒間消失し、18秒後にMIMIの位置でゲージ全回復して復活します",
-         "SHADEがMIMIの近くにいる間は、ゲージが毎秒10ずつ回復します"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -7582,16 +7581,27 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     plain K ("n66gat20") sprays 20 no-KB "pellet0" rounds. When the
     J+K spray is spent, the mortar arm's follow-up punch lands
     (20 dmg / KB 920). The ult ("n66ult") ripples its remaining
-    homing missiles out of his back every 0.11s */
+    homing missiles out of his back every 0.11s.
+    SHOT-COUNT FIX: at 60fps a tick interval quantises UP to whole
+    frames (0.055s -> 4 frames/round, 0.045s -> 3 frames/round),
+    so with the old intervals the last rounds fell past the end of
+    their states — J2 fired only 9 of its 10 pellets and K only 18
+    of its 20. The intervals are now 0.05s for J2 (3 frames/round:
+    all 10 pellets are out by ~0.48s, inside the UNCHANGED 0.62s
+    state) and 0.033s for K (2 frames/round: all 20 out by ~0.67s,
+    inside the UNCHANGED 0.95s state). J+K keeps its original
+    0.055s interval — its 10 pellets already all fired inside its
+    0.95s state, and its follow-up punch timing is unchanged.
+    Per-round damage / KB / heat are untouched. */
  if(f.char==="no66"){
    if(f.state==="n66gat"||f.state==="n66hook"){
      f.spinTick+=dt;
-     if(f.spinTick>=0.055&&f.spinHits<10){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*26,owner:f,life:0.55,kind:"pellet"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
+     if(f.spinTick>=(f.state==="n66gat"?0.05:0.055)&&f.spinHits<10){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*26,owner:f,life:0.55,kind:"pellet"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
      if(f.state==="n66hook"&&f.spinHits>=10&&!f.hitDone&&f.stateT<=0.30){f.hitDone=true;meleeHit(f,foe,84,66,20,920,f.face,-0.4);spawnParticles(f.x+f.face*36,f.y+f.h*0.45,14,"#fbbf24",230);spawnRing(f.x+f.face*40,f.y+f.h*0.45,"#fb923c",40);shake=Math.max(shake,4);beep(200,.12,"sawtooth",.06)}
    }
    if(f.state==="n66gat20"){
      f.spinTick+=dt;
-     if(f.spinTick>=0.045&&f.spinHits<20){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*30,owner:f,life:0.55,kind:"pellet0"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
+     if(f.spinTick>=0.033&&f.spinHits<20){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*30,owner:f,life:0.55,kind:"pellet0"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
    }
    if(f.state==="n66ult"){
      f.spinTick+=dt;
