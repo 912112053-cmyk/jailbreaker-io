@@ -10,6 +10,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Permanent+Marker&family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Permanent+Marker&family=DotGothic16&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet"></noscript>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js" integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/gh/PlayFab/JavaScriptSDK@master/PlayFabSdk/src/PlayFab/PlayFabClientApi.js"></script>
 <script>
 /* PlayFab SDK bridge: the current JavaScriptSDK exposes the client API
@@ -324,7 +325,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>与えたダメージがそのままスコアになるスコア制バトル（キル・アシスト共通）<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とP2P対戦（ロールバック方式）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>与えたダメージがそのままスコアになるスコア制バトル（キル・アシスト共通）<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -428,6 +429,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["14:53"],tag:"大型更新",title:"オンライン対戦の標準方式をSupabase経由に変更",
+  items:["オンライン対戦の標準の接続方式を、直接接続（P2P）から Supabase 経由に変更しました。ホストの端末が試合を計算する進め方はこれまで通りで、通信が Supabase の Realtime を経由して全員に届くようになります",
+         "直接接続（P2P）は選択肢から外しました。サーバー経由はこれまで通り選べます。フレンド機能・招待の仕組みに変更はありません",
+         "Supabase の接続設定も入っているため、この方式はそのまま選んで遊べます",
+         "ゲーム内容・技・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["14:38"],tag:"修正",title:"直接接続（P2P）：描画遅延の計算を戻し、スナップショットを軽量化",
   items:["描画遅延の計算を、直近の最大到着間隔に合わせる方式（実機で約150〜237msに張り付いていました）から、到着間隔の平均（EMA）＋ばらつき（ジッター）の平均×1.5＋9msで求める方式に戻しました。下限24ms・上限100msで、遅延が縮む方向には速く、広がる方向には少し遅く追随します。到着が安定すれば遅延は下限側へ戻ります（P2Pゲスト・サーバー経由の両方に適用）",
          "バッファが空になった時に約100msかけて滑らかに追いつく補間はそのまま維持しています。自分のキャラの描画・予測には変更はありません",
@@ -496,8 +502,6 @@ var UPDATE_LOG=[
          "SHADEは後方に拳が3回振り下りる技になりました"]},
  {date:"2026/11/15",times:["11:25"],tag:"調整",title:"KO判定を左右に拡大（ステージ端から320→500）",
   items:["KO判定の範囲を左右に拡大しました。ステージ端からの距離が320から500になりました"]},
- {date:"2026/11/15",times:["11:20"],tag:"調整",title:"タイトルの一文を「— 戦え。脱獄者たちよ —」に変更",
-  items:["タイトル画面の一文を「— 戦え。脱獄者たちよ —」に変更しました"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1009,7 +1013,7 @@ var keys={},buf={};
    so a held on-screen button behaves exactly like a held key for
    the hold-to-continue rule (see rbApplyInput / gatherPlayerInput) */
 var touchHeld={j:false,k:false,l:false,ult:false};
-function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof p2pHostLive!=="undefined"&&p2pHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
+function press(a){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[];
@@ -1453,8 +1457,21 @@ function hideBanner(){$("banner").style.display="none"}
    試合開始): the server is the authority, so a player leaving
    mid-match — host included — simply hands their fighter to the CPU
    on the server. The host leaving the LOBBY still dissolves the room.
-   PeerJS survives ONLY as the friend-presence / invite channel in the
-   accounts section below; it carries no match traffic any more. */
+   The STANDARD online transport is the Supabase one in the next
+   section (host-authoritative, relayed over Supabase Realtime
+   Broadcast); this server transport stays selectable unchanged.
+   PeerJS survives ONLY as the friend-presence / invite channel in
+   the accounts section below; it carries no match traffic. */
+/* Supabase connection for the standard online transport (Realtime
+   Broadcast): the project URL and the PUBLISHABLE key (the public
+   key meant to be embedded in browser code — not the secret /
+   service_role key). While either value is empty, sbConfigured()
+   is false, the ONLINE VS sheet shows the Supabase option as
+   未設定 and it cannot be selected (the server transport remains
+   available). */
+var SUPABASE_URL="https://ehffjfvrbjaacclwftfq.supabase.co";
+var SUPABASE_ANON_KEY="sb_publishable_YAg6Zy5z8L5u2LuG5I3vDg_ORgBtH6g";
+function sbConfigured(){return !!(SUPABASE_URL&&SUPABASE_ANON_KEY)}
 var JB_SERVER_URL="wss://jailbreaker-io-server.jailbreaker-io.workers.dev";
 function jbServerBase(){
  /* the game server is fixed to the project's own deployment — a
@@ -1476,12 +1493,13 @@ var guestChar=null,hostChar=null,forceP2Char=null;
    very helpers), so online matches show exactly the effects the sim
    produced. Here on the client fxRec stays a no-op: local spawns are
    already on screen, and replayed ones must not be re-recorded. */
-/* fxSink is installed ONLY while this device hosts a P2P match (see
-   the P2P section below): the local engine's spawns are then also
-   recorded into the host room's FX event queue and forwarded to the
-   guests, exactly like the server sim's fxRec stream. With no sink
-   (VS CPU / TRAINING / server-mode online / P2P guest) fxRec stays a
-   no-op and every spawn behaves exactly as before. pushFloater /
+/* fxSink is installed ONLY while this device hosts a Supabase-
+   transport match (see the Supabase section below): the local
+   engine's spawns are then also recorded into the host room's FX
+   event queue and forwarded to the guests, exactly like the
+   server sim's fxRec stream. With no sink (VS CPU / TRAINING /
+   server-mode online / Supabase guest) fxRec stays a no-op and
+   every spawn behaves exactly as before. pushFloater /
    pushParticle are the recording twins of the engine's direct
    floaters.push / particles.push sites (sim parity): they push the
    very same object locally, then report the spawn through fxRec. */
@@ -1489,11 +1507,12 @@ var fxSink=null;
 function fxRec(ev){if(fxSink){try{fxSink(ev)}catch(e){}}}
 function pushFloater(fl){floaters.push(fl);fxRec({k:"fl",x:Math.round(fl.x),y:Math.round(fl.y),t:fl.txt,c:fl.col,l:fl.life})}
 function pushParticle(p){particles.push(p);fxRec({k:"pt",x:Math.round(p.x),y:Math.round(p.y),vx:Math.round(p.vx),vy:Math.round(p.vy),l:p.life,c:p.col,s:Math.round((p.size||2)*10)/10,st:p.streak?1:0,amb:p.amb?1:0})}
-/* KO banner hook: while a P2P host match runs, killFighter delegates
-   its banner display to this hook (the hook queues the attributed
-   banner event for the guests and renders the host's own banner from
-   that same event via svOnEv). Null everywhere else — the banner
-   branches in killFighter are then byte-for-byte the old ones. */
+/* KO banner hook: while a Supabase-transport host match runs,
+   killFighter delegates its banner display to this hook (the hook
+   queues the attributed banner event for the guests and renders
+   the host's own banner from that same event via svOnEv). Null
+   everywhere else — the banner branches in killFighter are then
+   byte-for-byte the old ones. */
 var killBannerHook=null;
 function fxImgKey(img){for(var k in FXIMG){if(FXIMG[k]===img)return k}return null}
 /* seeded RNG kept for parity with the shared simulation code paths
@@ -1505,10 +1524,10 @@ function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦。接続方式は2つあります。<b style="color:#fff">直接接続（P2P）</b>はホストの端末が試合を計算してプレイヤー同士が直接つながる方式で、近くの相手とは遅延が小さくなりやすいのが特徴です（その代わり、ホストが抜けると試合は終了します）。<b style="color:#fff">サーバー経由</b>は従来の方式で、専用サーバーが試合を60fpsで計算して全員に配信します。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦。接続方式は2つあります。<b style="color:#fff">Supabase経由</b>（標準）はホストの端末が試合を計算し、通信を Supabase の Realtime 経由で全員に届ける方式です（ホストが抜けると試合は終了します）。<b style="color:#fff">サーバー経由</b>は従来の方式で、専用サーバーが試合を60fpsで計算して全員に配信します。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
- +'<p style="color:var(--muted)">※ サーバー経由では、試合中に誰かが抜けるとそのキャラはCPUが引き継いで対戦が続きます。直接接続（P2P）では、ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。どちらの方式でも、ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
- +'<div class="bindRow"><div><span class="bname">接続方式</span><br><span class="bnote">直接接続（P2P）が標準です。うまくつながらない環境では「サーバー経由」に切り替えてください（招待で参加する場合は、相手の方式に自動で合います）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="modeP2pBtn" style="min-width:118px">直接接続（P2P）</button><button class="bindKey" id="modeSvBtn" style="min-width:118px">サーバー経由</button></span></div>'
+ +'<p style="color:var(--muted)">※ サーバー経由では、試合中に誰かが抜けるとそのキャラはCPUが引き継いで対戦が続きます。Supabase経由では、ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。どちらの方式でも、ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
+ +'<div class="bindRow"><div><span class="bname">接続方式</span><br><span class="bnote">Supabase経由が標準です。「サーバー経由」に切り替えることもできます（招待で参加する場合は、相手の方式に自動で合います）</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" id="modeSbBtn" style="min-width:118px">Supabase経由</button><button class="bindKey" id="modeSvBtn" style="min-width:118px">サーバー経由</button></span></div>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
  +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
  +'<p id="bindMsg">'+(msg||"")+'</p>';
@@ -1517,17 +1536,17 @@ function wireOnlineBtns(){
  var mk=$("makeRoomBtn"),jn=$("joinRoomBtn");
  if(mk)mk.onclick=createRoom;
  if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
- var mp=$("modeP2pBtn"),ms=$("modeSvBtn");
- if(mp)mp.onclick=function(){onlineTransport="p2p";beep(660,.05);p2pSyncModeBtns()};
- if(ms)ms.onclick=function(){onlineTransport="server";beep(660,.05);p2pSyncModeBtns()};
- p2pSyncModeBtns();
+ var mb=$("modeSbBtn"),ms=$("modeSvBtn");
+ if(mb)mb.onclick=function(){if(!sbConfigured())return;onlineTransport="supabase";beep(660,.05);sbSyncModeBtns()};
+ if(ms)ms.onclick=function(){onlineTransport="server";beep(660,.05);sbSyncModeBtns()};
+ sbSyncModeBtns();
 }
 function openOnline(msg){
  openSheet(onlineHTML(msg));wireOnlineBtns();
 }
 $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
 function cleanupNet(){
- p2pCleanup();
+ sbCleanup();
  clearRematchWatch();
  if(net.ws){var w=net.ws;net.ws=null;try{w.close()}catch(e){}}
  net={role:null,ws:null,transport:"server",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
@@ -1538,1013 +1557,746 @@ function cleanupNet(){
  var lip=$("lobbyInvitePanel");if(lip)lip.style.display="none";
 }
 function svSend(o){
- /* the single send choke point for every room message: on the P2P
-    transport the same messages are re-routed to the PeerJS room
-    layer (p2pSend, below) instead of the match-server WebSocket —
-    no caller changes either way */
- if(net.transport==="p2p"){p2pSend(o);return}
+ /* the single send choke point for every room message: on the
+    Supabase transport the same messages are re-routed to the
+    Realtime room layer (sbSend, below) instead of the match-server
+    WebSocket — no caller changes either way */
+ if(net.transport==="supabase"){sbSend(o);return}
  if(net.ws&&net.ws.readyState===1){try{net.ws.send(JSON.stringify(o))}catch(e){}}
 }
-/* ================= P2P (DIRECT) TRANSPORT =================
-   The second online transport: PeerJS data connections, with the
-   HOST's device running the match itself on the local engine (the
-   very code VS CPU uses) and streaming the guests the same message
-   shapes the match server uses ({t:"joined" / "roster" / "start" /
-   "snap" / "ev" / "mymines" / "cpu" / "end" / "tolobby" /
-   "dissolved" / "error" / "chat"}), so guests render through the
-   existing svOnMsg / svOnSnap / svOnEv paths unchanged. The server
-   transport above is untouched and stays selectable as the fallback.
-   The room rules below replicate the match server's Room
-   (server/src/index.js) message for message: join limits and name /
-   chat cleanup, host-only start, the input cursor / seq rules, the
-   400ms chat rate limit, rematch, and the leave rules (mid-match a
-   departed slot is handed to the CPU; in the lobby a departing host
-   dissolves the room). Two structural differences from the server
-   are inherent to hosting on a player device: the host's own
-   fighter is played locally with zero added latency (its world IS
-   the match), and if the host goes away the match is over — guests
-   are told so on disconnect. The Peer instance here is separate
-   from the friend-presence peer (social.peer); PlayFab accounts /
-   friends are not involved in this layer at all. */
-var onlineTransport="p2p"; /* "p2p" (default) | "server" — picked on the ONLINE VS sheet, kept across re-renders */
-var p2pPeer=null;          /* our room PeerJS peer (host: the room id; guest: anonymous) */
-/* PeerJS connection options for EVERY Peer we create (P2P rooms and the
-   friend-presence peer): STUN only, no TURN relay. PeerJS's default config
-   includes a free overseas TURN relay (0.peerjs.com); passing this config
-   replaces it, so connections are direct-only — same-prefecture peers
-   connect peer-to-peer with lower, steadier latency, at the cost of pairs
-   that cannot connect directly failing to connect at all. */
+/* ================= SUPABASE (REALTIME) TRANSPORT =================
+The standard online transport: Supabase Realtime Broadcast, with
+the HOST's device running the match itself on the local engine
+(the very code VS CPU uses) and streaming the guests the same
+message shapes the match server uses ({t:"joined" / "roster" /
+"start" / "snap" / "ev" / "mymines" / "cpu" / "end" / "tolobby" /
+"dissolved" / "error" / "chat"}), so guests render through the
+existing svOnMsg / svOnSnap / svOnEv paths unchanged. The server
+transport above is untouched and stays selectable. (This replaced
+the direct PeerJS P2P transport: players no longer connect to
+each other — every message is relayed by Supabase. PeerJS now
+survives ONLY as the friend-presence / invite channel in the
+accounts section below.)
+Room = one Realtime channel "jb-room-<room code>", joined by
+every participant. Broadcast events:
+- "snap" host -> all: the match snapshot, 30/s (the same
+every-second-frame cadence and quantized shape the host pump
+has always produced).
+- "input" guest -> host: input bundles at 30/s, each repeating
+the guest's newest 12 sampled frames as [frame, bits] pairs;
+the host dedupes by frame number (sbRoomInputFast), so a lost
+bundle is healed by the next and no frame applies twice.
+- "fx" host -> all: FX events, batched on the snapshot
+cadence (at most 30/s).
+- "chat" guests -> host (relayed by the host with the sender's
+name attached) and host -> all; the server's chat rules
+(200 chars, 400ms per sender) are kept by sbRoomHandle.
+- "sys" lobby / match control: join, roster, char, start,
+end, rematch, leave, hostleft, and heartbeats. Presence is
+NOT used (its free-plan cap is too small): every participant
+broadcasts a heartbeat every 2s instead, the host treats a
+guest silent for ~6s as departed (CPU takeover mid-match,
+removal in the lobby), and guests treat a host silent for
+~6s as the host leaving (the match ends).
+Message budget (free plan: 100 messages/second per project):
+snap 30 + fx <=30 + input 30 per guest + heartbeats ~1/s +
+rare control/chat stays inside it for a 2-player match.
+Mine lists are owner-only information, so they never ride the
+shared channel: the host sends each guest's own mines on that
+guest's private channel "jb-room-<code>-<pid>" (event "mine").
+Host-originated room traffic is stamped h:1 — on a shared
+broadcast channel a guest must be able to tell the host's
+roster / start / snapshots from another guest's messages, and
+it ignores everything unstamped. Messages that answer one
+guest (joined / error) additionally carry to:<cid> and are
+ignored by everyone else.
+The room rules below replicate the match server's Room
+(server/src/index.js) message for message, exactly as the old
+P2P room did: join limits and name / chat cleanup, host-only
+start, the 400ms chat rate limit, rematch, and the leave rules
+(mid-match a departed slot is handed to the CPU; in the lobby a
+departing host dissolves the room). Two structural properties
+are inherent to hosting on a player device: the host's own
+fighter is played locally with zero added latency (its world
+IS the match), and if the host goes away the match is over —
+guests are told so by the hostleft message / heartbeat loss. */
+var onlineTransport=sbConfigured()?"supabase":"server"; /* "supabase" (standard, once configured) | "server" — picked on the ONLINE VS sheet, kept across re-renders */
+var sbClient=null; /* the supabase-js client, created lazily by sbEnsureClient */
+var sbChan=null; /* the room channel (jb-room-<code>) while a Supabase room is live */
+var sbPriv=null; /* guest side: our own private channel (jb-room-<code>-<pid>), mymines only */
+var sbCid=null; /* this client's transport id, stamped on everything we send; the host keys players by it */
+var sbRoom=null; /* host-side room state while hosting, else null */
+var sbGuestTimer=null; /* guest join timeout (10s without a joined reply) */
+var sbGuestJoined=false; /* guest: the host accepted our join */
+var sbLastHostHb=0; /* guest: performance.now() of the host's last heartbeat */
+var sbHbTimer=null; /* heartbeat / liveness interval while a room is live */
+var sbHostLive=false; /* host match hooks are active: this device is running a Supabase match on the local engine */
+var SB_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi","no66"];
+/* PeerJS connection options for the friend-presence peer (accounts
+section): STUN only, no TURN relay — PeerJS's default config
+includes a free overseas TURN relay (0.peerjs.com); passing this
+config replaces it. Presence / invites are tiny best-effort
+messages between friends, so direct-only is fine there. (Match
+traffic no longer rides PeerJS at all — see the header above.) */
 var PEER_OPTS={config:{iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]}};
-var p2pRoom=null;          /* host-side room state while hosting, else null */
-var p2pGuestConn=null;     /* guest-side data connection to the host */
-var p2pGuestTimer=null;    /* guest join timeout (10s without a joined reply) */
-var p2pGuestJoined=false;  /* guest: the host accepted our join */
-var p2pHostLive=false;     /* host match hooks are active: this device is running a P2P match on the local engine */
-var P2P_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi","no66"];
-function p2pR1(n){return Math.round(n*10)/10}
-function p2pR2(n){return Math.round(n*100)/100}
-function p2pRI(n){return Math.round(n)} /* snapshot-only integer quantization (v202): positions / velocities / HP / meter and other large-magnitude continuous values ride the P2P snapshot as integers, shortening every JSON number (no ".xx" tail) so each snapshot is fewer bytes and queues less on the link. Sub-second timers (hitstun / frozen / invuln / cooldowns / countdown / patch timers) keep their R1/R2 precision: rounding those to integers would erase states that are almost always between 0 and 1 (a display / state bug on guests), and interpolation — which makes integer positions invisible — does not apply to them. p2pR1/p2pR2 themselves are unchanged, so non-snapshot messages that use them (mines) are byte-for-byte untouched. */
+function sbR1(n){return Math.round(n*10)/10}
+function sbR2(n){return Math.round(n*100)/100}
+function sbRI(n){return Math.round(n)} /* snapshot-only integer quantization (v202): positions / velocities / HP / meter and other large-magnitude continuous values ride the snapshot as integers, shortening every JSON number (no ".xx" tail) so each snapshot is fewer bytes. Sub-second timers (hitstun / frozen / invuln / cooldowns / countdown / patch timers) keep their R1/R2 precision: rounding those to integers would erase states that are almost always between 0 and 1 (a display / state bug on guests), and interpolation — which makes integer positions invisible — does not apply to them. sbR1/sbR2 themselves are unchanged, so non-snapshot messages that use them (mines) are byte-for-byte untouched. */
 /* name cleanup with the match server's cleanName rule (control
-   characters stripped, whitespace collapsed, more than 20 code
-   points falls back instead of truncating) */
-function p2pCleanName(n,fallback){
- if(typeof n!=="string")return fallback;
- var t=n.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim();
- if(!t||Array.from(t).length>20)return fallback;
- return t;
+characters stripped, whitespace collapsed, more than 20 code
+points falls back instead of truncating) */
+function sbCleanName(n,fallback){
+if(typeof n!=="string")return fallback;
+var t=n.replace(/[\u0000-\u001f\u007f]/g,"").replace(/\s+/g," ").trim();
+if(!t||Array.from(t).length>20)return fallback;
+return t;
 }
 /* chat cleanup with the server's cleanChat rule */
-function p2pCleanChat(text){
- if(typeof text!=="string")return null;
- var t=text.replace(/[\u0000-\u001f\u007f-\u009f]/g," ").trim();
- if(!t)return null;
- var chars=Array.from(t);
- return chars.length>200?chars.slice(0,200).join(""):t;
+function sbCleanChat(text){
+if(typeof text!=="string")return null;
+var t=text.replace(/[\u0000-\u001f\u007f-\u009f]/g," ").trim();
+if(!t)return null;
+var chars=Array.from(t);
+return chars.length>200?chars.slice(0,200).join(""):t;
 }
-function p2pSyncModeBtns(){
- var a=$("modeP2pBtn"),b=$("modeSvBtn");
- if(a){var onA=onlineTransport==="p2p";a.style.opacity=onA?"1":"0.45";a.style.borderColor=onA?"#67e8f9":"";a.style.boxShadow=onA?"0 0 0 1.5px #67e8f9 inset":""}
- if(b){var onB=onlineTransport==="server";b.style.opacity=onB?"1":"0.45";b.style.borderColor=onB?"#67e8f9":"";b.style.boxShadow=onB?"0 0 0 1.5px #67e8f9 inset":""}
+/* the supabase-js client, created on first use. eventsPerSecond is
+raised to the free plan's project-wide cap of 100: the library's
+own default send throttle is far below the 30/s snapshot +
+30/s input streams this transport runs, and would silently
+strangle them. */
+function sbEnsureClient(){
+if(sbClient)return true;
+if(!sbConfigured())return false;
+if(typeof supabase==="undefined"||!supabase||typeof supabase.createClient!=="function")return false;
+try{sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{realtime:{params:{eventsPerSecond:100}}})}catch(e){return false}
+return!!sbClient;
 }
-/* teardown for the P2P layer, run at the top of every cleanupNet():
-   hooks off, room dissolved (lobby-phase guests are told), guest
-   connection closed after a best-effort leave, peer destroyed, join
-   timer cleared. Safe to call when no P2P session exists (every
-   server-mode cleanup passes through here as a no-op). */
-function p2pCleanup(){
- if(p2pGuestTimer){clearTimeout(p2pGuestTimer);p2pGuestTimer=null}
- /* guest snapshot side channel: close our end and forget it (the
-    host-side channels die with their connections / peer below).
-    Guarded so a cleanup with no P2P session stays a no-op */
- if(typeof p2pGuestSnap!=="undefined"&&p2pGuestSnap){
-   if(p2pGuestSnap.snapDc){try{p2pGuestSnap.snapDc.close()}catch(e){}p2pGuestSnap.snapDc=null}
-   p2pGuestSnap.snapOk=false;
- }
- /* guest input side channel: same treatment as the snap channel
-    above (the host-side ends die with their connections / peer) */
- if(typeof p2pGuestInput!=="undefined"&&p2pGuestInput){
-   if(p2pGuestInput.inDc){try{p2pGuestInput.inDc.close()}catch(e){}p2pGuestInput.inDc=null}
-   p2pGuestInput.inOk=false;
- }
- fxSink=null;killBannerHook=null;p2pHostLive=false;
- if(p2pRoom){
-   var room=p2pRoom;p2pRoom=null;room.dead=true;
-   if(room.phase!=="match"){
-     for(var i=0;i<room.players.length;i++){var p=room.players[i];
-       if(p.loopback)continue;
-       if(p.conn&&p.conn.open){try{p.conn.send({t:"dissolved"})}catch(e){}}
-       if(p.conn){try{p.conn.close()}catch(e){}}
-     }
-   }
- }
- if(p2pGuestConn){
-   var c=p2pGuestConn;p2pGuestConn=null;
-   if(c.open){try{c.send({t:"leave"})}catch(e){}}
-   try{c.close()}catch(e){}
- }
- if(p2pPeer){var pp=p2pPeer;p2pPeer=null;try{pp.destroy()}catch(e){}}
- p2pGuestJoined=false;
+/* one broadcast send; fire-and-forget (the returned promise is
+swallowed so a failed send can never surface as an unhandled
+rejection — every stream this carries is self-healing: the
+next snapshot / bundle carries the full current state) */
+function sbSendRaw(chan,event,payload){
+if(!chan)return false;
+try{
+var r=chan.send({type:"broadcast",event:event,payload:payload});
+if(r&&typeof r.catch==="function")r.catch(function(){});
+return true;
+}catch(e){return false}
 }
-/* svSend's P2P route: the host's own messages go through the room
-   rules as the host player; a guest's go straight down its host
-   connection. Snapshots / events / end are never sent this way —
-   the host pump delivers those to guests directly. */
-function p2pSend(o){
- if(!o||!o.t)return;
- if(p2pRoom){
-   if(p2pRoom.hostPlayer&&p2pRoom.hostPlayer.pid)p2pRoomHandle(p2pRoom,p2pRoom.hostPlayer,o);
-   return;
- }
- if(p2pGuestConn&&p2pGuestConn.open){try{p2pGuestConn.send(o)}catch(e){}}
+function sbChanSend(event,payload){return sbSendRaw(sbChan,event,payload)}
+/* host-originated room traffic carries the h:1 stamp (see header) */
+function sbHostSend(event,payload){
+if(payload&&typeof payload==="object")payload.h=1;
+return sbChanSend(event,payload);
+}
+/* room message type -> broadcast event (see header) */
+function sbEventFor(t){return t==="snap"?"snap":(t==="ev"?"fx":(t==="chat"?"chat":"sys"))}
+/* one guest input bundle over the input event (svSendBundle) */
+function sbSendInput(msg){return sbChanSend("input",msg)}
+function sbSyncModeBtns(){
+var a=$("modeSbBtn"),b=$("modeSvBtn");
+if(a){var conf=sbConfigured();var onA=conf&&onlineTransport==="supabase";
+a.textContent=conf?"Supabase経由":"Supabase経由（未設定）";
+a.disabled=!conf;
+a.style.opacity=onA?"1":"0.45";a.style.borderColor=onA?"#67e8f9":"";a.style.boxShadow=onA?"0 0 0 1.5px #67e8f9 inset":""}
+if(b){var onB=onlineTransport==="server";b.style.opacity=onB?"1":"0.45";b.style.borderColor=onB?"#67e8f9":"";b.style.boxShadow=onB?"0 0 0 1.5px #67e8f9 inset":""}
+}
+/* teardown for the Supabase layer, run at the top of every
+cleanupNet(): hooks off, room dissolved (guests are told via
+hostleft, best effort before unsubscribing), channels
+unsubscribed, timers cleared. Safe to call when no Supabase
+session exists (every server-mode cleanup passes through here
+as a no-op). */
+function sbCleanup(){
+if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
+if(sbHbTimer){clearInterval(sbHbTimer);sbHbTimer=null}
+fxSink=null;killBannerHook=null;sbHostLive=false;
+if(sbRoom){
+var room=sbRoom;sbRoom=null;room.dead=true;
+for(var i=0;i<room.players.length;i++){var p=room.players[i];
+if(p.priv){try{p.priv.unsubscribe()}catch(e){}p.priv=null}
+}
+try{sbHostSend("sys",{t:"hostleft"})}catch(e){}
+}
+if(sbPriv){var pv=sbPriv;sbPriv=null;try{pv.unsubscribe()}catch(e){}}
+if(sbChan){var ch=sbChan;sbChan=null;try{ch.unsubscribe()}catch(e){}}
+sbGuestJoined=false;sbCid=null;
+}
+/* svSend's Supabase route: the host's own messages go through the
+room rules as the host player; a guest's go out on the room
+channel, stamped with its cid so the host can key them to its
+player. Snapshots / events / end are never sent this way — the
+host pump broadcasts those directly. Input bundles never ride
+this either: svSendBundle ships them on the input event. */
+function sbSend(o){
+if(!o||!o.t)return;
+if(sbRoom){
+if(sbRoom.hostPlayer&&sbRoom.hostPlayer.pid)sbRoomHandle(sbRoom,sbRoom.hostPlayer,o);
+return;
+}
+if(o.t==="chat"){sbChanSend("chat",{t:"chat",cid:sbCid,text:o.text});return}
+if(o.t==="in")return;
+var m={};for(var k in o)m[k]=o[k];m.cid=sbCid;
+sbChanSend("sys",m);
 }
 /* ---- host room: delivery ---- */
-function p2pLoopback(m){
- /* the host's own copies: snap / ev / mymines / end are NOT
-    delivered (the host's world is the match itself, its mines are
-    already local, and its results come from the local match-end
-    flow), and dissolved is not either (the host's own leave flow
-    handles leaving). Everything else enters the normal svOnMsg. */
- if(!m||!m.t)return;
- if(m.t==="snap"||m.t==="ev"||m.t==="mymines"||m.t==="end"||m.t==="dissolved")return;
- svOnMsg(m);
+function sbLoopback(m){
+/* the host's own copies: snap / ev / mymines / end are NOT
+delivered (the host's world is the match itself, its mines are
+already local, and its results come from the local match-end
+flow), and dissolved is not either (the host's own leave flow
+handles leaving). Everything else enters the normal svOnMsg. */
+if(!m||!m.t)return;
+if(m.t==="snap"||m.t==="ev"||m.t==="mymines"||m.t==="end"||m.t==="dissolved")return;
+svOnMsg(m);
 }
-function p2pDeliver(player,msg){
- if(!player||!msg)return;
- if(player.loopback){p2pLoopback(msg);return}
- if(player.conn&&player.conn.open){try{player.conn.send(msg)}catch(e){}}
+/* deliver one room message to ONE player: the host player takes
+the loopback; a guest's own mines ride its private channel
+(owner-only information never touches the shared channel);
+joined / error are addressed with to:<cid> on the shared
+channel and ignored by every other guest. Everything else a
+caller wants delivered to a specific player is in practice
+room-wide, and goes through sbBroadcastRoom / sbSendGuests. */
+function sbDeliver(player,msg){
+if(!player||!msg)return;
+if(player.loopback){sbLoopback(msg);return}
+if(msg.t==="mymines"){if(player.priv)sbSendRaw(player.priv,"mine",msg);return}
+var out=msg;
+if(msg.t==="joined"||msg.t==="error"){out={};for(var k in msg)out[k]=msg[k];out.to=player.cid}
+sbHostSend(sbEventFor(msg.t),out);
 }
-/* ---- snapshot-only side channel ("jb-snap") ----
-   A second RTCDataChannel on the SAME RTCPeerConnection PeerJS
-   already manages for the room connection, created by BOTH ends
-   with {negotiated:true, id:P2P_SNAP_ID, ordered:false,
-   maxRetransmits:0}: unordered, never retransmitted — a snapshot
-   that cannot go out promptly is abandoned by the transport
-   instead of queueing ahead of newer ones, which removes the
-   structural cause of the guest delay (the reliable channel's
-   strict FIFO backlog). ONLY host -> guest snapshots ride it;
-   the existing reliable DataConnection is not touched in any
-   way and keeps carrying join / roster / chat / start / end /
-   inputs / FX / mines exactly as before.
-   Why this cannot fight PeerJS's own channel management:
-   PeerJS 1.5.5 creates exactly one (non-negotiated) data channel
-   per DataConnection and discovers the far end's channel through
-   the ondatachannel event. A negotiated channel NEVER fires
-   ondatachannel on either side (both ends create it locally, by
-   agreement), so PeerJS never sees jb-snap, never wraps it in a
-   DataConnection, and its bookkeeping is untouched. The agreed
-   stream id (1000) sits far above the browser-auto-assigned ids
-   PeerJS's own channels get (0/1 upward on a connection that
-   carries just the one channel), so the ids cannot collide.
-   Compatibility / fallback: an older build never creates its
-   end, so the channel simply never opens on that connection and
-   every snapshot keeps flowing over the reliable channel,
-   byte-for-byte the previous behaviour — per guest, automatically,
-   with no handshake and no protocol change. The reliability
-   settings are trusted only when the live channel reports them
-   back (ordered===false && maxRetransmits===0, checked at
-   creation and again at open): a browser that silently upgrades
-   the channel to reliable leaves the holder empty and the
-   fallback stays in force. Once a channel HAS verified and
-   opened for a peer (snapEverOk), the rule hardens (v202): a
-   dead or dying snap channel marks its holder unusable and
-   snapshots for that peer are DROPPED, never rerouted onto the
-   reliable channel — see p2pDeliverSnap. It can never stop the
-   game either way: the reliable channel keeps carrying every
-   non-snapshot message, and the next snapshot that gets through
-   carries the full current state.
-   Creation timing (both side channels): attach is called the
-   moment each end has its PeerJS connection object — before
-   the connection is open — and again from the connection's
-   "open" event if the channel is still missing then, so no
-   wiring order can leave it uncreated on a live connection;
-   a channel that closes before the match starts is rebuilt
-   exactly once (see p2pSnapAttach). */
-var P2P_SNAP_ID=1000;
-var p2pGuestSnap={snapDc:null,snapOk:false}; /* guest-side holder; host side: snapDc / snapOk live on each player */
-/* is a match (as opposed to the lobby) running on either side
-   right now? Host side: p2pHostLive. Guest side: the snapshot
-   session (sv) is active. The side channels below rebuild a
-   pre-match close exactly once; a mid-match snap close drops
-   snapshots for a proven peer instead of rerouting them (see
-   p2pDeliverSnap), while jb-input keeps its own fallback. */
-function p2pMatchRunning(){
- if(typeof p2pHostLive!=="undefined"&&p2pHostLive)return true;
- if(typeof sv!=="undefined"&&sv&&sv.active)return true;
- return false;
+/* room-wide delivery: the host player's loopback copy plus ONE
+broadcast on the shared channel (every guest is subscribed) */
+function sbBroadcastRoom(room,msg){
+sbLoopback(msg);
+sbHostSend(sbEventFor(msg.t),msg);
 }
-function p2pSnapAttach(conn,holder,onMsg){
- if(!conn||!holder)return;
- /* creation is attempted on TWO paths, so no timing quirk can
-    leave the channel uncreated on a live connection:
-    (1) immediately, from the call sites — the moment each end
-    has its PeerJS connection object, before the connection is
-    even open; (2) again from the connection's own "open" event,
-    in case the RTCPeerConnection was not wired yet at (1) or
-    creation failed there. attach() no-ops once the channel
-    exists, so the two paths can never create it twice. The
-    per-connection bookkeeping lives on the holder under _s*
-    fields (a host player object is also the jb-input holder,
-    which keeps its own _i* fields). */
- if(holder._sConn!==conn){holder._sConn=conn;holder._sRe=false;holder.snapEverOk=false} /* a new connection starts unproven: the reliable fallback applies again until THIS connection's jb-snap has verified + opened */
- if(onMsg)holder._sMsg=onMsg;
- if(holder._sHook!==conn){
-   holder._sHook=conn;
-   try{conn.on("open",function(){p2pSnapAttach(conn,holder,holder._sMsg||null)})}catch(e){}
- }
- if(holder.snapDc)return;
- var pc=null;
- try{pc=conn.peerConnection}catch(e){}
- if(!pc||typeof pc.createDataChannel!=="function")return; /* not wired yet: the "open" hook above retries — until then snapshots use the reliable channel */
- var dc=null;
- try{dc=pc.createDataChannel("jb-snap",{negotiated:true,id:P2P_SNAP_ID,ordered:false,maxRetransmits:0})}catch(e){return}
- var ok=false;
- try{ok=(dc.ordered===false&&dc.maxRetransmits===0)}catch(e){}
- if(!ok){try{dc.close()}catch(e){}return}
- holder.snapDc=dc;holder.snapOk=true;
- dc.onopen=function(){
-   /* re-verify against the live channel now that it is up: if
-      the settings did not survive negotiation, stop using it */
-   try{
-     if(dc.ordered!==false||dc.maxRetransmits!==0){
-       if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}
-       try{dc.close()}catch(e){}
-     }else{
-       holder.snapEverOk=true; /* verified AND open at least once for this peer: from now on snapshots for this peer NEVER fall back to the reliable channel (see p2pDeliverSnap) — position/state data must not ride a retransmitting, ordered path once a UDP-mode path has been proven to work */
-     }
-   }catch(e){}
- };
- dc.onclose=function(){
-   if(holder.snapDc!==dc)return;
-   holder.snapDc=null;holder.snapOk=false;
-   /* a channel that closes BEFORE the match starts is rebuilt
-      exactly once: whatever closed it (a renegotiation hiccup
-      on a shaky link) must not silently cost the whole match
-      its snapshot channel and drop snapshot delivery back onto
-      the ordered channel this channel exists to bypass */
-   if(!holder._sRe&&!p2pMatchRunning()){holder._sRe=true;p2pSnapAttach(conn,holder,holder._sMsg||null)}
- };
- dc.onerror=function(){if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}};
- if(holder._sMsg)dc.onmessage=holder._sMsg;
+/* guests only (the host needs no copy: its world is the match) */
+function sbSendGuests(room,msg){
+sbHostSend(sbEventFor(msg.t),msg);
 }
-/* the pump's snapshot delivery (v202, jb-snap-only rule):
-   snapshots ride jb-snap ONLY, once that channel has been
-   verified and open for this guest (holder.snapEverOk, set in
-   p2pSnapAttach's onopen). If jb-snap later becomes unusable
-   for such a guest — closed, closing, errored, send failed —
-   the snapshot is DROPPED, never rerouted onto the reliable
-   (ordered + retransmitted) channel: putting position/state
-   data back on a retransmitting path rebuilds the head-of-line
-   backlog jb-snap exists to avoid, and snapshots are full-state
-   and superseding, so the next one that does get through (or
-   the guest's rejoin) carries the complete current state.
-   Compatibility is preserved for a guest whose jb-snap NEVER
-   opened (older build / channel never created / settings not
-   verified): snapEverOk stays false for them and every snapshot
-   keeps flowing over the reliable channel, byte-for-byte the
-   previous behaviour. A snap channel whose send buffer is
-   stuffed likewise drops this snapshot outright instead of
-   queueing it. Out-of-order or duplicated arrivals on the
-   unordered channel are discarded by the existing svOnSnap
-   frame check (m.f <= sv.lastSnapF), and a lost snapshot
-   self-heals with the next one. */
-function p2pDeliverSnap(player,msg){
- if(!player)return;
- var dc=player.snapDc;
- if(dc&&player.snapOk){
-   if(dc.readyState==="open"){
-     try{
-       if(typeof dc.bufferedAmount==="number"&&dc.bufferedAmount>65536)return;
-       dc.send(JSON.stringify(msg));return;
-     }catch(e){player.snapDc=null;player.snapOk=false}
-   }else if(dc.readyState==="closed"||dc.readyState==="closing"){
-     player.snapDc=null;player.snapOk=false;
-   }
- }
- if(player.snapEverOk)return; /* jb-snap was proven for this peer: drop rather than reroute position data onto the reliable channel */
- p2pDeliver(player,msg);
+function sbRosterMsg(room){
+return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host}})};
 }
-/* ---- guest-input side channel ("jb-input") ----
-   The mirror image of jb-snap, for the guest -> host direction.
-   Guest inputs used to ride ONLY the reliable DataConnection:
-   ordered + retransmitted, so a single lost packet parked every
-   later input behind its retransmission and the guest's fighter
-   froze on the host for seconds at a time (head-of-line blocking,
-   the same structural flaw jb-snap removed for snapshots). This
-   second negotiated channel on the SAME RTCPeerConnection is
-   created by BOTH ends with {negotiated:true, id:P2P_INPUT_ID,
-   ordered:false, maxRetransmits:0} — unordered, never
-   retransmitted — and carries ONLY guest inputs while it is
-   verified and open. Each packet repeats the newest 12 sampled
-   frames as [frame, bits] pairs (see svSendBundle), so one
-   dropped packet is healed by the next; the host dedupes by
-   frame number (p2pRoomInputFast) and a frame is never applied
-   twice. The agreed stream id (1001) sits right above jb-snap's
-   (1000) and far above the browser-assigned ids of PeerJS's own
-   channels, so nothing collides, and a negotiated channel never
-   fires ondatachannel, so PeerJS's bookkeeping is untouched —
-   the same reasoning as jb-snap. The reliability settings are
-   trusted only when the live channel reports them back
-   (ordered===false && maxRetransmits===0, checked at creation
-   and again at open — the jb-snap rule verbatim): a channel
-   that does not report them is closed and never used.
-   Compatibility / fallback: an older build never creates its
-   end, so the channel simply never opens and every input keeps
-   flowing over the reliable channel, byte-for-byte the previous
-   behaviour, with no handshake and no protocol change. If the
-   channel dies mid-match its holder is cleared and the guest
-   falls back to the reliable channel from the next bundle on;
-   frames already shipped on jb-input are never re-sent there
-   (the guest's sentFrame has passed them, and the redundant
-   window never re-includes frames the reliable channel carried
-   — see sv.relFloor in svSendBundle), so the two paths can
-   never double-apply a frame. Every failure path is contained:
-   a dead input channel can never stop the match. */
-var P2P_INPUT_ID=1001;
-var p2pGuestInput={inDc:null,inOk:false}; /* guest-side holder; host side: inDc / inOk / inHi live on each player */
-function p2pInputAttach(conn,holder,onMsg){
- if(!conn||!holder)return;
- /* the same two creation paths as p2pSnapAttach (see its note):
-    immediately when the connection object appears, and again
-    from the connection's "open" event if the channel is still
-    missing then; the per-connection bookkeeping lives on the
-    holder under _i* fields */
- if(holder._iConn!==conn){holder._iConn=conn;holder._iRe=false}
- if(onMsg)holder._iMsg=onMsg;
- if(holder._iHook!==conn){
-   holder._iHook=conn;
-   try{conn.on("open",function(){p2pInputAttach(conn,holder,holder._iMsg||null)})}catch(e){}
- }
- if(holder.inDc)return;
- var pc=null;
- try{pc=conn.peerConnection}catch(e){}
- if(!pc||typeof pc.createDataChannel!=="function")return; /* not wired yet: the "open" hook above retries — until then inputs use the reliable channel */
- var dc=null;
- try{dc=pc.createDataChannel("jb-input",{negotiated:true,id:P2P_INPUT_ID,ordered:false,maxRetransmits:0})}catch(e){return}
- var ok=false;
- try{ok=(dc.ordered===false&&dc.maxRetransmits===0)}catch(e){}
- if(!ok){try{dc.close()}catch(e){}return}
- holder.inDc=dc;holder.inOk=true;
- dc.onopen=function(){
-   /* re-verify against the live channel now that it is up: if
-      the settings did not survive negotiation, stop using it */
-   try{
-     if(dc.ordered!==false||dc.maxRetransmits!==0){
-       if(holder.inDc===dc){holder.inDc=null;holder.inOk=false}
-       try{dc.close()}catch(e){}
-     }
-   }catch(e){}
- };
- dc.onclose=function(){
-   if(holder.inDc!==dc)return;
-   holder.inDc=null;holder.inOk=false;
-   /* same pre-match rule as jb-snap: a channel that closes
-      before the match starts is rebuilt exactly once, so a
-      transient close cannot silently cost the whole match
-      its input channel */
-   if(!holder._iRe&&!p2pMatchRunning()){holder._iRe=true;p2pInputAttach(conn,holder,holder._iMsg||null)}
- };
- dc.onerror=function(){if(holder.inDc===dc){holder.inDc=null;holder.inOk=false}};
- if(holder._iMsg)dc.onmessage=holder._iMsg;
+function sbBroadcastRoster(room){sbBroadcastRoom(room,sbRosterMsg(room))}
+function sbPlayerMatchIdx(room,pid){
+for(var i=0;i<room.matchRoster.length;i++){if(room.matchRoster[i].pid===pid)return i}
+return -1;
 }
-/* is the guest's jb-input channel verified and open right now?
-   (an older host build never creates its end, so the channel
-   stays "connecting" forever and this stays false — the guest
-   then uses the reliable channel for every bundle, unchanged) */
-function p2pInputUsable(){
- var dc=p2pGuestInput.inDc;
- return !!(dc&&p2pGuestInput.inOk&&dc.readyState==="open");
+/* queue one FX event for the room (flushed by the pump as one
+batched fx broadcast on the snapshot cadence — see sbPump).
+Capped; past the cap the oldest dressing is dropped (state
+never rides this queue). */
+function sbQueueEv(room,ev){
+if(!room)return;
+if(!room.evQ)room.evQ=[];
+if(room.evQ.length<600)room.evQ.push(ev);
 }
-/* one input packet over jb-input; false (nothing sent) when the
-   channel is unusable or the send itself fails, so the caller
-   falls back to the reliable channel for this bundle — the same
-   per-bundle fallback p2pDeliverSnap applies to snapshots */
-function p2pSendInputDc(msg){
- var dc=p2pGuestInput.inDc;
- if(!dc||!p2pGuestInput.inOk||dc.readyState!=="open")return false;
- try{dc.send(JSON.stringify(msg));return true}catch(e){p2pGuestInput.inDc=null;p2pGuestInput.inOk=false;return false}
-}
-/* how many bytes are already queued for this guest, undelivered:
-   the RTCDataChannel's own send buffer (bufferedAmount) plus
-   PeerJS's JS-side FIFO (bufferSize messages, converted at a rough
-   1.5KB each — it only fills once the channel buffer passes
-   PeerJS's own 8MB ceiling, but count it so a queue is a queue).
-   Both layers deliver strictly in order and NEVER drop, so once a
-   queue forms, every new snapshot lands BEHIND all the stale ones
-   ahead of it: at 60 snapshots a second, a link that falls even
-   slightly behind builds up whole seconds of backlog, and the
-   guest ends up watching (and being reconciled against) a world
-   that is seconds old — the reported ~3s guest delay, which no
-   amount of render-delay tuning on the guest can fix, because the
-   data itself arrives old. Snapshots are full-state and
-   superseding, so the pump below treats them as latest-only: a
-   guest whose queue is over the cap is SKIPPED for that snapshot
-   and simply receives the next pump's fresh one, which carries
-   the complete current state. The queue can then never grow past
-   the cap, and a draining link fast-forwards the guest to the
-   present instead of replaying the backlog frame by frame. */
-function p2pQueueBytes(player){
- if(!player||player.loopback||!player.conn)return 0;
- var q=0,c=player.conn;
- try{
-  if(c.dataChannel&&typeof c.dataChannel.bufferedAmount==="number")q+=c.dataChannel.bufferedAmount;
-  if(player.snapDc&&typeof player.snapDc.bufferedAmount==="number")q+=player.snapDc.bufferedAmount; /* the jb-snap channel's own unsent bytes count too, now that snapshots ride it instead of the reliable channel */
-  if(typeof c.bufferSize==="number")q+=c.bufferSize*1536;
- }catch(e){}
- return q;
-}
-var P2P_QUEUE_CAP=16384; /* ~16KB in flight: on a healthy link the queue hovers near zero (each snapshot is ~1-2KB and drains at link speed), so this only ever bites when delivery has genuinely fallen behind — beyond it, sending more would add delay, not data */
-/* is this guest's stream behind, by EITHER signal?
-   (1) the channel queue above — direct, but not every browser
-   reports bufferedAmount honestly (some keep it at 0 while the
-   SCTP stack is seconds deep), and on those the queue check
-   alone never fired and the ~3s guest delay survived the first
-   fix; (2) the guest's own stream ACK: every input bundle now
-   carries ack = the newest snapshot frame the guest has actually
-   RECEIVED (sv.lastSnapF), so the host can count the undelivered
-   frames itself — room.frame - ackF — with no dependence on the
-   transport's self-report. Past ~14 frames (~233ms) of unacked
-   stream the guest is by definition watching queued data, and
-   the pump withholds fresh snapshots / mines / FX for it until
-   the acks catch up (the anti-starvation force-send in p2pPump
-   keeps a deeply clogged guest from locking out entirely). A
-   guest that never acks (older build) simply falls back to
-   signal (1), exactly the previous behaviour. */
-var P2P_ACK_LAG_FRAMES=14;
-function p2pGuestLagging(room,player){
- if(!player||player.loopback)return false;
- if(p2pQueueBytes(player)>P2P_QUEUE_CAP)return true;
- if(room&&player.ackF>=0&&room.frame-player.ackF>P2P_ACK_LAG_FRAMES)return true;
- return false;
-}
-/* queue one FX event for every remote guest individually (each
-   guest's queue is flushed by the pump only while that guest is
-   not lagging — see p2pGuestLagging): one clogged guest can no
-   longer hold up everyone else's effects, and a lagging guest's
-   events wait in ITS queue instead of inside the shared channel
-   backlog, then go out in one batch once its stream recovers.
-   Capped per guest; past the cap the oldest dressing is dropped
-   for that guest only (state never rides this queue). */
-function p2pQueueEv(room,ev){
- if(!room)return;
- for(var i=0;i<room.players.length;i++){var p=room.players[i];
-   if(p.loopback)continue;
-   if(!p.evQ)p.evQ=[];
-   if(p.evQ.length<600)p.evQ.push(ev);
- }
-}
-function p2pBroadcastRoom(room,msg){
- for(var i=0;i<room.players.length;i++)p2pDeliver(room.players[i],msg);
-}
-function p2pSendGuests(room,msg){
- for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)p2pDeliver(p,msg)}
-}
-function p2pRosterMsg(room){
- return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host}})};
-}
-function p2pBroadcastRoster(room){p2pBroadcastRoom(room,p2pRosterMsg(room))}
-function p2pPlayerMatchIdx(room,pid){
- for(var i=0;i<room.matchRoster.length;i++){if(room.matchRoster[i].pid===pid)return i}
- return -1;
+/* is this guest's stream behind, by its own stream ACK? Every
+input bundle carries ack = the newest snapshot frame the guest
+has actually RECEIVED (sv.lastSnapF), so the host can count the
+undelivered frames itself — room.frame - ackF. Past ~14 frames
+(~233ms) of unacked stream the guest is by definition watching
+old data, and the pump withholds its (owner-only) mine updates
+until the acks catch up, so stale mine lists are never marked
+as sent. A guest that never acks simply never reads as lagging. */
+var SB_ACK_LAG_FRAMES=14;
+function sbGuestLagging(room,player){
+if(!player||player.loopback)return false;
+if(room&&player.ackF>=0&&room.frame-player.ackF>SB_ACK_LAG_FRAMES)return true;
+return false;
 }
 /* ---- host room: message rules (the server Room, replicated) ---- */
-function p2pRoomJoin(room,player,m){
- if(player.pid){p2pDeliver(player,{t:"error",msg:"already joined"});return}
- if(room.phase==="match"){p2pDeliver(player,{t:"error",msg:"試合中です"});if(player.conn)setTimeout(function(){try{player.conn.close()}catch(e){}},250);return}
- if(room.players.length>=8){p2pDeliver(player,{t:"error",msg:"満員です"});if(player.conn)setTimeout(function(){try{player.conn.close()}catch(e){}},250);return}
- player.pid="p"+Math.random().toString(36).slice(2,10);
- player.name=p2pCleanName(m.name,"ゲスト"+(room.players.length+1));
- player.joinSeq=++room.joinCounter;
- player.host=(room.players.length===0);
- player.char=null;player.cursor=0;player.lastSeq=-1;player.mnJson=null;player.lastChatAt=0;
- room.players.push(player);
- p2pDeliver(player,{t:"joined",pid:player.pid,host:player.host});
- p2pBroadcastRoster(room);
- p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が参加しました"});
+function sbRoomJoin(room,player,m){
+if(player.pid){sbDeliver(player,{t:"error",msg:"already joined"});return}
+if(room.phase==="match"){sbDeliver(player,{t:"error",msg:"試合中です"});return}
+if(room.players.length>=8){sbDeliver(player,{t:"error",msg:"満員です"});return}
+player.pid="p"+Math.random().toString(36).slice(2,10);
+player.name=sbCleanName(m.name,"ゲスト"+(room.players.length+1));
+player.joinSeq=++room.joinCounter;
+player.host=(room.players.length===0);
+player.char=null;player.cursor=0;player.lastSeq=-1;player.mnJson=null;player.lastChatAt=0;player.lastHb=Date.now();
+room.players.push(player);
+/* the guest's private channel, for its own mine list only (see
+header): the host subscribes now so it can send on it; the
+guest subscribes to the same name when it learns its pid from
+the joined reply. The host's own player is loopback and its
+mines are already local, so it never gets one. */
+if(!player.loopback&&sbClient){
+try{player.priv=sbClient.channel("jb-room-"+room.code+"-"+player.pid);player.priv.subscribe()}catch(e){player.priv=null}
 }
-/* one guest input packet arriving on that guest's jb-input
-   channel (see p2pInputAttach): {t:"in", fr:[[frame, bits], ...],
-   ack}. The packet repeats the guest's newest 12 sampled frames;
-   frames at or below player.inHi were already applied (or
-   superseded past recovery) and are dropped, so the same guest
-   frame is NEVER scheduled twice — not within one packet, not
-   across the redundant repeats, and not across the channel
-   switch (the guest never re-includes a reliably-carried frame
-   in the window, and never re-sends a jb-input frame on the
-   reliable channel). The surviving fresh frames, in ascending
-   order, enter the very same intake as a reliable bundle in
-   p2pRoomHandle's "in" branch: reserved from the next frame
-   onward (base = max(cursor, frame+1)) and chained forward by
-   the cursor, so everything downstream (realIn scheduling,
-   rbPendBits press parking, the held-repeat fallback in
-   p2pInputFor) behaves exactly as before. A frame the 12-frame
-   redundancy window could not recover is simply absent from the
-   stream: the steps it would have covered run on the held-repeat
-   fallback, exactly as they do today when a bundle arrives late.
-   The stream ack rides these packets too and is recorded before
-   anything else, exactly as in the reliable branch, so the
-   host's flow control (p2pGuestLagging) keeps working while
-   inputs ride this channel. */
-function p2pRoomInputFast(room,player,m){
- if(!room||room.dead||!player||!player.pid||!m)return;
- if(typeof m.ack==="number")player.ackF=m.ack,player.ackAt=performance.now();
- if(room.phase!=="match")return;
- var idx=p2pPlayerMatchIdx(room,player.pid);if(idx<0)return;
- var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
- var fr=Array.isArray(m.fr)?m.fr:[];
- var fresh=[];
- for(var i=0;i<fr.length&&fresh.length<16;i++){
-   var e=fr[i];if(!Array.isArray(e)||e.length<2)continue;
-   var f=e[0]|0;
-   if(f<=player.inHi)continue; /* duplicate / already applied / superseded */
-   fresh.push([f,(e[1]|0)&0xffff]);
- }
- if(!fresh.length)return;
- fresh.sort(function(a,b){return a[0]-b[0]});
- var base=Math.max(player.cursor||0,room.frame+1);
- var n=0,lastF=player.inHi;
- for(var k=0;k<fresh.length;k++){
-   if(fresh[k][0]<=lastF)continue; /* a repeat inside the packet itself */
-   slot.realIn[base+n]=fresh[k][1];n++;lastF=fresh[k][0];
- }
- if(n){player.cursor=base+n;player.inHi=lastF}
+sbDeliver(player,{t:"joined",pid:player.pid,host:player.host});
+sbBroadcastRoster(room);
+sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が参加しました"});
 }
-function p2pRoomHandle(room,player,m){
- if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
- if(m.t==="chat"){
-   if(!player.pid)return;
-   var text=p2pCleanChat(m.text);if(text===null)return;
-   var now=Date.now();if(now-(player.lastChatAt||0)<400)return;
-   player.lastChatAt=now;
-   p2pBroadcastRoom(room,{t:"chat",name:player.name,text:text});
-   return;
- }
- if(!player.pid){p2pDeliver(player,{t:"error",msg:"join first"});return}
- if(m.t==="char"){
-   if(room.phase==="match")return;
-   if(P2P_CHARS.indexOf(m.char)<0){p2pDeliver(player,{t:"error",msg:"unknown char"});return}
-   player.char=m.char;p2pBroadcastRoster(room);return;
- }
- if(m.t==="start"){
-   if(!player.host){p2pDeliver(player,{t:"error",msg:"host only"});return}
-   if(room.phase==="match")return;
-   if(room.players.length<2){p2pDeliver(player,{t:"error",msg:"2人以上必要です"});return}
-   for(var si=0;si<room.players.length;si++){if(!room.players[si].char){p2pDeliver(player,{t:"error",msg:"全員がキャラを選んでいません"});return}}
-   p2pRoomStartMatch(room);return;
- }
- if(m.t==="in"){
-   if(typeof m.ack==="number")player.ackF=m.ack,player.ackAt=performance.now(); /* stream ack: the newest snapshot frame this guest has received — the host's transport-independent flow-control signal (see p2pGuestLagging). Recorded before the seq filter: even a retransmitted bundle's ack is fresh delivery information */
-   if(room.phase!=="match")return;
-   var idx=p2pPlayerMatchIdx(room,player.pid);if(idx<0)return;
-   var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
-   if(typeof m.seq==="number"&&m.seq<=player.lastSeq)return;
-   if(typeof m.seq==="number")player.lastSeq=m.seq;
-   var ins=Array.isArray(m.ins)?m.ins:[];
-   /* guest heaviness fix: schedule at the NEXT frame, not +2. The
-      match server's +2 headroom covers a remote hop the host device
-      does not have — this handler runs the moment the bundle arrives
-      (single-threaded: never mid-step), so frame+1 is always a
-      not-yet-stepped frame, and a bundle that arrives late simply
-      chains forward from the cursor exactly as before (held bits
-      repeat in the meantime; nothing is dropped). One full frame
-      (~16.7ms) of input latency comes off every guest action. */
-   var base=Math.max(player.cursor||0,room.frame+1);
-   for(var k=0;k<ins.length&&k<4;k++)slot.realIn[base+k]=(ins[k]|0)&0xffff;
-   if(ins.length)player.cursor=base+Math.min(ins.length,4);
-   return;
- }
- if(m.t==="rematch"){
-   if(room.phase!=="ended")return;
-   room.phase="lobby";room.matchRoster=[];room.matchSlots=[];
-   room.players=room.players.filter(function(p){return !p.departed});
-   /* the match is over: release the host hooks before everyone
-      lands back in character select (the next start re-arms them) */
-   fxSink=null;killBannerHook=null;p2pHostLive=false;
-   var rmMsg=p2pRosterMsg(room);
-   p2pSendGuests(room,{t:"tolobby"});
-   p2pSendGuests(room,rmMsg);
-   /* the host's own tolobby is delivered a tick later, NOT in this
-      synchronous turn: when the host itself requested the rematch,
-      requestRematch() arms its watchdog and shows its wait message
-      AFTER svSend returns (the server flow it was written for is
-      asynchronous) — a synchronous loopback here would let that
-      watchdog fire into the fresh character select seconds later
-      and yank the host out of the lobby it had already entered */
-   setTimeout(function(){
-     if(p2pRoom!==room||room.dead)return;
-     p2pLoopback({t:"tolobby"});
-     p2pLoopback(rmMsg);
-   },0);
-   return;
- }
- if(m.t==="leave"){
-   p2pRoomGone(room,player);
-   if(player.conn){try{player.conn.close()}catch(e){}}
-   return;
- }
+/* one guest input bundle arriving on the input event (see
+svSendBundle): {t:"in", cid, fr:[[frame, bits],...], ack}.
+The bundle repeats the guest's newest 12 sampled frames;
+frames at or below player.inHi were already applied (or
+superseded past recovery) and are dropped, so the same guest
+frame is NEVER scheduled twice — not within one bundle and
+not across the redundant repeats. The surviving fresh frames,
+in ascending order, enter the very same intake a server-mode
+bundle uses: reserved from the next frame onward
+(base = max(cursor, frame+1)) and chained forward by the
+cursor, so everything downstream (realIn scheduling,
+rbPendBits press parking, the held-repeat fallback in
+sbInputFor) behaves exactly as before. A frame the 12-frame
+redundancy window could not recover is simply absent from the
+stream: the steps it would have covered run on the held-repeat
+fallback, exactly as they do when a bundle arrives late. The
+stream ack rides these bundles too and is recorded before
+anything else, so the host's flow control (sbGuestLagging)
+keeps working. */
+function sbRoomInputFast(room,player,m){
+if(!room||room.dead||!player||!player.pid||!m)return;
+if(typeof m.ack==="number")player.ackF=m.ack,player.ackAt=performance.now();
+if(room.phase!=="match")return;
+var idx=sbPlayerMatchIdx(room,player.pid);if(idx<0)return;
+var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
+var fr=Array.isArray(m.fr)?m.fr:[];
+var fresh=[];
+for(var i=0;i<fr.length&&fresh.length<16;i++){
+var e=fr[i];if(!Array.isArray(e)||e.length<2)continue;
+var f=e[0]|0;
+if(f<=player.inHi)continue; /* duplicate / already applied / superseded */
+fresh.push([f,(e[1]|0)&0xffff]);
 }
-function p2pRoomGone(room,player){
- if(!player||player.goneHandled||!player.pid)return;
- player.goneHandled=true;player.departed=true;
- if(p2pRoom!==room||room.dead)return;
- if(room.phase==="match"){
-   var idx=p2pPlayerMatchIdx(room,player.pid);
-   if(idx>=0&&!room.matchRoster[idx].gone){
-     room.matchRoster[idx].gone=true;
-     if(room.matchSlots[idx])room.matchSlots[idx].ai=true;
-     p2pBroadcastRoom(room,{t:"cpu",i:idx,name:room.matchRoster[idx].name});
-     p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
-   }
-   return;
- }
- /* lobby / ended: a departing host dissolves the room; a departing
-    guest is removed from the player list */
- if(player.host){
-   room.dead=true;
-   var guests=room.players.slice();
-   for(var gi=0;gi<guests.length;gi++){var gp=guests[gi];
-     if(gp.loopback)continue;
-     if(gp.conn&&gp.conn.open){try{gp.conn.send({t:"dissolved"})}catch(e){}}
-     if(gp.conn){try{gp.conn.close()}catch(e){}}
-   }
-   if(p2pRoom===room)p2pRoom=null;
-   return;
- }
- var pi=room.players.indexOf(player);if(pi>=0)room.players.splice(pi,1);
- p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
- p2pBroadcastRoster(room);
+if(!fresh.length)return;
+fresh.sort(function(a,b){return a[0]-b[0]});
+var base=Math.max(player.cursor||0,room.frame+1);
+var n=0,lastF=player.inHi;
+for(var k=0;k<fresh.length;k++){
+if(fresh[k][0]<=lastF)continue; /* a repeat inside the bundle itself */
+slot.realIn[base+n]=fresh[k][1];n++;lastF=fresh[k][0];
 }
-function p2pRoomStartMatch(room){
- room.matchRoster=room.players.map(function(p){return{pid:p.pid,name:p.name,char:p.char,gone:false}});
- room.seed=(Math.random()*0x7fffffff)|0||1;
- room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
- room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
- for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0;p.lastSnapSentF=-9999;p.evQ=[]}
- room.phase="match";
- var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
- p2pSendGuests(room,startMsg);
- /* the host builds its own match through the very same svOnMsg
-    start handler a guest uses (startMatch("online")), delivered by
-    loopback; the match hooks (guest input source, step hook, KO
-    hook, FX sink) arm in this same synchronous turn, below */
- p2pLoopback(startMsg);
- p2pHostLive=true;
- fxSink=function(ev){p2pQueueEv(p2pRoom,ev)};
- killBannerHook=p2pKillHook;
+if(n){player.cursor=base+n;player.inHi=lastF}
 }
-/* ---- host: peer + room creation ---- */
-function p2pCreateRoom(){
- net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();net.transport="p2p";
- net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
- openOnline("接続を準備しています…");
- p2pHostPeer(0);
+function sbRoomHandle(room,player,m){
+if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
+if(m.t==="chat"){
+if(!player.pid)return;
+var text=sbCleanChat(m.text);if(text===null)return;
+var now=Date.now();if(now-(player.lastChatAt||0)<400)return;
+player.lastChatAt=now;
+sbBroadcastRoom(room,{t:"chat",name:player.name,text:text});
+return;
 }
-function p2pHostPeer(retry){
- if(typeof Peer==="undefined"){cleanupNet();openOnline("オンライン基盤（PeerJS）の読み込みに失敗したため、直接接続は使えません。「サーバー経由」を試してください。");return}
- var peer=null;
- try{peer=new Peer("jailbreaker-room-"+net.code,PEER_OPTS)}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
- p2pPeer=peer;
- peer.on("open",function(){
-   if(p2pPeer!==peer)return;
-   var room={code:net.code,phase:"lobby",players:[],joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,lastSnapF:-1,dead:false,hostPlayer:null};
-   p2pRoom=room;
-   var hp={pid:null,name:"",char:null,host:false,joinSeq:0,conn:null,loopback:true,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[]};
-   room.hostPlayer=hp;
-   p2pRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
- });
- peer.on("connection",function(conn){
-   if(p2pPeer!==peer||!p2pRoom)return;
-   p2pHostAccept(p2pRoom,conn);
- });
- peer.on("error",function(err){
-   if(p2pPeer!==peer)return;
-   if(err&&err.type==="unavailable-id"){
-     /* the code collided with a live room: mint a fresh code and
-        retry, exactly like the server path's createRetry (max 3) */
-     if(retry<3){
-       try{peer.destroy()}catch(e){}
-       if(p2pPeer===peer)p2pPeer=null;
-       net.code=genRoomCode();net.createRetry=retry+1;
-       p2pHostPeer(retry+1);
-     }else{cleanupNet();openOnline("ルームを作成できませんでした。少し待ってから、もう一度お試しください。")}
-     return;
-   }
-   if(!p2pRoom){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。")}
- });
- peer.on("disconnected",function(){
-   if(p2pPeer===peer){try{peer.reconnect()}catch(e){}}
- });
+if(!player.pid){sbDeliver(player,{t:"error",msg:"join first"});return}
+if(m.t==="char"){
+if(room.phase==="match")return;
+if(SB_CHARS.indexOf(m.char)<0){sbDeliver(player,{t:"error",msg:"unknown char"});return}
+player.char=m.char;sbBroadcastRoster(room);return;
 }
-function p2pHostAccept(room,conn){
- var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[],snapDc:null,snapOk:false,inDc:null,inOk:false};
- /* snapshot side channel for this guest (see p2pSnapAttach):
-    created on the connection's existing RTCPeerConnection; the
-    host only ever SENDS on it (snapshots), so no message handler.
-    If the guest runs an older build its end is never created,
-    the channel never opens, and p2pDeliverSnap keeps using the
-    reliable channel for this guest */
- p2pSnapAttach(conn,player,null);
- /* guest-input side channel for this guest (see p2pInputAttach):
-    the host only ever RECEIVES on it — redundant guest input
-    packets, fed to p2pRoomInputFast. If the guest runs an older
-    build its end is never created, the channel never opens, and
-    its inputs keep arriving on the reliable channel exactly as
-    before (p2pRoomHandle's "in" branch) */
- p2pInputAttach(conn,player,function(ev){
-   if(p2pRoom!==room||room.dead)return;
-   var m=ev.data;
-   if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
-   if(!m||typeof m!=="object"||m.t!=="in")return;
-   p2pRoomInputFast(room,player,m);
- });
- conn.on("data",function(data){
-   if(p2pRoom!==room||room.dead)return;
-   var m=data;
-   if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
-   if(!m||typeof m!=="object")return;
-   if(!player.pid){if(m.t==="join")p2pRoomJoin(room,player,m);return}
-   p2pRoomHandle(room,player,m);
- });
- conn.on("close",function(){p2pRoomGone(room,player)});
- conn.on("error",function(){p2pRoomGone(room,player)});
+if(m.t==="start"){
+if(!player.host){sbDeliver(player,{t:"error",msg:"host only"});return}
+if(room.phase==="match")return;
+if(room.players.length<2){sbDeliver(player,{t:"error",msg:"2人以上必要です"});return}
+for(var si=0;si<room.players.length;si++){if(!room.players[si].char){sbDeliver(player,{t:"error",msg:"全員がキャラを選んでいません"});return}}
+sbRoomStartMatch(room);return;
 }
-/* ---- guest: join + failure / disconnect reporting ---- */
-function p2pJoinRoom(code){
- net.role="guest";net.expectHost=false;net.code=code;net.transport="p2p";
- p2pGuestJoined=false;
- openOnline("ルーム "+code+" に接続しています…");
- if(typeof Peer==="undefined"){cleanupNet();openOnline("オンライン基盤（PeerJS）の読み込みに失敗したため、直接接続は使えません。「サーバー経由」を試してください。");return}
- var peer=null;
- try{peer=new Peer(undefined,PEER_OPTS)}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
- p2pPeer=peer;
- p2pGuestTimer=setTimeout(function(){
-   p2pGuestTimer=null;
-   if(p2pPeer!==peer||p2pGuestJoined)return;
-   cleanupNet();
-   openOnline("ホストに接続できませんでした。相手がルームを作成しているか、コードが合っているか確認してください。お互いの通信環境によっては直接接続できない場合があります。その場合は「サーバー経由」も試してください。");
- },10000);
- peer.on("open",function(){
-   if(p2pPeer!==peer)return;
-   var conn=null;
-   try{conn=peer.connect("jailbreaker-room-"+code,{reliable:true})}catch(e){p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
-   p2pGuestConn=conn;
-   /* snapshot side channel (see p2pSnapAttach): created on the
-      connection's existing RTCPeerConnection with the same agreed
-      id / settings as the host's end. Snapshots arriving here are
-      fed into the very same svOnMsg -> svOnSnap path as reliable-
-      channel snapshots, so the stale-frame discard, the jitter
-      buffer and the stream acks behave identically whichever
-      channel a snapshot arrived on. Anything that is not a snap
-      message is ignored — nothing else may ride this channel.
-      If the host runs an older build its end is never created,
-      the channel never opens, and snapshots keep arriving on the
-      reliable channel exactly as before */
-   p2pSnapAttach(conn,p2pGuestSnap,function(ev){
-     if(p2pGuestConn!==conn)return;
-     var m=ev.data;
-     if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
-     if(!m||typeof m!=="object"||m.t!=="snap")return;
-     svOnMsg(m);
-   });
-   /* guest-input side channel (see p2pInputAttach): created on
-      the same RTCPeerConnection with the same agreed id /
-      settings as the host's end. This end only ever SENDS
-      (svSendBundle ships the redundant input packets on it
-      while it is verified + open), so no message handler. If
-      the host runs an older build its end is never created,
-      the channel never opens, and inputs keep going over the
-      reliable channel exactly as before */
-   p2pInputAttach(conn,p2pGuestInput,null);
-   conn.on("open",function(){
-     if(p2pGuestConn!==conn)return;
-     try{conn.send({t:"join",name:(social.loggedIn&&social.name)?myDispName():""})}catch(e){}
-   });
-   conn.on("data",function(data){
-     if(p2pGuestConn!==conn)return;
-     var m=data;
-     if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
-     if(!m||typeof m!=="object")return;
-     if(m.t==="joined"){p2pGuestJoined=true;if(p2pGuestTimer){clearTimeout(p2pGuestTimer);p2pGuestTimer=null}}
-     svOnMsg(m);
-   });
-   conn.on("close",function(){p2pGuestClosed(conn)});
-   conn.on("error",function(){if(!p2pGuestJoined)p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。")});
- });
- peer.on("error",function(err){
-   if(p2pPeer!==peer||p2pGuestJoined)return;
-   if(err&&err.type==="peer-unavailable"){p2pGuestFail(peer,"そのコードのルームが見つかりませんでした。コードを確認してください。");return}
-   p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。");
- });
- peer.on("disconnected",function(){
-   if(p2pPeer===peer){try{peer.reconnect()}catch(e){}}
- });
+if(m.t==="rematch"){
+if(room.phase!=="ended")return;
+room.phase="lobby";room.matchRoster=[];room.matchSlots=[];
+room.players=room.players.filter(function(p){return!p.departed});
+/* the match is over: release the host hooks before everyone
+lands back in character select (the next start re-arms them) */
+fxSink=null;killBannerHook=null;sbHostLive=false;
+var rmMsg=sbRosterMsg(room);
+sbSendGuests(room,{t:"tolobby"});
+sbSendGuests(room,rmMsg);
+/* the host's own tolobby is delivered a tick later, NOT in this
+synchronous turn: when the host itself requested the rematch,
+requestRematch() arms its watchdog and shows its wait message
+AFTER svSend returns (the server flow it was written for is
+asynchronous) — a synchronous loopback here would let that
+watchdog fire into the fresh character select seconds later
+and yank the host out of the lobby it had already entered */
+setTimeout(function(){
+if(sbRoom!==room||room.dead)return;
+sbLoopback({t:"tolobby"});
+sbLoopback(rmMsg);
+},0);
+return;
 }
-function p2pGuestFail(peer,msg){
- if(p2pPeer!==peer)return;
- cleanupNet();
- openOnline(msg);
+if(m.t==="leave"){
+sbRoomGone(room,player);
+return;
 }
-function p2pGuestClosed(conn){
- if(p2pGuestConn!==conn)return;
- if(net.leaving||net.dissolved)return;
- if(!p2pGuestJoined)return; /* a pre-join close is reported by the timeout / error paths instead */
- if(running&&mode==="online"&&net.started&&!matchOver){
-   /* the host is the match: losing it ends the match (the one
-      behavioural difference from the server transport) */
-   cleanupNet();toMenu();openOnline("ホストとの接続が切れたため、試合は終了しました。");
- }else{
-   cleanupNet();toMenu();openOnline("ホストとの接続が切れました。");
- }
+/* guest inputs never pass through here: they arrive on the
+input event and go straight to sbRoomInputFast */
+}
+function sbRoomGone(room,player){
+if(!player||player.goneHandled||!player.pid)return;
+player.goneHandled=true;player.departed=true;
+if(player.priv){try{player.priv.unsubscribe()}catch(e){}player.priv=null}
+if(room.byCid&&player.cid)delete room.byCid[player.cid];
+if(sbRoom!==room||room.dead)return;
+if(room.phase==="match"){
+var idx=sbPlayerMatchIdx(room,player.pid);
+if(idx>=0&&!room.matchRoster[idx].gone){
+room.matchRoster[idx].gone=true;
+if(room.matchSlots[idx])room.matchSlots[idx].ai=true;
+sbBroadcastRoom(room,{t:"cpu",i:idx,name:room.matchRoster[idx].name});
+sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
+}
+return;
+}
+/* lobby / ended: a departing host dissolves the room; a departing
+guest is removed from the player list */
+if(player.host){
+room.dead=true;
+sbHostSend("sys",{t:"dissolved"});
+if(sbRoom===room)sbRoom=null;
+return;
+}
+var pi=room.players.indexOf(player);if(pi>=0)room.players.splice(pi,1);
+sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
+sbBroadcastRoster(room);
+}
+function sbRoomStartMatch(room){
+room.matchRoster=room.players.map(function(p){return{pid:p.pid,name:p.name,char:p.char,gone:false}});
+room.seed=(Math.random()*0x7fffffff)|0||1;
+room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
+room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
+for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0}
+room.phase="match";
+var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
+sbSendGuests(room,startMsg);
+/* the host builds its own match through the very same svOnMsg
+start handler a guest uses (startMatch("online")), delivered by
+loopback; the match hooks (guest input source, step hook, KO
+hook, FX sink) arm in this same synchronous turn, below */
+sbLoopback(startMsg);
+sbHostLive=true;
+fxSink=function(ev){sbQueueEv(sbRoom,ev)};
+killBannerHook=sbKillHook;
+}
+/* ---- host: incoming broadcast dispatch ----
+Every guest message carries its cid; the host keys it to the
+player that cid joined as. Any message from a joined guest —
+heartbeat included — refreshes that guest's liveness stamp
+(the heartbeat watchdog in sbStartHeartbeat reads it). A cid
+the host has never seen may only join; anything else from it
+is dropped. */
+function sbHostDispatch(kind,m){
+var room=sbRoom;
+if(!room||room.dead||!m||typeof m!=="object")return;
+if(typeof m.cid!=="string"||!m.cid)return;
+var p=room.byCid[m.cid]||null;
+if(p)p.lastHb=Date.now();
+if(kind==="input"){if(p&&p.pid)sbRoomInputFast(room,p,m);return}
+if(!p){
+if(kind==="sys"&&m.t==="join"){
+p={pid:null,cid:m.cid,name:"",char:null,host:false,joinSeq:0,loopback:false,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,lastHb:Date.now(),goneHandled:false,departed:false,ackF:-1,ackAt:0,priv:null};
+room.byCid[m.cid]=p;
+sbRoomJoin(room,p,m);
+}
+return;
+}
+if(m.t==="hb")return;
+sbRoomHandle(room,p,m);
+}
+function sbHostWire(chan){
+chan.on("broadcast",{event:"sys"},function(en){if(sbChan!==chan)return;sbHostDispatch("sys",en&&en.payload)});
+chan.on("broadcast",{event:"chat"},function(en){if(sbChan!==chan)return;sbHostDispatch("chat",en&&en.payload)});
+chan.on("broadcast",{event:"input"},function(en){if(sbChan!==chan)return;sbHostDispatch("input",en&&en.payload)});
+}
+/* ---- heartbeat / liveness ----
+Every participant broadcasts a heartbeat every 2 seconds (one
+tick of this 1s interval sends on every second tick). The host
+treats a joined guest with no message of any kind for ~6s as
+departed (sbRoomGone: CPU takeover mid-match, removal in the
+lobby); a guest treats a host heartbeat silent for ~6s the
+same way the old transport treated losing the host connection.
+Presence is deliberately not used (see the header). */
+function sbStartHeartbeat(){
+if(sbHbTimer)clearInterval(sbHbTimer);
+var tick=0;
+sbHbTimer=setInterval(function(){
+tick++;
+if(sbRoom){
+if(tick%2===0)sbHostSend("sys",{t:"hb"});
+var room=sbRoom,now=Date.now();
+for(var i=room.players.length-1;i>=0;i--){var p=room.players[i];
+if(p.loopback||!p.pid)continue;
+if(now-(p.lastHb||0)>6000)sbRoomGone(room,p);
+}
+}else if(sbChan){
+if(tick%2===0)sbChanSend("sys",{t:"hb",cid:sbCid});
+if(sbGuestJoined&&performance.now()-sbLastHostHb>6000)sbGuestHostGone();
+}
+},1000);
+}
+/* ---- host: room creation ---- */
+function sbCreateRoom(){
+net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();net.transport="supabase";
+net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
+if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、この方式はまだ使えません。「サーバー経由」を選んでください。");return}
+if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、Supabase経由は使えません。「サーバー経由」を試してください。");return}
+openOnline("接続を準備しています…");
+sbCid="c"+Math.random().toString(36).slice(2,10);
+var chan=null;
+try{chan=sbClient.channel("jb-room-"+net.code,{config:{broadcast:{self:false}}})}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+sbChan=chan;
+sbHostWire(chan);
+chan.subscribe(function(status){
+if(sbChan!==chan)return;
+if(status==="SUBSCRIBED"){
+if(sbRoom)return;
+var room={code:net.code,phase:"lobby",players:[],byCid:{},joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,lastSnapF:-1,dead:false,hostPlayer:null};
+sbRoom=room;
+var hp={pid:null,cid:sbCid,name:"",char:null,host:false,joinSeq:0,loopback:true,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,lastHb:Date.now(),goneHandled:false,departed:false,ackF:-1,ackAt:0,priv:null};
+room.hostPlayer=hp;room.byCid[sbCid]=hp;
+sbRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
+sbStartHeartbeat();
+}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
+cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
+}
+});
+}
+/* ---- guest: join + failure / host-loss reporting ---- */
+function sbJoinRoom(code){
+net.role="guest";net.expectHost=false;net.code=code;net.transport="supabase";
+sbGuestJoined=false;
+if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、この方式はまだ使えません。「サーバー経由」を選んでください。");return}
+if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、Supabase経由は使えません。「サーバー経由」を試してください。");return}
+openOnline("ルーム "+code+" に接続しています…");
+sbCid="c"+Math.random().toString(36).slice(2,10);
+sbLastHostHb=performance.now();
+var chan=null;
+try{chan=sbClient.channel("jb-room-"+code,{config:{broadcast:{self:false}}})}catch(e){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+sbChan=chan;
+sbGuestWire(chan);
+sbGuestTimer=setTimeout(function(){
+sbGuestTimer=null;
+if(sbChan!==chan||sbGuestJoined)return;
+cleanupNet();
+openOnline("ホストに接続できませんでした。相手がルームを作成しているか、コードが合っているか確認してください。");
+},10000);
+chan.subscribe(function(status){
+if(sbChan!==chan)return;
+if(status==="SUBSCRIBED"){
+sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():""});
+sbStartHeartbeat();
+}else if((status==="CHANNEL_ERROR"||status==="TIMED_OUT")&&!sbGuestJoined){
+cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
+}
+});
+}
+/* guest-side receive wiring: on the shared channel a guest acts
+ONLY on host-stamped (h:1) traffic — other guests' joins,
+heartbeats and chat originals are for the host, whose stamped
+relays are what everyone renders. Directed replies (joined /
+error) are additionally filtered by their to:<cid>. */
+function sbGuestWire(chan){
+function hostMsg(en){
+var m=en&&en.payload;
+if(!m||typeof m!=="object"||m.h!==1)return null;
+return m;
+}
+chan.on("broadcast",{event:"snap"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
+chan.on("broadcast",{event:"fx"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
+chan.on("broadcast",{event:"chat"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
+chan.on("broadcast",{event:"sys"},function(en){
+if(sbChan!==chan)return;
+var m=en&&en.payload;
+if(!m||typeof m!=="object")return;
+if(m.t==="hb"){if(m.h===1)sbLastHostHb=performance.now();return}
+if(m.h!==1)return;
+if(m.to&&m.to!==sbCid&&m.to!==net.myId)return; /* addressed to another guest */
+if(m.t==="hostleft"){sbGuestHostGone();return}
+if(m.t==="joined"){
+sbGuestJoined=true;sbLastHostHb=performance.now();
+if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
+svOnMsg(m);
+sbGuestPrivSubscribe(m.pid);
+return;
+}
+svOnMsg(m);
+});
+}
+/* our own private channel (see header): the host sends ONLY our
+fighter's mine list here, as {t:"mymines"} — fed into the same
+svOnMsg branch the server transport uses */
+function sbGuestPrivSubscribe(pid){
+if(!pid||!sbClient)return;
+if(sbPriv){try{sbPriv.unsubscribe()}catch(e){}sbPriv=null}
+var ch=null;
+try{ch=sbClient.channel("jb-room-"+net.code+"-"+pid)}catch(e){return}
+sbPriv=ch;
+ch.on("broadcast",{event:"mine"},function(en){if(sbPriv!==ch)return;var m=en&&en.payload;if(m&&typeof m==="object")svOnMsg(m)});
+try{ch.subscribe()}catch(e){}
+}
+/* the host is gone (its hostleft message arrived, or its
+heartbeat has been silent ~6s): the host IS the match on this
+transport, so losing it ends the match — the one behavioural
+difference from the server transport. In the lobby / after the
+match it reads as the room dissolving. */
+function sbGuestHostGone(){
+if(net.leaving||net.dissolved)return;
+if(!sbGuestJoined)return;
+if(running&&mode==="online"&&net.started&&!matchOver){
+cleanupNet();toMenu();openOnline("ホストとの接続が切れたため、試合は終了しました。");
+}else{
+roomDissolved();
+}
 }
 /* ---- host match: step hook, guest input source, KO hook ---- */
 /* called at the top of every fixed step in loop() (right after
-   time+=STEP) while this device hosts a P2P match: advances the
-   room frame counter. During the countdown fighters are not
-   stepped, so each guest slot's input for this frame is consumed
-   here instead and its presses parked with svParkPresses — exactly
-   the server sim's stepFrame treatment, so a press thrown during
-   the countdown fires right after FIGHT. */
-function p2pStepHook(){
- if(!p2pHostLive||!p2pRoom||p2pRoom.phase!=="match")return;
- var room=p2pRoom,F=room.frame;
- room.fNow=F;room.frame=F+1;
- if(countdown>0){
-   for(var i=0;i<fighters.length;i++){
-     if(i===net.myIdx)continue;
-     var slot=room.matchSlots[i];if(!slot||slot.ai)continue;
-     var f=fighters[i];if(!f)continue;
-     var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* fallback repeats the full HELD mask (28687 = move / jump-hold + the v105 J / U / L hold-to-continue bits), not just &15: masking to 15 dropped a guest's held J / U / L whenever a bundle arrived late, cutting multi-stage hold moves out mid-swing — the same fix as p2pInputFor below */
-     slot.used[F]=bits;svParkPresses(f,bits,F);
-   }
- }
+time+=STEP) while this device hosts a Supabase match: advances
+the room frame counter. During the countdown fighters are not
+stepped, so each guest slot's input for this frame is consumed
+here instead and its presses parked with svParkPresses — exactly
+the server sim's stepFrame treatment, so a press thrown during
+the countdown fires right after FIGHT. */
+function sbStepHook(){
+if(!sbHostLive||!sbRoom||sbRoom.phase!=="match")return;
+var room=sbRoom,F=room.frame;
+room.fNow=F;room.frame=F+1;
+if(countdown>0){
+for(var i=0;i<fighters.length;i++){
+if(i===net.myIdx)continue;
+var slot=room.matchSlots[i];if(!slot||slot.ai)continue;
+var f=fighters[i];if(!f)continue;
+var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* fallback repeats the full HELD mask (28687 = move / jump-hold + the v105 J / U / L hold-to-continue bits), not just &15: masking to 15 dropped a guest's held J / U / L whenever a bundle arrived late, cutting multi-stage hold moves out mid-swing — the same fix as sbInputFor below */
+slot.used[F]=bits;svParkPresses(f,bits,F);
+}
+}
 }
 /* the input source for a guest fighter on the host (loop() calls
-   this instead of aiControl while hosting): the server sim's rule —
-   the slot's real input for this frame, else the previous frame's
-   held bits repeated; the input is recorded as used, its presses
-   parked, and rbApplyInput builds the step input from
-   bits | rbPendBits. A CPU-handed slot is driven by aiControl,
-   with the same held-direction bookkeeping the sim's AI driver
-   applies. */
-function p2pInputFor(f,foe){
- var room=p2pRoom;
- var idx=fighters.indexOf(f);
- var slot=room?room.matchSlots[idx]:null;
- if(!slot)return aiControl(f,foe);
- if(slot.ai){
-   var inp=aiControl(f,foe);
-   inp.upHeld=true;
-   f.hDown=!!inp.down;f.hUp=!!inp.jump;
-   f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
-   f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
-   return inp;
- }
- var F=room.fNow;
- var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* held-mask repeat: 28687 is svSampleStep's held mask (1|2|4|8 move + jump-hold, 4096|8192|16384 J / U / L held). The old &15 repeated only movement, so on any frame a guest's bundle had not landed yet, a held J / U / L silently released on the host — hold-to-continue chains stuttered exactly when the link was busy, which guests felt as input lag / dropped moves. Press bits are never in the mask, so nothing can re-fire */
- slot.used[F]=bits;
- svParkPresses(f,bits,F);
- if(F>900){delete slot.used[F-900];delete slot.realIn[F-900]}
- return rbApplyInput(f,bits|rbPendBits(f,F),F);
+this instead of aiControl while hosting): the server sim's rule —
+the slot's real input for this frame, else the previous frame's
+held bits repeated; the input is recorded as used, its presses
+parked, and rbApplyInput builds the step input from
+bits | rbPendBits. A CPU-handed slot is driven by aiControl,
+with the same held-direction bookkeeping the sim's AI driver
+applies. */
+function sbInputFor(f,foe){
+var room=sbRoom;
+var idx=fighters.indexOf(f);
+var slot=room?room.matchSlots[idx]:null;
+if(!slot)return aiControl(f,foe);
+if(slot.ai){
+var inp=aiControl(f,foe);
+inp.upHeld=true;
+f.hDown=!!inp.down;f.hUp=!!inp.jump;
+f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
+f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
+return inp;
+}
+var F=room.fNow;
+var bits=(slot.realIn[F]!==undefined)?slot.realIn[F]:((slot.used[F-1]||0)&28687); /* held-mask repeat: 28687 is svSampleStep's held mask (1|2|4|8 move + jump-hold, 4096|8192|16384 J / U / L held). The old &15 repeated only movement, so on any frame a guest's bundle had not landed yet, a held J / U / L silently released on the host — hold-to-continue chains stuttered exactly when the link was busy, which guests felt as input lag / dropped moves. Press bits are never in the mask, so nothing can re-fire */
+slot.used[F]=bits;
+svParkPresses(f,bits,F);
+if(F>900){delete slot.used[F-900];delete slot.realIn[F-900]}
+return rbApplyInput(f,bits|rbPendBits(f,F),F);
 }
 /* killFighter's banner hook while hosting: build the server sim's
-   attributed banner event, queue it for the guests, and render the
-   host's own banner from that very event through svOnEv (so every
-   screen words the KO identically). Unattributed deaths (falls)
-   come through too, with who=-1 / gain 0 / heal 0. */
-function p2pKillHook(def,att,gain,heal){
- var room=p2pRoom;if(!room||room.phase!=="match")return;
- var ev={k:"banner",big:"DOWN…",pts:"",sub:"",who:(att&&att!==def)?fighters.indexOf(att):-1,vic:fighters.indexOf(def),gain:gain||0,heal:heal||0};
- p2pQueueEv(room,ev);
- svOnEv([ev]);
+attributed banner event, queue it for the guests, and render the
+host's own banner from that very event through svOnEv (so every
+screen words the KO identically). Unattributed deaths (falls)
+come through too, with who=-1 / gain 0 / heal 0. */
+function sbKillHook(def,att,gain,heal){
+var room=sbRoom;if(!room||room.phase!=="match")return;
+var ev={k:"banner",big:"DOWN…",pts:"",sub:"",who:(att&&att!==def)?fighters.indexOf(att):-1,vic:fighters.indexOf(def),gain:gain||0,heal:heal||0};
+sbQueueEv(room,ev);
+svOnEv([ev]);
 }
 /* ---- host match: snapshot / results / mines / pump ---- */
 /* field-for-field the server sim's snapshot(), built from the local
-   engine state (ck is 0: the client never verifies a checksum) */
-function p2pBuildSnap(room){
- return{
-  f:room.frame,tm:p2pRI(timer),cd:p2pR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0,
-  fs:fighters.map(function(f,i){
-   return{
-    c:f.char,x:p2pRI(f.x),y:p2pRI(f.y),px:p2pRI(f.px),py:p2pRI(f.py),vx:p2pRI(f.vx),vy:p2pRI(f.vy),
-    hp:p2pRI(f.hp),hg:p2pRI(f.hpGhost),sc:f.score,kl:f.kills||0,awk:p2pR2(f.awakenT||0),mt:p2pRI(f.meter),fc:f.face,st:f.state,sT:p2pR2(f.stateT),
-    dead:f.dead?1:0,gd:f.guarding?1:0,hs:p2pR2(f.hitstun),fr:p2pR2(f.frozen),inv:p2pR2(f.invuln),
-    atk:p2pR2(f.attackCd),dcd:p2pR2(f.dashCd),spc:p2pR2(f.specCd||0),mcd:p2pR2(f.mistCd||0),fcd:p2pR2(f.flyCd||0),
-    uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:p2pR2(f.poisonT||0),brn:p2pR2(f.burnT||0),bld:p2pR2(f.bleedT||0),slo:p2pR2(f.slowT||0),
-    sph:f.spinHits||0,flm:p2pR2(f.flameT||0),fld:p2pR2(f.flameDelay||0),ven:f.venom?1:0,bft:p2pR2(f.buffT||0),
-    shx:f.char==="mimi"?p2pRI(f.shX):undefined,shy:f.char==="mimi"?p2pRI(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?p2pR2(f.shStateT||0):undefined,shp:f.char==="mimi"?p2pRI(f.shHp==null?190:f.shHp):undefined,shg:f.char==="mimi"?p2pR2(f.shGoneT||0):undefined,
-    ht:f.char==="no66"?p2pRI(f.heat||0):undefined,hst:f.char==="no66"?p2pR2(f.heatStun||0):undefined, /* No.66 【熱量】: the heat gauge and the overheat lock ride the snapshot so guests see the steam / scorching state and the HUD value */
-    grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:p2pRI(f.comboDmg||0),ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
-   };
-  }),
-  pr:projectiles.map(function(p){return{x:p2pRI(p.x),y:p2pRI(p.y),vx:p2pRI(p.vx),vy:p2pRI(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
-  ip:icePatches.map(function(p){return{x:p2pRI(p.x),y:p2pRI(p.y),w:p2pRI(p.w),t:p2pR1(p.t)}}),
-  fo:fireOrbs.map(function(o){return{x:p2pRI(o.x),y:p2pRI(o.y),t:p2pR1(o.t)}}),
-  pm:poisonMists.map(function(o){return{x:p2pRI(o.x),y:p2pRI(o.y),t:p2pR1(o.t)}}),
-  df:darkFields.map(function(d){return{x:p2pRI(d.x),y:p2pRI(d.y),w:p2pRI(d.w),t:p2pR1(d.t)}})
- };
+engine state (ck is 0: the client never verifies a checksum) */
+function sbBuildSnap(room){
+return{
+f:room.frame,tm:sbRI(timer),cd:sbR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0,
+fs:fighters.map(function(f,i){
+return{
+c:f.char,x:sbRI(f.x),y:sbRI(f.y),px:sbRI(f.px),py:sbRI(f.py),vx:sbRI(f.vx),vy:sbRI(f.vy),
+hp:sbRI(f.hp),hg:sbRI(f.hpGhost),sc:f.score,kl:f.kills||0,awk:sbR2(f.awakenT||0),mt:sbRI(f.meter),fc:f.face,st:f.state,sT:sbR2(f.stateT),
+dead:f.dead?1:0,gd:f.guarding?1:0,hs:sbR2(f.hitstun),fr:sbR2(f.frozen),inv:sbR2(f.invuln),
+atk:sbR2(f.attackCd),dcd:sbR2(f.dashCd),spc:sbR2(f.specCd||0),mcd:sbR2(f.mistCd||0),fcd:sbR2(f.flyCd||0),
+uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:sbR2(f.poisonT||0),brn:sbR2(f.burnT||0),bld:sbR2(f.bleedT||0),slo:sbR2(f.slowT||0),
+sph:f.spinHits||0,flm:sbR2(f.flameT||0),fld:sbR2(f.flameDelay||0),ven:f.venom?1:0,bft:sbR2(f.buffT||0),
+shx:f.char==="mimi"?sbRI(f.shX):undefined,shy:f.char==="mimi"?sbRI(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?sbR2(f.shStateT||0):undefined,shp:f.char==="mimi"?sbRI(f.shHp==null?190:f.shHp):undefined,shg:f.char==="mimi"?sbR2(f.shGoneT||0):undefined,
+ht:f.char==="no66"?sbRI(f.heat||0):undefined,hst:f.char==="no66"?sbR2(f.heatStun||0):undefined, /* No.66: the heat gauge and the overheat lock ride the snapshot so guests see the steam / scorching state and the HUD value */
+grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:sbRI(f.comboDmg||0),ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
+};
+}),
+pr:projectiles.map(function(p){return{x:sbRI(p.x),y:sbRI(p.y),vx:sbRI(p.vx),vy:sbRI(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
+ip:icePatches.map(function(p){return{x:sbRI(p.x),y:sbRI(p.y),w:sbRI(p.w),t:sbR1(p.t)}}),
+fo:fireOrbs.map(function(o){return{x:sbRI(o.x),y:sbRI(o.y),t:sbR1(o.t)}}),
+pm:poisonMists.map(function(o){return{x:sbRI(o.x),y:sbRI(o.y),t:sbR1(o.t)}}),
+df:darkFields.map(function(d){return{x:sbRI(d.x),y:sbRI(d.y),w:sbRI(d.w),t:sbR1(d.t)}})
+};
 }
 /* the server's results(): per-fighter rows sorted by score, then
-   current HP, with the roster name attached to each row */
-function p2pBuildResults(room){
- var rows=fighters.map(function(f,i){return{i:i,char:f.char,score:f.score,hp:Math.max(0,Math.round(f.hp)),kills:f.kills||0,assists:f.assists||0,deaths:f.deaths||0}});
- rows.sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)});
- return rows.map(function(r){var mr=room.matchRoster[r.i];return{i:r.i,char:r.char,score:r.score,hp:r.hp,kills:r.kills,assists:r.assists,deaths:r.deaths,name:mr?mr.name:""}});
+current HP, with the roster name attached to each row */
+function sbBuildResults(room){
+var rows=fighters.map(function(f,i){return{i:i,char:f.char,score:f.score,hp:Math.max(0,Math.round(f.hp)),kills:f.kills||0,assists:f.assists||0,deaths:f.deaths||0}});
+rows.sort(function(a,b){return (b.score-a.score)||(b.hp-a.hp)});
+return rows.map(function(r){var mr=room.matchRoster[r.i];return{i:r.i,char:r.char,score:r.score,hp:r.hp,kills:r.kills,assists:r.assists,deaths:r.deaths,name:mr?mr.name:""}});
 }
 /* the server's syncMines(): each guest receives ONLY their own
-   fighter's mines, and only when that list changed. The host's own
-   mines are already local and are never sent. */
-function p2pSyncMines(room){
- for(var i=0;i<room.players.length;i++){
-   var p=room.players[i];
-   if(p.loopback||!p.pid)continue;
-   var idx=p2pPlayerMatchIdx(room,p.pid);if(idx<0)continue;
-   var f=fighters[idx];if(!f)continue;
-   var mn=mines.filter(function(m){return m.owner===f}).map(function(m){return{x:p2pR2(m.x),y:p2pR2(m.y)}});
-   var j=JSON.stringify(mn);
-   if(p.mnJson===j)continue;
-   if(p2pGuestLagging(room,p))continue; /* guest behind (channel queue or stream ack): do NOT mark this list as sent — it is retried on a later pump once the guest catches up (see p2pGuestLagging) */
-   p.mnJson=j;
-   p2pDeliver(p,{t:"mymines",mn:mn});
- }
+fighter's mines (on their private channel — see sbDeliver),
+and only when that list changed. The host's own mines are
+already local and are never sent. */
+function sbSyncMines(room){
+for(var i=0;i<room.players.length;i++){
+var p=room.players[i];
+if(p.loopback||!p.pid)continue;
+var idx=sbPlayerMatchIdx(room,p.pid);if(idx<0)continue;
+var f=fighters[idx];if(!f)continue;
+var mn=mines.filter(function(m){return m.owner===f}).map(function(m){return{x:sbR2(m.x),y:sbR2(m.y)}});
+var j=JSON.stringify(mn);
+if(p.mnJson===j)continue;
+if(sbGuestLagging(room,p))continue; /* guest behind (stream ack): do NOT mark this list as sent — it is retried on a later pump once the guest catches up (see sbGuestLagging) */
+p.mnJson=j;
+sbDeliver(p,{t:"mymines",mn:mn});
+}
 }
 /* called from loop() after the local step processing (before the
-   render interpolation factor is computed) while hosting: sample
-   the screen-shake peak into the FX queue, stream a snapshot on
-   every SECOND sim frame (30/s — the same rate the match server
-   streams at; snapshots are full-state and superseding, so the
-   skipped frame loses nothing: the next snapshot carries the
-   complete current state, and the guest's adaptive buffer keys
-   off the measured arrival interval, which now settles around
-   33ms), flush the queued FX events, sync each guest's own
-   mines, and — once, when the local match ends — send the results
-   and close the match phase. The host's own results screen is the
-   local flow's (TIME UP banner + showLocalResults), not this
-   message. Only the snapshot state message is thinned to 30/s:
-   the FX flush below, the mines sync and the end message still
-   run on EVERY pump call, and guest -> host input still ships
-   every frame, so effects and events are never held back by the
-   snapshot cadence.
-   BACKPRESSURE (guest ~3s delay fix): snapshots are delivered
-   per guest through p2pGuestLagging — a guest that is behind,
-   by the channel-queue check OR by its own stream acks (the
-   transport-independent signal; not every browser reports the
-   queue honestly, which is how the delay survived the first,
-   queue-only fix), is skipped for this snapshot (the next one
-   it receives carries the full current state, so skipping
-   loses nothing but staleness), with an anti-starvation force
-   send so a clogged guest always gets a fresh frame to ack and
-   recover with. FX events are queued per guest and flushed
-   only while that guest is caught up, so effect bytes can
-   neither pile ahead of the state stream nor be held up by
-   another guest's clog. Without this, the ordered,
-   never-dropping PeerJS / WebRTC channel turned any shortfall
-   of delivery under the 30/s production rate into a FIFO
-   backlog that guests experienced as seconds of delay. */
-function p2pPump(){
- if(!p2pHostLive||!p2pRoom)return;
- var room=p2pRoom;
- if(room.phase!=="match")return;
- if(shake>room.shkPeak)room.shkPeak=shake;
- if(room.shkPeak>0){p2pQueueEv(room,{k:"shk",v:room.shkPeak});room.shkPeak=0}
- if(room.frame-room.lastSnapF>=2){ /* snapshot cadence: every second sim frame (30/s) — the >= form (not a parity test) so a pump that lands after a multi-step catch-up still sends as soon as two frames have passed, and never more often than every other frame */
-   room.lastSnapF=room.frame;
-   var snap=p2pBuildSnap(room);snap.t="snap";
-   for(var sgi=0;sgi<room.players.length;sgi++){var sp=room.players[sgi];
-     if(sp.loopback)continue;
-     /* latest-only, per guest (see p2pGuestLagging): a guest that
-        is behind — channel queue over the cap OR more than
-        P2P_ACK_LAG_FRAMES of stream still unacknowledged — is
-        skipped for this snapshot; the next one it does receive
-        carries the full current state, so skipping loses nothing
-        but staleness and its backlog can never grow past the
-        bound. Anti-starvation: at least one snapshot every 30
-        frames goes out regardless (and whenever the guest's acks
-        have gone silent for 600ms — a hidden tab must not lock
-        itself out), because the guest's ack can only advance when
-        a snapshot actually arrives; each forced send hands it a
-        fresh frame to ack, its ack jumps to near-current, and
-        normal flow resumes on its own. */
-     var forceSnap=room.frame-(sp.lastSnapSentF||0)>30||!sp.ackAt||performance.now()-sp.ackAt>600;
-     if(!forceSnap&&p2pGuestLagging(room,sp))continue;
-     p2pDeliverSnap(sp,snap);sp.lastSnapSentF=room.frame; /* over the jb-snap channel while it is verified + open for this guest, else the reliable channel (p2pDeliverSnap decides per guest) */
-   }
- }
- /* FX flush, per guest: a guest's queued events go out only
-    while that guest is not lagging; while it is behind they wait
-    in its own evQ (p2pQueueEv) instead of piling into the shared
-    channel ahead of the state stream, and one guest's clog never
-    delays another guest's effects */
- for(var fvi=0;fvi<room.players.length;fvi++){var fp=room.players[fvi];
-   if(fp.loopback||!fp.evQ||!fp.evQ.length)continue;
-   if(p2pGuestLagging(room,fp))continue;
-   var fevs=fp.evQ.splice(0,fp.evQ.length);
-   p2pDeliver(fp,{t:"ev",ev:fevs});
- }
- p2pSyncMines(room);
- if(matchOver&&!room.endSent){
-   room.endSent=true;room.phase="ended";
-   p2pSendGuests(room,{t:"end",results:p2pBuildResults(room)});
-   for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)p2pDeliver(p,{t:"mymines",mn:[]})}
- }
+render interpolation factor is computed) while hosting: sample
+the screen-shake peak into the FX queue, stream a snapshot on
+every SECOND sim frame (30/s — the same rate the match server
+streams at; snapshots are full-state and superseding, so the
+skipped frame loses nothing: the next snapshot carries the
+complete current state, and the guest's adaptive buffer keys
+off the measured arrival interval, which now settles around
+33ms), flush the queued FX events batched on that same cadence
+(one fx broadcast per snapshot tick at most), sync each guest's
+own mines, and — once, when the local match ends — send the
+results and close the match phase. The host's own results
+screen is the local flow's (TIME UP banner + showLocalResults),
+not this message.
+RATE BUDGET (free plan, 100 messages/second project-wide):
+snapshots 30/s + FX at most 30/s + each guest's input bundles
+30/s + heartbeats ~1/s + rare control / chat. A 2-player match
+peaks around 92/s; nothing else on this transport sends per
+frame. */
+function sbPump(){
+if(!sbHostLive||!sbRoom)return;
+var room=sbRoom;
+if(room.phase!=="match")return;
+if(shake>room.shkPeak)room.shkPeak=shake;
+if(room.shkPeak>0){sbQueueEv(room,{k:"shk",v:room.shkPeak});room.shkPeak=0}
+if(room.frame-room.lastSnapF>=2){ /* snapshot cadence: every second sim frame (30/s) — the >= form (not a parity test) so a pump that lands after a multi-step catch-up still sends as soon as two frames have passed, and never more often than every other frame */
+room.lastSnapF=room.frame;
+var snap=sbBuildSnap(room);snap.t="snap";
+sbHostSend("snap",snap);
+/* FX flush, batched on the same cadence: the room's queued
+events go out as ONE fx broadcast (see the rate budget
+above); while the queue is empty nothing is sent */
+if(room.evQ.length){
+var fevs=room.evQ.splice(0,room.evQ.length);
+sbHostSend("fx",{t:"ev",ev:fevs});
+}
+}
+sbSyncMines(room);
+if(matchOver&&!room.endSent){
+room.endSent=true;room.phase="ended";
+sbSendGuests(room,{t:"end",results:sbBuildResults(room)});
+for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)sbDeliver(p,{t:"mymines",mn:[]})}
+}
 }
 /* ================= ONLINE CHAT (bottom-left, bandit.rip style) =====
    Room chat rides the same match-server WebSocket as everything
@@ -2587,7 +2339,7 @@ function chatAdd(name,text,sys){
  chatRender();
 }
 function chatVisible(){
- return !!($("gameScreen").classList.contains("on")&&(net.ws||net.transport==="p2p")&&net.myId);
+ return !!($("gameScreen").classList.contains("on")&&(net.ws||net.transport==="supabase")&&net.myId);
 }
 function chatSyncVis(){
  var ui=$("chatUI");if(!ui)return;
@@ -2688,7 +2440,7 @@ function svConnect(){
 }
 function createRoom(){
  cleanupNet();
- if(onlineTransport==="p2p"){p2pCreateRoom();return}
+ if(onlineTransport==="supabase"){sbCreateRoom();return}
  net.role="host";net.expectHost=true;net.createRetry=0;net.code=genRoomCode();
  net.selfName=(social.loggedIn&&social.name)?myDispName():"ゲスト1";
  openOnline("接続を準備しています…");
@@ -2697,7 +2449,7 @@ function createRoom(){
 function joinRoom(code){
  if(!code||code.length<4){openOnline("コードを入力してください。");return}
  cleanupNet();
- if(onlineTransport==="p2p"){p2pJoinRoom(code);return}
+ if(onlineTransport==="supabase"){sbJoinRoom(code);return}
  net.role="guest";net.expectHost=false;net.code=code;
  openOnline("ルーム "+code+" に接続しています…");
  svConnect();
@@ -3183,9 +2935,10 @@ function svSampleStep(){
  if(svPredOn()){
    svStepP1(sv.sampleFrame,bits,false);
    if(P1)sv.predHist.push({t:performance.now(),x:P1.x-sv.corrX,y:P1.y-sv.corrY});
-   /* retention is 4.5s (was 700ms): on the P2P transport a snapshot
-      can be older than 700ms when it finally arrives (see the
-      stream-age estimate in svOnSnap), and reconciliation compares
+   /* retention is 4.5s (was 700ms): on the host-authoritative
+      (Supabase) transport a snapshot can be older than 700ms when
+      it finally arrives (see the stream-age estimate in svOnSnap),
+      and reconciliation compares
       against the predicted position at the snapshot's TRUE time —
       with the old window that entry was already gone, the compare
       fell back to the oldest survivor, and a merely-old (not
@@ -3200,34 +2953,32 @@ function svSampleStep(){
 }
 function svSendBundle(){
  if(!sv.active||matchOver)return;
- /* P2P INPUT SIDE CHANNEL (jb-input, see p2pInputAttach): while
-    the verified unordered / no-retransmit channel to the host is
-    open, inputs ride IT alone — never the reliable channel, whose
-    ordered retransmission parks every later input behind one
-    lost packet (the host-side guest freeze this removes). One
-    packet carries the newest 12 sampled frames as [frame, bits]
-    pairs (fewer at the very start of a match), so a dropped
-    packet is healed by the next one and the host dedupes by
-    frame number (p2pRoomInputFast). The window never re-includes
-    a frame the reliable channel already carried — it starts at
-    sv.relFloor, the first frame the reliable path has not sent —
-    and frames shipped here advance sentFrame past themselves, so
-    if the channel dies and sending falls back, the reliable path
-    resumes from frames it has never carried: the two paths can
-    never apply the same frame twice. The stream ack rides these
-    packets exactly as it rides reliable bundles (the host's flow
-    control counts from it). If the channel is not open (older
-    host build / not negotiated / died) — or the send itself
-    fails — this bundle falls through to the reliable path below,
-    unchanged. The server transport never takes this branch. */
- if(net.transport==="p2p"&&p2pInputUsable()){
-   var endF=sv.sampleFrame,startF=Math.max(sv.relFloor||0,endF-12);
-   if(endF<=startF){sv.sentFrame=endF;return}
+ /* SUPABASE INPUT BUNDLES: on the Supabase transport a guest ships
+    its inputs as "input" broadcast events at 30/s — one bundle per
+    two sampled frames — and each bundle repeats the newest 12
+    sampled frames as [frame, bits] pairs (fewer at the very start
+    of a match). A bundle that never arrives is healed by the next
+    one (the window overlaps by 10 frames), and the host dedupes
+    by frame number (sbRoomInputFast), so no frame is ever applied
+    twice. The stream ack rides every bundle exactly as it did on
+    the older transports (the host's flow control counts from it).
+    30 bundles/s per guest is also what keeps the transport inside
+    the free plan's project-wide 100 messages/second (see the
+    Supabase section header). If a send fails (channel not live),
+    sentFrame stays put and the unsent frames ride the next
+    bundle's window while they are still inside it. The server
+    transport below is unchanged. */
+ if(net.transport==="supabase"){
+   var endF=sv.sampleFrame;
+   if(endF-(sv.sbBundleF||0)<2)return; /* 30/s cadence */
+   var startF=Math.max(0,endF-12);
    var fr=[];
    for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
-   var dcMsg={t:"in",fr:fr};
-   if(typeof sv.lastSnapF==="number")dcMsg.ack=sv.lastSnapF;
-   if(p2pSendInputDc(dcMsg)){sv.sentFrame=endF;return}
+   if(!fr.length)return;
+   var sbMsg={t:"in",cid:sbCid,fr:fr};
+   if(typeof sv.lastSnapF==="number")sbMsg.ack=sv.lastSnapF;
+   if(sbSendInput(sbMsg)){sv.sbBundleF=endF;sv.sentFrame=endF}
+   return;
  }
  /* ship every unsent sampled frame, oldest first, in protocol-sized
     chunks of at most 4 (the server schedules each bundle at
@@ -3243,11 +2994,9 @@ function svSendBundle(){
    }
    if(!ins.length)break;
    var inMsg={t:"in",seq:sv.seq++,ins:ins};
-   if(net.transport==="p2p"&&typeof sv.lastSnapF==="number")inMsg.ack=sv.lastSnapF; /* P2P only: stream ack — the newest snapshot frame this guest has received, riding the input bundles the host's flow control counts from (see p2pGuestLagging). The server transport's protocol is unchanged (the field is simply never attached there) */
    svSend(inMsg);
    sv.sentFrame+=ins.length;
  }
- if(net.transport==="p2p")sv.relFloor=sv.sentFrame; /* every frame below sentFrame has now ridden the reliable channel: the jb-input window must never re-include them (the host would apply them a second time) */
 }
 function svApplySnapP1(s,hist){
  var f=P1;if(!f)return;
@@ -3547,7 +3296,7 @@ function svOnSnap(m){
     observes this snapshot's arrival gap and re-sizes the render
     delay (see its note above) --- */
  svAdaptDelay(now);
- /* --- P2P stream age + fast-forward (guest ~3s delay fix) ---
+ /* --- host-stream age + fast-forward (guest ~3s delay fix) ---
     The host's frame counter advances at a fixed 60fps in real
     time, so anchoring the first received frame to its arrival
     time predicts every later frame's arrival: expected =
@@ -3556,11 +3305,11 @@ function svOnSnap(m){
     block below; it replaces the originally hard-coded 0.06, which
     misread any host that could not hold a perfect 60fps cadence
     as permanent stream lag). A snapshot whose frame lags that
-    expectation spent the difference QUEUED inside the ordered,
-    never-dropping PeerJS / WebRTC channel (the host now also
-    skips sending into a backed-up queue — see p2pQueueBytes —
+    expectation spent the difference QUEUED in transit (a backed-up
+    relay queue, a stalled host tab — the host pump also withholds
+    fresh snapshots from a guest whose acks show it is behind,
     but a guest must still recover from whatever backlog a bad
-    stretch of link already created). Past ~300ms of lag:
+    stretch already created). Past ~300ms of lag:
     (1) the measured age is kept in sv.snapAgeMs — reconciliation
     compares the prediction at the snapshot's true time instead
     of dragging our fighter back to a seconds-old position, and
@@ -3572,7 +3321,7 @@ function svOnSnap(m){
     the age estimate and change nothing. The server transport
     never enters here: its snapshots carry no such queue (and
     its frame clock is the server's own). */
- if(net.transport==="p2p"&&typeof m.f==="number"){
+ if(net.transport==="supabase"&&typeof m.f==="number"){
   /* HOST CADENCE ESTIMATE (guest-lag fix): the age math below used
      to expect the host's frame clock to advance at exactly
      0.06 frames/ms. A host device that cannot hold a perfect 60fps
@@ -3646,13 +3395,14 @@ function svOnSnap(m){
  darkFields=svSyncPlaced(darkFields,m.df,function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
 }
 function svReset(){
- sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;sv.relFloor=0; /* jb-input: guest frame numbers restart with sampleFrame, and no frame has ridden the reliable channel yet in this match (see svSendBundle) */
- /* P2P starts at its own operating point (30/s stream: 33.3ms
-    interval EMA is set below, render delay at the 24ms floor) instead
-    of easing down from the server transport's 66ms / 33.3ms start —
-    the opening seconds of a match are exactly when a guest judges
-    the lag, and the old start spent them at server depth */
- sv.renderDelay=(net.transport==="p2p")?24:66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06; /* interval EMA starts at the 30/s cadence both transports now stream at (v201 thinned P2P snapshots to 30/s; the old 16.7 P2P start under-read the first gaps and starved the opening bracket) */
+ sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;sv.sbBundleF=0; /* Supabase input bundles restart with sampleFrame (see svSendBundle) */
+ /* The host-authoritative (Supabase) transport starts at its own
+    operating point (30/s stream: 33.3ms interval EMA is set below,
+    render delay at the 24ms floor) instead of easing down from
+    the server transport's 66ms / 33.3ms start — the opening
+    seconds of a match are exactly when a guest judges the lag,
+    and the old start spent them at server depth */
+ sv.renderDelay=(net.transport==="supabase")?24:66;sv.intervalEMA=33.3;sv.jitterEMA=6;sv.gapWin.length=0;sv.brPrevA=null;sv.brPrevStarved=false;sv.lastArrival=0;sv.lastSnapF=null;sv.lastSendAt=0;sv.pressPending=false;sv.heldPrev=null;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;sv.rateEMA=0.06; /* interval EMA starts at the 30/s cadence both transports now stream at (the host pump has streamed snapshots at 30/s since v201; the old 16.7 start under-read the first gaps and starved the opening bracket) */
  sv.startAt=performance.now();
  sv.snaps=[];sv.lastSnap=null;sv.prevCd=0;sv.hist={};sv.inpHist={};sv.predPr=[];sv.scratchPr=[];
  sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;
@@ -3744,9 +3494,9 @@ function svRenderWorld(now){
     snapshot timelines below drive it only in the fallback cases
     (dead / match over / CPU takeover / spectating), where it uses
     the timeline ~42ms AHEAD of everyone else's (20ms floor — 10ms
-    for a P2P guest: the host streams snapshots at 60fps, so the
-    earlier render time still brackets cleanly, and the guest's
-    own fighter is where the P2P latency chain shows most). When
+    for a Supabase guest: the host streams snapshots at 30fps, so
+    the earlier render time still brackets cleanly, and the guest's
+    own fighter is where the host-relay latency chain shows most). When
     either timeline runs past the newest snapshot, the fighter holds
     at that snapshot's real position until the next one arrives —
     snapshot-rendered fighters are never extrapolated from velocity
@@ -3754,7 +3504,7 @@ function svRenderWorld(now){
     predicting; only our own locally predicted fighter runs ahead). */
  var brR=svBracket(now-sv.renderDelay);
  if(!brR)return;
- var brL=svBracket(now-Math.max(net.transport==="p2p"?10:20,sv.renderDelay-42));
+ var brL=svBracket(now-Math.max(net.transport==="supabase"?10:20,sv.renderDelay-42));
  /* bracket discontinuity, for the catch-up glide below: the
     previous render was starved (render time past the newest
     snapshot, fighters holding) and this one is not — the new
@@ -3851,22 +3601,22 @@ function svAdvance(dtms){
       The sample accumulator clamps its leftover to one step instead of
       zeroing it, so a hitch can no longer silently swallow a sample
       slot and shift every later input by a frame.
-      P2P GUEST CADENCE (guest-lag fix): on the direct transport a
-      bundle leaves EVERY sampled frame (60/s), not every two. The
-      host chains 1-frame bundles onto the exact same frames (its
-      cursor rule is bundle-size independent), so nothing about
-      scheduling changes — but the guest's held stream reaches the
-      host up to a frame sooner, and the stream ACK that rides every
-      bundle (sv.lastSnapF, the host's flow-control signal) is up to
-      a frame fresher too, so a healthy guest is far less likely to
-      be misread as lagging and have its snapshots withheld by the
-      pump's backpressure. The server transport keeps the 30/s
-      cadence its protocol was tuned around. */
+      SUPABASE GUEST CADENCE: on the Supabase transport svSendBundle
+      is invoked on EVERY sampled frame (this gate), and the bundle
+      itself ships at 30/s — one bundle per two sampled frames, each
+      repeating the newest 12 frames (see svSendBundle). The host
+      chains bundles onto frames by frame number (its cursor rule
+      is bundle-size independent), so nothing about scheduling
+      changes — and the stream ACK that rides every bundle
+      (sv.lastSnapF, the host's flow-control signal) stays fresh,
+      so a healthy guest is not misread as lagging. The server
+      transport keeps the 30/s cadence its protocol was tuned
+      around. */
    sv.acc+=dt;
    var n=0;
    while(sv.acc>=SIM_STEP&&n<8){sv.acc-=SIM_STEP;n++;svSampleStep()}
    if(sv.acc>=SIM_STEP)sv.acc=SIM_STEP;
-   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||net.transport==="p2p"||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
+   if(sv.sampleFrame>sv.sentFrame&&(sv.pressPending||net.transport==="supabase"||sv.sampleFrame-sv.sentFrame>=2||now-sv.lastSendAt>=50)){
      var sentBefore=sv.sentFrame;
      svSendBundle();
      if(sv.sentFrame!==sentBefore){sv.lastSendAt=now;sv.pressPending=false}
@@ -4218,7 +3968,7 @@ function onSocialData(from,m){
       invite carries one (fromName, validated like every other
       remote name); older clients send none and keep the username */
    var invName=(typeof m.fromName==="string"&&validDisplayName(cleanName(m.fromName)))?cleanName(m.fromName):from;
-   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");onlineTransport=(m.mode==="p2p")?"p2p":"server";joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
+   showSocialToast("<b>"+escHtml(invName)+"</b> さんがルームに招待しています（コード不要で参加できます）",[{label:"参加する",fn:function(){$("modal").classList.remove("on");onlineTransport=(m.mode==="server")?"server":"supabase";joinRoom(String(m.code).toUpperCase().slice(0,8))}},{label:"断る",fn:function(){}}]);
    return;
  }
  /* friend-request signals carry a PlayFab id + display name from a
@@ -4947,7 +4697,7 @@ window.addEventListener("keydown",function(e){
    keys[k]=true;press(k);
    if(running&&P1&&(k==="left"||k==="right")){
      var now=performance.now();
-     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&!(typeof p2pHostLive!=="undefined"&&p2pHostLive)){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
+     if(now-lastTap[k]<280){if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(k==="left"?"dashL":"dashR")}else{tryDash(P1,k==="left"?-1:1)}}
      lastTap[k]=now;
    }
  }
@@ -9882,7 +9632,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!p2pHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the P2P stream age svOnSnap measured (0 on the server transport and whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 on the server transport and whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
@@ -9902,7 +9652,7 @@ function loop(ts){
     player sits in the worst of it. Step-up is unchanged. */
  if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
  else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
- if(mode==="online"&&!p2pHostLive){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A P2P HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
+ if(mode==="online"&&!sbHostLive){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A Supabase HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
   var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
  if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
@@ -9912,7 +9662,7 @@ function loop(ts){
  var STEP=1/60;
  if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
  while(acc>=STEP){
-   acc-=STEP;time+=STEP;p2pStepHook();
+   acc-=STEP;time+=STEP;sbStepHook();
    /* remember pre-step positions: draw() blends from these to the
       post-step positions for render interpolation */
    for(var pvi=0;pvi<fighters.length;pvi++){var pf=fighters[pvi];pf.px=pf.x;pf.py=pf.y}
@@ -9926,7 +9676,7 @@ function loop(ts){
      if(!matchOver){
        var pInp=gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
-         var inpF=(ff===P1)?pInp:(p2pHostLive?p2pInputFor(ff,foeF):aiControl(ff,foeF));
+         var inpF=(ff===P1)?pInp:(sbHostLive?sbInputFor(ff,foeF):aiControl(ff,foeF));
          stepFighter(ff,STEP,inpF,foeF);
        }
      }
@@ -9988,7 +9738,7 @@ function loop(ts){
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
- p2pPump();
+ sbPump();
  drawAlpha=Math.min(1,acc/STEP);
  camDtMs+=dtms;
  /* The scene is drawn on EVERY display frame at every tier (the old
