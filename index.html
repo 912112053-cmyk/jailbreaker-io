@@ -429,6 +429,13 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["18:02"],tag:"修正",title:"入力同期：フリーズ復帰と再参加に対応",
+  items:["オンライン対戦中に端末が数秒以上止まって（フリーズして）復帰した場合、その端末の入力状態をすべてリセットし、ホストへ復帰を伝えて完全な状態の再同期を受け、入力同期を再開するようになりました。止まっている間にキー状態が壊れて、復帰後に一部のキーだけ効かなくなる問題への対策です",
+         "ウィンドウのフォーカスを失った時やタブが非表示になった時にも、押されたままのキー状態をすべて解放するようになりました",
+         "対戦中にフリーズ／切断で不在になった参加者が、試合が終わる前に同じ参加者として戻ってきた場合は、CPU引き継ぎを解除してそのファイターの操作を本人に戻し、再同期して対戦を継続するようになりました（試合が終わってからの再参加は対象外です）",
+         "写真（保険）方式で、ズレの検出と位置の修正で使う時間が食い違っていた不整合を修正しました。修正側もスナップショットの古さを含めて補正するため、古いスナップショットで過去の位置へ引き戻されることがなくなります。あわせて、巻き戻し補正で相手の表示位置が大きく動く場合は、補正量に応じて最大約150msまで追随時間を延ばすようになりました（計算上の位置は従来どおり即座に正しい値を使い、自分のキャラには適用されません）",
+         "試合ログに、2秒を超えたフレーム間隔（フリーズ）の発生（時刻・フレーム・長さ）と、復帰・再参加・再同期の発生が記録されるようになりました。保存方式（結果画面の「ログをダウンロード」を押した時だけ保存）は従来どおりです",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["17:34"],tag:"修正",title:"技一覧：SHADEへのダメージはスコア対象外と明記",
   items:["MIMI&SHADEの技一覧にある「SHADE — 闇ゲージ」の説明に、SHADEへのダメージはスコアには入らない旨を追記しました。MIMIを倒した時にスコアへ換算されるのは、MIMI本体へ与えたダメージのみです（これまでも仕様は同じで、説明がなかったため明記したものです）",
          "表示のみの変更で、ゲームの挙動・数値に変更はありません"]},
@@ -511,9 +518,6 @@ var UPDATE_LOG=[
   items:["MIMIの地面波はダメージ12→6、KB 420→210、射程 約640→約600に下方修正しました（弾速560・幅72は変更なし）",
          "SHADEの拳はダメージ14→16／14→16／16→20に変わり、3発目のKBは880→920、判定は118×104→122×130に広がりましたが、発生が約0.22秒→0.25秒・0.50秒→0.65秒・0.78秒→0.95秒と遅くなり、当たった相手はSHADEの後ろ側へ吹き飛ぶようになりました",
          "技全体が0.42秒→0.54秒、後硬直が0.6秒→1.1秒に伸びました"]},
- {date:"2026/11/15",times:["12:31"],tag:"修正",title:"直接接続（P2P）：スナップショット専用チャネルでゲストの遅延をさらに軽減",
-  items:["P2P対戦で、ホストからゲストへのスナップショットを専用チャネル（再送なし・順序なし）で送るようにしました。配送が遅れても古いスナップショットが溜まらなくなります",
-         "専用チャネルが使えない環境や旧バージョンとの対戦では、従来のチャネルに自動で切り替わります。その他の通信・ゲーム内容に変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1139,6 +1143,7 @@ function startMatch(m){
    P2=fighters[1];
  }
  projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];mines=[];darkFields=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
+ lastTs=0; /* v210 rejoin fix: re-base the frame clock at every match start. loop() does not advance lastTs while no match is running, so without this the first tick of a match entered after time away (a guest rejoining mid-match after a disconnect, above all) reads the whole absence as one giant frame gap and fires the freeze-return path spuriously — its resync request is then swallowed by the host gate's cooldown (the revive resync just went out), the end gives up after ~3s and drags the match into the snapshot fallback, and the rejoined player's hand-back never takes effect on their own end. A real mid-match freeze still measures correctly: rAF stops during it, so the gap accrues between two ticks of the RUNNING match, after this re-base */
  buf={};$("endBtns").classList.remove("on");hideResults();hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  cam.x=P1.x-viewW/2;cam.y=P1.y-viewH/2+40;camVel.x=0;camVel.y=0;camLook=0;clampCam();
@@ -1477,7 +1482,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v209";
+var BUILD_ID="v210";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -1624,6 +1629,7 @@ var sbGuestJoined=false; /* guest: the host accepted our join */
 var sbLastHostHb=0; /* guest: performance.now() of the host's last heartbeat */
 var sbHbTimer=null; /* heartbeat / liveness interval while a room is live */
 var sbHostLive=false; /* host match hooks are active: this device is running a Supabase match on the local engine */
+var sbRejoinInfo=null; /* v210: {code, pid} of a match this guest was disconnected from mid-match (host judged gone while its own tab was frozen / stalled), kept in memory only so re-entering the SAME room code can reclaim the SAME participant id (see the rejoin branch in sbRoomJoin). Set only on the involuntary disconnect path (sbGuestHostGone); cleared when joining a different code or hosting. Never persisted anywhere */
 var SB_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi","no66"];
 /* PeerJS connection options for the friend-presence peer (accounts
 section): STUN only, no TURN relay — PeerJS's default config
@@ -1746,7 +1752,7 @@ if(!player||!msg)return;
 if(player.loopback){sbLoopback(msg);return}
 if(msg.t==="mymines"){if(player.priv)sbSendRaw(player.priv,"mine",msg);return}
 var out=msg;
-if(msg.t==="joined"||msg.t==="error"){out={};for(var k in msg)out[k]=msg[k];out.to=player.cid}
+if(msg.t==="joined"||msg.t==="error"||msg.t==="start"){out={};for(var k in msg)out[k]=msg[k];out.to=player.cid} /* "start" is addressed too since v210: a mid-match rejoin is re-sent its start message alone, and no other guest may act on it (the guest wire drops host traffic addressed to someone else) */
 sbHostSend(sbEventFor(msg.t),out);
 }
 /* room-wide delivery: the host player's loopback copy plus ONE
@@ -1793,6 +1799,42 @@ return false;
 /* ---- host room: message rules (the server Room, replicated) ---- */
 function sbRoomJoin(room,player,m){
 if(player.pid){sbDeliver(player,{t:"error",msg:"already joined"});return}
+if(room.phase==="match"&&typeof m.rejoin==="string"&&m.rejoin){
+/* v210 mid-match rejoin: a participant whose connection died
+   mid-match (its tab froze / was judged disconnected) can
+   re-enter DURING the match with its original participant id
+   (m.rejoin — the pid this host assigned at its first join).
+   The slot must be reclaimable: handed to the CPU (roster
+   gone), or its old connection record departed / silent past
+   the liveness window (a live connection is never hijacked).
+   The build must match as usual. The rejoining end is re-sent
+   the joined reply and the match's start message (addressed
+   to it alone), then sbHostRevivePlayer hands its fighter
+   back from the CPU and resyncs the match. Once the match is
+   over (phase lobby / ended) this branch never runs and the
+   normal rules below apply — a rejoin stamp then means
+   nothing. */
+var ridx=sbPlayerMatchIdx(room,m.rejoin),rold=null;
+for(var roi=0;roi<room.players.length;roi++){if(room.players[roi].pid===m.rejoin)rold=room.players[roi]}
+if(ridx>=0&&(room.matchRoster[ridx].gone||!rold||rold.departed||(Date.now()-(rold.lastHb||0)>6000))){
+if(m.v!==BUILD_ID){sbDeliver(player,{t:"error",msg:VERSION_MSG});if(room.byCid&&player.cid)delete room.byCid[player.cid];return}
+if(rold){
+if(room.byCid&&rold.cid&&rold.cid!==player.cid)delete room.byCid[rold.cid];
+if(rold.priv){try{rold.priv.unsubscribe()}catch(e){}rold.priv=null}
+var rpi=room.players.indexOf(rold);if(rpi>=0)room.players.splice(rpi,1);
+}
+player.build=m.v;player.pid=m.rejoin;
+player.name=room.matchRoster[ridx].name;player.char=room.matchRoster[ridx].char;
+player.host=false;player.joinSeq=rold?rold.joinSeq:++room.joinCounter;
+player.cursor=0;player.lastSeq=-1;player.inHi=-1;player.mnJson=null;player.lastChatAt=0;player.lastHb=Date.now();
+room.players.push(player);
+if(!player.loopback&&sbClient){try{player.priv=sbClient.channel("jb-room-"+room.code+"-"+player.pid);player.priv.subscribe()}catch(e){player.priv=null}}
+sbDeliver(player,{t:"joined",pid:player.pid,host:false});
+sbDeliver(player,{t:"start",ls:1,bv:BUILD_ID,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})});
+sbHostRevivePlayer(room,player,ridx);
+return;
+}
+}
 if(room.phase==="match"){sbDeliver(player,{t:"error",msg:"試合中です"});return}
 if(room.players.length>=8){sbDeliver(player,{t:"error",msg:"満員です"});return}
 /* build version handshake (v206): a join whose build id differs
@@ -1873,7 +1915,29 @@ it with a full-state resync and the match STAYS on input sync —
 the gate falls back to the snapshot insurance only when
 resyncs loop (v208) */
 if(mrec.on)mrec.chkReport++; /* match recorder (host): a guest reported a mismatch / unrecoverable rollback */
-if(room.lsMode)lsHostResyncGate(m.r==="cap"?"cap":"chk",true);
+if(room.lsMode)lsHostResyncGate((m.r==="cap"||m.r==="freeze")?m.r:"chk",true);
+return;
+}
+if(m.t==="back"){
+/* v210: a participant that froze / stalled is back on its own
+   feet (lsOnFreezeReturn sent this the moment its frame gap
+   closed). If its slot was handed to the CPU meanwhile, hand
+   it back and resync; if it was never taken over, a resync
+   alone heals whatever its absence diverged */
+if(room.phase!=="match")return;
+var bkidx=sbPlayerMatchIdx(room,player.pid);if(bkidx<0)return;
+if(player.departed||room.matchRoster[bkidx].gone)sbHostRevivePlayer(room,player,bkidx);
+else if(room.lsMode)lsHostResyncGate("freeze",true);
+return;
+}
+if(m.t==="join"){
+/* a re-subscribed channel re-sends its join (Supabase rejoins
+   channels after a dropped socket): for a departed match
+   participant that re-join IS its return — revive it exactly
+   like a "back". Any other mid-match join is meaningless and
+   ignored (first joins arrive through sbHostDispatch's
+   unknown-cid path, not here) */
+if(room.phase==="match"&&player.departed){var jnidx=sbPlayerMatchIdx(room,player.pid);if(jnidx>=0)sbHostRevivePlayer(room,player,jnidx)}
 return;
 }
 if(m.t==="desync"){
@@ -1940,13 +2004,37 @@ return;
 /* guest inputs never pass through here: they arrive on the
 input event and go straight to sbRoomInputFast */
 }
+/* v210: hand a departed participant's fighter back from the CPU
+   (mid-match only — every caller checks phase). The slot's AI
+   flag clears on the host sim, the hand-back is broadcast to
+   every end ({t:"back"} for the notice / prediction flags and,
+   in a rollback match, {t:"lsret"} + a full-state resync via
+   lsHostReturn), and the participant's stream bookkeeping
+   restarts so its bundles chain again from wherever it resumes.
+   The mine-list private channel is re-subscribed host-side. */
+function sbHostRevivePlayer(room,player,idx){
+player.goneHandled=false;player.departed=false;
+player.cursor=0;player.lastSeq=-1;player.inHi=-1;player.lastHb=Date.now();
+room.matchRoster[idx].gone=false;
+if(room.matchSlots[idx])room.matchSlots[idx].ai=false;
+if(!player.loopback&&sbClient&&!player.priv){try{player.priv=sbClient.channel("jb-room-"+room.code+"-"+player.pid);player.priv.subscribe()}catch(e){player.priv=null}}
+sbBroadcastRoom(room,{t:"back",i:idx,name:room.matchRoster[idx].name});
+sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が復帰しました"});
+if(room.lsMode)lsHostReturn(idx);
+}
 function sbRoomGone(room,player){
 if(!player||player.goneHandled||!player.pid)return;
 player.goneHandled=true;player.departed=true;
 if(player.priv){try{player.priv.unsubscribe()}catch(e){}player.priv=null}
-if(room.byCid&&player.cid)delete room.byCid[player.cid];
 if(sbRoom!==room||room.dead)return;
 if(room.phase==="match"){
+/* v210: the byCid entry is KEPT for a match-phase departure
+   (the lobby path below still deletes it): the same
+   participant can come back mid-match — its own freeze return
+   ("back") or a rejoin with its participant id — and the host
+   must still be able to key those messages to this player
+   (sbHostDispatch drops everything else from a departed
+   player). */
 var idx=sbPlayerMatchIdx(room,player.pid);
 if(idx>=0&&!room.matchRoster[idx].gone){
 room.matchRoster[idx].gone=true;
@@ -1959,6 +2047,7 @@ return;
 }
 /* lobby / ended: a departing host dissolves the room; a departing
 guest is removed from the player list */
+if(room.byCid&&player.cid)delete room.byCid[player.cid];
 if(player.host){
 room.dead=true;
 sbHostSend("sys",{t:"dissolved"});
@@ -2001,6 +2090,17 @@ if(!room||room.dead||!m||typeof m!=="object")return;
 if(typeof m.cid!=="string"||!m.cid)return;
 var p=room.byCid[m.cid]||null;
 if(p)p.lastHb=Date.now();
+if(p&&p.departed){
+/* v210: a match participant marked departed (its slot is with
+the CPU) may only come back — its return (back), its channel
+re-join (join) reach the room rules; everything else from the
+half-dead connection (stale input bundles filed before it left,
+heartbeats) is dropped, so it cannot drive the fighter the CPU
+is holding. Its byCid entry is deliberately kept for exactly
+this (see sbRoomGone). */
+if(kind==="sys"&&(m.t==="back"||m.t==="join"))sbRoomHandle(room,p,m);
+return;
+}
 if(kind==="input"){if(p&&p.pid){sbRoomInputFast(room,p,m);if(room.lsMode)lsCollect(m)}return}
 if(!p){
 if(kind==="sys"&&m.t==="join"){
@@ -2075,6 +2175,7 @@ cleanupNet();openOnline("接続に失敗しました。通信環境を確認し�
 function sbJoinRoom(code){
 net.role="guest";net.expectHost=false;net.code=code;net.transport="supabase";
 sbGuestJoined=false;
+if(sbRejoinInfo&&sbRejoinInfo.code!==code)sbRejoinInfo=null; /* a rejoin stamp is only ever offered to the room it was issued in */
 if(!sbConfigured()){cleanupNet();openOnline("Supabaseが未設定のため、オンライン対戦はまだ使えません。");return}
 if(!sbEnsureClient()){cleanupNet();openOnline("オンライン基盤（Supabase）の読み込みに失敗したため、オンライン対戦は使えません。通信環境を確認して、もう一度お試しください。");return}
 openOnline("ルーム "+code+" に接続しています…");
@@ -2093,7 +2194,7 @@ openOnline("ホストに接続できませんでした。相手がルームを�
 chan.subscribe(function(status){
 if(sbChan!==chan)return;
 if(status==="SUBSCRIBED"){
-sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID});
+sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID,rejoin:(sbRejoinInfo&&sbRejoinInfo.code===code)?sbRejoinInfo.pid:undefined});
 sbStartHeartbeat();
 }else if((status==="CHANNEL_ERROR"||status==="TIMED_OUT")&&!sbGuestJoined){
 cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
@@ -2153,6 +2254,7 @@ function sbGuestHostGone(){
 if(net.leaving||net.dissolved)return;
 if(!sbGuestJoined)return;
 if(running&&mode==="online"&&net.started&&!matchOver){
+if(net.code&&net.myId)sbRejoinInfo={code:net.code,pid:net.myId}; /* v210: remember WHO we were in this room (memory only) — if the "gone" host was merely frozen and the match is still running there, re-entering the same code reclaims this participant id and the host hands our fighter back from the CPU (see sbRoomJoin's rejoin branch) */
 cleanupNet();toMenu();openOnline("ホストとの接続が切れたため、試合は終了しました。");
 }else{
 roomDissolved();
@@ -2420,6 +2522,7 @@ $("chatOpenBtn").addEventListener("click",function(){chatOpenInput()});
    select / match / results / disconnect without hooking each one) */
 setInterval(chatSyncVis,400);
 function createRoom(){
+ sbRejoinInfo=null; /* hosting our own room retires any rejoin stamp we were holding */
  cleanupNet();
  sbCreateRoom();
 }
@@ -2482,6 +2585,17 @@ function svOnMsg(m){
  }
  if(m.t==="chk"){lsOnChk(m);return} /* rollback layer: host state checksum for a confirmed frame */
  if(m.t==="lsai"){lsOnTakeover(m);return} /* rollback layer: CPU takeover of a departed slot from frame f, on every end at once */
+ if(m.t==="lsret"){lsOnReturn(m);return} /* rollback layer (v210): the departed slot's player is back — from frame f the slot is player-driven again on every end at once (the host's resync follows separately) */
+ if(m.t==="back"){
+   /* a departed participant returned mid-match and the host
+      handed its fighter back from the CPU: if it is OUR fighter,
+      prediction applies to it again (the mirror of the "cpu"
+      branch below) */
+   if(net.match&&net.match[net.myIdx]&&m.name&&m.name===net.match[net.myIdx].name)sv.predOff=false;
+   if(running&&mode==="online")showCenter((m.name||"プレイヤー")+" さんが復帰しました",2600);
+   mrecEvent((m.name||"プレイヤー")+" さんが復帰し、CPU引き継ぎが解除されました"); /* match recorder: the return, on every end that witnesses it */
+   return;
+ }
  if(m.t==="lsfb"){lsOnFallback(m);return} /* rollback layer: the host switched this match to the snapshot mode (m.r carries the detection reason, for the match log) */
  if(m.t==="lsrs"){lsOnResync(m);return} /* rollback layer (v208): the host's full-state resync — adopt the state and resume input sync from its frame */
  if(m.t==="snap"){svOnSnap(m);return}
@@ -2977,7 +3091,8 @@ function svApplySnapP1(s,hist){
 }
 /* hard resync of the predicted fighter to the authoritative
    snapshot state: everything is taken verbatim (extrapolated
-   forward by the render delay so it lands on the present timeline),
+   forward by the render delay plus the snapshot's measured
+   stream age so it lands on the present timeline),
    and the visual correction offset is set to the gap between where
    the body was being shown and where it truly is — svAdvance decays
    that offset over ~150ms, so even a forced correction reads as a
@@ -2987,7 +3102,7 @@ function svHardResyncP1(s){
  var f=P1;if(!f||!s)return;
  var shownX=f.x,shownY=f.y;
  svApplySnapP1(s,null);
- var age=sv.renderDelay/1000;
+ var age=(sv.renderDelay+(sv.snapAgeMs||0))/1000; /* v210: the extrapolation age matches the one svReconcileP1 judges the divergence with — render delay PLUS the stream age svOnSnap measured for this snapshot. The old code extrapolated by the render delay alone while detection counted the age too, so a snapshot that had spent time queued was applied at its stale position and the fighter was pulled BACK to where it had been that long ago */
  f.x+=(s.vx||0)*age;f.y+=(s.vy||0)*age;f.px=f.x;f.py=f.y;
  sv.corrX=Math.max(-280,Math.min(280,shownX-f.x));
  sv.corrY=Math.max(-200,Math.min(200,shownY-f.y));
@@ -3458,7 +3573,7 @@ var LS_RESIM_MAX=30; /* re-simulation cap, frames (v206: raised from 12 — on r
 var LS_RING=60; /* per-frame state saves kept (v206: raised from 40 so a 30-frame rollback always finds its save, with margin for checkpoints) */
 var LS_CHK_EVERY=60; /* host checksum cadence, frames (~1/s) */
 var LS_HELD_MASK=28687; /* held bits repeated by prediction (move / jump-hold + J / U / L held) */
-var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0,rsTimes:[],rsCount:0,rsWait:false,rsWaitAt:0,rsCode:"",rsLastAt:0}; /* rs* = the v208 resync bookkeeping: rsTimes / rsLastAt are the HOST's loop-guard stamps, rsCount the match-wide resync total, rsWait a guest's unanswered resync request */
+var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},cpuEnd:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0,rsTimes:[],rsCount:0,rsWait:false,rsWaitAt:0,rsCode:"",rsLastAt:0}; /* rs* = the v208 resync bookkeeping: rsTimes / rsLastAt are the HOST's loop-guard stamps, rsCount the match-wide resync total, rsWait a guest's unanswered resync request. cpuEnd (v210) is the return counterpart of cpuAt: the frame from which a slot handed to the CPU belongs to its player again (see lsOnReturn) */
 /* ---- rollback correction render smoothing (v206) ----
    When a rollback re-simulation moves a REMOTE fighter a long way
    (more than LS_SMOOTH_MIN px), the simulation state itself snaps
@@ -3470,11 +3585,12 @@ var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},l
    simulation, the checksums and any later re-simulation are
    bit-identical with or without smoothing. */
 var LS_SMOOTH_MS=80;
+var LS_SMOOTH_MAX_MS=150; /* v210: the follow time grows with the correction size, capped here */
 var LS_SMOOTH_MIN=25; /* px: corrections at or below this draw as-is */
-var lsSmooth={}; /* fighter index -> {x, y, t}: offset + performance.now() stamp */
+var lsSmooth={}; /* fighter index -> {x, y, t, ms}: offset + performance.now() stamp + this correction's follow duration */
 function lsSmoothVec(idx){
  var s=lsSmooth[idx];if(!s)return null;
- var el=(performance.now()-s.t)/LS_SMOOTH_MS;
+ var el=(performance.now()-s.t)/(s.ms||LS_SMOOTH_MS);
  if(el>=1){delete lsSmooth[idx];return null}
  var k=1-el;
  return{x:s.x*k,y:s.y*k};
@@ -3493,7 +3609,7 @@ function lsSyncModeLabel(){
  if(on&&tx._hv!==want){tx._hv=want;tx.textContent=want}
 }
 function lsReset(){
- ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
+ ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.cpuEnd={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
  lsSmooth={};
  if(sbRoom)sbRoom.lsMode=false;
  lsSyncModeLabel();
@@ -3565,8 +3681,8 @@ function lsChecksumOf(s){
 }
 /* ---- confirmed inputs, prediction, misprediction detection ---- */
 function lsSetConf(idx,F,bits,own){
- if(ls.cpuAt[idx]!==undefined&&F>=ls.cpuAt[idx]&&!own)return; /* the CPU owns this slot from cpuAt on; late real inputs for it are moot */
- if(!ls.conf[idx]){ls.conf[idx]={};ls.confHi[idx]=-1;ls.lastConfF[idx]=-1}
+ if(ls.cpuAt[idx]!==undefined&&F>=ls.cpuAt[idx]&&(ls.cpuEnd[idx]===undefined||F<ls.cpuEnd[idx])&&!own)return; /* the CPU owns this slot from cpuAt until cpuEnd (its player's return, v210); real inputs inside that window are moot, inputs from cpuEnd on are the player's again */
+ if(!ls.conf[idx]){ls.conf[idx]={};if(typeof ls.confHi[idx]!=="number")ls.confHi[idx]=-1;if(typeof ls.lastConfF[idx]!=="number")ls.lastConfF[idx]=-1} /* v210: a slot with no filed inputs yet may already carry a confHi baseline from lsAdoptResync (a rejoining end adopts a state at frame F with EMPTY conf: every frame before F counts as confirmed). Resetting it to -1 here clobbered that baseline and wedged the slot's confirmation — and with it checkpoint verification — forever */
  if(ls.conf[idx][F]===bits)return;
  ls.conf[idx][F]=bits;
  while(ls.conf[idx][ls.confHi[idx]+1]!==undefined)ls.confHi[idx]++;
@@ -3601,7 +3717,7 @@ function lsCollect(m){
 function lsRowFor(F){
  var n=(net.match&&net.match.length)||fighters.length,row=[];
  for(var i=0;i<n;i++){
-  if(ls.cpuAt[i]!==undefined&&F>=ls.cpuAt[i]){row.push(-1);continue}
+  if(ls.cpuAt[i]!==undefined&&F>=ls.cpuAt[i]&&(ls.cpuEnd[i]===undefined||F<ls.cpuEnd[i])){row.push(-1);continue}
   var c=ls.conf[i];
   if(c&&c[F]!==undefined){row.push(c[F]);continue}
   row.push((ls.lastBits[i]||0)&LS_HELD_MASK);
@@ -3732,7 +3848,7 @@ function lsProcessRollback(){
    if(si3===net.myIdx)continue; /* your own fighter is never smoothed */
    var nf=fighters[si3],op=prePos[si3];if(!nf||!op)continue;
    var mdx=nf.x-op.x,mdy=nf.y-op.y;
-   if(mdx*mdx+mdy*mdy>LS_SMOOTH_MIN*LS_SMOOTH_MIN)lsSmooth[si3]={x:-mdx,y:-mdy,t:nowS};
+   if(mdx*mdx+mdy*mdy>LS_SMOOTH_MIN*LS_SMOOTH_MIN){var distS=Math.sqrt(mdx*mdx+mdy*mdy);lsSmooth[si3]={x:-mdx,y:-mdy,t:nowS,ms:Math.min(LS_SMOOTH_MAX_MS,Math.max(LS_SMOOTH_MS,distS*0.75))}} /* v210: a bigger correction eases over a longer follow — 80ms at the threshold, growing with the distance and capped at ~150ms. Only the drawn offset stretches; the simulation state above already holds the corrected value, and your own fighter is skipped by the caller as before */
   }
  }
  particles=vP;rings=vR;fxBursts=vB;vecBursts=vV;floaters=vF;
@@ -3988,7 +4104,7 @@ function lsOnTakeover(m){
  var idx=m.i;
  if(typeof m.cb==="number"&&typeof m.cf==="number"&&m.cf>=0)lsSetConf(idx,m.cf,m.cb&0xffff,false);
  if(ls.cpuAt[idx]!==undefined&&ls.cpuAt[idx]<=m.f)return;
- ls.cpuAt[idx]=m.f;
+ ls.cpuAt[idx]=m.f;delete ls.cpuEnd[idx]; /* a fresh takeover supersedes any earlier return for this slot */
  /* frames already simulated with this slot predicted / real past
     the takeover point must be re-run with the CPU in place; the
     earliest still-unconfirmed frame of the slot bounds the
@@ -4002,6 +4118,86 @@ function lsOnTakeover(m){
   }
   if(ls.rbFrom<0||from<ls.rbFrom)ls.rbFrom=from;
  }
+}
+/* ---- return from a takeover (v210): the mirror of lsOnTakeover ----
+   A participant who was handed to the CPU (freeze / disconnect)
+   and comes back DURING the match gets its fighter back: from
+   frame f the slot is player-driven again on every end at once.
+   Frames already simulated with the CPU past the return point are
+   re-run with the player in place (its still-unconfirmed frames
+   predict from its last confirmed held bits until its real bundles
+   land, exactly like any other prediction). The host follows the
+   hand-back with a full-state resync (lsHostReturn), so whatever
+   the absence diverged is healed wholesale rather than chased
+   frame by frame. After the match this is never sent: the room
+   only revives while phase is "match" (sbHostRevivePlayer). */
+function lsOnReturn(m){
+ if(typeof m.i!=="number"||typeof m.f!=="number")return;
+ var idx=m.i;
+ if(ls.cpuAt[idx]===undefined){
+  /* this end never saw the takeover (a rejoining end rebuilt the
+     match from the start message AFTER the slot was handed over):
+     adopt the takeover frame the host stamps on the message, so
+     this end derives the same CPU window as every other end */
+  if(typeof m.cf!=="number")return;
+  ls.cpuAt[idx]=m.cf;
+ }
+ if(ls.cpuEnd[idx]!==undefined&&ls.cpuEnd[idx]<=m.f)return;
+ ls.cpuEnd[idx]=m.f;
+ if(m.f<ls.frame&&ls.active){
+  if(ls.rbFrom<0||m.f<ls.rbFrom)ls.rbFrom=m.f;
+ }
+}
+/* host: broadcast the hand-back a few frames ahead of the host's
+   current frame (every end applies it at the same frame, like a
+   takeover), then heal the match with the usual resync gate */
+function lsHostReturn(idx){
+ if(!ls.active)return;
+ var msg={t:"lsret",i:idx,f:ls.frame+6,cf:ls.cpuAt[idx]}; /* cf: the takeover frame, for an end that rejoins after it happened (see lsOnReturn) */
+ lsOnReturn(msg);
+ if(sbRoom)sbBroadcastRoom(sbRoom,msg);
+ lsHostResyncGate("freeze",true);
+}
+/* ---- freeze recovery (v210) ----
+   loop() hands us any frame gap over LS_FREEZE_MS: the tab was
+   frozen / stalled (the real-machine case was a ~26s host freeze),
+   not merely slow. Whatever input state existed before the stall
+   is untrustworthy — keyups / pointerups that fired (or should
+   have) during it are lost, and a press queued then would fire
+   seconds late — so ALL of it is released first. Then:
+   - the liveness clocks get a grace re-base: the peer's silence
+     DURING our own freeze must not be read as a departure (its
+     heartbeats could not be received while we were frozen), and
+     our silence must not be read by the host either — a live
+     peer's next heartbeat lands well inside the re-based window,
+     while a truly gone one is still detected a few seconds later;
+   - a guest tells the host it is back ({t:"back"}: if its slot
+     was handed to the CPU meanwhile, the host hands it back —
+     sbHostRevivePlayer) and asks for the full-state resync that
+     restarts input sync from the host's current frame;
+   - the host resyncs the match through its gate directly: its
+     state is the reference, and the guests' predictions made
+     during its freeze are overwritten by the adoption;
+   - in the snapshot insurance the same stall is healed by
+     dropping the stale snapshot buffer (the next arrival
+     re-anchors the stream) plus the same "back" notice. */
+var LS_FREEZE_MS=2000;
+function lsOnFreezeReturn(gapMs){
+ releaseAllInputs();
+ mrecFreeze(gapMs); /* match recorder: the stall itself (time / frame / length) */
+ sbLastHostHb=performance.now()-3000; /* grace: do not judge the host gone for its silence during OUR freeze */
+ if(sbRoom){var nowF=Date.now()-3000;for(var fi2=0;fi2<sbRoom.players.length;fi2++)sbRoom.players[fi2].lastHb=nowF} /* grace: do not judge guests gone for our own frozen window */
+ if(ls.fb){
+  sv.snaps.length=0;sv.lastSnap=null;sv.anchorF=null;sv.snapAgeMs=0;
+  if(!net.isHost)svSend({t:"back",pid:net.myId});
+  return;
+ }
+ if(!ls.active)return;
+ if(net.isHost){lsHostResyncGate("freeze",false);mrecEvent("ホストがフリーズから復帰し、再同期しました");return}
+ ls.rsWait=false; /* a resync request from before the stall is superseded by the return below */
+ svSend({t:"back",pid:net.myId});
+ lsDesync("freeze"); /* asks the host for the full-state resync (lsrs) and resumes input sync from it */
+ mrecEvent("フリーズから復帰し、ホストへ復帰を伝えて再同期を要求しました");
 }
 /* ---- the driver ---- */
 /* called from loop() in place of both the snapshot client and the
@@ -4056,7 +4252,9 @@ function fighterDispName(f){
    build ids and this end's role, the mode transitions (with
    time / frame / reason), the checkpoint checksum verdicts,
    the rollback count and max depth, the remote input arrival
-   gaps, and this device's own frame-time max. NOTHING is
+   gaps, this device's own frame-time max, and (v210) every
+   frame gap over 2s (a freeze: time / frame / length) plus
+   every return / rejoin / resync it caused. NOTHING is
    written anywhere during the match. When the results screen
    shows, the record is rendered to text and held in memory
    only; the results panel's 「ログをダウンロード」 button is
@@ -4067,9 +4265,9 @@ function fighterDispName(f){
    the record unconditionally: an un-downloaded log is gone.
    No addresses or connection data are ever recorded — player
    names and build ids only. */
-var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[]};
+var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[]};
 function mrecReset(){
- mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];
+ mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];mrec.frz=[];mrec.evt=[];
 }
 function mrecStart(){
  mrecReset();
@@ -4104,8 +4302,22 @@ function mrecChkDist(F){
  if(mrec.chk.length<600)mrec.chk.push({f:F,ok:null});
  mrec.chkDist++;
 }
+/* a frame gap over 2s on THIS device (v210): when it happened
+   (elapsed / frame) and how long the tab was gone */
+function mrecFreeze(gapMs){
+ if(!mrec.on)return;
+ if(mrec.frz.length<50)mrec.frz.push({el:mrecElapsed(),f:ls.frame,ms:Math.round(gapMs)});
+}
+/* a return / rejoin event (v210): this device froze and came
+   back, a departed participant returned and its CPU takeover
+   was cancelled, the host revived a slot… */
+function mrecEvent(txt){
+ if(!mrec.on)return;
+ if(mrec.evt.length<50)mrec.evt.push({el:mrecElapsed(),f:ls.frame,txt:txt});
+}
 function mrecReasonBase(code){
  if(code==="cap")return "巻き戻し上限超過（相手入力の遅れが30フレームを超えた、または巻き戻し先の保存状態がなかった）";
+ if(code==="freeze")return "フリーズ復帰";
  if(code==="chk")return "チェックサム不一致";
  if(code==="freq")return "再同期が10秒以内に3回必要になったため、恒久的に写真方式へ切替（再同期の無限ループ防止）";
  return "ズレ検出";
@@ -4154,6 +4366,16 @@ function mrecBuildText(){
   for(i=0;i<mrec.rs.length;i++){var rs=mrec.rs[i];L.push("  "+rs.el.toFixed(1)+"s / frame "+rs.f+" — 再同期 #"+rs.n+"（理由: "+mrecReasonBase(rs.code)+"）")}
   L.push("  再同期の合計: "+mrec.rs.length+" 回");
  }else L.push("  再同期は発生しませんでした");
+ L.push("フリーズ（2秒を超えたフレーム間隔）:");
+ if(mrec.frz.length){
+  for(i=0;i<mrec.frz.length;i++){var fz=mrec.frz[i];L.push("  "+fz.el.toFixed(1)+"s / frame "+fz.f+" — "+fz.ms+" ms")}
+  L.push("  フリーズの合計: "+mrec.frz.length+" 回");
+ }else L.push("  フリーズは発生しませんでした");
+ L.push("復帰・再参加:");
+ if(mrec.evt.length){
+  for(i=0;i<mrec.evt.length;i++){var ev=mrec.evt[i];L.push("  "+ev.el.toFixed(1)+"s / frame "+ev.f+" — "+ev.txt)}
+  L.push("  復帰・再参加の合計: "+mrec.evt.length+" 回");
+ }else L.push("  復帰・再参加は発生しませんでした");
  L.push("相手入力の到着間隔（入力同期中の集計）:");
  L.push("  最大: "+Math.round(mrec.arrMax)+" ms");
  L.push("  100msを超えた回数: "+mrec.arrOver+" 回");
@@ -5463,7 +5685,23 @@ window.addEventListener("keydown",function(e){
  }
 });
 window.addEventListener("keyup",function(e){if(typingInField(e))return;var k=keyMap[e.code];if(k){keys[k]=false}}); /* W's release timing picks the first jump's height (tap within 0.12s = short hop, held = normal jump) — both heights are fixed; there is no analog jump cut after the decision */
-window.addEventListener("blur",function(){keys={};touchHeld.j=touchHeld.k=touchHeld.l=touchHeld.ult=false});
+/* release EVERY piece of live input state at once (v210): held
+   keys, the press buffer, touch holds, queued online presses and
+   the stick. A keyup / pointerup lost while the tab was frozen,
+   unfocused or hidden would otherwise leave a key logically held
+   forever — or a press queued during the stall firing seconds
+   late — which is exactly how a freeze left some keys (W / J / K /
+   L…) dead or stuck afterwards. After a release, only a fresh
+   physical press registers again. */
+function releaseAllInputs(){
+ keys={};buf={};
+ touchHeld.j=touchHeld.k=touchHeld.l=touchHeld.ult=false;
+ if(typeof svPressQ!=="undefined")svPressQ.length=0;
+ if(typeof stick!=="undefined"&&stick){stick.id=null;stick.dx=0;stick.dy=0;var sbEl=$("stickBase"),skEl=$("stickKnob");if(sbEl)sbEl.style.display="none";if(skEl)skEl.style.display="none"}
+ lastTap.left=0;lastTap.right=0;
+}
+window.addEventListener("blur",releaseAllInputs);
+document.addEventListener("visibilitychange",function(){if(document.hidden)releaseAllInputs()});
 /* ---- touch: floating joystick + bandit-style boxes ---- */
 var stick={id:null,bx:0,by:0,dx:0,dy:0,jumpArmed:true};
 var sz=$("stickZone"),sBase=$("stickBase"),sKnob=$("stickKnob");
@@ -10487,6 +10725,7 @@ function loop(ts){
  if(!lastTs)lastTs=ts;
  var dtms=ts-lastTs;lastTs=ts;
  if(mrec.on&&dtms>mrec.frameMax)mrec.frameMax=dtms; /* match recorder: this device's own frame-time max (recording only — no behavior change) */
+ if(dtms>LS_FREEZE_MS&&mode==="online"&&!matchOver)lsOnFreezeReturn(dtms); /* v210 freeze recovery: a frame gap this large means the tab was frozen / stalled, not slow — reset all input state, tell the host we are back and re-sync (see lsOnFreezeReturn). Offline play is untouched: its accumulator simply drops the excess time as before */
  /* PERF round 3: the fps meter and the quality driver below run on a
     CLAMPED frame time (pdt). A single long frame (tab restore, a GC
     pause, a notification) used to drag the EMA down for a second and
