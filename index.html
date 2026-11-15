@@ -309,7 +309,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="logoWrap">
     <div class="super">SUPER</div>
     <div class="logo">JAILBREAKER<small>.IO</small></div>
-    <div class="tagline">— 脱獄せよ。氷の狐 KAIRO、参戦 —</div>
+    <div class="tagline">— 戦え。脱獄者たちよ —</div>
   </div>
   <div class="newbie">New Players<br>Click Here!<span class="arr">⤵</span></div>
   <nav class="menuNav">
@@ -426,6 +426,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["11:16"],tag:"調整",title:"SHADEの闇ゲージ回復に4.5秒の待機を追加（下方修正）",
+  items:["SHADEの闇ゲージは、これまでMIMIの近くにいる間すぐ毎秒10ずつ回復していましたが、近くに来てから4.5秒たたないと回復が始まらないよう下方修正しました",
+         "4.5秒たった後はこれまで通り毎秒10ずつ回復します。途中でMIMIから離れるとタイマーはリセットされ、次に近づいてからまた4.5秒必要です",
+         "回復量（毎秒10）・ゲージ上限（190）・消失時間（18秒）など、その他の数値に変更はありません"]},
  {date:"2026/11/15",times:["10:59"],tag:"調整",title:"SHADEの闇ゲージ上限を190に変更・表示を「SHADE」に",
   items:["MIMI&SHADEのSHADEの闇ゲージの上限を250から190に変更しました",
          "ゲーム中の闇ゲージの表示を「闇」から「SHADE」に変更しました（SHADEの頭上のゲージ表示と、画面下のピル表示）"]},
@@ -515,10 +519,6 @@ var UPDATE_LOG=[
   items:["VS CPU・トレーニング・オンライン対戦の試合中に、フレンド画面が勝手に開いて操作の邪魔になることがあった問題を修正しました。原因は、フレンド画面を一度開いて閉じた後も、閉じたはずの画面が内部に残ったままになっていて、フレンドのオンライン状態の変化や定期更新のたびに「開いている」と誤判定して再表示していたことです",
          "試合中は、フレンド申請の受信・オンライン状態の変化・接続の再試行など裏側のイベントでは、フレンド画面が自動で開かないようにしました。申請や招待の受信自体はこれまで通り行われ、試合が終わってから FRIENDS を開けば届いた内容をそのまま確認・参加できます（申請件数のバッジ表示もこれまで通り更新されます）",
          "タイトル画面などで FRIENDS ボタンを自分で押して開く操作はこれまで通り使えます。技・数値・その他の機能への変更はありません"]},
- {date:"2026/11/15",times:["01:34"],tag:"修正",title:"ONLINE VS の描画遅延を60fps配信に合わせて短縮（下限 約34ms・上限 120ms）",
-  items:["サーバー側のスナップショット配信が 30fps→60fps（間隔 約33ms→約16.7ms）になったのに合わせ、オンライン対戦の描画遅延の自動調整を見直しました：安定時の下限を 約44ms→約34ms（≒2スナップショット分）に下げ、上限も 150ms→120ms にしました",
-         "回線が不安定な時は、これまでどおり到着の揺れに合わせて自動で遅延が広がり、滑らかさを保ちます。調整は到着間隔をもとに行うため、サーバーが30fps配信の間でもこれまで通り動作します",
-         "自分のキャラを約38ms手前に描く仕様と、画面右上の描画遅延（ms）表示はそのままです。技のダメージや判定などの対戦バランス数値に変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -764,7 +764,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.12')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','遅め（×0.44）'))
 +mvLegend
-+'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限190</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るほか、<b>燃焼・毒・出血などの継続ダメージを受けている間も、MIMIへのダメージと同じぶん減る</b>（炎のビームや毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけ減る）。ただし<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くにいる間</b>は毎秒10ずつ回復する（K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','190')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くで毎秒10'))+'</div></div>'
++'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限190</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るほか、<b>燃焼・毒・出血などの継続ダメージを受けている間も、MIMIへのダメージと同じぶん減る</b>（炎のビームや毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけ減る）。ただし<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くに来てから4.5秒たつと</b>、毎秒10ずつ回復し始める（途中で離れるとタイマーがリセットされ、次に近づいてからまた4.5秒必要。K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','190')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くに4.5秒いてから毎秒10'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、少し遅れてSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 5／SHADE 12')+mvS('KB','180／300')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.4秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 68×62／SHADE 116×74')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
@@ -1071,7 +1071,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shFlash:0,fieldCd:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,fieldCd:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1081,7 +1081,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shFlash=0;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":"VS CPU"));
@@ -2516,7 +2516,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shFlash","fieldCd"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","fieldCd"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0};
 var svPressQ=[];
 var svMute=false;
@@ -5870,12 +5870,16 @@ function shadeBurst(f,n){spawnParticles(f.shX,f.shY-52,n||8,"#7e22ce",170);spawn
    ticks (flame beams, poison mist, dark field, the AXE ult grind)
    drain it while SHADE's body is in the area. While SHADE is
    NEAR MIMI (beside her after a K recall / up+K swing / U warp, or
-   simply standing close) the gauge refills 10 per second. */
-var SHADE_HP_MAX=190,SHADE_VANISH_TIME=18,SHADE_REGEN_RATE=10;
+   simply standing close) the gauge refills 10 per second — but only
+   once SHADE has stayed near her CONTINUOUSLY for 4.5 seconds
+   (SHADE_REGEN_DELAY, tracked by f.shNearT): stepping away resets
+   the timer, so the refill no longer starts the instant it returns
+   to her side (balance nerf, user request 2026/11/15). */
+var SHADE_HP_MAX=190,SHADE_VANISH_TIME=18,SHADE_REGEN_RATE=10,SHADE_REGEN_DELAY=4.5;
 function shadeAlive(f){return !!f&&f.char==="mimi"&&(f.shGoneT||0)<=0}
 function shadeNearMimi(f){return Math.abs(f.shX-f.x)<170&&Math.abs(f.shY-(f.y+f.h))<130}
 function shadeVanish(owner){
- owner.shHp=0;owner.shGoneT=SHADE_VANISH_TIME;owner.shState="idle";owner.shStateT=0;owner.shHitT=0;owner.shHitKind="";
+ owner.shHp=0;owner.shGoneT=SHADE_VANISH_TIME;owner.shNearT=0;owner.shState="idle";owner.shStateT=0;owner.shHitT=0;owner.shHitKind="";
  for(var i=0;i<fighters.length;i++){var hf=fighters[i];if(hf.heldBy===owner&&(hf.heldKind||0)===1){hf.heldT=0;hf.heldBy=null;hf.heldKb=0;hf.heldUlt=false}} /* a foe SHADE was holding is let go — no throw from a vanished hand */
  spawnParticles(owner.shX,owner.shY-52,30,"#7e22ce",280);spawnParticles(owner.shX,owner.shY-52,16,"#0d0817",200);
  spawnRing(owner.shX,owner.shY-52,"#a855f7",62);
@@ -6639,14 +6643,15 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.char==="mimi"){
    f.fieldCd=Math.max(0,(f.fieldCd||0)-dt);
    /* 【闇ゲージ】 vanish countdown / revival / proximity regen */
-   if(f.shHp==null)f.shHp=SHADE_HP_MAX;if(f.shGoneT==null)f.shGoneT=0;if(f.shFlash==null)f.shFlash=0;
+   if(f.shHp==null)f.shHp=SHADE_HP_MAX;if(f.shGoneT==null)f.shGoneT=0;if(f.shNearT==null)f.shNearT=0;if(f.shFlash==null)f.shFlash=0;
    if(f.shFlash>0)f.shFlash-=dt;
    if(f.shGoneT>0){
-     f.shGoneT-=dt;
-     if(f.shGoneT<=0){f.shGoneT=0;f.shHp=SHADE_HP_MAX;f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="ssend";f.shStateT=0.4;f._shPX=f.x;f._shPY=f.y+f.h;shadeBurst(f,16);spawnRing(f.shX,f.shY-52,"#a855f7",46);pushFloater({x:f.x,y:f.y-26,txt:"SHADE復活！",life:1,col:"#d8b4fe"});beep(520,.14,"sine",.05)} /* 18s after the gauge broke, SHADE returns at MIMI's position with the gauge full */
-   }else if(shadeNearMimi(f)&&f.shHp<SHADE_HP_MAX){
-     f.shHp=Math.min(SHADE_HP_MAX,f.shHp+SHADE_REGEN_RATE*dt); /* beside MIMI (K recall / up+K / U warp all leave it at her side) the darkness refills 10/s */
-   }
+     f.shGoneT-=dt;f.shNearT=0;
+     if(f.shGoneT<=0){f.shGoneT=0;f.shHp=SHADE_HP_MAX;f.shNearT=0;f.shAway=false;f.shX=shadeAnchorX(f);f.shY=f.y+f.h;f.shState="ssend";f.shStateT=0.4;f._shPX=f.x;f._shPY=f.y+f.h;shadeBurst(f,16);spawnRing(f.shX,f.shY-52,"#a855f7",46);pushFloater({x:f.x,y:f.y-26,txt:"SHADE復活！",life:1,col:"#d8b4fe"});beep(520,.14,"sine",.05)} /* 18s after the gauge broke, SHADE returns at MIMI's position with the gauge full */
+   }else if(shadeNearMimi(f)){
+     f.shNearT+=dt; /* 【下方修正】 proximity timer: the refill starts only after SHADE has stayed beside MIMI continuously for SHADE_REGEN_DELAY (4.5s); leaving her side (the else below) resets it to 0 */
+     if(f.shNearT>=SHADE_REGEN_DELAY&&f.shHp<SHADE_HP_MAX)f.shHp=Math.min(SHADE_HP_MAX,f.shHp+SHADE_REGEN_RATE*dt); /* beside MIMI (K recall / up+K / U warp all leave it at her side) the darkness refills 10/s — after the 4.5s wait */
+   }else f.shNearT=0;
    if(f.shStateT>0){f.shStateT-=dt;if(f.shStateT<=0)f.shState="idle"}
    /* SHADE always faces MIMI (user request): it turns toward
       whichever side of it she stands on — beside her that is her
