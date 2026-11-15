@@ -434,6 +434,23 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["23:42"],tag:"調整",title:"KAIRO：バランス調整（上方・下方修正）",
+  items:["J 1段目「横払い」：KB 270→250、判定 64×58→70×62、被弾硬直 0.24秒→0.34秒",
+         "J 2段目「返し斬り」：KB 330→250、判定 66×60→72×64、被弾硬直 0.26秒→0.36秒",
+         "J 3段目「突進フィニッシュ」：ダメージ 15→16、KB 530→580",
+         "前+J「ブリンク斬り」を作り替え：瞬間移動ではなく約105先への高速移動になり、移動中の経路にいた相手にも当たるようになりました（ヒットは1回まで）。発生は即時（移動中）、後硬直 0.8秒→0.34秒、被弾硬直0.4秒を追加",
+         "後ろ+J「バックステップ斬り」と ↑+J「ライジングアッパー」を削除しました",
+         "↓+J「アイスフット」：KB 560が上方向に吹き飛ぶようになり、後硬直 0.30秒→0.26秒、判定 72×34→80×34、被弾硬直 0.26秒→0.36秒",
+         "空中J「ホバースピン」：判定 68×62→66×64",
+         "空中↓+J「急降下斬り」：着地硬直 0.25秒→0.3秒",
+         "J+K「アイスファング・コンボ」：ダメージ 12＋16→16＋20、2段目KB 660→710、判定 66×58／78×68→72×64／80×70、1段目に被弾硬直0.3秒を追加（2段目はなし）",
+         "K「フロストテイル」：KB 地上620／空中660→地上700／空中740、判定 80×64→84×72",
+         "空中↓+K「メテオドロップ」：発生 約0.12秒→0.2秒、全体 0.40秒→0.48秒、着地硬直 0.34秒→0.38秒",
+         "空中↑+K「フロストスピン」：再使用 5.0秒→4.0秒、着地硬直 0.40秒→0.44秒",
+         "U「アイスシャード」：リロード 1.25秒→1.75秒ごとに1発、凍結 0.85秒→1.2秒",
+         "L「アブソリュート・ゼロ」：ダメージ 50→48、KB 940→900",
+         "↓+K「アイスエッジ」は今回の指定どおり従来の数値のままです（一段目62／二段目56／三段目48、KB 800／720／920、発生 0.2／0.3／0.4秒、全体1.38秒、後硬直0.62秒、判定 52×140／52×120／52×90）",
+         "技一覧の表示もすべて実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv220に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/15",times:["23:14"],tag:"調整",title:"KAIRO：全技のエフェクトを判定に合わせて調整",
   items:["KAIROのすべての技について、エフェクトのサイズ・位置・タイミングを実際の当たり判定に重なるよう調整しました（判定・ダメージ・KBなどの数値は一切変更していません）",
          "Jチェーン（1〜3段目）・ブリンク斬り・ライジングアッパー・アイスフット・ダイブクロー・J+Kの拳は、爪痕や拳が判定の前端・上下幅まで届くよう拡大しました。ホバースピン／フロストスピンは回転する氷が両側の判定いっぱいに広がり、フロストテイルは尻尾の弧とトゲの先端が判定の縁に沿うようになりました",
@@ -627,22 +644,20 @@ function mvS(k,v){return '<span><i>'+k+'</i>'+v+'</span>'}
 var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足が速く空中制御が強い。爪で刻み、氷弾で牽制し、尻尾でとどめを刺すキャラ。モチーフは送ってくれた青い氷キャラ（紺の長い耳＋水色ダイヤ模様）。</p>'
 +mvSpec(mvS('HP','250')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.00')+mvS('ダッシュ','1100')+mvS('ウルト溜まり','遅め（約0.42倍）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','270')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','64×58')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','66×60')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','530')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ瞬間移動し、<b>大きな氷の爪でひっかく</b>。到達と同時に3本の氷の爪が爪痕を刻み、氷片が飛び散る。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.8秒')+mvS('判定','80×62'))+'</div></div>'
-+'<div class="moveRow"><div><b>後ろ+J — バックステップ斬り</b><p>前に薙ぎながら後ろへ跳んで距離を作る間合い調整技。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','64×50'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+J — ライジングアッパー</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','56×74')+mvS('上昇','vy -448'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.30秒')+mvS('判定','72×34')+mvS('被弾硬直','0.26秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','68×62')+mvS('着地硬直','0.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68')+mvS('着地硬直','0.25秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','66×58／78×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上620／空中660')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','80×64')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。判定は<b>左右両側</b>に出るので、真横や背後側にいる相手にも当たる。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は凍結1.2秒＝移動速度0.45倍になる）。着地硬直0.34秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.12秒')+mvS('全体','0.40秒')+mvS('後硬直','0.45秒')+mvS('判定','左右122×84')+mvS('着地硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','70×62')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','72×64')+mvS('被弾硬直','0.36秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ<b>高速移動</b>し、移動しながら<b>大きな氷の爪でひっかく</b>。経路の間にいた相手にも当たる（ヒットは1回まで）。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.34秒')+mvS('判定','80×62')+mvS('被弾硬直','0.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','560（上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.26秒')+mvS('判定','80×34')+mvS('被弾硬直','0.36秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','66×64')+mvS('着地硬直','0.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — 急降下斬り</b><p>斜め下へ突っ込み、<b>着地時に氷の衝撃波</b>が両側に出る。</p>'+mvSpec(mvS('ダメージ','本体34／着地 前16・後16')+mvS('KB','本体600／着地 前430・後340')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.55秒')+mvS('判定','本体62×52／着地92×68')+mvS('着地硬直','0.3秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','16＋20')+mvS('KB','300／710')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','72×64／80×70')+mvS('被弾硬直','0.3秒／なし'))+'</div></div>'
++'<div class="moveRow"><div><b>K — フロストテイル</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p><b>氷まみれの尻尾</b>を大きく振り回す。氷のトゲと結晶をびっしりまとった太い尻尾で薙ぎ払い、軌跡に氷片が残る。判定は振りの途中（約0.12秒後）に出る。地上・通常の空中どちらでも同じ振りで、空中の方が少し重い。</p>'+mvSpec(mvS('ダメージ','地上33／空中32')+mvS('KB','地上700／空中740')+mvS('発生','約0.12秒')+mvS('全体','0.36秒')+mvS('後硬直','0.45秒')+mvS('判定','84×72')+mvS('着地硬直','空中で出した場合0.30秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b><p><b>大きな氷柱に乗って</b>急降下し、氷柱ごと真下へ叩き込む。落下スピードは最速クラスで、ダメージも大きい。判定は<b>左右両側</b>に出るので、真横や背後側にいる相手にも当たる。<b>着地すると地面に氷を張る</b>（幅150・3.5秒残る氷の床になり、乗った相手は凍結1.2秒＝移動速度0.45倍になる）。着地硬直0.38秒あり。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700')+mvS('発生','約0.2秒')+mvS('全体','0.48秒')+mvS('後硬直','0.45秒')+mvS('判定','左右122×84')+mvS('着地硬直','0.38秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず<b>ジャンプもできない</b>。さらに<b>後硬直（完全硬直）の間も動けず、ジャンプもできない</b>、全体の拘束が長い大技。</p>'+mvSpec(mvS('ダメージ','一段目62／二段目56／三段目48')+mvS('KB','一段目800（真上へ）／二段目720（真上へ）／三段目920')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒（動けない・ジャンプ不可）')+mvS('後硬直','0.62秒（完全硬直）')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','5.0秒')+mvS('着地硬直','0.40秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発まで撃てて、撃った分は1.25秒ごとに1発ずつ自動リロードされる。当たると相手が 0.85秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.25秒')+mvS('凍結','0.85秒（移動速度0.45倍）'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','940')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','4.0秒')+mvS('着地硬直','0.44秒'))+'</div></div>'
++'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発まで撃てて、撃った分は1.75秒ごとに1発ずつ自動リロードされる。当たると相手が 1.2秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.75秒')+mvS('凍結','1.2秒（移動速度0.45倍）'))+'</div></div>'
++'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','48')+mvS('KB','900')+mvS('発生','即時')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p>'+mvSpec(mvS('速度','1100')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>刑務所の看守ロボ。重量級で足は遅いぶん、一撃が重く吹っ飛ばしが強いパワータイプ。バトンで制圧し、ボルトで撃ち抜き、必殺のスカイフック・クレーンで上空から確保して叩き落とす。</p>'
@@ -1152,7 +1167,7 @@ function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.
 /* per-shot reload interval for the four U guns = each gun's ORIGINAL
    full-magazine reload time, unchanged (owner rule: one shot comes
    back per interval while the magazine is below full) */
-function reloadInterval(f){return f.char==="warden"?1.15:(f.char==="smiley"?1.1:(f.char==="travis"?2.5:1.25))} /* warden bolt 1.15 / smiley knife 1.1 / kairo shard 1.25 / travis blast 1.25 -> 2.5 (user spec) */
+function reloadInterval(f){return f.char==="warden"?1.15:(f.char==="smiley"?1.1:(f.char==="travis"?2.5:(f.char==="kairo"?1.75:1.25)))} /* warden bolt 1.15 / smiley knife 1.1 / kairo shard 1.25 -> 1.75 (user spec) / travis blast 1.25 -> 2.5 (user spec) */
 /* HOLD-TO-CONTINUE gates (owner request): holding a button may only
    ever CONTINUE a multi-stage / multi-shot move, never start one and
    never auto-repeat a single move. The U gate covers exactly the
@@ -1578,7 +1593,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v219";
+var BUILD_ID="v220";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2579,7 +2594,7 @@ hp:sbRI(f.hp),hg:sbRI(f.hpGhost),sc:f.score,kl:f.kills||0,awk:sbR2(f.awakenT||0)
 dead:f.dead?1:0,gd:f.guarding?1:0,hs:sbR2(f.hitstun),fr:sbR2(f.frozen),inv:sbR2(f.invuln),
 atk:sbR2(f.attackCd),dcd:sbR2(f.dashCd),spc:sbR2(f.specCd||0),mcd:sbR2(f.mistCd||0),fcd:sbR2(f.flyCd||0),
 uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:sbR2(f.poisonT||0),brn:sbR2(f.burnT||0),bld:sbR2(f.bleedT||0),slo:sbR2(f.slowT||0),
-sph:f.spinHits||0,flm:sbR2(f.flameT||0),fld:sbR2(f.flameDelay||0),ven:f.venom?1:0,bft:sbR2(f.buffT||0),
+sph:f.spinHits||0,blk:sbR2(f.blinkLeft||0),blh:f.blinkHit?1:0,flm:sbR2(f.flameT||0),fld:sbR2(f.flameDelay||0),ven:f.venom?1:0,bft:sbR2(f.buffT||0),
 shx:f.char==="mimi"?sbRI(f.shX):undefined,shy:f.char==="mimi"?sbRI(f.shY):undefined,sha:f.char==="mimi"?(f.shAway?1:0):undefined,shf:f.char==="mimi"?f.shFace:undefined,shs:f.char==="mimi"?(f.shState||"idle"):undefined,sht:f.char==="mimi"?sbR2(f.shStateT||0):undefined,shp:f.char==="mimi"?sbRI(f.shHp==null?190:f.shHp):undefined,shg:f.char==="mimi"?sbR2(f.shGoneT||0):undefined,
 ht:f.char==="no66"?sbRI(f.heat||0):undefined,hst:f.char==="no66"?sbR2(f.heatStun||0):undefined, /* No.66: the heat gauge and the overheat lock ride the snapshot so guests see the steam / scorching state and the HUD value */
 grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,hkd:f.heldKind||0,og:f.onGround?1:0,cmb:f.comboHits,cdg:sbRI(f.comboDmg||0),ai:(room.matchSlots[i]&&room.matchSlots[i].ai)?1:0
@@ -3023,7 +3038,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","airJ","airLag","landLagT","recLockT","thrustHits","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -3332,7 +3347,7 @@ function svApplySnapP1(s,hist){
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
  f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
  f.onGround=!!s.og;f.comboHits=s.cmb;f.comboDmg=s.cdg;
- if(typeof s.sph==="number")f.spinHits=s.sph; if(typeof s.flm==="number")f.flameT=s.flm; if(typeof s.fld==="number")f.flameDelay=s.fld; if(typeof s.ven==="number")f.venom=!!s.ven; if(typeof s.bft==="number")f.buffT=s.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft): spin-hit count, flame timers, venom flag and buff time the draw code reads — without these they stayed at local defaults online */
+ if(typeof s.sph==="number")f.spinHits=s.sph; if(typeof s.blk==="number")f.blinkLeft=s.blk; if(typeof s.blh==="number")f.blinkHit=!!s.blh; if(typeof s.flm==="number")f.flameT=s.flm; if(typeof s.fld==="number")f.flameDelay=s.fld; if(typeof s.ven==="number")f.venom=!!s.ven; if(typeof s.bft==="number")f.buffT=s.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft): spin-hit count, flame timers, venom flag and buff time the draw code reads — without these they stayed at local defaults online */
  if(s.grb){f.grabT=Math.max(f.grabT||0,0.15);if(!f.grabBy)f.grabBy=svFindWarden()}
  if(s.hld){f.heldT=Math.max(f.heldT||0,0.15);if(typeof s.hby==="number"&&s.hby>=0&&fighters[s.hby]&&fighters[s.hby]!==f)f.heldBy=fighters[s.hby];if(typeof s.hkd==="number")f.heldKind=s.hkd} /* 【掴み】 snapshot hold flag (forward-compat, mirrors grb): the pin position itself already arrives via x/y — this only restores the held state + grabber link so the hold visual and release read correctly on guests */
 }
@@ -3446,6 +3461,8 @@ function svReconcileP1(s,snap){
  if(typeof s.flm==="number")f.flameT=s.flm;
  if(typeof s.fld==="number")f.flameDelay=s.fld;
  if(typeof s.sph==="number")f.spinHits=s.sph;
+ if(typeof s.blk==="number")f.blinkLeft=s.blk;
+ if(typeof s.blh==="number")f.blinkHit=!!s.blh;
  if(typeof s.awk==="number")f.awakenT=Math.max(f.awakenT||0,s.awk);
  if(typeof s.inv==="number")f.invuln=Math.max(f.invuln||0,s.inv);
  if(f.state==="idle"&&s.st&&s.st!=="idle"&&s.st!=="guard"){
@@ -3477,7 +3494,7 @@ function svApplySnapRemote(f,sf){
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
  f.comboHits=sf.cmb;f.comboDmg=sf.cdg;f.groundPlat=null;
- if(typeof sf.sph==="number")f.spinHits=sf.sph; if(typeof sf.flm==="number")f.flameT=sf.flm; if(typeof sf.fld==="number")f.flameDelay=sf.fld; if(typeof sf.ven==="number")f.venom=!!sf.ven; if(typeof sf.bft==="number")f.buffT=sf.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft) — see svApplySnapP1 */
+ if(typeof sf.sph==="number")f.spinHits=sf.sph; if(typeof sf.blk==="number")f.blinkLeft=sf.blk; if(typeof sf.blh==="number")f.blinkHit=!!sf.blh; if(typeof sf.flm==="number")f.flameT=sf.flm; if(typeof sf.fld==="number")f.flameDelay=sf.fld; if(typeof sf.ven==="number")f.venom=!!sf.ven; if(typeof sf.bft==="number")f.buffT=sf.bft; /* draw-only snapshot fields (sph/flm/fld/ven/bft) — see svApplySnapP1 */
  if(sf.grb)f.grabT=Math.max(f.grabT||0,0.15);
  if(sf.hld){f.heldT=Math.max(f.heldT||0,0.15);if(typeof sf.hby==="number"&&sf.hby>=0&&fighters[sf.hby]&&fighters[sf.hby]!==f)f.heldBy=fighters[sf.hby];if(typeof sf.hkd==="number")f.heldKind=sf.hkd} /* 【掴み】 hold state from the snapshot (mirrors grb) */
 }
@@ -6831,7 +6848,7 @@ function applyFullLock(f){f.recLockT=Math.max(f.recLockT||0,f.attackCd+0.07)}
    飛翔) or ults. ORCHID 飛翔 is the one exception: it now carries a
    specced 0.42s landing lag (the ofly entry below). */
 var LAND_LAG={
- kairo:{airclaw:0.2,taildrop:0.34,diveclaw:0.25,tail:0.30,fspin:0.40,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) landing lag 0.28 -> 0.2; フロストスピン (fspin) landing lag 0.30 -> 0.40 */
+ kairo:{airclaw:0.2,taildrop:0.38,diveclaw:0.30,tail:0.30,fspin:0.44,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): メテオドロップ (taildrop) 着地硬直 0.34 -> 0.38; 急降下斬り (diveclaw) 着地硬直 0.25 -> 0.30; フロストスピン (fspin) 着地硬直 0.40 -> 0.44 */
  warden:{airclaw:0.33,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18},
  kojiro:{airslash:0.2,airheavy:0.3,taildrop:0.30,diveclaw:0.44,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.26 -> 0.2, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{airclaw:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
@@ -8130,7 +8147,7 @@ function startAttack(f,type){
       Two hits, long recovery; breaks the J chain. */
    f.state="jkcombo";f.stateT=0.48;f.attackCd=0.62;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*168;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,66,58,12,300,f.face,-0.3);
+   meleeHit(f,foe,72,64,16,300,f.face,-0.3,0.3); /* アイスファング・コンボ 1段目 (user spec): dmg 12 -> 16, box 66x58 -> 72x64, 被弾硬直 0.3秒を追加 (KB 300 unchanged) */
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#a5f3fc",200);
    beep(1250,.06,"square",.05);setTimeout(function(){beep(280,.12,"sawtooth",.05)},110);
  }else if(type==="j"){
@@ -8162,39 +8179,25 @@ function startAttack(f,type){
         quick low sweep (user spec: アイスフット). It still chills the
         floor it crosses: a slick ice patch stays behind for a few seconds
         and chills (slows) any foe standing on it */
-     f.state="lowclaw";f.stateT=0.12;f.attackCd=0.23;f.comboWin=0; /* アイスフット 後硬直 (user spec): attackCd 0.15 -> 0.23, so the displayed recovery (attackCd + the shared 0.07) goes 0.22s -> 0.30s; 全体 (stateT) 0.12s unchanged */
+     f.state="lowclaw";f.stateT=0.12;f.attackCd=0.19;f.comboWin=0; /* アイスフット 後硬直 (user spec): 0.30秒 -> 0.26秒 — attackCd 0.23 -> 0.19, so the displayed recovery (attackCd + the shared 0.07) goes 0.30s -> 0.26s; 全体 (stateT) 0.12s unchanged */
      f.vx=f.face*344;
-     meleeHit(f,foe,72,34,8,560,f.face,0.08,0.26); /* アイスフット (user spec): KB 450 -> 560, 被弾硬直 0.2s -> 0.26s (damage 8 / box 72x34 unchanged) */
+     meleeHit(f,foe,80,34,8,560,f.face,-0.6,0.36); /* アイスフット (user spec): box 72x34 -> 80x34, KB 560 now launches UPWARD (up 0.08 -> -0.6), 被弾硬直 0.26s -> 0.36s (damage 8 unchanged) */
      icePatches.push({x:f.x+f.face*36,y:f.y+f.h,w:150,t:3.5,owner:f});
      spawnParticles(f.x+f.face*22,f.y+f.h-6,9,"#bae6fd",150);
      beep(760,.07,"square",.045);
-   }else if(upHeld){
-     /* ground up+J: RISING UPPER — launches the foe; landing it REFUNDS the
-        double jump, so Kairo can chase the launched foe into the air */
-     f.state="clawup";f.stateT=0.3;f.attackCd=0.38;f.comboWin=0;
-     f.vy=-448;f.onGround=false;f.fastfall=false;
-     if(meleeHit(f,foe,56,74,14,360,f.face,-1.1)){f.jumps=1;spawnParticles(f.x,f.y+f.h,8,"#a5f3fc",140)}
-     spawnParticles(f.x+f.face*16,f.y+f.h*0.28,9,"#a5f3fc",170);
-     beep(840,.08,"square",.05);
-   }else if(backHeld){
-     /* back+J: BACKSTEP FANG — slashes in front while leaping backwards.
-        A spacing tool: it hits the foe AND opens distance in one motion */
-     f.state="backclaw";f.stateT=0.26;f.attackCd=0.34;f.comboWin=0;
-     f.vx=-f.face*370;
-     meleeHit(f,foe,64,50,12,300,f.face,-0.25);
-     spawnParticles(f.x-f.face*18,f.y+f.h*0.5,8,"#bae6fd",150);
-     beep(1100,.06,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
-     /* forward+J / running / dash J: BLINK SLASH — Kairo freezes his trail
-        and reappears ~105u ahead (shortened from ~170), slashing on arrival.
-        The blink passes straight through the foe, so it can cross up behind
-        them — but it now pays a longer cooldown, like every J lunge */
-     f.state="dashclaw";f.stateT=0.3;f.attackCd=0.73;f.comboWin=0;f.dashT=0; /* blink thrust slash: a little extra recovery */
-     spawnParticles(f.x,f.y+f.h*0.45,10,"#67e8f9",170);
-     f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+     /* forward+J / running / dash J: BLINK SLASH (reworked, user spec) —
+        no longer a teleport: Kairo DASHES ~105u at high speed and the
+        slash lands DURING the movement, on any foe standing in the
+        path (hit once only, 被弾硬直 0.4秒). The travel + path hit live
+        in stepFighter (state "dashclaw", blinkLeft / blinkHit).
+        後硬直 0.8s -> 0.34s. NOTE: ground ↑+J ライジングアッパー and
+        後ろ+J バックステップ斬り were DELETED (user spec) — up/back+J
+        now fall through to the blink / plain chain like any other J */
+     f.state="dashclaw";f.stateT=0.3;f.attackCd=0.27;f.comboWin=0;f.dashT=0; /* 後硬直: attackCd 0.73 -> 0.27 (displayed 0.8s -> 0.34s with the shared +0.07) */
+     f.blinkLeft=105;f.blinkHit=false;
      f.vx=f.face*260;
-     meleeHit(f,foe,80,62,14,440,f.face,-0.3);
-     spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30); /* 氷の爪でひっかく見た目: 到達点に氷片と爪痕のリングを追加 (数値は変更なし) */
+     spawnParticles(f.x,f.y+f.h*0.45,10,"#67e8f9",170);
      beep(1350,.06,"square",.05);
    }else{
      /* ground J = a 3-stage CHAIN (user spec, restored): stage 1 is a plain
@@ -8208,13 +8211,13 @@ function startAttack(f,type){
        f.comboWin=0.9;
        f.state="claw";f.stateT=0.22;f.attackCd=0.13;
        /* stage 1: normal slash — no lunge, no step-in */
-       meleeHit(f,foe,64,58,13,270,f.face,-0.24,0.24);
+       meleeHit(f,foe,70,62,13,250,f.face,-0.24,0.34); /* J1 横払い (user spec): KB 270 -> 250, box 64x58 -> 70x62, 被弾硬直 0.24s -> 0.34s */
        beep(1200,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.9;
        f.state="clawrev";f.stateT=0.26;f.attackCd=0.15;
        /* stage 2: reverse slash — still no lunge */
-       meleeHit(f,foe,66,60,13,330,f.face,-0.3,0.26);
+       meleeHit(f,foe,72,64,13,250,f.face,-0.3,0.36); /* J2 返し斬り (user spec): KB 330 -> 250, box 66x60 -> 72x64, 被弾硬直 0.26s -> 0.36s */
        spawnParticles(f.x+f.face*18,f.y+f.h*0.4,7,"#a5f3fc",150);
        beep(1350,.06,"square",.045);
      }else{
@@ -8222,7 +8225,7 @@ function startAttack(f,type){
        f.state="clawspin";f.stateT=0.4;f.attackCd=0.58; /* longer cooldown after the lunge */
        f.x+=f.face*52;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50; /* stage 3 only: short lunge step */
        f.vx+=f.face*84;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,80,68,15,530,f.face,-0.42);
+       meleeHit(f,foe,80,68,16,580,f.face,-0.42); /* J3 突進フィニッシュ (user spec): dmg 15 -> 16, KB 530 -> 580 (box 80x68 / 全体 0.4s / 後硬直 0.65s / 約52前進 unchanged) */
        spawnParticles(f.x,f.y+f.h*0.45,12,"#22d3ee",210);
        beep(1700,.09,"square",.05);setTimeout(function(){beep(500,.08,"sawtooth",.04)},60);
      }
@@ -8236,7 +8239,7 @@ function startAttack(f,type){
         BOTH sides in stepFighter (state "fspin", up to 5 ticks).
         CD 5.0s on the shared flyCd */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=5.0;f.state="fspin";f.stateT=0.55;f.attackCd=0.62;f.comboWin=0; /* フロストスピン 全体 0.35秒 -> 0.55秒 / 上昇秒数 1.2秒 -> 0.55秒 (user spec): 後硬直は attackCd 0.62 + 共通0.07 = 0.69秒のまま。0.55秒の中に最大5ヒットを収めるため、stepFighter 側のヒット間隔も 0.06秒 -> 0.11秒に戻した */
+     f.flyCd=4.0;f.state="fspin";f.stateT=0.55; /* フロストスピン 再使用 (user spec): 5.0秒 -> 4.0秒 */f.attackCd=0.62;f.comboWin=0; /* フロストスピン 全体 0.35秒 -> 0.55秒 / 上昇秒数 1.2秒 -> 0.55秒 (user spec): 後硬直は attackCd 0.62 + 共通0.07 = 0.69秒のまま。0.55秒の中に最大5ヒットを収めるため、stepFighter 側のヒット間隔も 0.06秒 -> 0.11秒に戻した */
      f.vy=-550;f.vx=0;f.onGround=false;f.fastfall=false;f.flyDur=0.55; /* rise held at vy -550 for 0.55s (user spec): flyDur counts it down in stepFighter and the gravity step holds the rise; landing clears it */
      f.spinHits=0;f.spinTick=0.05;
      spawnParticles(f.x,f.y+f.h*0.45,14,"#67e8f9",200);spawnRing(f.x,f.y+f.h*0.45,"#a5f3fc",42);
@@ -8259,7 +8262,7 @@ function startAttack(f,type){
      beep(240,.13,"sawtooth",.05);
    }else if(kDown&&!f.onGround){
      /* air down+K: meteor drop — plunges straight down, tail spike on the way */
-     f.state="taildrop";f.stateT=0.4;f.attackCd=0.5;f.hitDone=false;f.comboWin=0;
+     f.state="taildrop";f.stateT=0.48;f.attackCd=0.5;f.hitDone=false;f.comboWin=0; /* メテオドロップ (user spec): 発生 約0.12秒 -> 0.2秒 (the stepFighter threshold stays 0.28, so the hit now lands 0.48-0.28 = 0.20s after the press), 全体 0.40秒 -> 0.48秒 */
      f.vy=Math.max(f.vy,752);f.vx*=0.3;
      beep(190,.14,"sawtooth",.055);
    }else{
@@ -8272,13 +8275,13 @@ function startAttack(f,type){
    f.ammo--;f.state="shard";f.stateT=0.22;f.attackCd=0.32;
    projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*660,vy:-14,owner:f,life:1.3,kind:"shard"}); /* speed 640 -> 660, life 1.3s = range ~860 (user spec) */
    beep(1600,.07,"sine",.05);
-   if(f.reloadT<=0)f.reloadT=1.25; /* リロード: per-shot trickle starts on the first spent shot (see stepFighter) */
+   if(f.reloadT<=0)f.reloadT=1.75; /* リロード (user spec): 1.25秒 -> 1.75秒ごとに1発ずつ — per-shot trickle starts on the first spent shot (see stepFighter) */
  }else if(type==="ult"){
    if(f.meter<100)return;f.meter=0;f.state="ult";f.stateT=0.62;f.attackCd=0.72;shake=15;
    spawnParticles(f.x,f.y+f.h/2,60,"#a5f3fc",330);spawnParticles(f.x,f.y+f.h/2,40,"#22d3ee",240);
    var ultHit=false;
    dbgBox(f.x,f.y,270,250,"255,123,45",18); /* hitbox viewer (おかき only): the ult tests foe centres within ±135 across and foe tops within ±125 of his top */
-   for(var ui=0;ui<fighters.length;ui++){var uf=fighters[ui];if(uf===f||uf.dead||uf.invuln>0)continue;if(Math.abs(uf.x-f.x)<135&&Math.abs(uf.y-f.y)<125){if(applyHit(f,uf,50,940,f.face,-0.62,true))ultHit=true}} /* ult: dmg 55 -> 50, KB 920 -> 940, box widened vertically 135x105 -> 135x125 (user spec) */
+   for(var ui=0;ui<fighters.length;ui++){var uf=fighters[ui];if(uf===f||uf.dead||uf.invuln>0)continue;if(Math.abs(uf.x-f.x)<135&&Math.abs(uf.y-f.y)<125){if(applyHit(f,uf,48,900,f.face,-0.62,true))ultHit=true}} /* ult: dmg 50 -> 48, KB 940 -> 900 (user spec; box 135x125 unchanged) */
    /* Kairo ult recharge rule: landing the ult instantly recharges it, so it
       can be fired again — but consecutive hits are capped at 5 per charge
       cycle. Using up all 5 RESETS the count on the spot (not only on
@@ -8628,7 +8631,7 @@ function stepFighter(f,dt,input,foe){
    if(Math.floor(before/50)!==Math.floor(f.hp/50))pushFloater({x:f.x,y:f.y-18,txt:"REGEN",life:.8,col:"#f9a8d4"});
  }
  var frozenFactor=1;if(f.frozen>0){f.frozen-=dt;frozenFactor=0.45}
- if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?80:74,f.char==="kairo"?64:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?660:620):(airT?620:580),f.face,airT?0.95:-0.5);if(f.char==="kairo"){spawnParticles(f.x+f.face*40,f.y+f.h*0.5,10,"#a5f3fc",210);spawnParticles(f.x+f.face*34,f.y+f.h*0.42,5,"#e0f2fe",150);spawnRing(f.x+f.face*38,f.y+f.h*0.48,"#7dd3fc",30)} /* KAIRO フロストテイル: 氷まみれの尻尾のヒット時に氷片バーストを追加 (数値は変更なし) */beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64, dmg 33 ground / 32 air, KB 620 ground / 660 air; other chars keep their values */
+ if(f.state==="tail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;var airT=!f.onGround;meleeHit(f,foe,f.char==="kairo"?84:74,f.char==="kairo"?72:66,f.char==="kairo"?(airT?32:33):(airT?22:24),f.char==="kairo"?(airT?740:700):(airT?620:580),f.face,airT?0.95:-0.5);if(f.char==="kairo"){spawnParticles(f.x+f.face*40,f.y+f.h*0.5,10,"#a5f3fc",210);spawnParticles(f.x+f.face*34,f.y+f.h*0.42,5,"#e0f2fe",150);spawnRing(f.x+f.face*38,f.y+f.h*0.48,"#7dd3fc",30)} /* KAIRO フロストテイル: 氷まみれの尻尾のヒット時に氷片バーストを追加 (数値は変更なし) */beep(240,.1,"sawtooth",.05)} /* KAIRO フロストテイル buffed (user spec): box 80x64 -> 84x72, dmg 33 ground / 32 air, KB 620 -> 700 ground / 660 -> 740 air; other chars keep their values */
  /* WARDEN shield bash delayed hit (user spec): lands 0.18s after the
     press (stateT 0.38 -> threshold 0.20), box 80x70, dmg 24 / air 22,
     KB 600 / air 640. Presentation: a dull square shockwave burst on
@@ -8644,7 +8647,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     is pinned for 0.4s and then thrown (the grab system above
     applyGrabHit). No hitstun of its own （被弾硬直 なし） */
  if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,146,84,16,800,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?78:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?68:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16)),f.char==="kojiro"?660:(f.char==="kairo"?660:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16))),f.char==="kojiro"?660:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* MIMI&SHADE per-step work: SHADE's follow movement, its delayed
     hits (shHitT), MIMI's air-spin and light-barrage ticks, and the
     down+K light pillar */
@@ -8973,6 +8976,20 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     startSmileyAttack): no rush state remains — the Berserker timer
     ticks down near the top of stepFighter and its riders live in
     applyHit / meleeHit / tryDash */
+ /* BLINK SLASH (Kairo forward+J, reworked — user spec): while the
+    dashclaw state lasts he DASHES the remaining blinkLeft (~105u) at
+    1500/s and the slash tests the path AS HE CROSSES IT — a foe
+    standing anywhere along the route takes the hit (once only,
+    blinkHit; dmg 14 / KB 440 / box 80x62 / 被弾硬直 0.4秒), instead
+    of the old teleport that passed through foes and only hit at the
+    arrival point. blinkLeft / blinkHit ride the rollback state list
+    and the snapshot fields (blk / blh) */
+ if(f.char==="kairo"&&f.state==="dashclaw"&&(f.blinkLeft||0)>0){
+   var bStep=Math.min(f.blinkLeft,1500*dt);f.blinkLeft-=bStep;f.x+=f.face*bStep;
+   if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+   if(!f.blinkHit&&meleeHit(f,foe,80,62,14,440,f.face,-0.3,0.4)){f.blinkHit=true;spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30)}
+   spawnParticles(f.x-f.face*10,f.y+f.h*0.45,2,"#67e8f9",120);
+ }
  /* HOVER SPIN (Kairo air J): while the spin state lasts, the fall is nearly
     cancelled and the spin ticks out up to 5 real hits around the body
     (user tuning: dmg 5/5, KB 330 both sides, max 5 ticks — the tick
@@ -8980,7 +8997,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.state==="airclaw"&&f.char==="kairo"){
    if(f.vy>30)f.vy=30;
    f.spinTick+=dt;
-   if(f.spinTick>=0.08&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,68,62,5,330,f.face,-0.3);meleeHit(f,foe,68,62,5,330,-f.face,-0.15);spawnParticles(f.x,f.y+f.h*0.45,6,"#67e8f9",170)}
+   if(f.spinTick>=0.08&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,66,64,5,330,f.face,-0.3);meleeHit(f,foe,66,64,5,330,-f.face,-0.15); /* ホバースピン (user spec): box 68x62 -> 66x64 (dmg 前5/後5 x最大5 / KB 330 unchanged) */spawnParticles(f.x,f.y+f.h*0.45,6,"#67e8f9",170)}
  }
  /* SPIN BATON (WARDEN air J): while the spin state lasts, the baton
     ticks out up to 4 small hits on BOTH sides (user spec: 4 dmg /
@@ -9410,7 +9427,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    }
  }
  if(f.onGround&&!f.wasGround){f.landT=0.18;f.jumps=1;f.jBoostT=0;f.firstJump=false;f.leftByJump=false;f.airDashed=false;if(f.airLag>0){f.attackCd=Math.max(f.attackCd,f.airLag);f.landLagT=Math.max(f.landLagT||0,f.airLag);f.airLag=0} /* 着地硬直 (landing lag): a move used in the air (marked as airLag by applyLandLag in startAttack) locks out EVERYTHING for its lag time from touchdown — landLagT roots the fighter (no movement, no jump, no fastfall / drop-through in the movement chain below) while attackCd / the startAttack and tryDash landLagT guards block moves and dashes; the move's own remaining recovery still applies too, whichever is longer */if(f.char==="kairo")f.flyDur=0; /* landing ends the frost-spin rise */
-   if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.34);f.landLagT=Math.max(f.landLagT||0,0.34);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 0.34s landing lag */
+   if(f.char==="kairo"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.38);f.landLagT=Math.max(f.landLagT||0,0.38);icePatches.push({x:f.x,y:f.y+f.h,w:150,t:3.5,owner:f});spawnParticles(f.x,f.y+f.h-4,14,"#bae6fd",200);spawnRing(f.x,f.y+f.h-2,"#a5f3fc",44)} /* KAIRO メテオドロップ landing (user spec): freezes the floor (ice patch, same 150 wide / 3.5s as the ice foot) + 着地硬直 0.34s -> 0.38s (user spec) */
    if(f.char==="axe"&&f.meteorArm){f.meteorArm=false;if(f.state==="taildrop"){meleeHit(f,foe,102,72,32,700,f.face,1.05);meleeHit(f,foe,102,72,32,700,-f.face,1.05);shake=Math.max(shake,9);spawnParticles(f.x,f.y+f.h-4,20,"#fdba74",240);spawnParticles(f.x,f.y+f.h-6,14,"#a8a29e",220);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",52);beep(95,.16,"sawtooth",.07)}} /* AXE メテオドロップ landing (okaki rework): the butt slam's damage lands HERE, on touchdown — both sides 32 dmg / KB 700 in the 102x72 boxes, with a ground-crack eruption. The flag is always cleared on landing, even if he was knocked out of the move */
    if(f.char==="warden"&&f.state==="taildrop"){f.attackCd=Math.max(f.attackCd,0.36);f.landLagT=Math.max(f.landLagT||0,0.36)} /* WARDEN メテオドロップ landing lag 0.36s (user spec) */ if(f.char==="warden"&&f.airJ>0&&!f.diveArmed){f.attackCd=Math.max(f.attackCd,0.33);f.landLagT=Math.max(f.landLagT||0,0.33)} /* WARDEN 回転警棒 landing lag 0.33s (user spec) */ if(f.char==="kairo"&&f.airJ>0&&!f.diveArmed&&f.state!=="taildrop"){f.attackCd=Math.max(f.attackCd,0.2);f.landLagT=Math.max(f.landLagT||0,0.2)}f.airJ=0;f.fastfall=false; /* KAIRO hover-spin landing lag 0.2s (user spec, shortened from 0.28s): airJ>0 means a hover spin was used this airborne stint; the dive pays its own shockwave instead */if(f.hitstun<=0){spawnParticles(f.x,f.y+f.h,f.char==="axe"?10:4,charFX(f),f.char==="axe"?170:70);if(f.char==="axe")shake=Math.max(shake,3.5);if(f.char==="warden")spawnParticles(f.x,f.y+f.h,5,"#fbbf24",110)}
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
@@ -11314,7 +11331,7 @@ function simStepFrame(getInp){
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,1.2);spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
-       else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,0.85)} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s (movement x0.45) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
+       else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,1.2)} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
      if(pr.kind==="msong"){var msGrounded=false;for(var gi=0;gi<platforms.length;gi++){var gp=platforms[gi];if(pr.x>gp.x-4&&pr.x<gp.x+gp.w+4&&pr.y+30>=gp.y&&pr.y<gp.y+26){msGrounded=true;break}}if(msGrounded){explodeMsong(pr);return false}} /* メテオソング: explodes the moment it touches the ground (接地と同時に爆発) — a swept band instead of the generic 10px test, since at 1020 speed it crosses ~17px per step and could tunnel */
      if(pr.kind==="gren"||(pr.kind==="glauncher"&&!pr.rolled)){var gnPlat=null;for(var gi2=0;gi2<platforms.length;gi2++){var gp2=platforms[gi2];if(pr.x>gp2.x-4&&pr.x<gp2.x+gp2.w+4&&pr.y+16>=gp2.y&&pr.y<gp2.y+26){gnPlat=gp2;break}}if(gnPlat){if(pr.kind==="gren"){explodeGren(pr,14,620);return false} /* ダウンアトミック grenades burst on ground contact, like the msong */ pr.rolled=true;pr.y=gnPlat.y-6;pr.vy=0;pr.vx=(pr.vx>0?1:-1)*140;spawnParticles(pr.x,pr.y+4,5,"#a8a29e",110);beep(200,.05,"square",.03)}} /* No.66 グレネードランチャー: on ground contact the grenade does NOT burst — it slows to a 140 u/s horizontal roll (rolled; the ground-hug at the top of this filter keeps it on the floor) and only bursts when it reaches a foe or its life runs out */
