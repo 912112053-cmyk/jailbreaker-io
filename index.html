@@ -921,6 +921,41 @@ function no66NameOk(n){
 function canUseNo66(){
  try{return !!(typeof social!=="undefined"&&social&&social.loggedIn&&no66NameOk(social.name))}catch(e){return false}
 }
+/* ---- attack hitbox viewer (username 「おかき」 only) ----
+   While the signed-in USERNAME (social.name — the login id, not
+   the player name) is おかき, draw() overlays every attack's hit
+   box in the game world: meleeHit / shadeHit and the custom-
+   geometry moves record their exact test box into dbgBoxes at
+   the moment the engine tests it (dbgBox), and drawHitboxOverlay
+   renders those flashes plus the live projectile / placed-object
+   ranges and every fighter's body box. Any other username —
+   guests and signed-out players included — never records or
+   draws anything, and the simulation itself is untouched: this
+   is a display-only layer, gated exactly like the No.66 gate
+   above (NFC + lowercase on the username). */
+var HB_VIEW_NAMES=["おかき"];
+function hbNameOk(n){
+ if(typeof n!=="string"||!n)return false;
+ var k=n.normalize("NFC").trim().toLowerCase();
+ for(var i=0;i<HB_VIEW_NAMES.length;i++){if(k===HB_VIEW_NAMES[i].normalize("NFC").toLowerCase())return true}
+ return false;
+}
+var _hbOn=false,_hbName=null;
+function hitboxViewerOn(){
+ try{
+  var n=(typeof social!=="undefined"&&social&&social.loggedIn&&typeof social.name==="string")?social.name:null;
+  if(n!==_hbName){_hbName=n;_hbOn=!!n&&hbNameOk(n)}
+  return _hbOn;
+ }catch(e){return false}
+}
+var dbgBoxes=[];
+function dbgBox(cx,cy,w,h,col,life){
+ if(!hitboxViewerOn())return;
+ if(typeof svMute!=="undefined"&&svMute)return; /* rollback re-simulation / prediction steps must not re-record boxes for frames already shown */
+ if(!(w>0)||!(h>0))return;
+ dbgBoxes.push({x:cx-w/2,y:cy-h/2,w:w,h:h,life:life||16,max:life||16,col:col||"255,45,120"});
+ if(dbgBoxes.length>240)dbgBoxes.splice(0,dbgBoxes.length-240);
+}
 function selectChar(c){
  if(c==="no66"&&!canUseNo66()){beep(160,.08);return}
  playerChar=c;
@@ -1538,7 +1573,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v218";
+var BUILD_ID="v219";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6381,6 +6416,7 @@ function startWardenAttack(f,type,foe){
       arrest move, not an area blast. Whiffing it still spends the meter. */
    if(f.meter<100)return;f.meter=0;f.attackCd=0.85;shake=8;
    var gd=Math.abs(foe.x-f.x),gdy=Math.abs(foe.y-f.y);
+   dbgBox(f.x,f.y,1000,860,"255,123,45",20); /* hitbox viewer (おかき only): SKYHOOK grab reach (±500 across / ±430 up-down) */
    if(gd<500&&gdy<430&&!foe.dead&&foe.invuln<=0&&!acrossMainFloor(f,foe)){ /* grab reach (user spec): forward ~520 -> ~500, vertical ~320 -> ~430. The hoist lerps the foe through the air ignoring collision, so a grab across the solid main floor could pull a foe who is underneath it up through the slab — the acrossMainFloor guard refuses exactly that pairing */
      f.state="ultgrab";f.stateT=0.55;
      foe.grabT=0.55;foe.grabBy=f;foe.dashT=0;foe.fastfall=false;foe.hitstun=Math.max(foe.hitstun,0.2);
@@ -7551,6 +7587,7 @@ function shadeHit(att,cx,cy,w,h,dmg,kb,dir,up,hs,grab){
     applyGrabHit with heldKind 1 — the foe is pinned in front of
     SHADE for 0.4s in complete stun, then thrown with this call's
     kb / up toward SHADE's release-time facing (shFace, toward MIMI) */
+ dbgBox(cx,cy,w,h,"255,45,120",16); /* hitbox viewer (おかき only): SHADE's exact test box */
  var hitAny=false;
  for(var i=0;i<fighters.length;i++){var t=fighters[i];if(t===att||t.dead)continue;
   var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
@@ -7902,6 +7939,7 @@ function no66Heat(f,n){
    radius takes the hit away from the blast centre (the direct-hit
    and ground-contact paths in the projectile filter both end here) */
 function explodeGren(pr,dmg,kb){
+ dbgBox(pr.x,pr.y,190,190,"255,123,45",18); /* hitbox viewer (おかき only): the burst tests foe centres within ±95 both axes */
  for(var ei=0;ei<fighters.length;ei++){var et=fighters[ei];if(et===pr.owner||et.dead||et.invuln>0)continue;
    if(Math.abs(et.x-pr.x)<95&&Math.abs((et.y+et.h/2)-pr.y)<95)applyHit(pr.owner,et,dmg,kb,et.x>=pr.x?1:-1,-0.5,false,pr.x,pr.y)}
  spawnParticles(pr.x,pr.y,18,"#fb923c",260);spawnParticles(pr.x,pr.y,10,"#78716c",190);spawnRing(pr.x,pr.y,"#fbbf24",50);spawnFxBurst(FXIMG.fire,pr.x,pr.y,140,0.32,0,1,0.9);
@@ -8013,6 +8051,7 @@ function startNo66Attack(f,type,foe){
         CD 2.6s on the shared flyCd. Heat +5 */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.6;f.state="n66blast";f.stateT=0.4;f.attackCd=0.55;f.comboWin=0;f.jumps=1;
+     dbgBox(f.x,f.y+f.h,190,200,"255,123,45",16); /* hitbox viewer (おかき only): ブラストアップ burst — foe centres within ±95 across / ±100 of his feet line */
      for(var bi=0;bi<fighters.length;bi++){var bt=fighters[bi];if(bt===f||bt.dead||bt.invuln>0)continue;if(Math.abs(bt.x-f.x)<95&&Math.abs((bt.y+bt.h/2)-(f.y+f.h))<100)applyHit(f,bt,15,720,bt.x>=f.x?1:-1,-0.9,false,f.x,f.y+f.h)}
      f.hp=Math.max(1,f.hp-8);pushFloater({x:f.x,y:f.y-16,txt:"-8",life:.6,col:"#fda4af"}); /* self damage from his own blast — never lethal, never credited to anyone */
      f.vy=-1010;f.onGround=false;f.fastfall=false;
@@ -8233,6 +8272,7 @@ function startAttack(f,type){
    if(f.meter<100)return;f.meter=0;f.state="ult";f.stateT=0.62;f.attackCd=0.72;shake=15;
    spawnParticles(f.x,f.y+f.h/2,60,"#a5f3fc",330);spawnParticles(f.x,f.y+f.h/2,40,"#22d3ee",240);
    var ultHit=false;
+   dbgBox(f.x,f.y,270,250,"255,123,45",18); /* hitbox viewer (おかき only): the ult tests foe centres within ±135 across and foe tops within ±125 of his top */
    for(var ui=0;ui<fighters.length;ui++){var uf=fighters[ui];if(uf===f||uf.dead||uf.invuln>0)continue;if(Math.abs(uf.x-f.x)<135&&Math.abs(uf.y-f.y)<125){if(applyHit(f,uf,50,940,f.face,-0.62,true))ultHit=true}} /* ult: dmg 55 -> 50, KB 920 -> 940, box widened vertically 135x105 -> 135x125 (user spec) */
    /* Kairo ult recharge rule: landing the ult instantly recharges it, so it
       can be fired again — but consecutive hits are capped at 5 per charge
@@ -8264,6 +8304,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab){
     note above applyGrabHit). The burn / bleed riders below still
     apply on a grab connect, exactly as on a normal hit. */
  var cx=att.x+dir*(range*0.55),cy=att.y+att.h*0.45;
+ dbgBox(cx,cy,range*1.44,h*2,"255,45,120",16); /* hitbox viewer (おかき only): the exact box this call tests — half-extents range*0.72 across / h up-down from (cx,cy) */
  var hitAny=false;
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
@@ -8724,7 +8765,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     feet down 230 — a custom loop, since meleeHit's box is centred
     on her body. A hit spikes the foe straight down (dir 0 / up 0.9,
     the meteor convention) at 18 dmg / KB 660 */
- if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.stateT<=0.36){f.hitDone=true;var rpHit=false;for(var rpi=0;rpi<fighters.length;rpi++){var rpf=fighters[rpi];if(rpf===f||rpf.dead||rpf.invuln>0)continue;if(Math.abs(rpf.x-f.x)<49+rpf.w/2&&(rpf.y+rpf.h)>(f.y+f.h-14)&&rpf.y<(f.y+f.h+230)){if(applyHit(f,rpf,18,660,0,0.9,false,f.x,f.y+f.h+115))rpHit=true}}spawnParticles(f.x,f.y+f.h+120,12,"#a3e635",210);spawnParticles(f.x,f.y+f.h+226,8,"#c084fc",170);if(rpHit)shake=Math.max(shake,3);beep(300,.1,"sawtooth",.05)}
+ if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.stateT<=0.36){f.hitDone=true;dbgBox(f.x,f.y+f.h+108,98,244,"255,45,120",16); /* hitbox viewer (おかき only): the vine column — 98 wide, from just under her feet down 230 */var rpHit=false;for(var rpi=0;rpi<fighters.length;rpi++){var rpf=fighters[rpi];if(rpf===f||rpf.dead||rpf.invuln>0)continue;if(Math.abs(rpf.x-f.x)<49+rpf.w/2&&(rpf.y+rpf.h)>(f.y+f.h-14)&&rpf.y<(f.y+f.h+230)){if(applyHit(f,rpf,18,660,0,0.9,false,f.x,f.y+f.h+115))rpHit=true}}spawnParticles(f.x,f.y+f.h+120,12,"#a3e635",210);spawnParticles(f.x,f.y+f.h+226,8,"#c084fc",170);if(rpHit)shake=Math.max(shake,3);beep(300,.1,"sawtooth",.05)}
  /* ORCHID ポイズンボム (U): the sphere leaves her hand 0.2s after
     the press (stateT 0.4 -> threshold 0.2, 発生 0.2秒). The ball
     (kind "pbomb", pr.grav arc) is resolved in the projectile
@@ -8781,7 +8822,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     straight below him — 44 dmg / KB 720 in a 98x102 box under
     the axe. Custom geometry (not meleeHit) so the box hangs
     directly underneath instead of slanting forward */
- if(f.char==="axe"&&f.state==="diveclaw"&&!f.hitDone&&f.stateT<=0.32){f.hitDone=true;var dHit=false;for(var dxi=0;dxi<fighters.length;dxi++){var dtg=fighters[dxi];if(dtg===f||dtg.dead)continue;var ddx=dtg.x-f.x,ddy=(dtg.y+dtg.h/2)-(f.y+f.h*0.5);if(Math.abs(ddx)<72+dtg.w/2&&ddy>-46&&ddy<112){if(applyHit(f,dtg,44,720,ddx<0?-1:1,1.05,false,f.x,f.y+f.h*0.8))dHit=true}}if(dHit)shake=Math.max(shake,5);spawnParticles(f.x,f.y+f.h*0.85,14,"#fdba74",230);beep(100,.15,"sawtooth",.07)}
+ if(f.char==="axe"&&f.state==="diveclaw"&&!f.hitDone&&f.stateT<=0.32){f.hitDone=true;dbgBox(f.x,f.y+f.h*0.5+33,144,158,"255,45,120",16); /* hitbox viewer (おかき only): the meteor box hanging under him — foe centres 46 above to 112 below his centre */var dHit=false;for(var dxi=0;dxi<fighters.length;dxi++){var dtg=fighters[dxi];if(dtg===f||dtg.dead)continue;var ddx=dtg.x-f.x,ddy=(dtg.y+dtg.h/2)-(f.y+f.h*0.5);if(Math.abs(ddx)<72+dtg.w/2&&ddy>-46&&ddy<112){if(applyHit(f,dtg,44,720,ddx<0?-1:1,1.05,false,f.x,f.y+f.h*0.8))dHit=true}}if(dHit)shake=Math.max(shake,5);spawnParticles(f.x,f.y+f.h*0.85,14,"#fdba74",230);beep(100,.15,"sawtooth",.07)}
  /* AXE 掘斧撃 (down+J): he is rooted while the state lasts, and
  0.30s after the press (stateT 0.60 -> threshold 0.30) the axe
  bursts up IN FRONT of him: 24 dmg / KB 540, box 120x100,
@@ -8810,6 +8851,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    var axTh=[0.34,0.21,0.08];
    while(f.spinHits<3&&f.stateT<=axTh[f.spinHits]){
      f.spinHits++;
+     dbgBox(f.x+f.face*52,f.y+f.h*0.45,104,216,"255,45,120",10);dbgBox(f.x-f.face*38,f.y+f.h*0.45,76,128,"255,45,120",10); /* hitbox viewer (おかき only): 宙斧 tick — front box 104 across / ±108, back box 76 across / ±64 */
      for(var axI=0;axI<fighters.length;axI++){var axFoe=fighters[axI];if(axFoe===f||axFoe.dead||axFoe.invuln>0)continue;if(axFoe.axSpinT&&time-axFoe.axSpinT<0.34)continue;var axDx=axFoe.x-f.x,axDy=(axFoe.y+axFoe.h/2)-(f.y+f.h*0.45);var axFront=(axDx*f.face)>=0;if(Math.abs(axDx)<(axFront?104:76)+axFoe.w/2&&Math.abs(axDy)<(axFront?108:64)) /* 宙斧 判定 (user spec): 前 112x108 / 後 84x64 — foes in front of him are checked against the big box, foes behind against the smaller one */{axFoe.axSpinT=time;if(Math.abs(axDx)>=Math.abs(axDy))applyHit(f,axFoe,22,550,axDx<0?-1:1,-0.3,false,axFoe.x,axFoe.y+axFoe.h*0.45);else applyHit(f,axFoe,18,500,axDx<0?-1:1,axDy<0?-1.05:0.9,false,axFoe.x,axFoe.y+axFoe.h*0.45)}}
      spawnParticles(f.x,f.y+f.h*0.45,7,"#fdba74",200);
    }
@@ -8961,7 +9003,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    var ieT=[1.18,1.08,0.98],ieD=[62,56,48],ieK=[800,720,920],ieH=[140,120,90],ieO=[40,95,150];
    while(f.spinHits<3&&f.stateT<=ieT[f.spinHits]){
      var ii=f.spinHits;f.spinHits++;
-     for(var isd=-1;isd<=1;isd+=2){var sx=f.x+isd*ieO[ii],sTop=f.y+f.h-ieH[ii];
+     for(var isd=-1;isd<=1;isd+=2){var sx=f.x+isd*ieO[ii],sTop=f.y+f.h-ieH[ii];dbgBox(sx,sTop+ieH[ii]/2,52,ieH[ii],"255,45,120",14); /* hitbox viewer (おかき only): one ice spike column — 52 wide, from the spike top to his feet line */
        for(var iq=0;iq<fighters.length;iq++){var qf=fighters[iq];if(qf===f||qf.dead||qf.invuln>0)continue;if(Math.abs(qf.x-sx)<26+qf.w/2&&(qf.y+qf.h)>sTop&&qf.y<f.y+f.h)applyHit(f,qf,ieD[ii],ieK[ii],0,-1.25,false,sx,sTop+ieH[ii]*0.4)}
        spawnParticles(sx,f.y+f.h-10,10,"#a5f3fc",220);spawnFxBurst(charFxImg("kairo"),sx,f.y+f.h-ieH[ii]*0.4,ieH[ii]*0.9,0.3,-1.57,isd,0.8);
      }
@@ -9027,6 +9069,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        else spawnParticles(f.x+(Math.random()-0.5)*70,f.y-30-Math.random()*90,2,"#fb923c",110);
      }
      if(f.flameTick<=0){f.flameTick=0.16;
+       if(f.flameMode===1)dbgBox(f.x+f.face*118,f.y+f.h*0.45,224,160,"255,123,45",10);else if(f.flameMode===3)dbgBox(f.x+f.face*338,f.y+f.h*0.45,664,190,"255,123,45",10);else dbgBox(f.x,f.y-110,210,211,"255,123,45",10); /* hitbox viewer (おかき only): this flame tick's test area — jet forward 6..230 / ±80, sunflower 6..670 / ±95, breath cone ±105 across and 4..215 above */
        for(var fli=0;fli<fighters.length;fli++){var flt=fighters[fli];if(flt===f||flt.dead||flt.invuln>0)continue;
          var fdx=(flt.x-f.x)*f.face,fdy=(flt.y+flt.h/2)-(f.y+f.h*0.45);
          if(f.flameMode===1){if(fdx>6&&fdx<230&&Math.abs(fdy)<80){applyHit(f,flt,9,210,f.face,-0.15,true,flt.x,flt.y+flt.h*0.45,false);flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}if(shadeAlive(flt)){var shdx1=(flt.shX-f.x)*f.face,shdy1=(flt.shY-52)-(f.y+f.h*0.45);if(shdx1>6&&shdx1<230&&Math.abs(shdy1)<80){applyShadeDot(f,flt,9);if(!(fdx>6&&fdx<230&&Math.abs(fdy)<80)){flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}}}} /* 【闇ゲージ】 the jet is continuous damage: while SHADE's body is inside it, its darkness drains 9 per tick too (and the pair still ignites from SHADE-only exposure, via flameExp) */ /* 火炎放射 (user spec): KB なし -> 210, 判定 6〜215 -> 6〜230, 燃焼は放射後に滞在時間で精算 */
@@ -10792,6 +10835,52 @@ function drawMinimap(){
  });
  ctx.fillStyle="rgba(207,250,254,.85)";ctx.font="10px 'DotGothic16'";ctx.fillText("MAP",mx+6,my+14);
 }
+/* ---- hitbox overlay (username おかき only — see hitboxViewerOn) ----
+   Drawn in world space at the end of draw(), over the fighters and
+   effects. Pink/red = attack boxes recorded at the exact frame the
+   engine tested them (meleeHit / shadeHit / explosions / the
+   custom-geometry moves), orange = live projectile ranges and
+   placed-object trigger areas (fire orb / mine / poison mist /
+   dark field / ice floor), green = the fighters' own body (hurt)
+   boxes, violet = SHADE's second body box. Note the engine's own
+   convention: meleeHit tests the foe's CENTRE vertically, so a
+   pink box scores when it overlaps a green box sideways and
+   covers the green box's centre cross up / down. Nothing here
+   feeds back into the simulation. */
+function drawHitboxOverlay(){
+ var i,f,pr,b,ba;
+ /* recorded attack boxes: fade out over their stored life (in draws) */
+ for(i=dbgBoxes.length-1;i>=0;i--){b=dbgBoxes[i];b.life--;if(b.life<=0){dbgBoxes.splice(i,1);continue}
+  ba=b.life/b.max;
+  ctx.fillStyle="rgba("+b.col+","+(0.05+0.13*ba)+")";ctx.fillRect(b.x,b.y,b.w,b.h);
+  ctx.strokeStyle="rgba("+b.col+","+(0.4+0.6*ba)+")";ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h);}
+ /* live projectile ranges — the same half-extents the projectile
+    step tests against a foe (half height uses the universal h=70) */
+ for(i=0;i<projectiles.length;i++){pr=projectiles[i];
+  var hw=pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))));
+  var hh=70*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))));
+  ctx.fillStyle="rgba(255,159,28,.10)";ctx.fillRect(pr.x-hw,pr.y-hh,hw*2,hh*2);
+  ctx.strokeStyle="rgba(255,159,28,.9)";ctx.lineWidth=2;ctx.strokeRect(pr.x-hw,pr.y-hh,hw*2,hh*2);}
+ /* placed-object trigger areas (the exact tests in simStepFrame) */
+ for(i=0;i<fireOrbs.length;i++){var ob=fireOrbs[i];ctx.strokeStyle="rgba(251,146,60,.85)";ctx.lineWidth=2;ctx.strokeRect(ob.x-92,ob.y-92,184,184)}
+ for(i=0;i<mines.length;i++){var mn2=mines[i];ctx.strokeStyle="rgba(251,191,36,.9)";ctx.lineWidth=2;ctx.strokeRect(mn2.x-80,mn2.y-60,160,60)}
+ for(i=0;i<poisonMists.length;i++){var mb2=poisonMists[i];ctx.strokeStyle="rgba(163,230,53,.7)";ctx.lineWidth=2;ctx.strokeRect(mb2.x-205,mb2.y-80,410,80)}
+ for(i=0;i<darkFields.length;i++){var df9=darkFields[i];ctx.strokeStyle="rgba(168,85,247,.7)";ctx.lineWidth=2;ctx.strokeRect(df9.x-95,df9.y-70,190,70)}
+ for(i=0;i<icePatches.length;i++){var ip2=icePatches[i];ctx.strokeStyle="rgba(125,211,252,.8)";ctx.lineWidth=2;ctx.strokeRect(ip2.x-ip2.w/2,ip2.y-16,ip2.w,16)}
+ var fl=fighters.length?fighters:[P1,P2];
+ /* AXE ult while charging: the pin box at his front and the wider
+    suction field around him (same numbers as the charge block) */
+ for(i=0;i<fl.length;i++){f=fl[i];if(!f||f.dead)continue;
+  if(f.char==="axe"&&(f.ultChargeT||0)>0){var fx2=f.x+f.ultDir*64;ctx.fillStyle="rgba(255,45,120,.10)";ctx.fillRect(fx2-58,f.y+f.h/2-86,116,172);ctx.strokeStyle="rgba(255,45,120,.9)";ctx.lineWidth=2;ctx.strokeRect(fx2-58,f.y+f.h/2-86,116,172);ctx.strokeStyle="rgba(255,159,28,.55)";ctx.strokeRect(f.x-330,f.y+f.h/2-120,660,240)}
+ }
+ /* hurt boxes: every fighter's body, plus SHADE's second body */
+ for(i=0;i<fl.length;i++){f=fl[i];if(!f||f.dead)continue;
+  ctx.fillStyle="rgba(34,255,136,.07)";ctx.fillRect(f.x-f.w/2,f.y,f.w,f.h);
+  ctx.strokeStyle="rgba(34,255,136,.95)";ctx.lineWidth=2;ctx.strokeRect(f.x-f.w/2,f.y,f.w,f.h);
+  ctx.strokeStyle="rgba(34,255,136,.8)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(f.x-7,f.y+f.h/2);ctx.lineTo(f.x+7,f.y+f.h/2);ctx.moveTo(f.x,f.y+f.h/2-7);ctx.lineTo(f.x,f.y+f.h/2+7);ctx.stroke();
+  if(f.char==="mimi"&&shadeAlive(f)){ctx.fillStyle="rgba(192,132,252,.10)";ctx.fillRect(f.shX-58,f.shY-106,116,108);ctx.strokeStyle="rgba(192,132,252,.95)";ctx.lineWidth=2;ctx.strokeRect(f.shX-58,f.shY-106,116,108)}
+ }
+}
 function draw(){
  /* RENDER INTERPOLATION (fixed 60fps logic): fighters and projectiles
     are drawn blended between their previous-step and current-step
@@ -11038,6 +11127,7 @@ function draw(){
  fxBursts.forEach(function(b){if(b.x<cX0||b.x>cX1||b.y<cY0||b.y>cY1)return;var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))}); /* texture bursts draw at every tier; only fully off-screen ones are culled (see the culling bounds above) */
  drawVecBursts(); /* TRAVIS / SMILEY dedicated vector bursts (no borrowed FX textures) */
  floaters.forEach(function(fl){if(fl.x<cX0||fl.x>cX1||fl.y<cY0||fl.y>cY1)return;ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
+ if(hitboxViewerOn())drawHitboxOverlay(); /* hitbox viewer (おかき only): attack / hurt boxes over the world, under the screen-space overlays */
  ctx.restore();
  /* screen-space: low drifting fog, then minimap, then the pre-rendered
     overlay (moon + halo + vignette — static, see buildBgCaches; it used
@@ -11046,6 +11136,7 @@ function draw(){
     drawing the fog before the overlay changes nothing visible. */
  {ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}} /* the drifting screen fog is drawn at every quality tier (owner directive: effects are never cut) */
  drawMinimap();
+ if(hitboxViewerOn()){ctx.fillStyle="rgba(3,12,22,.66)";ctx.fillRect(12,134,Math.min(404,cw-24),22);ctx.font="12px 'DotGothic16','Noto Sans JP',sans-serif";ctx.fillStyle="#fecdd3";ctx.fillText("判定表示ON： 赤=攻撃判定 / 緑=喰らい判定 / 橙=飛び道具・設置",18,149)}
  if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
  for(var ri2=0;ri2<swapped.length;ri2++){swapped[ri2].x=swapped[ri2]._rx;swapped[ri2].y=swapped[ri2]._ry;if(swapped[ri2]._rshx!==undefined){swapped[ri2].shX=swapped[ri2]._rshx;swapped[ri2].shY=swapped[ri2]._rshy;swapped[ri2]._rshx=undefined;swapped[ri2]._rshy=undefined}}
@@ -11142,6 +11233,7 @@ var lastTs=0,acc=0,fpsEMA=60,fpsTick=0,drawAlpha=1;
    the impact point. Fired from the projectile step on ground contact
    (接地と同時に爆発) and on a direct hit alike */
 function explodeMsong(pr){
+ dbgBox(pr.x,pr.y,102,102,"255,123,45",18); /* hitbox viewer (おかき only): the 102x102 burst box */
  for(var ei=0;ei<fighters.length;ei++){var et=fighters[ei];if(et===pr.owner||et.dead||et.invuln>0)continue;
    if(Math.abs(et.x-pr.x)<51+et.w/2&&Math.abs((et.y+et.h/2)-pr.y)<51+et.h/2)applyHit(pr.owner,et,22,1100,et.x>=pr.x?1:-1,-0.55,false,pr.x,pr.y)}
  spawnParticles(pr.x,pr.y,18,"#c084fc",260);spawnParticles(pr.x,pr.y,12,"#fcd34d",210);spawnRing(pr.x,pr.y,"#fcd34d",52);spawnCharBurst("travis",pr.x,pr.y,120,0.3,0,1,0.9);
