@@ -426,6 +426,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["12:31"],tag:"修正",title:"直接接続（P2P）：スナップショット専用チャネルでゲストの遅延をさらに軽減",
+  items:["P2P対戦で、ホストからゲストへのスナップショットを専用チャネル（再送なし・順序なし）で送るようにしました。配送が遅れても古いスナップショットが溜まらなくなります",
+         "専用チャネルが使えない環境や旧バージョンとの対戦では、従来のチャネルに自動で切り替わります。その他の通信・ゲーム内容に変更はありません"]},
  {date:"2026/11/15",times:["12:01"],tag:"調整",title:"MIMI&SHADE：ウルト発動でSHADEの闇ゲージが40回復（上方修正）",
   items:["MIMI&SHADEのウルト「大好きだよSHADE」を発動すると、SHADEの闇ゲージが40回復するよう上方修正しました",
          "回復は闇ゲージの上限（190）を超えません。ウルト自体のダメージ・KB・弾の性能に変更はありません"]},
@@ -499,11 +502,6 @@ var UPDATE_LOG=[
   items:["第2弾・第3弾の軽量化で入っていた「画質の段階に連動したエフェクトの省略」を全て廃止しました。パーティクルの発生数と上限（常に460で固定）、背景の星の瞬き、KOJIROの居合と斬空の光のボカし、技に重なるエフェクトテクスチャ、漂う光の粒、画面下部の霧は、どの画質段階でも常に出るようになりました。描画を1フレームおきに間引く処理も無くし、常に毎フレーム描画します",
          "代わりに、見た目が一切変わらない方法だけで軽くしました：カメラの画面の外に完全に出ている飛び道具・パーティクル・リング・浮き文字・各種フィールドなど11種類の描画をスキップするようにし、残像の描画で毎回切り替えていた設定をループの外で1回だけ行うようまとめました",
          "画質の自動調整（解像度だけを下げる仕組み）自体は残しています。技・数値・物理・オンライン対戦の仕組みへの変更はありません"]},
- {date:"2026/11/15",times:["02:43"],tag:"修正",title:"軽量化 第2弾：描画の無駄をさらに削りました",
-  items:["スマホでは最初から少し軽い画質（解像度上限を少し下げた状態）で始まるようにしました。フレームレートが安定すれば自動で元の画質に戻ります",
-         "フレームレートが下がったときの画質調整が、これまでより早め・深めに効くようになりました（段階が1つ増え、最下段では描画回数も半分にして処理を逃がします）。ゲームの速度・技・数値はいつも通り60fpsのままです",
-         "毎フレームやっていた無駄な全画面クリアをやめ、画面外の背景描画もさらに間引きました。重い半透明エフェクト（テクスチャ合成）は、低画質の段階では自動で省略されます",
-         "ポーズ中は画面を描き直し続けないようにしました（電池の減りも抑えられます）。技・数値・オンライン対戦の仕組みへの変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1586,6 +1584,13 @@ function p2pSyncModeBtns(){
    server-mode cleanup passes through here as a no-op). */
 function p2pCleanup(){
  if(p2pGuestTimer){clearTimeout(p2pGuestTimer);p2pGuestTimer=null}
+ /* guest snapshot side channel: close our end and forget it (the
+    host-side channels die with their connections / peer below).
+    Guarded so a cleanup with no P2P session stays a no-op */
+ if(typeof p2pGuestSnap!=="undefined"&&p2pGuestSnap){
+   if(p2pGuestSnap.snapDc){try{p2pGuestSnap.snapDc.close()}catch(e){}p2pGuestSnap.snapDc=null}
+   p2pGuestSnap.snapOk=false;
+ }
  fxSink=null;killBannerHook=null;p2pHostLive=false;
  if(p2pRoom){
    var room=p2pRoom;p2pRoom=null;room.dead=true;
@@ -1633,6 +1638,99 @@ function p2pDeliver(player,msg){
  if(player.loopback){p2pLoopback(msg);return}
  if(player.conn&&player.conn.open){try{player.conn.send(msg)}catch(e){}}
 }
+/* ---- snapshot-only side channel ("jb-snap") ----
+   A second RTCDataChannel on the SAME RTCPeerConnection PeerJS
+   already manages for the room connection, created by BOTH ends
+   with {negotiated:true, id:P2P_SNAP_ID, ordered:false,
+   maxRetransmits:0}: unordered, never retransmitted — a snapshot
+   that cannot go out promptly is abandoned by the transport
+   instead of queueing ahead of newer ones, which removes the
+   structural cause of the guest delay (the reliable channel's
+   strict FIFO backlog). ONLY host -> guest snapshots ride it;
+   the existing reliable DataConnection is not touched in any
+   way and keeps carrying join / roster / chat / start / end /
+   inputs / FX / mines exactly as before.
+   Why this cannot fight PeerJS's own channel management:
+   PeerJS 1.5.5 creates exactly one (non-negotiated) data channel
+   per DataConnection and discovers the far end's channel through
+   the ondatachannel event. A negotiated channel NEVER fires
+   ondatachannel on either side (both ends create it locally, by
+   agreement), so PeerJS never sees jb-snap, never wraps it in a
+   DataConnection, and its bookkeeping is untouched. The agreed
+   stream id (1000) sits far above the browser-auto-assigned ids
+   PeerJS's own channels get (0/1 upward on a connection that
+   carries just the one channel), so the ids cannot collide.
+   Compatibility / fallback: an older build never creates its
+   end, so the channel simply never opens on that connection and
+   every snapshot keeps flowing over the reliable channel,
+   byte-for-byte the previous behaviour — per guest, automatically,
+   with no handshake and no protocol change. The reliability
+   settings are trusted only when the live channel reports them
+   back (ordered===false && maxRetransmits===0, checked at
+   creation and again at open): a browser that silently upgrades
+   the channel to reliable leaves the holder empty and the
+   fallback stays in force. Every failure path here is contained:
+   a dead or dying snap channel just marks its holder unusable
+   and delivery falls back — it can never stop the game. */
+var P2P_SNAP_ID=1000;
+var p2pGuestSnap={snapDc:null,snapOk:false}; /* guest-side holder; host side: snapDc / snapOk live on each player */
+function p2pSnapAttach(conn,holder,onMsg){
+ if(!conn||!holder||holder.snapDc)return;
+ var pc=null;
+ try{pc=conn.peerConnection}catch(e){}
+ if(!pc||typeof pc.createDataChannel!=="function"){
+   /* the RTCPeerConnection is not wired yet (PeerJS sets it up
+      during connect / offer handling): retry when the connection
+      opens — until then snapshots use the reliable channel */
+   try{conn.on("open",function(){p2pSnapAttach(conn,holder,onMsg)})}catch(e){}
+   return;
+ }
+ var dc=null;
+ try{dc=pc.createDataChannel("jb-snap",{negotiated:true,id:P2P_SNAP_ID,ordered:false,maxRetransmits:0})}catch(e){return}
+ var ok=false;
+ try{ok=(dc.ordered===false&&dc.maxRetransmits===0)}catch(e){}
+ if(!ok){try{dc.close()}catch(e){}return}
+ holder.snapDc=dc;holder.snapOk=true;
+ dc.onopen=function(){
+   /* re-verify against the live channel now that it is up: if
+      the settings did not survive negotiation, stop using it */
+   try{
+     if(dc.ordered!==false||dc.maxRetransmits!==0){
+       if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}
+       try{dc.close()}catch(e){}
+     }
+   }catch(e){}
+ };
+ dc.onclose=function(){if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}};
+ dc.onerror=function(){if(holder.snapDc===dc){holder.snapDc=null;holder.snapOk=false}};
+ if(onMsg)dc.onmessage=onMsg;
+}
+/* the pump's snapshot delivery: over jb-snap while that guest's
+   channel is verified and open, over the reliable channel
+   otherwise (older build / channel unavailable / channel died —
+   the automatic per-guest fallback). A snap channel whose send
+   buffer is stuffed drops this snapshot outright instead of
+   queueing it: snapshots are full-state and superseding, and
+   rerouting a clogged guest's snapshot onto the ordered channel
+   would rebuild the very backlog this channel exists to avoid.
+   Out-of-order or duplicated arrivals on the unordered channel
+   are discarded by the existing svOnSnap frame check
+   (m.f <= sv.lastSnapF), and a lost snapshot self-heals with
+   the next one, which carries the complete current state. */
+function p2pDeliverSnap(player,msg){
+ var dc=player?player.snapDc:null;
+ if(dc&&player.snapOk){
+   if(dc.readyState==="open"){
+     try{
+       if(typeof dc.bufferedAmount==="number"&&dc.bufferedAmount>65536)return;
+       dc.send(JSON.stringify(msg));return;
+     }catch(e){player.snapDc=null;player.snapOk=false}
+   }else if(dc.readyState==="closed"||dc.readyState==="closing"){
+     player.snapDc=null;player.snapOk=false;
+   }
+ }
+ p2pDeliver(player,msg);
+}
 /* how many bytes are already queued for this guest, undelivered:
    the RTCDataChannel's own send buffer (bufferedAmount) plus
    PeerJS's JS-side FIFO (bufferSize messages, converted at a rough
@@ -1657,6 +1755,7 @@ function p2pQueueBytes(player){
  var q=0,c=player.conn;
  try{
   if(c.dataChannel&&typeof c.dataChannel.bufferedAmount==="number")q+=c.dataChannel.bufferedAmount;
+  if(player.snapDc&&typeof player.snapDc.bufferedAmount==="number")q+=player.snapDc.bufferedAmount; /* the jb-snap channel's own unsent bytes count too, now that snapshots ride it instead of the reliable channel */
   if(typeof c.bufferSize==="number")q+=c.bufferSize*1536;
  }catch(e){}
  return q;
@@ -1897,7 +1996,14 @@ function p2pHostPeer(retry){
  });
 }
 function p2pHostAccept(room,conn){
- var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[]};
+ var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[],snapDc:null,snapOk:false};
+ /* snapshot side channel for this guest (see p2pSnapAttach):
+    created on the connection's existing RTCPeerConnection; the
+    host only ever SENDS on it (snapshots), so no message handler.
+    If the guest runs an older build its end is never created,
+    the channel never opens, and p2pDeliverSnap keeps using the
+    reliable channel for this guest */
+ p2pSnapAttach(conn,player,null);
  conn.on("data",function(data){
    if(p2pRoom!==room||room.dead)return;
    var m=data;
@@ -1929,6 +2035,24 @@ function p2pJoinRoom(code){
    var conn=null;
    try{conn=peer.connect("jailbreaker-room-"+code,{reliable:true})}catch(e){p2pGuestFail(peer,"接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
    p2pGuestConn=conn;
+   /* snapshot side channel (see p2pSnapAttach): created on the
+      connection's existing RTCPeerConnection with the same agreed
+      id / settings as the host's end. Snapshots arriving here are
+      fed into the very same svOnMsg -> svOnSnap path as reliable-
+      channel snapshots, so the stale-frame discard, the jitter
+      buffer and the stream acks behave identically whichever
+      channel a snapshot arrived on. Anything that is not a snap
+      message is ignored — nothing else may ride this channel.
+      If the host runs an older build its end is never created,
+      the channel never opens, and snapshots keep arriving on the
+      reliable channel exactly as before */
+   p2pSnapAttach(conn,p2pGuestSnap,function(ev){
+     if(p2pGuestConn!==conn)return;
+     var m=ev.data;
+     if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
+     if(!m||typeof m!=="object"||m.t!=="snap")return;
+     svOnMsg(m);
+   });
    conn.on("open",function(){
      if(p2pGuestConn!==conn)return;
      try{conn.send({t:"join",name:(social.loggedIn&&social.name)?myDispName():""})}catch(e){}
@@ -2137,7 +2261,7 @@ function p2pPump(){
         normal flow resumes on its own. */
      var forceSnap=room.frame-(sp.lastSnapSentF||0)>30||!sp.ackAt||performance.now()-sp.ackAt>600;
      if(!forceSnap&&p2pGuestLagging(room,sp))continue;
-     p2pDeliver(sp,snap);sp.lastSnapSentF=room.frame;
+     p2pDeliverSnap(sp,snap);sp.lastSnapSentF=room.frame; /* over the jb-snap channel while it is verified + open for this guest, else the reliable channel (p2pDeliverSnap decides per guest) */
    }
  }
  /* FX flush, per guest: a guest's queued events go out only
