@@ -434,6 +434,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["00:30"],tag:"調整",title:"KAIRO：前+J「ブリンク斬り」の調整（KB低下＋連続使用ペナルティ追加）",
+  items:["前+J「ブリンク斬り」：KB 440→180に変更しました",
+         "追加仕様：1ヒット目を当ててから2秒以内にもう一度使うと、その回の後硬直が0.6秒（完全硬直）に変化します（その間は移動・ジャンプ・ダッシュ・次の技のすべてができません）。ヒットするたびに2秒の猶予は数え直されます",
+         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv224に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["00:23"],tag:"調整",title:"KAIRO：空中↓+J「急降下斬り」を削除し「メテオネイル」に変更",
   items:["空中↓+J「急降下斬り」を削除しました（斜め下への突っ込み・本体34ダメージ・着地時の氷の衝撃波はなくなります）",
          "新しい空中↓+J「メテオネイル」：ダメージ26・KB700（真下方向・メテオ判定あり）・発生0.26秒・全体0.56秒・後硬直0.47秒・判定96×70（真下方向）。技の間は重力が70%軽減され、本人はゆっくり落ちながら真下へ氷の釘を叩き落とします",
@@ -659,7 +663,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>J 1段目 — 横払い</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>踏み込みなしの通常の横払い。猶予（0.9秒）以内に J を押し続けると次段へ。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','70×62')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','72×64')+mvS('被弾硬直','0.36秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ<b>高速移動</b>し、移動しながら<b>大きな氷の爪でひっかく</b>。経路の間にいた相手にも当たる（ヒットは1回まで）。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','440')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.34秒')+mvS('判定','80×62')+mvS('被弾硬直','0.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ<b>高速移動</b>し、移動しながら<b>大きな氷の爪でひっかく</b>。経路の間にいた相手にも当たる（ヒットは1回まで）。ダッシュ中・走行中の J でも出る。さらに、<b>1ヒット目を当ててから2秒以内にもう一度使うと、その回の後硬直が0.6秒（完全硬直）に変化する</b>（その間は移動・ジャンプ・ダッシュ・次の技のすべてができない）。ヒットするたびに2秒の猶予は数え直される。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','180')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.34秒')+mvS('判定','80×62')+mvS('被弾硬直','0.4秒')+mvS('追加効果','2秒以内の再使用で後硬直が0.6秒（完全硬直）に変化'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を突き出して足払いをする。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','620（真上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.26秒')+mvS('判定','80×34')+mvS('被弾硬直','0.36秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','66×64')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — メテオネイル</b> <span style="color:#f59e0b;font-weight:900">新技（急降下斬りから変更）</span><p>本人は突っ込まず、<b>重力が70%軽減</b>されてゆっくり落ちながら、0.26秒後に<b>真下へ氷の釘（ネイル）を叩き落とす</b>。<b>メテオ判定</b>あり（当たった相手は真下へ叩き落とされる）。旧「急降下斬り」の斜め突っ込みと着地衝撃波は削除された。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700（真下方向）')+mvS('発生','0.26秒')+mvS('全体','0.56秒（重力70%軽減）')+mvS('後硬直','0.47秒')+mvS('判定','96×70（真下方向）'))+'</div></div>'
@@ -1207,7 +1211,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?4:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1217,7 +1221,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?4:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
@@ -1603,7 +1607,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v223";
+var BUILD_ID="v224";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3048,7 +3052,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -8226,10 +8230,16 @@ function startAttack(f,type){
         slash lands DURING the movement, on any foe standing in the
         path (hit once only, 被弾硬直 0.4秒). The travel + path hit live
         in stepFighter (state "dashclaw", blinkLeft / blinkHit).
-        後硬直 0.8s -> 0.34s. NOTE: ground ↑+J ライジングアッパー and
+        後硬直 0.8s -> 0.34s. KB 440 -> 180 (user spec; the hit itself
+        is in stepFighter). 追加仕様 (user spec): landing a hit opens a
+        2-second window (f.blinkWin, set on the hit in stepFighter);
+        using the blink AGAIN while that window is open makes THIS
+        use's recovery 0.6s and a FULL LOCK (see the press-side check
+        below). NOTE: ground ↑+J ライジングアッパー and
         後ろ+J バックステップ斬り were DELETED (user spec) — up/back+J
         now fall through to the blink / plain chain like any other J */
      f.state="dashclaw";f.stateT=0.3;f.attackCd=0.27;f.comboWin=0;f.dashT=0; /* 後硬直: attackCd 0.73 -> 0.27 (displayed 0.8s -> 0.34s with the shared +0.07) */
+     if((f.blinkWin||0)>0){f.attackCd=0.53;applyFullLock(f);f.blinkWin=0;spawnParticles(f.x,f.y+f.h*0.5,10,"#bae6fd",170);spawnRing(f.x,f.y+f.h*0.45,"#67e8f9",36)} /* 追加仕様: 1ヒット目から2秒以内の再使用 — 後硬直 0.6秒（完全硬直）: attackCd 0.53 + 共通0.07 = 0.6秒。applyFullLock は startAttack 末尾の addRecovery より前に呼ばれるため recLockT も 0.6秒になり、その間は移動・ジャンプ・ダッシュ・次の技のすべてができない。ウィンドウは使った時点で消費される (ヒットすれば stepFighter 側で 2.0 に数え直される) */
      f.blinkLeft=105;f.blinkHit=false;
      f.vx=f.face*260;
      spawnParticles(f.x,f.y+f.h*0.45,10,"#67e8f9",170);
@@ -8610,7 +8620,7 @@ function stepFighter(f,dt,input,foe){
    f.respawnT-=dt;if(f.respawnT<=0&&!matchOver){var sidx=Math.max(0,fighters.indexOf(f));var s=SPAWNS_ALL[sidx%SPAWNS_ALL.length];resetFighter(f,s.x,s.y)}return}
  f.stateT=Math.max(0,f.stateT-dt);f.attackCd=Math.max(0,f.attackCd-dt);f.dashCd=Math.max(0,f.dashCd-dt);
  f.comboT=Math.max(0,f.comboT-dt);if(f.comboT===0){f.comboHits=0;f.comboDmg=0}
- f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.recLockT=Math.max(0,(f.recLockT||0)-dt); /* 完全硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・急降下・台すり抜けが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;f.batonWin=Math.max(0,(f.batonWin||0)-dt); /* WARDEN 電気警棒: 1ヒット目からの2秒ウィンドウ (2回目のヒットで後硬直が完全硬直に変化する判定用) */
+ f.invuln=Math.max(0,f.invuln-dt);f.landT=Math.max(0,(f.landT||0)-dt);f.landLagT=Math.max(0,(f.landLagT||0)-dt); /* 着地硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・ガード・ワザのすべてが不可 */f.recLockT=Math.max(0,(f.recLockT||0)-dt); /* 完全硬直タイマー: 残っている間は移動・ジャンプ・ダッシュ・急降下・台すり抜けが不可 */f.comboWin=Math.max(0,f.comboWin-dt);if(f.comboWin===0)f.comboStep=0;f.batonWin=Math.max(0,(f.batonWin||0)-dt); /* WARDEN 電気警棒: 1ヒット目からの2秒ウィンドウ (2回目のヒットで後硬直が完全硬直に変化する判定用) */f.blinkWin=Math.max(0,(f.blinkWin||0)-dt); /* KAIRO ブリンク斬り: 1ヒット目からの2秒ウィンドウ (2秒以内の再使用で後硬直が0.6秒の完全硬直に変化する判定用) */
  if(f.hitstun>0)f.jBoostT=0; /* being launched cancels a pending first-jump height decision: knockback owns vy now, no boost may fire on the recovery */
  f.flash=Math.max(0,f.flash-dt);
  f.specCd=Math.max(0,(f.specCd||0)-dt);
@@ -9024,14 +9034,18 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     dashclaw state lasts he DASHES the remaining blinkLeft (~105u) at
     1500/s and the slash tests the path AS HE CROSSES IT — a foe
     standing anywhere along the route takes the hit (once only,
-    blinkHit; dmg 14 / KB 440 / box 80x62 / 被弾硬直 0.4秒), instead
+    blinkHit; dmg 14 / KB 180 / box 80x62 / 被弾硬直 0.4秒), instead
     of the old teleport that passed through foes and only hit at the
     arrival point. blinkLeft / blinkHit ride the rollback state list
-    and the snapshot fields (blk / blh) */
+    and the snapshot fields (blk / blh). KB 440 -> 180 (user spec).
+    A landed hit also opens the 2-second window (f.blinkWin = 2.0,
+    riding RB_FSTATE next to blinkHit): reusing the blink while it
+    runs pays a 0.6s FULL-LOCK recovery — the press-side check lives
+    in startAttack (state "dashclaw") */
  if(f.char==="kairo"&&f.state==="dashclaw"&&(f.blinkLeft||0)>0){
    var bStep=Math.min(f.blinkLeft,1500*dt);f.blinkLeft-=bStep;f.x+=f.face*bStep;
    if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
-   if(!f.blinkHit&&meleeHit(f,foe,80,62,14,440,f.face,-0.3,0.4)){f.blinkHit=true;spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30)}
+   if(!f.blinkHit&&meleeHit(f,foe,80,62,14,180,f.face,-0.3,0.4)){f.blinkHit=true;f.blinkWin=2.0; /* ブリンク斬り KB 440 -> 180 (user spec)。ヒットで2秒ウィンドウを開く (ヒットするたびに数え直し) */spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30)}
    spawnParticles(f.x-f.face*10,f.y+f.h*0.45,2,"#67e8f9",120);
  }
  /* HOVER SPIN (Kairo air J): while the spin state lasts, the fall is nearly
