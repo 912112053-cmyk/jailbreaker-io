@@ -429,6 +429,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["15:49"],tag:"大型更新",title:"オンライン対戦を入力同期方式に作り替え",
+  items:["オンライン対戦の進め方を作り替えました。これまではホストの端末が計算した結果（スナップショット）を全員に送っていましたが、これからは全員の端末が同じ計算を回し、ネットワークで運ぶのは各自の「操作」だけになります",
+         "自分の操作は遅延なしで即座に反映されます。相手の操作がまだ届いていない間は、相手の直近の操作が続くものとして予測して先に進み、本物の操作が届いた時点でその時点まで巻き戻して計算し直す（ロールバック）方式です。相手の動きが通信の揺れでブレたり、凍結したりしなくなります",
+         "試合開始時にホストが乱数シードを配り、計算に影響する乱数は全端末で同じ結果になるよう揃えました。約1秒ごとに状態のチェックサムを照合し、万一ズレが検出された場合や、巻き戻しの範囲を超える遅れがあった場合は、その試合の残りは従来のスナップショット方式に自動で切り替わります",
+         "ゲストが途中で抜けた場合は、全端末が同じフレームからそのキャラをCPUに引き継ぎます。ロビー・チャット・フレンド招待は今まで通りです"]},
  {date:"2026/11/15",times:["15:18"],tag:"大型更新",title:"オンライン対戦をSupabase経由のみに整理",
   items:["オンライン対戦の接続方式を Supabase 経由のみに整理しました。これまで選べた「サーバー経由」（専用サーバー方式）を削除し、オンライン対戦は Supabase 経由だけになりました",
          "ルーム作成・ロビー・対戦・チャット・フレンド招待の仕様はこれまで通りです。招待で参加する場合も Supabase 経由のルームに入ります",
@@ -501,9 +506,6 @@ var UPDATE_LOG=[
          "ゲストの入力送信を毎フレーム行うように変更しました"]},
  {date:"2026/11/15",times:["11:44"],tag:"調整",title:"カメラが画面端の外に出た自分のキャラを少しだけ追うように",
   items:["自分のキャラが画面端の外に出てしまったとき、カメラがそのキャラを少しだけ追いかけるようになりました"]},
- {date:"2026/11/15",times:["11:40"],tag:"調整",title:"MIMI&SHADEの↓+Kを作り替え",
-  items:["MIMI&SHADEの↓+Kを作り替えました。MIMIは地面に沿って進む光の衝撃波を放つ技になりました",
-         "SHADEは後方に拳が3回振り下りる技になりました"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1428,14 +1430,16 @@ function showBanner(big,pts,sub,ms){if(typeof svMute!=="undefined"&&svMute)retur
 function hideBanner(){$("banner").style.display="none"}
 /* ================= ONLINE VS (Supabase relay) =================
    VS CPU / TRAINING stay fully offline. ONLINE VS runs ONLY over
-   the Supabase transport in the next section (host-authoritative,
-   relayed over Supabase Realtime Broadcast): the host's device
-   runs the real simulation on the local engine and streams state
-   snapshots to every guest at 30/s; guests send nothing but packed
-   inputs, bundled at 30/s. Rendering (snapshot interpolation,
-   adaptive render delay, local prediction of your own fighter and
-   reconciliation) lives in the SERVER-CLIENT MATCH ENGINE section
-   below and is shared by this transport unchanged.
+   the Supabase transport in the next section, relayed over
+   Supabase Realtime Broadcast. Matches run ROLLBACK INPUT-SYNC
+   (see the ROLLBACK layer below): every participant runs the same
+   local simulation and only packed inputs cross the network,
+   bundled at 30/s per participant. The host-authoritative
+   snapshot stream this transport also implements (host streams
+   state at 30/s, guests render through the SERVER-CLIENT MATCH
+   ENGINE below — snapshot interpolation, adaptive render delay,
+   local prediction and reconciliation) survives as the FALLBACK
+   a match switches to when the rollback layer detects a desync.
    The former dedicated match server transport (Cloudflare) and
    the former direct PeerJS P2P transport have been REMOVED: there
    is no transport selection anymore. PeerJS survives ONLY as the
@@ -1496,7 +1500,7 @@ function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>ONLINE VS — ルーム対戦</h2>'
- +'<p>友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。ホストの端末が試合を計算し、通信を Supabase の Realtime 経由で全員に届ける方式です（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
+ +'<p>友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。全員の端末が同じ計算を回し、Supabase の Realtime 経由で各自の操作だけを送り合う方式です。自分の操作は即座に反映され、相手の操作は届いた時点で巻き戻して計算し直す（ロールバック）ため、通信の揺れがそのまま画面のブレになりません（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
  +'<p style="color:var(--muted)">※ ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
  +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
@@ -1517,6 +1521,7 @@ function cleanupNet(){
  clearRematchWatch();
  net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
+ lsReset();
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
  chatReset();
  var lb=$("lobbyScreen");if(lb)lb.classList.remove("on");
@@ -1544,11 +1549,15 @@ Room = one Realtime channel "jb-room-<room code>", joined by
 every participant. Broadcast events:
 - "snap" host -> all: the match snapshot, 30/s (the same
 every-second-frame cadence and quantized shape the host pump
-has always produced).
-- "input" guest -> host: input bundles at 30/s, each repeating
-the guest's newest 12 sampled frames as [frame, bits] pairs;
-the host dedupes by frame number (sbRoomInputFast), so a lost
-bundle is healed by the next and no frame applies twice.
+has always produced). FALLBACK ONLY since the rollback build:
+the pump runs only after a match falls back to snapshot mode.
+- "input" every participant -> all: input bundles at 30/s, each
+repeating the sender's newest 12 sampled frames as [frame, bits]
+pairs, stamped with the sender's pid. The host dedupes by frame
+number into its snapshot slots (sbRoomInputFast — what a
+fallback resumes from), and every participant files them into
+its rollback pool (lsCollect), so a lost bundle is healed by
+the next and no frame applies twice.
 - "fx" host -> all: FX events, batched on the snapshot
 cadence (at most 30/s).
 - "chat" guests -> host (relayed by the host with the sender's
@@ -1562,8 +1571,10 @@ guest silent for ~6s as departed (CPU takeover mid-match,
 removal in the lobby), and guests treat a host silent for
 ~6s as the host leaving (the match ends).
 Message budget (free plan: 100 messages/second per project):
-snap 30 + fx <=30 + input 30 per guest + heartbeats ~1/s +
-rare control/chat stays inside it for a 2-player match.
+input 30 per participant + checksum 1/s + heartbeats ~1/s +
+rare control/chat — a 2-player rollback match peaks near
+62/s. (A fallen-back snapshot match returns to the old
+snap 30 + fx <=30 + input 30 per guest accounting.)
 Mine lists are owner-only information, so they never ride the
 shared channel: the host sends each guest's own mines on that
 guest's private channel "jb-room-<code>-<pid>" (event "mine").
@@ -1828,6 +1839,12 @@ if(n){player.cursor=base+n;player.inHi=lastF}
 }
 function sbRoomHandle(room,player,m){
 if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
+if(m.t==="desync"){
+/* a guest's rollback layer detected a desync (or a rollback it
+could not perform): switch the whole match to the snapshot mode */
+if(room.lsMode)lsHostFallback();
+return;
+}
 if(m.t==="chat"){
 if(!player.pid)return;
 var text=sbCleanChat(m.text);if(text===null)return;
@@ -1892,6 +1909,7 @@ if(idx>=0&&!room.matchRoster[idx].gone){
 room.matchRoster[idx].gone=true;
 if(room.matchSlots[idx])room.matchSlots[idx].ai=true;
 sbBroadcastRoom(room,{t:"cpu",i:idx,name:room.matchRoster[idx].name});
+if(room.lsMode)lsHostTakeover(idx); /* rollback match: every end switches this slot to the CPU at the same frame (lsai) */
 sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が退出しました"});
 }
 return;
@@ -1915,7 +1933,8 @@ room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:fals
 room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
 for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0}
 room.phase="match";
-var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
+room.lsMode=true; /* matches now run rollback input-sync (see the ROLLBACK layer); the snapshot stream this room also knows how to produce is the desync fallback only */
+var startMsg={t:"start",ls:1,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
 sbSendGuests(room,startMsg);
 /* the host builds its own match through the very same svOnMsg
 start handler a guest uses (startMatch("online")), delivered by
@@ -1939,7 +1958,7 @@ if(!room||room.dead||!m||typeof m!=="object")return;
 if(typeof m.cid!=="string"||!m.cid)return;
 var p=room.byCid[m.cid]||null;
 if(p)p.lastHb=Date.now();
-if(kind==="input"){if(p&&p.pid)sbRoomInputFast(room,p,m);return}
+if(kind==="input"){if(p&&p.pid){sbRoomInputFast(room,p,m);if(room.lsMode)lsCollect(m)}return}
 if(!p){
 if(kind==="sys"&&m.t==="join"){
 p={pid:null,cid:m.cid,name:"",char:null,host:false,joinSeq:0,loopback:false,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,lastHb:Date.now(),goneHandled:false,departed:false,ackF:-1,ackAt:0,priv:null};
@@ -2052,6 +2071,7 @@ return m;
 chan.on("broadcast",{event:"snap"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
 chan.on("broadcast",{event:"fx"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
 chan.on("broadcast",{event:"chat"},function(en){if(sbChan!==chan)return;var m=hostMsg(en);if(m)svOnMsg(m)});
+chan.on("broadcast",{event:"input"},function(en){if(sbChan!==chan)return;var m=en&&en.payload;if(m&&typeof m==="object")lsCollect(m)}); /* rollback matches: every participant's input bundles land in the local rollback pool directly (the sender's pid keys them to a match slot; our own are ignored inside lsCollect) */
 chan.on("broadcast",{event:"sys"},function(en){
 if(sbChan!==chan)return;
 var m=en&&en.payload;
@@ -2104,6 +2124,7 @@ here instead and its presses parked with svParkPresses — exactly
 the server sim's stepFrame treatment, so a press thrown during
 the countdown fires right after FIGHT. */
 function sbStepHook(){
+if(typeof ls!=="undefined"&&ls&&ls.active)return; /* rollback match: frame counting / press parking live in the ls layer (lsStepFrame / lsParkFrame); the snapshot slot machinery resumes only after a fallback, when ls.active is false again */
 if(!sbHostLive||!sbRoom||sbRoom.phase!=="match")return;
 var room=sbRoom,F=room.frame;
 room.fNow=F;room.frame=F+1;
@@ -2409,8 +2430,12 @@ function svOnMsg(m){
       has actually picked and entered the lobby. */
    $("lobbyScreen").classList.remove("on");$("charSelect").classList.remove("on");showCenter("",0);
    startMatch("online");
+   if(m.ls)lsBegin();else lsReset(); /* ls:1 start = rollback input-sync match (the seed startMatch just consumed via svReset is the shared PRNG seed on every end) */
    return;
  }
+ if(m.t==="chk"){lsOnChk(m);return} /* rollback layer: host state checksum for a confirmed frame */
+ if(m.t==="lsai"){lsOnTakeover(m);return} /* rollback layer: CPU takeover of a departed slot from frame f, on every end at once */
+ if(m.t==="lsfb"){lsOnFallback();return} /* rollback layer: the host switched this match to the snapshot mode */
  if(m.t==="snap"){svOnSnap(m);return}
  if(m.t==="mymines"){ if(mode==="online"){ mines = (m.mn||[]).map(function(s){ return {x:s.x, y:s.y, owner:P1}; }); } return; } /* targeted per-connection: only the WARDEN who placed them ever receives this list (it changes only when their own mines change), so the existing draw loop (owner===P1 only: gold body + detection ellipse) renders our own mines exactly like local play while no other player ever sees them */
  if(m.t==="chat"){chatAdd(m.name,m.text,!!m.sys);return} /* room chat broadcast: {name, text} for a player message, {sys:1, text} for a join/leave notice — chatAdd renders both as text only */
@@ -2426,6 +2451,7 @@ function svOnMsg(m){
  if(m.t==="end"){sv.endResults=m.results||null;matchOver=true;return}
  if(m.t==="tolobby"){
    clearRematchWatch();
+   ls.active=false; /* the rollback match is over; the next start re-arms it via lsBegin */
    toLobbyCharSelect();
    return;
  }
@@ -3293,6 +3319,404 @@ function svReset(){
    f._svDead=false;f._svHp=undefined;f._svScore=undefined;f._svDcd=undefined;f._svOg=false;f._svState=undefined;f._cuAt=0;f._cuX=0;f._cuY=0; /* catch-up glide state (svRenderWorld) starts disarmed */
  }
  svPressQ.length=0;
+}
+/* ================= ROLLBACK (INPUT SYNC) MATCH LAYER =================
+   The primary online match mode since this build: instead of the
+   host streaming state snapshots, EVERY participant runs the same
+   local engine (simStepFrame — the very step VS CPU uses) and the
+   network carries only INPUTS, rollback-style:
+   - Your own input is sampled and applied IMMEDIATELY, the frame
+     it is sampled on — there is no input delay at all. Every
+     participant broadcasts its sampled inputs on the room channel
+     in the existing 30/s bundles (newest 12 frames, [frame, bits]
+     pairs; the host files them into its snapshot slots exactly as
+     before, everyone else files them into the rollback pool).
+   - A remote frame whose real input has not arrived yet is
+     PREDICTED by repeating that player's last confirmed input's
+     held bits (the same held-mask rule the snapshot host's
+     late-bundle fallback uses), and the simulation runs ahead.
+   - When the real input lands and differs from what a past frame
+     used, that frame's saved state is restored and the simulation
+     re-runs from there to the present (predictions that turned
+     out right cost nothing — the used bits already match). State
+     saves are the prediction system's own svSaveFighter /
+     svRestoreFighter snapshots, kept for the last LS_RING frames
+     per frame, together with projectiles / placed objects /
+     timers / the seeded PRNG state, so a re-run is bit-exact.
+     Re-simulation is capped at LS_RESIM_MAX frames: a real input
+     arriving older than that, or one whose state save is already
+     gone, switches the match to the snapshot mode instead (the
+     same insurance as a checksum desync, below).
+   - Determinism: the host picks the seed in the start message
+     (net.seed, already distributed) and svReset seeds simRand
+     from it on every end; every state-affecting random in the
+     simulation goes through rnd() (the AI's decisions, the No.66
+     gatling spread — the last raw Math.random in a projectile —
+     included). Rendering-only randomness (particles, shake, beep
+     pitch) is left alone: it cannot move state. CPU fighters are
+     driven by aiControl inside the simulation on every end, so
+     their inputs are never sent.
+   - A guest leaving mid-match: the host broadcasts
+     {t:"lsai", i, f, cf, cb} — from frame f that slot is CPU-
+     driven on every end (f is a few frames ahead of the host's
+     current frame; an end that already simulated past f rolls
+     back to f and re-runs with the CPU in place; cf/cb are the
+     host's last confirmed frame / bits for the slot, so every
+     end re-derives the still-unconfirmed predictions in between
+     from the same base). The host leaving still ends the match.
+   - Desync insurance: every LS_CHK_EVERY frames (60, ~1/s), once
+     a checkpoint frame's inputs are confirmed on all ends, the
+     host broadcasts its quantized state checksum for that frame
+     ({t:"chk"}); each end compares it with its own checksum of
+     the same (by then fully confirmed) frame. A mismatch — or a
+     rollback that would exceed the cap — switches the REST of
+     the match to the snapshot mode: the host broadcasts
+     {t:"lsfb"} and its normal loop path resumes streaming
+     snapshots via sbPump, guests fall back to the svAdvance
+     snapshot client. The snapshot code is kept intact for this.
+   Message budget (free plan, 100/s project-wide): input bundles
+   30/s per participant + chk 1/s + heartbeats — a 2-player match
+   peaks near 62/s, well under the old snap+fx ~92/s. */
+var LS_RESIM_MAX=12; /* re-simulation cap, frames */
+var LS_RING=40; /* per-frame state saves kept (spec: ~30+) */
+var LS_CHK_EVERY=60; /* host checksum cadence, frames (~1/s) */
+var LS_HELD_MASK=28687; /* held bits repeated by prediction (move / jump-hold + J / U / L held) */
+var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0};
+function lsReset(){
+ ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;
+ if(sbRoom)sbRoom.lsMode=false;
+}
+function lsBegin(){
+ lsReset();ls.active=true;
+ /* the seed is already in place: startMatch -> svReset seeded
+    simRand from net.seed (the host's start message) on this end,
+    exactly like on every other end */
+ if(sbRoom)sbRoom.lsMode=true;
+}
+/* ---- per-frame state saves (the rollback substrate) ---- */
+function lsCloneObj(o){
+ var c={};
+ for(var k in o){var v=o[k];c[k]=(v&&typeof v==="object"&&Array.isArray(v))?v.slice():v}
+ return c;
+}
+function lsSaveState(F){
+ var s={f:F,time:time,timer:timer,cd:countdown,hs:hitstop,over:matchOver,seed:simSeedState,
+  fs:fighters.map(function(f){
+   var o=svSaveFighter(f);
+   o.blb=f.bleedBy;o.feb=f.flameExpBy;o.fex=f.flameExp; /* DoT attribution refs / scalar svSaveFighter does not carry */
+   return o;
+  }),
+  pr:projectiles.map(lsCloneObj),ip:icePatches.map(lsCloneObj),fo:fireOrbs.map(lsCloneObj),
+  pm:poisonMists.map(lsCloneObj),mn:mines.map(lsCloneObj),df:darkFields.map(lsCloneObj)};
+ ls.saves[F]=s;
+ return s;
+}
+function lsRestoreState(s){
+ time=s.time;timer=s.timer;countdown=s.cd;hitstop=s.hs;matchOver=s.over;simSeedState=s.seed;
+ for(var i=0;i<fighters.length&&i<s.fs.length;i++){
+  var f=fighters[i];svRestoreFighter(f,s.fs[i]);
+  f.bleedBy=s.fs[i].blb||null;f.flameExpBy=s.fs[i].feb||null;f.flameExp=s.fs[i].fex||0;
+ }
+ projectiles=s.pr.map(lsCloneObj);icePatches=s.ip.map(lsCloneObj);fireOrbs=s.fo.map(lsCloneObj);
+ poisonMists=s.pm.map(lsCloneObj);mines=s.mn.map(lsCloneObj);darkFields=s.df.map(lsCloneObj);
+}
+/* quantized checksum OF A SAVED STATE (positions / velocities /
+   HP rounded to coarse steps so float dust cannot false-positive,
+   plus score / kills / deaths / facing / dead and the projectile
+   count + coarse projectile positions, FNV-1a mixed) — computed
+   from the save so a checkpoint can be verified after the fact,
+   once every input that produced it is confirmed */
+function lsChecksumOf(s){
+ var h=2166136261>>>0;
+ function mix(n){h^=((n|0)&0xffffffff)>>>0;h=Math.imul(h,16777619)}
+ for(var i=0;i<s.fs.length;i++){var o=s.fs[i];
+  mix(Math.round(o.x*4));mix(Math.round(o.y*4));mix(Math.round(o.vx*2));mix(Math.round(o.vy*2));
+  mix(Math.round(o.hp*8));mix(o.score|0);mix(o.kills|0);mix(o.deaths|0);mix(o.face|0);mix(o.dead?1:0);
+ }
+ mix(s.pr.length);
+ for(var j=0;j<s.pr.length;j++){var p=s.pr[j];mix(Math.round(p.x*2));mix(Math.round(p.y*2));mix(p.kind?p.kind.length:0)}
+ return (h>>>0).toString(16);
+}
+/* ---- confirmed inputs, prediction, misprediction detection ---- */
+function lsSetConf(idx,F,bits,own){
+ if(ls.cpuAt[idx]!==undefined&&F>=ls.cpuAt[idx]&&!own)return; /* the CPU owns this slot from cpuAt on; late real inputs for it are moot */
+ if(!ls.conf[idx]){ls.conf[idx]={};ls.confHi[idx]=-1;ls.lastConfF[idx]=-1}
+ if(ls.conf[idx][F]===bits)return;
+ ls.conf[idx][F]=bits;
+ while(ls.conf[idx][ls.confHi[idx]+1]!==undefined)ls.confHi[idx]++;
+ if(ls.confHi[idx]>=0)ls.lastBits[idx]=ls.conf[idx][ls.confHi[idx]];
+ if(F>ls.lastConfF[idx])ls.lastConfF[idx]=F;
+ /* a real input that contradicts what a simulated frame used is
+    a misprediction: queue a rollback to the earliest such frame.
+    (Predictions repeat held bits only, so a steady hold confirms
+    silently — the used bits already match.) */
+ if(!own&&F<ls.frame){
+  var u=ls.used[F];
+  if(u&&typeof u[idx]==="number"&&u[idx]>=0&&u[idx]!==bits){
+   if(ls.rbFrom<0||F<ls.rbFrom)ls.rbFrom=F;
+  }
+ }
+}
+function lsCollect(m){
+ if(!ls.active||!m||!net.match)return;
+ var idx=-1;
+ for(var i=0;i<net.match.length;i++){if(net.match[i].id===m.pid)idx=i}
+ if(idx<0||idx===net.myIdx)return;
+ var fr=Array.isArray(m.fr)?m.fr:[];
+ for(var j=0;j<fr.length;j++){var e=fr[j];
+  if(Array.isArray(e)&&e.length>=2)lsSetConf(idx,e[0]|0,(e[1]|0)&0xffff,false);
+ }
+}
+/* the input row frame F is (re-)simulated with: the confirmed
+   bits where they exist, the CPU sentinel (-1) from the takeover
+   frame on, and a prediction — the player's last confirmed held
+   bits — everywhere else */
+function lsRowFor(F){
+ var n=(net.match&&net.match.length)||fighters.length,row=[];
+ for(var i=0;i<n;i++){
+  if(ls.cpuAt[i]!==undefined&&F>=ls.cpuAt[i]){row.push(-1);continue}
+  var c=ls.conf[i];
+  if(c&&c[F]!==undefined){row.push(c[F]);continue}
+  row.push((ls.lastBits[i]||0)&LS_HELD_MASK);
+ }
+ return row;
+}
+/* park frame F's presses for every human fighter (the countdown /
+   hitstop treatment sbStepHook + sbInputFor give the snapshot
+   host: a press thrown on a frozen frame fires on the first live
+   frame after it) */
+function lsParkFrame(F,row){
+ for(var i=0;i<fighters.length;i++){
+  var bits=row[i];if(bits===undefined||bits===null||bits<0)continue;
+  svParkPresses(fighters[i],bits,F);
+ }
+}
+/* the per-fighter input source while rollback-stepping: the row's
+   bits through the deterministic applier — the same rule the
+   snapshot host applies to guest slots (sbInputFor), now applied
+   to EVERY human fighter including your own, so all ends build
+   identical step inputs from identical rows. A CPU slot is
+   aiControl-driven with sbInputFor's held-direction bookkeeping. */
+function lsInputFor(f,foe){
+ var idx=fighters.indexOf(f),F=ls.curF,row=ls.curRow;
+ var bits=row?row[idx]:0;
+ if(bits===-1){
+  var inp=aiControl(f,foe);inp.upHeld=true;
+  f.hDown=!!inp.down;f.hUp=!!inp.jump;
+  f.hFwd=(f.face===1&&!!inp.right)||(f.face===-1&&!!inp.left);
+  f.hBack=(f.face===1&&!!inp.left)||(f.face===-1&&!!inp.right);
+  return inp;
+ }
+ if(typeof bits!=="number"||bits<0)bits=0;
+ svParkPresses(f,bits,F);
+ return rbApplyInput(f,bits|rbPendBits(f,F),F);
+}
+/* simulate frame F once (first pass or re-simulation): save the
+   pre-step state, then step the world with F's row. Hitstop is
+   part of the simulation here, not wall-clock: it freezes the
+   world for the same number of FRAMES on every end, consuming
+   (and parking) the frame's inputs like a countdown frame. */
+function lsStepFrame(F){
+ var row=lsRowFor(F);ls.used[F]=row;ls.curRow=row;ls.curF=F;
+ lsSaveState(F);
+ if(countdown>0)lsParkFrame(F,row);
+ if(hitstop>0){lsParkFrame(F,row);hitstop-=1/60;return}
+ /* stepFighter reads the LOCAL fighter's held state from the live
+    keys / stick globals (its isPlayer branches), not from the
+    input object — the prediction step (svStepP1) already solves
+    exactly this by staging the frame's bits into keys / stick for
+    the duration of the step. Do the same with the local slot's
+    row bits: the local fighter's held state then IS its confirmed
+    input on this end, matches the hDown / hFwd fields the same
+    bits produce through rbApplyInput on every other end (where
+    this fighter is remote), and is identical on every
+    re-simulation of this frame, whenever it happens. */
+ var myBits=row[net.myIdx],saveKeys=null,saveDx=0,saveDy=0;
+ if(typeof myBits==="number"&&myBits>=0){
+  saveKeys=keys;saveDx=stick.dx;saveDy=stick.dy;
+  keys={left:!!(myBits&1),right:!!(myBits&2),down:!!(myBits&4),jump:!!(myBits&8)};
+  stick.dx=(myBits&2)?0.5:((myBits&1)?-0.5:0);stick.dy=(myBits&4)?0.8:0;
+ }
+ simStepFrame(lsInputFor);
+ if(saveKeys){keys=saveKeys;stick.dx=saveDx;stick.dy=saveDy}
+}
+/* sample this frame's local input, file it as confirmed (your own
+   input is never predicted and never delayed), mirror it into the
+   snapshot-mode counters so a mid-match fallback resumes bundle
+   numbering seamlessly, then step the frame */
+function lsSampleAndStep(){
+ var F=ls.frame;
+ var bits=svSampleLocal();
+ lsSetConf(net.myIdx,F,bits,true);
+ sv.inpHist[F]=bits;sv.sampleFrame=F+1;
+ lsStepFrame(F);
+ ls.frame=F+1;
+ if(F%2===1)lsSendBundle();
+ if(F%600===599){ /* prune history well behind the save ring */
+  var cut=F-LS_RING-30;
+  for(var a in ls.saves)if(+a<cut)delete ls.saves[a];
+  for(var b in ls.used)if(+b<cut)delete ls.used[b];
+  for(var ci=0;ci<(net.match?net.match.length:0);ci++){var cc=ls.conf[ci];if(cc)for(var cf in cc)if(+cf<cut)delete cc[cf]}
+ }
+}
+/* every participant ships its sampled inputs in the existing
+   bundle shape at 30/s (newest 12 frames — the redundancy window
+   heals a lost bundle, receivers dedupe by frame number) */
+function lsSendBundle(){
+ var endF=ls.frame;
+ if(endF-ls.sbF<2)return;
+ var startF=Math.max(0,endF-12),fr=[];
+ for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
+ if(!fr.length)return;
+ var msg={t:"in",cid:sbCid,pid:net.myId,fr:fr};
+ if(sbSendInput(msg))ls.sbF=endF;
+}
+/* ---- rollback execution ---- */
+function lsProcessRollback(){
+ if(ls.rbFrom<0||!ls.active)return;
+ var F0=ls.rbFrom;ls.rbFrom=-1;
+ var target=ls.frame,depth=target-F0;
+ var save=ls.saves[F0];
+ if(depth>LS_RESIM_MAX||!save||save.f!==F0){lsFallbackStart();return}
+ /* re-running frames must not re-fire presentation side effects:
+   pure-visual lists are swapped out for the duration (placed
+   objects are state and stay live), the FX sink / KO banner hook
+   are detached, and svMute silences beeps / banners — exactly the
+   protections the prediction step (svStepP1) uses */
+ var keepFx=fxSink,keepHook=killBannerHook,wasMute=svMute;
+ var vP=particles,vR=rings,vB=fxBursts,vV=vecBursts,vF=floaters;
+ fxSink=null;killBannerHook=null;svMute=true;
+ particles=[];rings=[];fxBursts=[];vecBursts=[];floaters=[];
+ lsRestoreState(save);
+ ls.frame=F0;
+ while(ls.frame<target){lsStepFrame(ls.frame);ls.frame++}
+ particles=vP;rings=vR;fxBursts=vB;vecBursts=vV;floaters=vF;
+ fxSink=keepFx;killBannerHook=keepHook;svMute=wasMute;
+ ls.resimCount++;if(depth>ls.maxResim)ls.maxResim=depth;
+}
+/* ---- checksums over confirmed frames ---- */
+function lsAllConfirmed(F){
+ var n=(net.match&&net.match.length)||0;
+ for(var i=0;i<n;i++){
+  var need=F-1;
+  if(ls.cpuAt[i]!==undefined)need=Math.min(need,ls.cpuAt[i]-1);
+  if(need<0)continue;
+  if((ls.confHi[i]===undefined?-1:ls.confHi[i])<need)return false;
+ }
+ return true;
+}
+function lsChkProcess(){
+ if(!ls.active)return;
+ while(ls.chkNext<ls.frame){
+  var F=ls.chkNext,s=ls.saves[F];
+  if(!s){ls.chkNext+=LS_CHK_EVERY;continue} /* save already gone: this checkpoint can no longer be verified — skip it */
+  if(!lsAllConfirmed(F))break; /* inputs still in flight: wait */
+  var h=lsChecksumOf(s);ls.chkM[F]=h;
+  if(net.isHost){if(sbRoom&&sbRoom.lsMode)sbSendGuests(sbRoom,{t:"chk",f:F,h:h})}
+  else if(ls.chkH[F]!==undefined&&ls.chkH[F]!==h){lsDesync();return}
+  ls.chkNext+=LS_CHK_EVERY;
+ }
+ for(var k in ls.chkM){if(+k<ls.chkNext-600)delete ls.chkM[k]}
+ for(var k2 in ls.chkH){if(+k2<ls.chkNext-600)delete ls.chkH[k2]}
+}
+function lsOnChk(m){
+ if(net.isHost||!ls.active)return;
+ ls.chkH[m.f]=m.h;
+ if(ls.chkM[m.f]!==undefined&&ls.chkM[m.f]!==m.h){lsDesync();return}
+ lsChkProcess();
+}
+/* ---- snapshot fallback (the insurance) ---- */
+/* a guest that detects a desync (checksum mismatch, or a rollback
+   it cannot perform) falls back locally at once and reports it;
+   the host then switches the whole match over */
+function lsDesync(){
+ if(!ls.active)return;
+ ls.active=false;ls.fb=true;
+ svSend({t:"desync"});
+}
+function lsOnFallback(){
+ if(!ls.active)return;
+ ls.active=false;ls.fb=true;
+ /* the loop's snapshot branch takes over from the next frame:
+    sv counters were kept in step by lsSampleAndStep, so the
+    guest's input bundles resume with continuous frame numbers */
+}
+function lsHostFallback(){
+ if(!ls.active)return;
+ ls.active=false;ls.fb=true;
+ var room=sbRoom;if(!room)return;
+ room.lsMode=false;room.frame=ls.frame;room.lastSnapF=-9999;
+ sbSendGuests(room,{t:"lsfb"});
+ /* sbHostLive stays on: back in the normal loop path sbPump
+    streams snapshots built from this device's sim (the reference
+    state) and guests reconcile onto them via svOnSnap */
+}
+function lsFallbackStart(){
+ if(net.isHost)lsHostFallback();else lsDesync();
+}
+/* ---- CPU takeover on leave ---- */
+/* host: from a few frames ahead of the host's current frame the
+   departed slot is CPU-driven on every end. cf/cb carry the
+   host's last confirmed frame / bits for the slot, so every end
+   re-derives the still-unconfirmed predictions in between from
+   the same base before the CPU takes over. */
+function lsHostTakeover(idx){
+ if(!ls.active)return;
+ var at=ls.frame+6;
+ var msg={t:"lsai",i:idx,f:at,cf:(ls.confHi[idx]===undefined?-1:ls.confHi[idx]),cb:(ls.lastBits[idx]||0)};
+ lsOnTakeover(msg);
+ if(sbRoom)sbBroadcastRoom(sbRoom,msg);
+}
+function lsOnTakeover(m){
+ if(typeof m.i!=="number"||typeof m.f!=="number")return;
+ var idx=m.i;
+ if(typeof m.cb==="number"&&typeof m.cf==="number"&&m.cf>=0)lsSetConf(idx,m.cf,m.cb&0xffff,false);
+ if(ls.cpuAt[idx]!==undefined&&ls.cpuAt[idx]<=m.f)return;
+ ls.cpuAt[idx]=m.f;
+ /* frames already simulated with this slot predicted / real past
+    the takeover point must be re-run with the CPU in place; the
+    earliest still-unconfirmed frame of the slot bounds the
+    re-derivation of its predictions in between */
+ if(m.f<ls.frame&&ls.active){
+  var from=m.f;
+  var used=ls.used,conf=ls.conf[idx]||{};
+  for(var F=Math.max(0,ls.frame-LS_RING);F<ls.frame;F++){
+   var u=used[F];
+   if(u&&typeof u[idx]==="number"&&u[idx]>=0&&conf[F]===undefined){from=Math.min(from,F);break}
+  }
+  if(ls.rbFrom<0||from<ls.rbFrom)ls.rbFrom=from;
+ }
+}
+/* ---- the driver ---- */
+/* called from loop() in place of both the snapshot client and the
+   local-engine path while a rollback match runs (host and guests
+   alike): process any pending rollback first, then step at a
+   fixed 60Hz from the display clock — never waiting on the
+   network, so your own fighter answers instantly */
+function lsDrive(dtms){
+ if(!running||!P1||paused)return;
+ lsProcessRollback();
+ if(!ls.active)return; /* a fallback was triggered: the normal paths own the match from here */
+ ls.acc+=Math.min(100,Math.max(0,dtms));
+ var steps=0;
+ while(ls.acc>=1000/60&&steps<3){
+  ls.acc-=1000/60;steps++;
+  lsSampleAndStep();
+  if(matchOver)break;
+ }
+ if(ls.acc>1000/60)ls.acc=1000/60; /* like the local engine: drop excess time instead of spiralling */
+ drawAlpha=1;
+ camDtMs+=dtms;updateCamera(camDtMs,P1.x,P1.y);camDtMs=0;
+ lsChkProcess();
+ if(net.isHost&&matchOver)lsHostEndFlow();
+}
+/* host: the match-end room flow sbPump performs in snapshot mode
+   (results to the guests, phase -> ended, mine lists cleared) */
+function lsHostEndFlow(){
+ var room=sbRoom;if(!room||room.phase!=="match"||room.endSent)return;
+ room.endSent=true;room.phase="ended";
+ sbSendGuests(room,{t:"end",results:sbBuildResults(room)});
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];if(!p.loopback)sbDeliver(p,{t:"mymines",mn:[]})}
 }
 /* ---- v99 RESULTS panel: post-match ranking table, SCORE desc
    (ties: more KILLS, then more current HP). Columns NAME / SCORE /
@@ -7324,12 +7748,12 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.char==="no66"){
    if(f.state==="n66gat"||f.state==="n66hook"){
      f.spinTick+=dt;
-     if(f.spinTick>=(f.state==="n66gat"?0.05:0.055)&&f.spinHits<10){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*26,owner:f,life:0.55,kind:"pellet"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
+     if(f.spinTick>=(f.state==="n66gat"?0.05:0.055)&&f.spinHits<10){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(rnd()-0.5)*26,owner:f,life:0.55,kind:"pellet"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
      if(f.state==="n66hook"&&f.spinHits>=10&&!f.hitDone&&f.stateT<=0.30){f.hitDone=true;meleeHit(f,foe,84,66,20,920,f.face,-0.4);spawnParticles(f.x+f.face*36,f.y+f.h*0.45,14,"#fbbf24",230);spawnRing(f.x+f.face*40,f.y+f.h*0.45,"#fb923c",40);shake=Math.max(shake,4);beep(200,.12,"sawtooth",.06)}
    }
    if(f.state==="n66gat20"){
      f.spinTick+=dt;
-     if(f.spinTick>=0.033&&f.spinHits<20){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(Math.random()-0.5)*30,owner:f,life:0.55,kind:"pellet0"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
+     if(f.spinTick>=0.033&&f.spinHits<20){f.spinTick=0;f.spinHits++;projectiles.push({x:f.x+f.face*46,y:f.y+f.h*0.40,vx:f.face*980,vy:(rnd()-0.5)*30,owner:f,life:0.55,kind:"pellet0"});if(Math.random()<0.7)spawnParticles(f.x+f.face*44,f.y+f.h*0.40,2,"#fde68a",150);beep(1400+Math.random()*300,.03,"square",.018)}
    }
    if(f.state==="n66ult"){
      f.spinTick+=dt;
@@ -9498,50 +9922,15 @@ function explodeMsong(pr){
  spawnRing(pr.x,pr.y,"#c084fc",76);spawnRing(pr.x-40,pr.y-4,"#fcd34d",42);spawnRing(pr.x+40,pr.y-4,"#fcd34d",42);spawnCharBurst("travis",pr.x,pr.y,168,0.38,0,1,1);spawnSparks(pr.x,pr.y,1,"#fcd34d",7);spawnSparks(pr.x,pr.y,-1,"#fcd34d",7);spawnParticles(pr.x,pr.y,10,"#e9d5ff",190); /* (見た目変更) the explosion now fills its 102x102 box: a bigger bloom, twin side rings where the blast reaches, sparks both ways */
  shake=Math.max(shake,6);beep(110,.18,"sawtooth",.07);
 }
-function loop(ts){
- requestAnimationFrame(loop);
- if(!running||!P1||!P2)return;
- frameNo++;
- if(!lastTs)lastTs=ts;
- var dtms=ts-lastTs;lastTs=ts;
- /* PERF round 3: the fps meter and the quality driver below run on a
-    CLAMPED frame time (pdt). A single long frame (tab restore, a GC
-    pause, a notification) used to drag the EMA down for a second and
-    could shove the tier down even on a fast device; the game logic
-    keeps using the real dtms (its accumulator is already clamped). */
- var pdt=Math.min(Math.max(dtms,0),50);
- if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
- /* PERF (lag fix): adaptive quality driver. While the smoothed frame
-    rate stays under 47fps for ~0.6s, step the quality tier down (the
-    canvas gets cheaper to fill — resolution only; no effect, particle
-    count or draw pass is ever tied to the tier) and
-    re-check after a 2s cooldown; while it holds above 57fps for 5s,
-    step back up. Hysteresis + cooldown keep it from oscillating, and
-    the 1.5s initial cooldown keeps spawn-in jank from triggering it.
-    PERF round 2 (user: still heavy): the step-down now reacts sooner
-    (under 50fps for ~0.4s) and has a 6th tier to land on, so a phone
-    that hovers in the high-40s no longer sits at near-full quality
-    forever; the step-up rule is unchanged. */
- if(perfCdMs>0)perfCdMs-=pdt;
- if(fpsEMA<53){perfSlowMs+=pdt;perfFastMs=0}else if(fpsEMA>57.5){perfFastMs+=pdt;perfSlowMs=0}else{perfSlowMs=0;perfFastMs=0}
- /* PERF round 3: react sooner (under 53fps for ~0.3s, was 50fps/0.4s)
-    and, when the frame rate is truly bad (<34fps), drop TWO tiers at
-    once instead of crawling down one tier per 2s cooldown while the
-    player sits in the worst of it. Step-up is unchanged. */
- if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
- else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
- if(mode==="online"&&!sbHostLive){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A Supabase HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
-  var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
- if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
- if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
- pausedDrawn=false;
- if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
- acc+=Math.min(0.1,dtms/1000);
+/* one fixed 1/60 simulation step of the local engine — the body
+   that used to live inline in loop()'s accumulator, extracted
+   unchanged so the LOCKSTEP driver below can step the very same
+   simulation from confirmed network inputs. getInp, when given,
+   supplies every fighter's input for the step (lockstep); null
+   keeps the original sources (local player / host slots / AI). */
+function simStepFrame(getInp){
  var STEP=1/60;
- if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
- while(acc>=STEP){
-   acc-=STEP;time+=STEP;sbStepHook();
+ time+=STEP;sbStepHook();
    /* remember pre-step positions: draw() blends from these to the
       post-step positions for render interpolation */
    for(var pvi=0;pvi<fighters.length;pvi++){var pf=fighters[pvi];pf.px=pf.x;pf.py=pf.y}
@@ -9553,9 +9942,9 @@ function loop(ts){
    }else{
      if(!matchOver&&(mode==="versus"||mode==="online")){timer-=STEP;if(timer<=0){timer=0;matchOver=true;var topF=fighters.slice().sort(function(a,b){return (b.score-a.score)||((b.kills||0)-(a.kills||0))||(b.hp-a.hp)})[0];var tw=(topF===P1); /* TIME UP winner uses the same unified order as the results / leaderboard: SCORE desc, ties by KILLS then current HP */if(tw&&mode==="versus")wins++;showCenter(tw?"🏆 TIME UP\n"+(mode==="online"?fighterDispName(P1):cname(P1.char))+" WIN":"TIME UP\n"+(mode==="online"?fighterDispName(topF):cname(topF.char))+" WIN",99999);$("endBtns").classList.add("on");showLocalResults()}}
      if(!matchOver){
-       var pInp=gatherPlayerInput();
+       var pInp=getInp?null:gatherPlayerInput();
        for(var fi2=0;fi2<fighters.length;fi2++){var ff=fighters[fi2];var foeF=nearestOpponent(ff);
-         var inpF=(ff===P1)?pInp:(sbHostLive?sbInputFor(ff,foeF):aiControl(ff,foeF));
+         var inpF=getInp?getInp(ff,foeF):((ff===P1)?pInp:(sbHostLive?sbInputFor(ff,foeF):aiControl(ff,foeF)));
          stepFighter(ff,STEP,inpF,foeF);
        }
      }
@@ -9616,7 +10005,51 @@ function loop(ts){
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<118&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
- }
+}
+function loop(ts){
+ requestAnimationFrame(loop);
+ if(!running||!P1||!P2)return;
+ frameNo++;
+ if(!lastTs)lastTs=ts;
+ var dtms=ts-lastTs;lastTs=ts;
+ /* PERF round 3: the fps meter and the quality driver below run on a
+    CLAMPED frame time (pdt). A single long frame (tab restore, a GC
+    pause, a notification) used to drag the EMA down for a second and
+    could shove the tier down even on a fast device; the game logic
+    keeps using the real dtms (its accumulator is already clamped). */
+ var pdt=Math.min(Math.max(dtms,0),50);
+ if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
+ /* PERF (lag fix): adaptive quality driver. While the smoothed frame
+    rate stays under 47fps for ~0.6s, step the quality tier down (the
+    canvas gets cheaper to fill — resolution only; no effect, particle
+    count or draw pass is ever tied to the tier) and
+    re-check after a 2s cooldown; while it holds above 57fps for 5s,
+    step back up. Hysteresis + cooldown keep it from oscillating, and
+    the 1.5s initial cooldown keeps spawn-in jank from triggering it.
+    PERF round 2 (user: still heavy): the step-down now reacts sooner
+    (under 50fps for ~0.4s) and has a 6th tier to land on, so a phone
+    that hovers in the high-40s no longer sits at near-full quality
+    forever; the step-up rule is unchanged. */
+ if(perfCdMs>0)perfCdMs-=pdt;
+ if(fpsEMA<53){perfSlowMs+=pdt;perfFastMs=0}else if(fpsEMA>57.5){perfFastMs+=pdt;perfSlowMs=0}else{perfSlowMs=0;perfFastMs=0}
+ /* PERF round 3: react sooner (under 53fps for ~0.3s, was 50fps/0.4s)
+    and, when the frame rate is truly bad (<34fps), drop TWO tiers at
+    once instead of crawling down one tier per 2s cooldown while the
+    player sits in the worst of it. Step-up is unchanged. */
+ if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
+ else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
+ if(mode==="online"&&!sbHostLive&&!(typeof ls!=="undefined"&&ls&&ls.active)){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A Supabase HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
+  var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore();syncHUD();return}
+ if(mode==="online"&&typeof ls!=="undefined"&&ls&&ls.active){lsDrive(dtms);var lox=shake?(Math.random()-.5)*shake:0,loy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(lox,loy);draw();ctx.restore();syncHUD();return} /* rollback match (host and guests alike): the local engine IS the match — lsDrive steps it (rolling back / re-simulating as remote inputs land), then the frame draws exactly like local play */
+ if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
+ if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints */
+ pausedDrawn=false;
+ if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;draw();syncHUD();return}
+ acc+=Math.min(0.1,dtms/1000);
+ var STEP=1/60;
+ if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
+ while(acc>=STEP){acc-=STEP;simStepFrame(null)}
  sbPump();
  drawAlpha=Math.min(1,acc/STEP);
  camDtMs+=dtms;
