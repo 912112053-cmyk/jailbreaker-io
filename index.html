@@ -340,7 +340,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="hudPanel pix" id="scorePill">SCORE: <span id="scoreText">0</span></div>
   <div class="hudPanel pix" id="timerPill"><span id="modeLabel">VS CPU</span>　<span id="timerText">3:00</span></div>
   <div class="hudPanel pix" id="comboPill"><span id="comboText"></span></div>
-  <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span><div id="netDiag"></div></div>
+  <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span><span id="lsModeRow" style="display:none"><br>方式: <span id="lsModeText">入力同期</span></span><div id="netDiag"></div></div>
   <div class="cornerBtns"><button class="gbtn" id="pauseBtn">⏸ ポーズ</button><button class="gbtn" id="resetBtn">↺ リセット</button><button class="gbtn primary" id="backBtn">← メニュー</button></div>
   <div id="rotateHint">横画面にするとステージが広く見えます</div>
   <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts"></div><div class="sub" id="bannerSub"></div></div>
@@ -429,6 +429,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["16:05"],tag:"修正",title:"入力同期：版数チェックと巻き戻し許容量を拡大",
+  items:["オンライン対戦で、ビルドの版数（v206）が一致しない相手はロビーに入れなくなりました。版数が違う相手が参加しようとすると「バージョンが違います。全員がページを再読み込みしてください」と表示され、全員の版数が揃っていない場合は試合も開始しません",
+         "オンライン対戦中、画面右上に現在の方式を表示するようにしました。入力同期で進んでいる間は「入力同期」、ズレ検出などで保険のスナップショット方式に切り替わった場合は「写真（保険）」と表示され、切り替わった瞬間に表示も変わります",
+         "巻き戻し（ロールバック）の許容量を広げました。フレーム状態の保存を直近60フレーム分に、巻き戻しの上限を30フレームに拡大し、入力バンドルの冗長範囲も直近30フレーム分に広げました（送信は毎秒30回のまま）。相手の入力が約250ms固まって届いても、保険に落ちず巻き戻しで追いつけます",
+         "巻き戻し補正で相手の位置が大きく変わった場合だけ、表示位置を約80msかけて滑らかに追随させるようにしました。計算上の位置は即座に正しい値を使っており、自分のキャラには適用されません",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["15:49"],tag:"大型更新",title:"オンライン対戦を入力同期方式に作り替え",
   items:["オンライン対戦の進め方を作り替えました。これまではホストの端末が計算した結果（スナップショット）を全員に送っていましたが、これからは全員の端末が同じ計算を回し、ネットワークで運ぶのは各自の「操作」だけになります",
          "自分の操作は遅延なしで即座に反映されます。相手の操作がまだ届いていない間は、相手の直近の操作が続くものとして予測して先に進み、本物の操作が届いた時点でその時点まで巻き戻して計算し直す（ロールバック）方式です。相手の動きが通信の揺れでブレたり、凍結したりしなくなります",
@@ -504,8 +510,6 @@ var UPDATE_LOG=[
   items:["P2P対戦でゲスト側の遅延を軽減しました。ゲスト側の描画遅延を引き締め、遅延の推定方法をホストの実測ペースに合わせる方式に変更しました",
          "長押し入力が途中で欠落してしまう問題を修正しました",
          "ゲストの入力送信を毎フレーム行うように変更しました"]},
- {date:"2026/11/15",times:["11:44"],tag:"調整",title:"カメラが画面端の外に出た自分のキャラを少しだけ追うように",
-  items:["自分のキャラが画面端の外に出てしまったとき、カメラがそのキャラを少しだけ追いかけるようになりました"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1461,6 +1465,16 @@ function sbConfigured(){return !!(SUPABASE_URL&&SUPABASE_ANON_KEY)}
 function jbHttpBase(){
  return SUPABASE_URL?SUPABASE_URL.replace(/\/+$/,"")+"/functions/v1":"";
 }
+/* BUILD VERSION HANDSHAKE (v206): every participant carries this
+   build's id and exchanges it at lobby join (the join message's v)
+   and again at match start (the roster's per-player b and the start
+   message's bv). A participant whose build differs is refused at
+   the lobby door, and a match never starts while any roster build
+   differs — mixed builds would run different simulations and the
+   rollback layer would desync instantly, so the mismatch is
+   surfaced with VERSION_MSG instead of failing silently. */
+var BUILD_ID="v206";
+var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
 /* FX spawn helpers call fxRec on every spawn. On the SERVER sim the
@@ -1552,7 +1566,7 @@ every-second-frame cadence and quantized shape the host pump
 has always produced). FALLBACK ONLY since the rollback build:
 the pump runs only after a match falls back to snapshot mode.
 - "input" every participant -> all: input bundles at 30/s, each
-repeating the sender's newest 12 sampled frames as [frame, bits]
+repeating the sender's newest 30 sampled frames as [frame, bits]
 pairs, stamped with the sender's pid. The host dedupes by frame
 number into its snapshot slots (sbRoomInputFast — what a
 fallback resumes from), and every participant files them into
@@ -1741,7 +1755,7 @@ function sbSendGuests(room,msg){
 sbHostSend(sbEventFor(msg.t),msg);
 }
 function sbRosterMsg(room){
-return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host}})};
+return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host,b:p.build}})};
 }
 function sbBroadcastRoster(room){sbBroadcastRoom(room,sbRosterMsg(room))}
 function sbPlayerMatchIdx(room,pid){
@@ -1776,6 +1790,14 @@ function sbRoomJoin(room,player,m){
 if(player.pid){sbDeliver(player,{t:"error",msg:"already joined"});return}
 if(room.phase==="match"){sbDeliver(player,{t:"error",msg:"試合中です"});return}
 if(room.players.length>=8){sbDeliver(player,{t:"error",msg:"満員です"});return}
+/* build version handshake (v206): a join whose build id differs
+   from the host's — including an old build that sends no id at
+   all — is refused here at the lobby door; the joining side shows
+   VERSION_MSG (see the error branch in svOnMsg). The refused
+   player never enters room.players, so it can neither appear in
+   the roster nor be counted toward a start. */
+if(m.v!==BUILD_ID){sbDeliver(player,{t:"error",msg:VERSION_MSG});if(room.byCid&&player.cid)delete room.byCid[player.cid];return}
+player.build=m.v;
 player.pid="p"+Math.random().toString(36).slice(2,10);
 player.name=sbCleanName(m.name,"ゲスト"+(room.players.length+1));
 player.joinSeq=++room.joinCounter;
@@ -1796,7 +1818,7 @@ sbBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が参加しました"})
 }
 /* one guest input bundle arriving on the input event (see
 svSendBundle): {t:"in", cid, fr:[[frame, bits],...], ack}.
-The bundle repeats the guest's newest 12 sampled frames;
+The bundle repeats the guest's newest 30 sampled frames;
 frames at or below player.inHi were already applied (or
 superseded past recovery) and are dropped, so the same guest
 frame is NEVER scheduled twice — not within one bundle and
@@ -1806,7 +1828,7 @@ bundle path uses: reserved from the next frame onward
 (base = max(cursor, frame+1)) and chained forward by the
 cursor, so everything downstream (realIn scheduling,
 rbPendBits press parking, the held-repeat fallback in
-sbInputFor) behaves exactly as before. A frame the 12-frame
+sbInputFor) behaves exactly as before. A frame the 30-frame
 redundancy window could not recover is simply absent from the
 stream: the steps it would have covered run on the held-repeat
 fallback, exactly as they do when a bundle arrives late. The
@@ -1821,7 +1843,7 @@ var idx=sbPlayerMatchIdx(room,player.pid);if(idx<0)return;
 var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
 var fr=Array.isArray(m.fr)?m.fr:[];
 var fresh=[];
-for(var i=0;i<fr.length&&fresh.length<16;i++){
+for(var i=0;i<fr.length&&fresh.length<32;i++){ /* cap above the 30-frame bundle window (v206) so a full window of fresh frames is never truncated */
 var e=fr[i];if(!Array.isArray(e)||e.length<2)continue;
 var f=e[0]|0;
 if(f<=player.inHi)continue; /* duplicate / already applied / superseded */
@@ -1864,6 +1886,10 @@ if(!player.host){sbDeliver(player,{t:"error",msg:"host only"});return}
 if(room.phase==="match")return;
 if(room.players.length<2){sbDeliver(player,{t:"error",msg:"2人以上必要です"});return}
 for(var si=0;si<room.players.length;si++){if(!room.players[si].char){sbDeliver(player,{t:"error",msg:"全員がキャラを選んでいません"});return}}
+/* build version handshake, second gate (v206): joins are already
+   refused on a mismatch, but the start re-verifies every roster
+   build — a match must never begin with mixed builds */
+for(var bi=0;bi<room.players.length;bi++){if(room.players[bi].build!==BUILD_ID){sbDeliver(player,{t:"error",msg:VERSION_MSG});return}}
 sbRoomStartMatch(room);return;
 }
 if(m.t==="rematch"){
@@ -1934,7 +1960,7 @@ room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;roo
 for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0}
 room.phase="match";
 room.lsMode=true; /* matches now run rollback input-sync (see the ROLLBACK layer); the snapshot stream this room also knows how to produce is the desync fallback only */
-var startMsg={t:"start",ls:1,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
+var startMsg={t:"start",ls:1,bv:BUILD_ID,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
 sbSendGuests(room,startMsg);
 /* the host builds its own match through the very same svOnMsg
 start handler a guest uses (startMatch("online")), delivered by
@@ -2021,7 +2047,7 @@ var room={code:net.code,phase:"lobby",players:[],byCid:{},joinCounter:0,frame:0,
 sbRoom=room;
 var hp={pid:null,cid:sbCid,name:"",char:null,host:false,joinSeq:0,loopback:true,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,lastHb:Date.now(),goneHandled:false,departed:false,ackF:-1,ackAt:0,priv:null};
 room.hostPlayer=hp;room.byCid[sbCid]=hp;
-sbRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():""});
+sbRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID});
 sbStartHeartbeat();
 }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
 cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
@@ -2050,7 +2076,7 @@ openOnline("ホストに接続できませんでした。相手がルームを�
 chan.subscribe(function(status){
 if(sbChan!==chan)return;
 if(status==="SUBSCRIBED"){
-sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():""});
+sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID});
 sbStartHeartbeat();
 }else if((status==="CHANNEL_ERROR"||status==="TIMED_OUT")&&!sbGuestJoined){
 cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
@@ -2405,11 +2431,15 @@ function svOnMsg(m){
    return;
  }
  if(m.t==="roster"){
-   net.roster=(m.players||[]).map(function(p){return{id:p.pid,name:p.name,host:!!p.host,char:p.char,ready:!!p.char}});
+   net.roster=(m.players||[]).map(function(p){return{id:p.pid,name:p.name,host:!!p.host,char:p.char,ready:!!p.char,build:p.b}});
    renderLobby();
    return;
  }
  if(m.t==="start"){
+   /* build version handshake, guest gate (v206): a start stamped
+      with a different build (or none — an old host) must not begin
+      a match on this end; leave the room and say why */
+   if(m.bv!==BUILD_ID){net.leaving=true;cleanupNet();toMenu();openOnline(VERSION_MSG);return}
    clearRematchWatch();
    net.match=(m.roster||[]).map(function(r){return{id:r.pid,name:r.name,char:r.char}});
    net.myIdx=0;
@@ -2458,7 +2488,7 @@ function svOnMsg(m){
  if(m.t==="dissolved"){roomDissolved();return}
  if(m.t==="error"){
    if(!net.myId){
-     var msg=(m.msg==="満員です")?"そのルームは満員です（最大8人まで）。人数が減るまで入ることはできません。":((m.msg==="試合中です")?"そのルームは試合中です。試合が終わるまで参加できません。":("エラーが発生しました（"+(m.msg||"")+"）。もう一度お試しください。"));
+     var msg=(m.msg===VERSION_MSG)?VERSION_MSG:((m.msg==="満員です")?"そのルームは満員です（最大8人まで）。人数が減るまで入ることはできません。":((m.msg==="試合中です")?"そのルームは試合中です。試合が終わるまで参加できません。":("エラーが発生しました（"+(m.msg||"")+"）。もう一度お試しください。")));
      net.leaving=true;cleanupNet();openOnline(msg);
    }else{
      net.lobbyMsg=m.msg||"";renderLobby();
@@ -2493,6 +2523,12 @@ function renderLobby(){
  $("lobbyInviteBtn").style.display=isHost?"":"none";
  $("lobbyLeaveBtn").textContent=isHost?"ルームを解散":"ルームを退出";
  if(net.lobbyMsg){stat.textContent=net.lobbyMsg;net.lobbyMsg="";if(isHost){startBtn.style.display="";startBtn.disabled=true;startBtn.classList.add("disabled")}else startBtn.style.display="none";return}
+ /* build version handshake (v206): while any roster build differs
+    (a missing build stamp counts — it means an old build), the
+    lobby says so and the host's start stays disabled */
+ var verBad=false;
+ for(var vi=0;vi<r.length;vi++){if(r[vi].build!==BUILD_ID)verBad=true}
+ if(verBad){stat.textContent=VERSION_MSG;if(isHost){startBtn.style.display="";startBtn.disabled=true;startBtn.classList.add("disabled")}else startBtn.style.display="none";return}
  if(isHost){
    startBtn.style.display="";
    var guests=r.length-1,allReady=true;
@@ -2510,6 +2546,7 @@ $("lobbyStartBtn").onclick=function(){
  var r=net.roster||[];
  if(r.length<2){beep(200,.12);renderLobby();return}
  for(var i=0;i<r.length;i++){if(!r[i].ready){beep(200,.12);renderLobby();return}}
+ for(var vi2=0;vi2<r.length;vi2++){if(r[vi2].build!==BUILD_ID){beep(200,.12);net.lobbyMsg=VERSION_MSG;renderLobby();return}} /* build version handshake (v206): never start with mixed builds */
  beep(700,.07);svSend({t:"start"});
 };
 /* invites live ONLY here in the lobby (the FRIENDS sheet no longer
@@ -2880,10 +2917,11 @@ function svSendBundle(){
  if(!sv.active||matchOver)return;
  /* SUPABASE INPUT BUNDLES: on the Supabase transport a guest ships
     its inputs as "input" broadcast events at 30/s — one bundle per
-    two sampled frames — and each bundle repeats the newest 12
+    two sampled frames — and each bundle repeats the newest 30
     sampled frames as [frame, bits] pairs (fewer at the very start
     of a match). A bundle that never arrives is healed by the next
-    one (the window overlaps by 10 frames), and the host dedupes
+    one (the window overlaps by 28 frames — v206 widened it from 12
+    so a ~250ms delivery burst cannot strand frames), and the host dedupes
     by frame number (sbRoomInputFast), so no frame is ever applied
     twice. The stream ack rides every bundle exactly as it did on
     the shared protocol (the host's flow control counts from it).
@@ -2895,7 +2933,7 @@ function svSendBundle(){
  if(net.transport==="supabase"){
    var endF=sv.sampleFrame;
    if(endF-(sv.sbBundleF||0)<2)return; /* 30/s cadence */
-   var startF=Math.max(0,endF-12);
+   var startF=Math.max(0,endF-30);
    var fr=[];
    for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
    if(!fr.length)return;
@@ -3328,9 +3366,11 @@ function svReset(){
    - Your own input is sampled and applied IMMEDIATELY, the frame
      it is sampled on — there is no input delay at all. Every
      participant broadcasts its sampled inputs on the room channel
-     in the existing 30/s bundles (newest 12 frames, [frame, bits]
-     pairs; the host files them into its snapshot slots exactly as
-     before, everyone else files them into the rollback pool).
+     in the existing 30/s bundles (newest 30 frames, [frame, bits]
+     pairs — v206 widened the redundancy window from 12 so a bundle
+     burst ~250ms apart still carries every frame; the host files
+     them into its snapshot slots exactly as before, everyone else
+     files them into the rollback pool).
    - A remote frame whose real input has not arrived yet is
      PREDICTED by repeating that player's last confirmed input's
      held bits (the same held-mask rule the snapshot host's
@@ -3377,14 +3417,49 @@ function svReset(){
    Message budget (free plan, 100/s project-wide): input bundles
    30/s per participant + chk 1/s + heartbeats — a 2-player match
    peaks near 62/s, well under the old snap+fx ~92/s. */
-var LS_RESIM_MAX=12; /* re-simulation cap, frames */
-var LS_RING=40; /* per-frame state saves kept (spec: ~30+) */
+var LS_RESIM_MAX=30; /* re-simulation cap, frames (v206: raised from 12 — on real links a peer's inputs can arrive in bursts ~250ms / ~15 frames apart, which silently blew past the old cap and dropped the match into the snapshot fallback) */
+var LS_RING=60; /* per-frame state saves kept (v206: raised from 40 so a 30-frame rollback always finds its save, with margin for checkpoints) */
 var LS_CHK_EVERY=60; /* host checksum cadence, frames (~1/s) */
 var LS_HELD_MASK=28687; /* held bits repeated by prediction (move / jump-hold + J / U / L held) */
 var ls={active:false,fb:false,frame:0,acc:0,saves:{},used:{},conf:{},confHi:{},lastBits:{},lastConfF:{},cpuAt:{},rbFrom:-1,chkNext:60,chkH:{},chkM:{},sbF:0,curRow:null,curF:0,resimCount:0,maxResim:0};
+/* ---- rollback correction render smoothing (v206) ----
+   When a rollback re-simulation moves a REMOTE fighter a long way
+   (more than LS_SMOOTH_MIN px), the simulation state itself snaps
+   to the corrected value immediately — only the DRAWN position
+   eases: lsProcessRollback records an offset here and draw() adds
+   its decaying remainder (linear over ~LS_SMOOTH_MS) on top of the
+   interpolated render position. Your own fighter never gets an
+   offset. Nothing outside draw() reads these offsets, so the
+   simulation, the checksums and any later re-simulation are
+   bit-identical with or without smoothing. */
+var LS_SMOOTH_MS=80;
+var LS_SMOOTH_MIN=25; /* px: corrections at or below this draw as-is */
+var lsSmooth={}; /* fighter index -> {x, y, t}: offset + performance.now() stamp */
+function lsSmoothVec(idx){
+ var s=lsSmooth[idx];if(!s)return null;
+ var el=(performance.now()-s.t)/LS_SMOOTH_MS;
+ if(el>=1){delete lsSmooth[idx];return null}
+ var k=1-el;
+ return{x:s.x*k,y:s.y*k};
+}
+/* the top-right mode label (in the fps pill): while an online
+   match runs it names the CURRENT mode — 「入力同期」 while the
+   rollback layer is live, 「写真（保険）」 from the moment the match
+   falls back to the snapshot insurance — so a switch is never
+   silent. DOM is written only on change; called from every mode
+   transition and from the loop's fps tick as a backstop. */
+function lsSyncModeLabel(){
+ var row=$("lsModeRow"),tx=$("lsModeText");if(!row||!tx)return;
+ var on=(mode==="online"&&(ls.active||ls.fb)&&$("gameScreen").classList.contains("on"));
+ var want=ls.active?"入力同期":"写真（保険）";
+ if(row._lsOn!==on){row._lsOn=on;row.style.display=on?"":"none"}
+ if(on&&tx._hv!==want){tx._hv=want;tx.textContent=want}
+}
 function lsReset(){
  ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;
+ lsSmooth={};
  if(sbRoom)sbRoom.lsMode=false;
+ lsSyncModeLabel();
 }
 function lsBegin(){
  lsReset();ls.active=true;
@@ -3392,6 +3467,7 @@ function lsBegin(){
     simRand from net.seed (the host's start message) on this end,
     exactly like on every other end */
  if(sbRoom)sbRoom.lsMode=true;
+ lsSyncModeLabel(); /* the mode label flips to 入力同期 the moment the match starts */
 }
 /* ---- per-frame state saves (the rollback substrate) ---- */
 function lsCloneObj(o){
@@ -3552,7 +3628,7 @@ function lsSampleAndStep(){
  lsStepFrame(F);
  ls.frame=F+1;
  if(F%2===1)lsSendBundle();
- if(F%600===599){ /* prune history well behind the save ring */
+ if(F%300===299){ /* prune history well behind the save ring */
   var cut=F-LS_RING-30;
   for(var a in ls.saves)if(+a<cut)delete ls.saves[a];
   for(var b in ls.used)if(+b<cut)delete ls.used[b];
@@ -3560,12 +3636,15 @@ function lsSampleAndStep(){
  }
 }
 /* every participant ships its sampled inputs in the existing
-   bundle shape at 30/s (newest 12 frames — the redundancy window
-   heals a lost bundle, receivers dedupe by frame number) */
+   bundle shape at 30/s (newest 30 frames — v206: the redundancy
+   window was 12; real links can deliver a peer's bundles in
+   ~250ms bursts, and a 12-frame window left the frames between
+   bursts unrecoverable. The send rate is unchanged — only the
+   overlap grew — so the message budget is untouched) */
 function lsSendBundle(){
  var endF=ls.frame;
  if(endF-ls.sbF<2)return;
- var startF=Math.max(0,endF-12),fr=[];
+ var startF=Math.max(0,endF-30),fr=[];
  for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
  if(!fr.length)return;
  var msg={t:"in",cid:sbCid,pid:net.myId,fr:fr};
@@ -3587,9 +3666,24 @@ function lsProcessRollback(){
  var vP=particles,vR=rings,vB=fxBursts,vV=vecBursts,vF=floaters;
  fxSink=null;killBannerHook=null;svMute=true;
  particles=[];rings=[];fxBursts=[];vecBursts=[];floaters=[];
+ /* render smoothing (v206): remember where each remote fighter
+    sits BEFORE the correction lands, so a large jump can be eased
+    on screen afterwards (draw-only — see lsSmoothVec above; the
+    simulation below uses the corrected state immediately) */
+ var prePos=null;
+ if(typeof fighters!=="undefined"&&fighters&&fighters.length){prePos=[];for(var pi3=0;pi3<fighters.length;pi3++){var pf3=fighters[pi3];prePos.push(pf3?{x:pf3.x,y:pf3.y}:null)}}
  lsRestoreState(save);
  ls.frame=F0;
  while(ls.frame<target){lsStepFrame(ls.frame);ls.frame++}
+ if(prePos){
+  var nowS=performance.now();
+  for(var si3=0;si3<fighters.length;si3++){
+   if(si3===net.myIdx)continue; /* your own fighter is never smoothed */
+   var nf=fighters[si3],op=prePos[si3];if(!nf||!op)continue;
+   var mdx=nf.x-op.x,mdy=nf.y-op.y;
+   if(mdx*mdx+mdy*mdy>LS_SMOOTH_MIN*LS_SMOOTH_MIN)lsSmooth[si3]={x:-mdx,y:-mdy,t:nowS};
+  }
+ }
  particles=vP;rings=vR;fxBursts=vB;vecBursts=vV;floaters=vF;
  fxSink=keepFx;killBannerHook=keepHook;svMute=wasMute;
  ls.resimCount++;if(depth>ls.maxResim)ls.maxResim=depth;
@@ -3632,11 +3726,13 @@ function lsOnChk(m){
 function lsDesync(){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ lsSyncModeLabel(); /* the mode label flips to 写真（保険） at the switch, never silently */
  svSend({t:"desync"});
 }
 function lsOnFallback(){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ lsSyncModeLabel();
  /* the loop's snapshot branch takes over from the next frame:
     sv counters were kept in step by lsSampleAndStep, so the
     guest's input bundles resume with continuous frame numbers */
@@ -3644,6 +3740,7 @@ function lsOnFallback(){
 function lsHostFallback(){
  if(!ls.active)return;
  ls.active=false;ls.fb=true;
+ lsSyncModeLabel();
  var room=sbRoom;if(!room)return;
  room.lsMode=false;room.frame=ls.frame;room.lastSnapF=-9999;
  sbSendGuests(room,{t:"lsfb"});
@@ -3907,7 +4004,7 @@ function svAdvance(dtms){
       SUPABASE GUEST CADENCE: on the Supabase transport svSendBundle
       is invoked on EVERY sampled frame (this gate), and the bundle
       itself ships at 30/s — one bundle per two sampled frames, each
-      repeating the newest 12 frames (see svSendBundle). The host
+      repeating the newest 30 frames (see svSendBundle). The host
       chains bundles onto frames by frame number (its cursor rule
       is bundle-size independent), so nothing about scheduling
       changes — and the stream ACK that rides every bundle
@@ -9654,6 +9751,16 @@ function draw(){
  if(useInterp){
    var dList=fighters.length?fighters:[P1,P2];
    for(var di2=0;di2<dList.length;di2++){var df2=dList[di2];if(!df2||df2.px==null)continue;swapped.push(df2);df2._rx=df2.x;df2._ry=df2.y;df2.x=df2.px+(df2.x-df2.px)*drawAlpha;df2.y=df2.py+(df2.y-df2.py)*drawAlpha}
+   /* rollback correction smoothing (v206): a remote fighter whose
+      position a rollback just corrected by a lot is drawn easing
+      from its pre-correction spot to the true one over ~80ms. The
+      offset touches ONLY this swapped render position (restored
+      from _rx/_ry at the end of draw) — the simulation state is
+      already the corrected value and is never delayed. Your own
+      fighter (net.myIdx) is excluded. */
+   if(typeof ls!=="undefined"&&ls&&ls.active&&typeof lsSmooth!=="undefined"){
+     for(var dsm=0;dsm<dList.length;dsm++){var df3=dList[dsm];if(!df3||df3.px==null||dsm===net.myIdx)continue;var svec=lsSmoothVec(dsm);if(svec){df3.x+=svec.x;df3.y+=svec.y}}
+   }
    for(var dj=0;dj<projectiles.length;dj++){var pj2=projectiles[dj];if(pj2.px==null)continue;swapped.push(pj2);pj2._rx=pj2.x;pj2._ry=pj2.y;pj2.x=pj2.px+(pj2.x-pj2.px)*drawAlpha;pj2.y=pj2.py+(pj2.y-pj2.py)*drawAlpha}
  }
  /* PERF round 2: the full-screen clearRect that used to run here is
@@ -10019,7 +10126,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA)} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA);if(typeof lsSyncModeLabel==="function")lsSyncModeLabel()} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
