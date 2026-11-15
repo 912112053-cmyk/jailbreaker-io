@@ -430,6 +430,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["19:30"],tag:"修正",title:"相手キャラの表示を安定化",
+  items:["オンライン対戦（入力同期）で、相手キャラの描画方法を変えました。これまでは相手を「予測した最新の状態」で描いていたため、相手の入力が固まって届いて予測が外れるたびに、表示位置が直されてブレ・瞬間移動・急加速に見えていました。これからは相手キャラを約8フレーム（約133ms）過去の状態から描き、その前後の状態の間を補間して滑らかに動かします。その時点の状態は入力が確定済みであることがほとんどなので、予測の当たり外れに表示が引っ張られなくなります",
+         "自分のキャラは従来どおり最新の状態を遅延ゼロで描きます。計算・当たり判定・予測・巻き戻し（ロールバック）の仕組み自体には一切手を入れていません。変えたのは相手キャラの描画に使う状態だけです",
+         "例外的に深い巻き戻しが描画位置まで届いて位置が飛ぶ場合は、従来の追随（グライド）で緩和する仕組みも併用します",
+         "試合ログに「見た目の補正回数」（相手キャラの描画位置が25pxを超えて飛んだ回数）を追加しました。次回の実機ログで、今回の対策が効いたかを数字で判定できます",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["19:09"],tag:"修正",title:"入力同期：入力変化時の即時送信",
   items:["オンライン対戦（入力同期）で、自分の入力に変化があった時（方向キーの保持状態が変わった時、ジャンプや攻撃などのボタンを押した時）は、毎秒30回の定期送信を待たず、その場で入力バンドルを即時送信するようにしました。相手の端末は、まだ届いていない入力を直前の入力の継続として予測して計算を進めるため、変化が早く届くほど予測外れの巻き戻し補正が小さくなり、ホストから見たゲストの動きのブレや瞬間移動が抑えられます",
          "定期送信は従来どおり毎秒30回を続け、各バンドルには直近30フレーム分の入力を重ねて載せています（冗長範囲は変更なし）。入力に変化がない間は、追加の送信は一切しません",
@@ -520,11 +526,7 @@ var UPDATE_LOG=[
          "技はガトリングの連射（J2／K／J+K）、迫撃砲の手榴弾（J3／↓+J／↓+K／空中↓+J）、突進のメタルバッシュ、真下の爆発で跳ぶブラストアップ、ホーミングミサイル（U）、背中から6発のホーミングを放つウルト「バーストエンドフォース」です。詳しくは技一覧のNo.66タブで確認できます"]},
  {date:"2026/11/15",times:["13:14"],tag:"調整",title:"MIMI&SHADE：U「助けて！」のワープ位置をSHADEより少し高く",
   items:["MIMI&SHADEのU「助けて！」でMIMIがワープする位置を、SHADEの足元に一致する高さから、SHADEより少し高い位置（足元がSHADEの足元より40高い）に変更しました",
-         "横の位置関係（SHADEがMIMIの後ろに付く並び）・クールタイム・硬直など、その他の性能に変更はありません"]},
- {date:"2026/11/15",times:["13:06"],tag:"調整",title:"MIMI&SHADEの↓+J「こけちゃうよ／こけロ」を調整",
-  items:["SHADEのKBを520→660に上げました（吹き飛ばし方向は真上のままです）",
-         "SHADEの発生を0.16秒→0.2秒に遅くしました",
-         "MIMI側（ダメージ6／KB 680／発生 即時）など、その他の性能に変更はありません"]}
+         "横の位置関係（SHADEがMIMIの後ろに付く並び）・クールタイム・硬直など、その他の性能に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1490,7 +1492,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v213";
+var BUILD_ID="v214";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3761,6 +3763,74 @@ function lsSmoothVec(idx){
  var k=1-el;
  return{x:s.x*k,y:s.y*k};
 }
+/* ---- delayed confirmed-state rendering for REMOTE fighters (v214) ----
+   Real-machine logs settled the diagnosis: input bundles arrive in
+   bursts on BOTH directions (gaps up to ~429ms), yet the guest end
+   rolled back once while the host end rolled back 321 times, and the
+   checksums agree — the simulation is right, only the host's VIEW of
+   the guest was wrong. A remote fighter drawn at the newest PREDICTED
+   state is dragged around by every misprediction: each burst arrival
+   corrects the prediction and the drawn position snaps, stutters or
+   suddenly hurries. So in input-sync mode a remote fighter is drawn
+   from the state LS_RENDER_DELAY frames in the PAST, interpolated
+   between the two saved states bracketing that moment. By the time
+   the render clock reaches a frame, that frame's inputs are almost
+   always confirmed, so the drawn path no longer depends on whether
+   predictions happened to be right. Your own fighter is untouched
+   (drawn at the newest state, zero delay), and NOTHING about the
+   simulation, hit detection, prediction or rollback changes — only
+   the state draw() reads for remote fighters. A rollback deep enough
+   to reach back past the render delay can still move the drawn
+   position; the v206 glide above (lsSmooth) keeps applying on top,
+   exactly as before.
+   Frame-time convention (the same one draw()'s px/x interpolation
+   uses): the live state sits at integer time ls.frame, the state
+   saved for frame F (ls.saves[F], the pre-step state of F) sits at
+   integer time F, and ls.acc / (1000/60) is the fractional progress
+   toward the next step. */
+var LS_RENDER_DELAY=8; /* frames (~133ms at 60fps) */
+var lsDrawPrev={}; /* fighter index -> last DRAWN position {x,y}: the match recorder's visual-correction metric (v214) compares each draw against it */
+function lsRenderPos(idx){
+ var T=(ls.frame-1)+(ls.acc/(1000/60));
+ var Rt=T-LS_RENDER_DELAY;
+ if(Rt<0||!ls.saves)return null; /* match just started: the delay has not built up yet — draw at the newest state until it has */
+ var F0=Math.floor(Rt),ft=Rt-F0;
+ var s0=ls.saves[F0],a=s0?s0.fs[idx]:null;
+ if(!a)return null; /* save pruned / not yet written: fall back to the newest state */
+ var b=null;
+ if(F0+1>=ls.frame){var lf=fighters[idx];if(lf)b={x:lf.x,y:lf.y,shX:lf.shX,shY:lf.shY}}
+ else{var s1=ls.saves[F0+1];b=s1?s1.fs[idx]:null}
+ if(!b||ft<=0)return{x:a.x,y:a.y,shX:a.shX,shY:a.shY};
+ return{x:a.x+(b.x-a.x)*ft,y:a.y+(b.y-a.y)*ft,
+  shX:(typeof a.shX==="number"&&typeof b.shX==="number")?a.shX+(b.shX-a.shX)*ft:a.shX,
+  shY:(typeof a.shY==="number"&&typeof b.shY==="number")?a.shY+(b.shY-a.shY)*ft:a.shY};
+}
+/* render-space glide for delayed fighters (v214): a rollback deep
+   enough to reach back past the render delay (or a resync adoption)
+   rewrites the saved states the delayed rendering reads, so the
+   delayed TARGET itself can jump. The v206 glide cannot cover that:
+   its offset is computed in LIVE-position space (pre/post correction
+   at the newest frame), and adding it on top of a delayed position
+   double-applies the correction — the drawn fighter gets dragged
+   along a phantom path at several times its real speed. So a delayed
+   fighter instead glides in RENDER space: draw() watches the delayed
+   target, and when the target itself moves discontinuously (more
+   than LS_SMOOTH_MIN from the previous draw's target), it eases from
+   the previously drawn spot to the new target with the same
+   duration rule as the v206 glide (80ms at the threshold, growing
+   with distance, capped at LS_SMOOTH_MAX_MS). Fighters drawn at the
+   newest state (your own, and remotes while the delay has not built
+   up yet) keep the original live-space glide, unchanged. */
+var LS_RENDER_SNAP=240; /* px: a delayed-target jump past this is a placement (respawn / resync), drawn as-is rather than glided */
+var lsRenderGlide={}; /* fighter index -> {x, y, t, ms}: render-space glide offset + stamp + duration */
+var lsRenderPrevTgt={}; /* fighter index -> the previous draw's delayed target {x, y} (before any glide offset) */
+function lsRenderGlideVec(idx){
+ var g=lsRenderGlide[idx];if(!g)return null;
+ var el=(performance.now()-g.t)/(g.ms||LS_SMOOTH_MS);
+ if(el>=1){delete lsRenderGlide[idx];return null}
+ var k=1-el;
+ return{x:g.x*k,y:g.y*k};
+}
 /* the top-right mode label (in the fps pill): while an online
    match runs it names the CURRENT mode — 「入力同期」 while the
    rollback layer is live, 「写真（保険）」 from the moment the match
@@ -3777,6 +3847,8 @@ function lsSyncModeLabel(){
 function lsReset(){
  ls.active=false;ls.fb=false;ls.frame=0;ls.acc=0;ls.saves={};ls.used={};ls.conf={};ls.confHi={};ls.lastBits={};ls.lastConfF={};ls.cpuAt={};ls.cpuEnd={};ls.rbFrom=-1;ls.chkNext=60;ls.chkH={};ls.chkM={};ls.sbF=0;ls.prevBits=null;ls.lastSendAt=0;ls.immPend=false;ls.sendLog=[];ls.curRow=null;ls.curF=0;ls.resimCount=0;ls.maxResim=0;ls.rsTimes=[];ls.rsCount=0;ls.rsWait=false;ls.rsWaitAt=0;ls.rsCode="";ls.rsLastAt=0;
  lsSmooth={};
+ lsDrawPrev={}; /* v214: the drawn-position tracker restarts with the match, so the first delayed draw is never counted as a jump */
+ lsRenderGlide={};lsRenderPrevTgt={}; /* v214: render-space glide state restarts with the match too */
  if(sbRoom)sbRoom.lsMode=false;
  lsSyncModeLabel();
 }
@@ -4210,6 +4282,7 @@ function lsAdoptResync(F){
   if(c)while(c[ls.confHi[i]+1]!==undefined)ls.confHi[i]++;
  }
  lsSmooth={};
+ lsRenderGlide={}; /* v214: an in-flight render glide belongs to the pre-adoption history; the last drawn TARGET (lsRenderPrevTgt) is kept on purpose — draw() holds it until the save ring refills, then glides / snaps to the adopted history from there */
  ls.rsWait=false;
 }
 /* host: the single gate every resync passes through — a guest's
@@ -4457,7 +4530,9 @@ function fighterDispName(f){
    count and max depth, the remote input arrival gaps, this
    device's own frame-time max, and (v210) every frame gap over
    2s (a freeze: time / frame / length) plus every return /
-   rejoin / resync it caused.
+   rejoin / resync it caused. (v214) It also counts visual
+   corrections: draws where a remote fighter's drawn position
+   moved more than 25px from the previous draw (drawCorr).
    (v212) The record is ALSO persisted to this device's
    localStorage as the match runs (mrecPersist: on match start,
    on every recorded event, every 5s, when the tab hides, and
@@ -4473,9 +4548,9 @@ function fighterDispName(f){
    never the saved copy — only the next match overwrites it.
    No addresses or connection data are ever recorded — player
    names and build ids only. */
-var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[],press:{jump:0,j:0,k:0,l:0,ult:0},pressSeen:{}}; /* press / pressSeen (v211): how many of MY OWN presses the calculation actually applied, per action — internal names jump / j / k / l (= the U shoot key) / ult (= the L key); pressSeen dedupes by press frame so rollback re-simulation can never count one press twice */
+var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[],press:{jump:0,j:0,k:0,l:0,ult:0},pressSeen:{},drawCorr:0}; /* press / pressSeen (v211): how many of MY OWN presses the calculation actually applied, per action — internal names jump / j / k / l (= the U shoot key) / ult (= the L key); pressSeen dedupes by press frame so rollback re-simulation can never count one press twice. drawCorr (v214): how often a REMOTE fighter's drawn position moved more than 25px between draws (the visual-correction count — see the counting block in draw()) */
 function mrecReset(){
- mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];mrec.frz=[];mrec.evt=[];mrec.press={jump:0,j:0,k:0,l:0,ult:0};mrec.pressSeen={};
+ mrec.on=false;mrec.fin=false;mrec.text=null;mrec.startAt=0;mrec.wall=null;mrec.parts=[];mrec.trans=[];mrec.chk=[];mrec.chkSeen={};mrec.chkOk=0;mrec.chkNg=0;mrec.chkDist=0;mrec.chkReport=0;mrec.arrLast={};mrec.arrMax=0;mrec.arrOver=0;mrec.frameMax=0;mrec.fbWhy={};mrec.fb=false;mrec.rs=[];mrec.frz=[];mrec.evt=[];mrec.press={jump:0,j:0,k:0,l:0,ult:0};mrec.pressSeen={};mrec.drawCorr=0;
 }
 function mrecStart(){
  mrecReset();
@@ -4614,6 +4689,8 @@ function mrecBuildText(){
  L.push("巻き戻し:");
  L.push("  発生回数: "+ls.resimCount+" 回");
  L.push("  最大深度: "+ls.maxResim+" フレーム");
+ L.push("見た目の補正回数:");
+ L.push("  相手キャラの描画位置が25pxを超えて飛んだ回数: "+(mrec.drawCorr||0)+" 回");
  L.push("自分の押下が計算に適用された回数（入力同期中）:");
  L.push("  ジャンプ: "+(mrec.press.jump||0)+" 回");
  L.push("  J: "+(mrec.press.j||0)+" 回");
@@ -10642,6 +10719,54 @@ function draw(){
  if(useInterp){
    var dList=fighters.length?fighters:[P1,P2];
    for(var di2=0;di2<dList.length;di2++){var df2=dList[di2];if(!df2||df2.px==null)continue;swapped.push(df2);df2._rx=df2.x;df2._ry=df2.y;df2.x=df2.px+(df2.x-df2.px)*drawAlpha;df2.y=df2.py+(df2.y-df2.py)*drawAlpha}
+   /* delayed confirmed-state rendering (v214): in input-sync mode a
+      REMOTE fighter is drawn from ~8 frames in the past (see
+      lsRenderPos), interpolated between the two saved states around
+      that moment, instead of at the newest predicted state — the
+      prediction's hit-or-miss no longer reaches the screen. Only the
+      swapped render position changes (restored from _rx/_ry at the
+      end of draw, like every other render offset); the simulation
+      state is never touched. MIMI&SHADE's shade anchor (shX/shY)
+      rides along so SHADE stays glued to its delayed owner, and is
+      restored the same way. Your own fighter (net.myIdx) is skipped:
+      it keeps drawing at the newest state with zero delay. */
+   var dDelayed={}; /* indices drawn from the delayed state this frame: the live-space glide below must not ALSO move them (see lsRenderGlide) */
+   if(typeof ls!=="undefined"&&ls&&ls.active&&typeof lsRenderPos==="function"){
+     for(var drp=0;drp<dList.length;drp++){
+       if(drp===net.myIdx)continue;
+       var df4=dList[drp];if(!df4||df4.px==null)continue;
+       if(df4.dead){delete lsRenderPrevTgt[drp];delete lsRenderGlide[drp];continue} /* a corpse / respawn placement is not a movement: no glide, no target history */
+       var rp=lsRenderPos(drp);
+       if(!rp&&lsRenderPrevTgt[drp])rp={x:lsRenderPrevTgt[drp].x,y:lsRenderPrevTgt[drp].y}; /* a resync adoption empties the save ring for a few frames (lsAdoptResync): hold the last drawn target until the delayed history refills instead of snapping to the live state and back */
+       if(rp){
+         dDelayed[drp]=1;
+         df4.x=rp.x;df4.y=rp.y;if(typeof rp.shX==="number"&&typeof df4.shX==="number"){df4._rshx=df4.shX;df4._rshy=df4.shY;df4.shX=rp.shX;df4.shY=rp.shY}
+         /* render-space glide (v214): if the delayed target itself
+            just jumped (a rollback rewrote the render window, or a
+            resync landed), ease from the previously drawn spot
+            instead of snapping — same threshold as the v206 glide,
+            anchored at the render position. Two refinements over the
+            live-space rule: the duration grows ~1.1ms per px (floor
+            80ms, cap 400ms) so the catch-up itself never outruns
+            real motion and re-creates the very jumps it is meant to
+            hide; and a jump past LS_RENDER_SNAP (respawn placement,
+            a resync teleport) is not glided at all — the fighter
+            simply appears at the new spot, one snap instead of a
+            long streak across the stage */
+         var pt=lsRenderPrevTgt[drp];
+         if(pt){
+           var tdx=rp.x-pt.x,tdy=rp.y-pt.y,td2=tdx*tdx+tdy*tdy;
+           if(td2>LS_SMOOTH_MIN*LS_SMOOTH_MIN){
+             var distT=Math.sqrt(td2);
+             if(distT>LS_RENDER_SNAP)delete lsRenderGlide[drp];
+             else{var rem=lsRenderGlideVec(drp);lsRenderGlide[drp]={x:(pt.x+(rem?rem.x:0))-rp.x,y:(pt.y+(rem?rem.y:0))-rp.y,t:performance.now(),ms:Math.min(400,Math.max(LS_SMOOTH_MS,distT*1.1))}}
+           }
+         }
+         lsRenderPrevTgt[drp]={x:rp.x,y:rp.y};
+         var gv=lsRenderGlideVec(drp);if(gv){df4.x+=gv.x;df4.y+=gv.y}
+       }
+     }
+   }
    /* rollback correction smoothing (v206): a remote fighter whose
       position a rollback just corrected by a lot is drawn easing
       from its pre-correction spot to the true one over ~80ms. The
@@ -10650,7 +10775,25 @@ function draw(){
       already the corrected value and is never delayed. Your own
       fighter (net.myIdx) is excluded. */
    if(typeof ls!=="undefined"&&ls&&ls.active&&typeof lsSmooth!=="undefined"){
-     for(var dsm=0;dsm<dList.length;dsm++){var df3=dList[dsm];if(!df3||df3.px==null||dsm===net.myIdx)continue;var svec=lsSmoothVec(dsm);if(svec){df3.x+=svec.x;df3.y+=svec.y}}
+     for(var dsm=0;dsm<dList.length;dsm++){var df3=dList[dsm];if(!df3||df3.px==null||dsm===net.myIdx||dDelayed[dsm])continue;var svec=lsSmoothVec(dsm);if(svec){df3.x+=svec.x;df3.y+=svec.y}}
+   }
+   /* match recorder (v214): the visual-correction metric — a remote
+      fighter's final drawn position (delayed interpolation + glide,
+      exactly what reaches the screen) is compared against the
+      previous draw's; a move of more than 25px between draws counts
+      as one visual correction in the match log, so the next
+      real-machine log can judge numerically whether the delayed
+      rendering actually calmed the picture down. Draw-only
+      bookkeeping: nothing here feeds back into the simulation. */
+   if(typeof ls!=="undefined"&&ls&&ls.active){
+     for(var djp=0;djp<dList.length;djp++){
+       if(djp===net.myIdx)continue;
+       var df5=dList[djp];
+       if(!df5||df5.dead){if(df5)delete lsDrawPrev[djp];continue}
+       var pv=lsDrawPrev[djp];
+       if(pv){var jdx=df5.x-pv.x,jdy=df5.y-pv.y;if(jdx*jdx+jdy*jdy>625&&typeof mrec!=="undefined"&&mrec.on)mrec.drawCorr=(mrec.drawCorr||0)+1}
+       lsDrawPrev[djp]={x:df5.x,y:df5.y};
+     }
    }
    for(var dj=0;dj<projectiles.length;dj++){var pj2=projectiles[dj];if(pj2.px==null)continue;swapped.push(pj2);pj2._rx=pj2.x;pj2._ry=pj2.y;pj2.x=pj2.px+(pj2.x-pj2.px)*drawAlpha;pj2.y=pj2.py+(pj2.y-pj2.py)*drawAlpha}
  }
@@ -10820,7 +10963,7 @@ function draw(){
  drawMinimap();
  if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
- for(var ri2=0;ri2<swapped.length;ri2++){swapped[ri2].x=swapped[ri2]._rx;swapped[ri2].y=swapped[ri2]._ry}
+ for(var ri2=0;ri2<swapped.length;ri2++){swapped[ri2].x=swapped[ri2]._rx;swapped[ri2].y=swapped[ri2]._ry;if(swapped[ri2]._rshx!==undefined){swapped[ri2].shX=swapped[ri2]._rshx;swapped[ri2].shY=swapped[ri2]._rshy;swapped[ri2]._rshx=undefined;swapped[ri2]._rshy=undefined}}
 }
 /* PERF (1P lag fix): syncHUD() runs EVERY rendered frame, and it used
    to rebuild the leaderboard's innerHTML and rewrite ~20 textContents
