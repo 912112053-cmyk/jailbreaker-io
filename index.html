@@ -9797,15 +9797,6 @@ function drawKairo(f){
   ctx.fillStyle="#e0f2fe";ctx.fillRect(-19,41,38,5);
   ctx.strokeStyle="rgba(224,242,254,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-13,26);ctx.lineTo(-17,6);ctx.moveTo(13,26);ctx.lineTo(17,4);ctx.moveTo(0,36);ctx.lineTo(0,14);ctx.stroke();
  }
- if(f.state==="taildrop"&&f.hitDone&&f.stateT<=0.28&&f.stateT>0.13){
-  /* メテオドロップの判定 (左右122x84 = 中心から左右±146・縦±84) が
-     出る瞬間だけ、判定どおり左右いっぱいに氷の衝撃波を広げる:
-     描画座標では中心 (0,26) から ±129、縦は -44..96 の帯 */
-  ctx.fillStyle="rgba(165,243,252,.10)";ctx.fillRect(-129,-44,258,140);
-  ctx.fillStyle="rgba(165,243,252,.9)";
-  for(var mb=-1;mb<=1;mb+=2){for(var ms=0;ms<3;ms++){var myA=[-20,26,72][ms],mlA=[118,129,118][ms];ctx.beginPath();ctx.moveTo(mb*8,myA-13);ctx.lineTo(mb*mlA,myA);ctx.lineTo(mb*8,myA+13);ctx.closePath();ctx.fill()}}
-  ctx.fillStyle="rgba(224,242,254,.95)";for(var mq=0;mq<5;mq++){var mx2=-96+mq*48;ctx.beginPath();ctx.moveTo(mx2-7,96);ctx.lineTo(mx2,64);ctx.lineTo(mx2+7,96);ctx.closePath();ctx.fill()}
- }
  if(f.state==="fspin"){
   /* 空中↑+K フロストスピン: 体の周りを周回する5本の小氷柱と軌道の輪 */
   for(var ic2=0;ic2<5;ic2++){var ia=time*14+ic2*1.2566,ix2=Math.cos(ia)*62,iy2=26+Math.sin(ia)*44;
