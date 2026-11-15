@@ -91,6 +91,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 #scorePill{top:calc(10px + 118px);left:50%;transform:translateX(-50%);padding:4px 16px;font-size:15px;letter-spacing:.12em}
 #timerPill{top:calc(10px + 152px);left:50%;transform:translateX(-50%);padding:2px 12px;font-size:12.5px;color:#a9dfee;letter-spacing:.14em}
 #fpsPill{top:64px;right:10px;padding:5px 12px;font-size:12.5px;line-height:1.5;color:#a9cfe0;text-align:left}
+#netDiag{display:none;margin-top:3px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;color:#7ee2c0;white-space:pre}
 .cornerBtns{position:absolute;top:10px;right:10px;z-index:8;display:flex;gap:6px}
 .gbtn{background:rgba(3,14,26,.8);color:#fff;border:1.5px solid rgba(103,232,249,.45);border-radius:999px;padding:6px 13px;font-weight:900;font-size:12.5px;min-height:36px}
 .gbtn:hover{border-color:var(--cyan)}
@@ -338,7 +339,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div class="hudPanel pix" id="scorePill">SCORE: <span id="scoreText">0</span></div>
   <div class="hudPanel pix" id="timerPill"><span id="modeLabel">VS CPU</span>　<span id="timerText">3:00</span></div>
   <div class="hudPanel pix" id="comboPill"><span id="comboText"></span></div>
-  <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span></div>
+  <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span><div id="netDiag"></div></div>
   <div class="cornerBtns"><button class="gbtn" id="pauseBtn">⏸ ポーズ</button><button class="gbtn" id="resetBtn">↺ リセット</button><button class="gbtn primary" id="backBtn">← メニュー</button></div>
   <div id="rotateHint">横画面にするとステージが広く見えます</div>
   <div id="banner"><div class="big" id="bannerBig">KNOCKOUT!</div><div class="pts" id="bannerPts"></div><div class="sub" id="bannerSub"></div></div>
@@ -427,6 +428,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["13:47"],tag:"修正",title:"直接接続（P2P）：ゲストの入力も再送なしチャンネルと冗長化に移行",
+  items:["P2P対戦で、ゲストからホストへの入力も専用チャネル（再送なし・順序なし）で送るようにしました。1つの入力が届かなくても後ろの入力が止まらなくなり、ホスト側でゲストのキャラが数秒止まって見える現象が起きなくなります",
+         "各入力には直近12フレーム分の入力を重ねて載せているため、途中の入力が1つ届かなくても次の入力で自動的に補われます",
+         "専用チャネルが使えない環境や旧バージョンとの対戦では、従来のチャネルに自動で切り替わります。その他の通信・ゲーム内容に変更はありません"]},
  {date:"2026/11/15",times:["13:25"],tag:"調整",title:"直接接続（P2P）：海外中継を使わず直接接続のみに変更",
   items:["P2P対戦の接続設定を見直し、海外の無料中継サーバーを経由しないようにしました。県内同士なら直接つながり、遅延と揺らぎが減ります",
          "直接つながらない回線同士では接続できない場合があります"]},
@@ -490,10 +495,6 @@ var UPDATE_LOG=[
          "ゲージが残っている間、SHADEはノックバックを完全に受けません（KB完全無効）",
          "ゲージが0になるとSHADEは18秒間消失し、18秒後にMIMIの位置でゲージ全回復して復活します",
          "SHADEがMIMIの近くにいる間は、ゲージが毎秒10ずつ回復します"]},
- {date:"2026/11/15",times:["09:54"],tag:"新機能",title:"新システム：掴み技を追加",
-  items:["掴み技がヒットすると相手を目の前に固定し0.4秒間完全硬直、その後向いている方向へ投げ飛ばす",
-         "適用技はAXEのJ2段目『ヘッドロック』（30ダメージ／KB770）と、MIMI&SHADEの空中JでSHADEが掴む投げ（12ダメージ／KB760）",
-         "ダメージ・スコア・コンボ・ウルトゲージ・キル判定は通常ヒットと同じ。掴み中は黄色い拘束リングとラインで表示。WARDENウルトのSKYHOOK掴みとは相互排他"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1613,6 +1614,12 @@ function p2pCleanup(){
    if(p2pGuestSnap.snapDc){try{p2pGuestSnap.snapDc.close()}catch(e){}p2pGuestSnap.snapDc=null}
    p2pGuestSnap.snapOk=false;
  }
+ /* guest input side channel: same treatment as the snap channel
+    above (the host-side ends die with their connections / peer) */
+ if(typeof p2pGuestInput!=="undefined"&&p2pGuestInput){
+   if(p2pGuestInput.inDc){try{p2pGuestInput.inDc.close()}catch(e){}p2pGuestInput.inDc=null}
+   p2pGuestInput.inOk=false;
+ }
  fxSink=null;killBannerHook=null;p2pHostLive=false;
  if(p2pRoom){
    var room=p2pRoom;p2pRoom=null;room.dead=true;
@@ -1753,6 +1760,91 @@ function p2pDeliverSnap(player,msg){
  }
  p2pDeliver(player,msg);
 }
+/* ---- guest-input side channel ("jb-input") ----
+   The mirror image of jb-snap, for the guest -> host direction.
+   Guest inputs used to ride ONLY the reliable DataConnection:
+   ordered + retransmitted, so a single lost packet parked every
+   later input behind its retransmission and the guest's fighter
+   froze on the host for seconds at a time (head-of-line blocking,
+   the same structural flaw jb-snap removed for snapshots). This
+   second negotiated channel on the SAME RTCPeerConnection is
+   created by BOTH ends with {negotiated:true, id:P2P_INPUT_ID,
+   ordered:false, maxRetransmits:0} — unordered, never
+   retransmitted — and carries ONLY guest inputs while it is
+   verified and open. Each packet repeats the newest 12 sampled
+   frames as [frame, bits] pairs (see svSendBundle), so one
+   dropped packet is healed by the next; the host dedupes by
+   frame number (p2pRoomInputFast) and a frame is never applied
+   twice. The agreed stream id (1001) sits right above jb-snap's
+   (1000) and far above the browser-assigned ids of PeerJS's own
+   channels, so nothing collides, and a negotiated channel never
+   fires ondatachannel, so PeerJS's bookkeeping is untouched —
+   the same reasoning as jb-snap. The reliability settings are
+   trusted only when the live channel reports them back
+   (ordered===false && maxRetransmits===0, checked at creation
+   and again at open — the jb-snap rule verbatim): a channel
+   that does not report them is closed and never used.
+   Compatibility / fallback: an older build never creates its
+   end, so the channel simply never opens and every input keeps
+   flowing over the reliable channel, byte-for-byte the previous
+   behaviour, with no handshake and no protocol change. If the
+   channel dies mid-match its holder is cleared and the guest
+   falls back to the reliable channel from the next bundle on;
+   frames already shipped on jb-input are never re-sent there
+   (the guest's sentFrame has passed them, and the redundant
+   window never re-includes frames the reliable channel carried
+   — see sv.relFloor in svSendBundle), so the two paths can
+   never double-apply a frame. Every failure path is contained:
+   a dead input channel can never stop the match. */
+var P2P_INPUT_ID=1001;
+var p2pGuestInput={inDc:null,inOk:false}; /* guest-side holder; host side: inDc / inOk / inHi live on each player */
+function p2pInputAttach(conn,holder,onMsg){
+ if(!conn||!holder||holder.inDc)return;
+ var pc=null;
+ try{pc=conn.peerConnection}catch(e){}
+ if(!pc||typeof pc.createDataChannel!=="function"){
+   /* same not-wired-yet retry as p2pSnapAttach: until the
+      channel exists, inputs use the reliable channel */
+   try{conn.on("open",function(){p2pInputAttach(conn,holder,onMsg)})}catch(e){}
+   return;
+ }
+ var dc=null;
+ try{dc=pc.createDataChannel("jb-input",{negotiated:true,id:P2P_INPUT_ID,ordered:false,maxRetransmits:0})}catch(e){return}
+ var ok=false;
+ try{ok=(dc.ordered===false&&dc.maxRetransmits===0)}catch(e){}
+ if(!ok){try{dc.close()}catch(e){}return}
+ holder.inDc=dc;holder.inOk=true;
+ dc.onopen=function(){
+   /* re-verify against the live channel now that it is up: if
+      the settings did not survive negotiation, stop using it */
+   try{
+     if(dc.ordered!==false||dc.maxRetransmits!==0){
+       if(holder.inDc===dc){holder.inDc=null;holder.inOk=false}
+       try{dc.close()}catch(e){}
+     }
+   }catch(e){}
+ };
+ dc.onclose=function(){if(holder.inDc===dc){holder.inDc=null;holder.inOk=false}};
+ dc.onerror=function(){if(holder.inDc===dc){holder.inDc=null;holder.inOk=false}};
+ if(onMsg)dc.onmessage=onMsg;
+}
+/* is the guest's jb-input channel verified and open right now?
+   (an older host build never creates its end, so the channel
+   stays "connecting" forever and this stays false — the guest
+   then uses the reliable channel for every bundle, unchanged) */
+function p2pInputUsable(){
+ var dc=p2pGuestInput.inDc;
+ return !!(dc&&p2pGuestInput.inOk&&dc.readyState==="open");
+}
+/* one input packet over jb-input; false (nothing sent) when the
+   channel is unusable or the send itself fails, so the caller
+   falls back to the reliable channel for this bundle — the same
+   per-bundle fallback p2pDeliverSnap applies to snapshots */
+function p2pSendInputDc(msg){
+ var dc=p2pGuestInput.inDc;
+ if(!dc||!p2pGuestInput.inOk||dc.readyState!=="open")return false;
+ try{dc.send(JSON.stringify(msg));return true}catch(e){p2pGuestInput.inDc=null;p2pGuestInput.inOk=false;return false}
+}
 /* how many bytes are already queued for this guest, undelivered:
    the RTCDataChannel's own send buffer (bufferedAmount) plus
    PeerJS's JS-side FIFO (bufferSize messages, converted at a rough
@@ -1850,6 +1942,53 @@ function p2pRoomJoin(room,player,m){
  p2pDeliver(player,{t:"joined",pid:player.pid,host:player.host});
  p2pBroadcastRoster(room);
  p2pBroadcastRoom(room,{t:"chat",sys:1,text:player.name+" が参加しました"});
+}
+/* one guest input packet arriving on that guest's jb-input
+   channel (see p2pInputAttach): {t:"in", fr:[[frame, bits], ...],
+   ack}. The packet repeats the guest's newest 12 sampled frames;
+   frames at or below player.inHi were already applied (or
+   superseded past recovery) and are dropped, so the same guest
+   frame is NEVER scheduled twice — not within one packet, not
+   across the redundant repeats, and not across the channel
+   switch (the guest never re-includes a reliably-carried frame
+   in the window, and never re-sends a jb-input frame on the
+   reliable channel). The surviving fresh frames, in ascending
+   order, enter the very same intake as a reliable bundle in
+   p2pRoomHandle's "in" branch: reserved from the next frame
+   onward (base = max(cursor, frame+1)) and chained forward by
+   the cursor, so everything downstream (realIn scheduling,
+   rbPendBits press parking, the held-repeat fallback in
+   p2pInputFor) behaves exactly as before. A frame the 12-frame
+   redundancy window could not recover is simply absent from the
+   stream: the steps it would have covered run on the held-repeat
+   fallback, exactly as they do today when a bundle arrives late.
+   The stream ack rides these packets too and is recorded before
+   anything else, exactly as in the reliable branch, so the
+   host's flow control (p2pGuestLagging) keeps working while
+   inputs ride this channel. */
+function p2pRoomInputFast(room,player,m){
+ if(!room||room.dead||!player||!player.pid||!m)return;
+ if(typeof m.ack==="number")player.ackF=m.ack,player.ackAt=performance.now();
+ if(room.phase!=="match")return;
+ var idx=p2pPlayerMatchIdx(room,player.pid);if(idx<0)return;
+ var slot=room.matchSlots[idx];if(!slot||slot.ai)return;
+ var fr=Array.isArray(m.fr)?m.fr:[];
+ var fresh=[];
+ for(var i=0;i<fr.length&&fresh.length<16;i++){
+   var e=fr[i];if(!Array.isArray(e)||e.length<2)continue;
+   var f=e[0]|0;
+   if(f<=player.inHi)continue; /* duplicate / already applied / superseded */
+   fresh.push([f,(e[1]|0)&0xffff]);
+ }
+ if(!fresh.length)return;
+ fresh.sort(function(a,b){return a[0]-b[0]});
+ var base=Math.max(player.cursor||0,room.frame+1);
+ var n=0,lastF=player.inHi;
+ for(var k=0;k<fresh.length;k++){
+   if(fresh[k][0]<=lastF)continue; /* a repeat inside the packet itself */
+   slot.realIn[base+n]=fresh[k][1];n++;lastF=fresh[k][0];
+ }
+ if(n){player.cursor=base+n;player.inHi=lastF}
 }
 function p2pRoomHandle(room,player,m){
  if(!room||room.dead||!player||!m||typeof m.t!=="string")return;
@@ -1961,7 +2100,7 @@ function p2pRoomStartMatch(room){
  room.seed=(Math.random()*0x7fffffff)|0||1;
  room.matchSlots=room.matchRoster.map(function(){return{realIn:{},used:{},ai:false}});
  room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;room.lastSnapF=-1;
- for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0;p.lastSnapSentF=-9999;p.evQ=[]}
+ for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0;p.lastSnapSentF=-9999;p.evQ=[]}
  room.phase="match";
  var startMsg={t:"start",seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
  p2pSendGuests(room,startMsg);
@@ -2018,7 +2157,7 @@ function p2pHostPeer(retry){
  });
 }
 function p2pHostAccept(room,conn){
- var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[],snapDc:null,snapOk:false};
+ var player={pid:null,name:"",char:null,host:false,joinSeq:0,conn:conn,loopback:false,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,goneHandled:false,departed:false,ackF:-1,ackAt:0,lastSnapSentF:-9999,evQ:[],snapDc:null,snapOk:false,inDc:null,inOk:false};
  /* snapshot side channel for this guest (see p2pSnapAttach):
     created on the connection's existing RTCPeerConnection; the
     host only ever SENDS on it (snapshots), so no message handler.
@@ -2026,6 +2165,19 @@ function p2pHostAccept(room,conn){
     the channel never opens, and p2pDeliverSnap keeps using the
     reliable channel for this guest */
  p2pSnapAttach(conn,player,null);
+ /* guest-input side channel for this guest (see p2pInputAttach):
+    the host only ever RECEIVES on it — redundant guest input
+    packets, fed to p2pRoomInputFast. If the guest runs an older
+    build its end is never created, the channel never opens, and
+    its inputs keep arriving on the reliable channel exactly as
+    before (p2pRoomHandle's "in" branch) */
+ p2pInputAttach(conn,player,function(ev){
+   if(p2pRoom!==room||room.dead)return;
+   var m=ev.data;
+   if(typeof m==="string"){try{m=JSON.parse(m)}catch(e){return}}
+   if(!m||typeof m!=="object"||m.t!=="in")return;
+   p2pRoomInputFast(room,player,m);
+ });
  conn.on("data",function(data){
    if(p2pRoom!==room||room.dead)return;
    var m=data;
@@ -2075,6 +2227,15 @@ function p2pJoinRoom(code){
      if(!m||typeof m!=="object"||m.t!=="snap")return;
      svOnMsg(m);
    });
+   /* guest-input side channel (see p2pInputAttach): created on
+      the same RTCPeerConnection with the same agreed id /
+      settings as the host's end. This end only ever SENDS
+      (svSendBundle ships the redundant input packets on it
+      while it is verified + open), so no message handler. If
+      the host runs an older build its end is never created,
+      the channel never opens, and inputs keep going over the
+      reliable channel exactly as before */
+   p2pInputAttach(conn,p2pGuestInput,null);
    conn.on("open",function(){
      if(p2pGuestConn!==conn)return;
      try{conn.send({t:"join",name:(social.loggedIn&&social.name)?myDispName():""})}catch(e){}
@@ -2959,6 +3120,35 @@ function svSampleStep(){
 }
 function svSendBundle(){
  if(!sv.active||matchOver)return;
+ /* P2P INPUT SIDE CHANNEL (jb-input, see p2pInputAttach): while
+    the verified unordered / no-retransmit channel to the host is
+    open, inputs ride IT alone — never the reliable channel, whose
+    ordered retransmission parks every later input behind one
+    lost packet (the host-side guest freeze this removes). One
+    packet carries the newest 12 sampled frames as [frame, bits]
+    pairs (fewer at the very start of a match), so a dropped
+    packet is healed by the next one and the host dedupes by
+    frame number (p2pRoomInputFast). The window never re-includes
+    a frame the reliable channel already carried — it starts at
+    sv.relFloor, the first frame the reliable path has not sent —
+    and frames shipped here advance sentFrame past themselves, so
+    if the channel dies and sending falls back, the reliable path
+    resumes from frames it has never carried: the two paths can
+    never apply the same frame twice. The stream ack rides these
+    packets exactly as it rides reliable bundles (the host's flow
+    control counts from it). If the channel is not open (older
+    host build / not negotiated / died) — or the send itself
+    fails — this bundle falls through to the reliable path below,
+    unchanged. The server transport never takes this branch. */
+ if(net.transport==="p2p"&&p2pInputUsable()){
+   var endF=sv.sampleFrame,startF=Math.max(sv.relFloor||0,endF-12);
+   if(endF<=startF){sv.sentFrame=endF;return}
+   var fr=[];
+   for(var fi=startF;fi<endF;fi++){var fb=sv.inpHist[fi];fr.push([fi,fb===undefined?0:fb])}
+   var dcMsg={t:"in",fr:fr};
+   if(typeof sv.lastSnapF==="number")dcMsg.ack=sv.lastSnapF;
+   if(p2pSendInputDc(dcMsg)){sv.sentFrame=endF;return}
+ }
  /* ship every unsent sampled frame, oldest first, in protocol-sized
     chunks of at most 4 (the server schedules each bundle at
     max(its cursor, server frame + 2) and chains the rest, so chunk
@@ -2977,6 +3167,7 @@ function svSendBundle(){
    svSend(inMsg);
    sv.sentFrame+=ins.length;
  }
+ if(net.transport==="p2p")sv.relFloor=sv.sentFrame; /* every frame below sentFrame has now ridden the reliable channel: the jb-input window must never re-include them (the host would apply them a second time) */
 }
 function svApplySnapP1(s,hist){
  var f=P1;if(!f)return;
@@ -3394,7 +3585,7 @@ function svOnSnap(m){
  darkFields=svSyncPlaced(darkFields,m.df,function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
 }
 function svReset(){
- sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;
+ sv.active=true;svMute=false;sv.acc=0;sv.sendAcc=0;sv.seq=0;sv.predFrame=0;sv.sampleFrame=0;sv.sentFrame=0;sv.relFloor=0; /* jb-input: guest frame numbers restart with sampleFrame, and no frame has ridden the reliable channel yet in this match (see svSendBundle) */
  /* P2P starts at its own operating point (60/s stream: 16.7ms
     interval EMA, render delay already near the 20ms floor) instead
     of easing down from the server transport's 66ms / 33.3ms start —
