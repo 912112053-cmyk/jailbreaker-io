@@ -320,6 +320,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
     <button class="menuBtn" id="trainingBtn">TRAINING MODE</button>
     <button class="menuBtn" id="onlineBtn">ONLINE VS</button>
     <button class="menuBtn" id="friendsBtn">FRIENDS</button>
+    <button class="menuBtn" id="lastLogBtn" style="display:none">前回の試合ログをダウンロード</button>
     <button class="menuBtn" id="charBtn">KAIRO</button>
     <button class="menuBtn" id="settingsBtn">SETTINGS</button>
   </nav>
@@ -429,6 +430,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["18:51"],tag:"修正",title:"試合ログの保存改善と自動再接続",
+  items:["試合ログを、試合中ずっと端末内（localStorage）へ随時保存するようにしました。切断などで結果画面まで行けずに試合が終わってしまっても、ログは端末に残ります",
+         "タイトル画面に「前回の試合ログをダウンロード」ボタンを追加しました。前回のログが残っていれば、いつでもそこから取り出せます（切断でタイトル画面に戻された場合も同様です）。新しい試合が始まると、前回のログは新しい試合のものに上書きされます。結果画面のダウンロードボタンは従来どおり使えます",
+         "オンライン対戦中にチャンネルの切断を検出すると、手動操作なしで自動的に再接続を試みるようになりました（目安30秒）。つながれば同じ部屋・同じ参加者として復帰し、再同期して対戦を継続します。相手側でCPU引き継ぎ中だった場合は解除され、本人の操作に戻ります。30秒ほど試みても復帰できない場合は、従来どおり対戦を終了します",
+         "再接続の開始・成功・失敗は、試合ログにも記録されます",
+         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
  {date:"2026/11/15",times:["18:31"],tag:"修正",title:"入力同期：自分の押下入力が巻き戻しで消える問題を修正",
   items:["オンライン対戦（入力同期）で、ホスト側の「押した瞬間」の入力（ジャンプ・J・K・L）が計算に届かず、押しっぱなしで拾う入力（A・D・U）だけが効く問題を修正しました。原因は、ホストの押下がオンライン用の入力キューではなくオフライン用の入力バッファへ振り分けられ、入力同期の計算からは一切読まれていなかったことです",
          "自分の押下入力は、計算に使う前にフレームごとの入力履歴へ確定記録される経路に統一しました。相手へ送る入力バンドルの内容と、自分の計算に使う入力は常に一致します。巻き戻し（ロールバック）の再計算が何度起きても、自分の押下は必ずちょうど1回だけ反映されます。二度押しダッシュの押下も同じ経路に統一しました",
@@ -515,10 +522,7 @@ var UPDATE_LOG=[
  {date:"2026/11/15",times:["13:04"],tag:"修正",title:"MIMI&SHADE：U「助けて！」の次のKが「いってらっしゃいSHADE」になるように",
   items:["MIMI&SHADEのU「助けて！」でSHADEのそばへワープした後は、K「助けてSHADE！！」の呼び戻しと同じくSHADEが「そばにいる」状態になるよう修正しました",
          "これまでは、前方へ送り出したSHADEへワープした後にKを押すと、すでにそばにいるのに「助けてSHADE！！」（呼び戻し）になってしまいました。これからは次にKを押すと「いってらっしゃいSHADE」（送り出し）になります",
-         "ワープの着地点・クールタイム・硬直など、その他の性能に変更はありません"]},
- {date:"2026/11/15",times:["12:55"],tag:"調整",title:"MIMI&SHADEのUワープの着地点を調整",
-  items:["U「助けて！」のワープ着地点を、SHADEの真上からKでSHADEがMIMIのそばへ戻る時と同じ位置関係（SHADE位置＋向き×54）に変更しました",
-         "足元の高さは従来どおりSHADEの足元に一致します"]}
+         "ワープの着地点・クールタイム・硬直など、その他の性能に変更はありません"]}
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1373,7 +1377,7 @@ $("csBack").onclick=function(){$("charSelect").classList.remove("on");toMenu()};
 $("csMoves").onclick=function(){openAllMoves(playerChar)};
 $("playBtn").onclick=function(){beep(660,.07);tryFullscreen();openCharSelect("versus")};
 $("trainingBtn").onclick=function(){beep(520,.07);tryFullscreen();openCharSelect("training")};
-function toMenu(){cleanupNet();running=false;$("gameScreen").classList.remove("on");$("menu").style.display="block";if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){})}
+function toMenu(){cleanupNet();running=false;$("gameScreen").classList.remove("on");$("menu").style.display="block";if(typeof mrecRefreshTitleBtn==="function")mrecRefreshTitleBtn(); /* v212: the title's saved-log download button reflects whatever the last match left on this device */if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){})}
 $("backBtn").onclick=toMenu;
 $("endMenuBtn").onclick=toMenu;
 /* --- online rematch reliability -----------------------------------
@@ -1484,7 +1488,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v211";
+var BUILD_ID="v212";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -1544,7 +1548,7 @@ $("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
 function cleanupNet(){
  sbCleanup();
  clearRematchWatch();
- mrecDiscard(); /* match recorder: leaving the session discards any un-downloaded log */
+ mrecDiscard(); /* match recorder: leaving the session discards the in-memory record; the on-device saved copy (v212) survives for the title screen's download button and is only overwritten by the next match */
  net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
  lsReset();
@@ -1632,6 +1636,10 @@ var sbLastHostHb=0; /* guest: performance.now() of the host's last heartbeat */
 var sbHbTimer=null; /* heartbeat / liveness interval while a room is live */
 var sbHostLive=false; /* host match hooks are active: this device is running a Supabase match on the local engine */
 var sbRejoinInfo=null; /* v210: {code, pid} of a match this guest was disconnected from mid-match (host judged gone while its own tab was frozen / stalled), kept in memory only so re-entering the SAME room code can reclaim the SAME participant id (see the rejoin branch in sbRoomJoin). Set only on the involuntary disconnect path (sbGuestHostGone); cleared when joining a different code or hosting. Never persisted anywhere */
+var sbRecon={active:false,pending:false,at:0,lastTry:0,tries:0,timer:null}; /* v212 guest auto-reconnect: while a match runs, a detected channel loss (heartbeat silence / channel error) no longer ends the match at once — the guest keeps its match state and re-joins the same room with its rejoin pid on a fresh channel, retrying for ~30s (SB_RECON_GIVEUP_MS). Success rides the v210 rejoin path (joined + addressed start + host revive + resync); only when the budget runs out does the match end the old way (sbReconGiveUp). */
+var sbHostRecon={active:false,at:0,lastTry:0,tries:0,subbed:false,timer:null}; /* v212 host auto-reconnect: the host's room state lives on this device, so a dropped host channel is re-created under the same room code and the room simply resumes (guests' liveness stamps are re-based so nobody is judged gone for the host's own outage). ~30s of failed attempts ends the room the old way. */
+var SB_RECON_GIVEUP_MS=30000; /* ~30s of reconnect attempts before giving up (both ends) */
+var SB_RECON_RETRY_MS=4000; /* an attempt that produced no joined reply / subscription within this span is retried on a fresh channel */
 var SB_CHARS=["kairo","warden","kojiro","axe","sara","orchid","travis","smiley","mimi","no66"];
 /* PeerJS connection options for the friend-presence peer (accounts
 section): STUN only, no TURN relay — PeerJS's default config
@@ -1702,6 +1710,8 @@ session exists (every cleanup passes through here as a no-op). */
 function sbCleanup(){
 if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
 if(sbHbTimer){clearInterval(sbHbTimer);sbHbTimer=null}
+if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}sbRecon.active=false;sbRecon.pending=false; /* v212: any session teardown retires a pending auto-reconnect */
+if(sbHostRecon.timer){clearInterval(sbHostRecon.timer);sbHostRecon.timer=null}sbHostRecon.active=false;
 fxSink=null;killBannerHook=null;sbHostLive=false;
 if(sbRoom){
 var room=sbRoom;sbRoom=null;room.dead=true;
@@ -1818,7 +1828,7 @@ if(room.phase==="match"&&typeof m.rejoin==="string"&&m.rejoin){
    nothing. */
 var ridx=sbPlayerMatchIdx(room,m.rejoin),rold=null;
 for(var roi=0;roi<room.players.length;roi++){if(room.players[roi].pid===m.rejoin)rold=room.players[roi]}
-if(ridx>=0&&(room.matchRoster[ridx].gone||!rold||rold.departed||(Date.now()-(rold.lastHb||0)>6000))){
+if(ridx>=0&&(room.matchRoster[ridx].gone||!rold||rold.departed||(Date.now()-(rold.lastHb||0)>6000)||(rold.cid!==player.cid&&(Date.now()-(rold.lastHb||0)>2500)))){ /* v212: a claim arriving on a FRESH connection (different cid) whose old connection has also gone quiet (>2.5s — a live connection speaks at least every 2s) is the auto-reconnect path: the slot is reclaimable without waiting out the full liveness window, and the guest's retrying attempts reclaim it at the latest when the window passes */
 if(m.v!==BUILD_ID){sbDeliver(player,{t:"error",msg:VERSION_MSG});if(room.byCid&&player.cid)delete room.byCid[player.cid];return}
 if(rold){
 if(room.byCid&&rold.cid&&rold.cid!==player.cid)delete room.byCid[rold.cid];
@@ -2138,6 +2148,7 @@ if(tick%2===0)sbHostSend("sys",{t:"hb"});
 var room=sbRoom,now=Date.now();
 for(var i=room.players.length-1;i>=0;i--){var p=room.players[i];
 if(p.loopback||!p.pid)continue;
+if(sbHostRecon.active)continue; /* v212: while the host's own channel is being re-established, nobody is judged gone — the outage is the host's, and liveness stamps are re-based when it lands */
 if(now-(p.lastHb||0)>6000)sbRoomGone(room,p);
 }
 }else if(sbChan){
@@ -2168,7 +2179,8 @@ var hp={pid:null,cid:sbCid,name:"",char:null,host:false,joinSeq:0,loopback:true,
 room.hostPlayer=hp;room.byCid[sbCid]=hp;
 sbRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID});
 sbStartHeartbeat();
-}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
+}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
+if(sbRoom){sbHostReconStart();return} /* v212: the room lives on this device — a dropped host channel is re-established under the same code instead of dissolving the room */
 cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
 }
 });
@@ -2198,8 +2210,9 @@ if(sbChan!==chan)return;
 if(status==="SUBSCRIBED"){
 sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID,rejoin:(sbRejoinInfo&&sbRejoinInfo.code===code)?sbRejoinInfo.pid:undefined});
 sbStartHeartbeat();
-}else if((status==="CHANNEL_ERROR"||status==="TIMED_OUT")&&!sbGuestJoined){
-cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");
+}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
+if(!sbGuestJoined){cleanupNet();openOnline("接続に失敗しました。通信環境を確認して、もう一度お試しください。");return}
+if(running&&mode==="online"&&net.started&&!matchOver)sbReconStart(); /* v212: a channel loss mid-match goes to auto-reconnect, not straight to the end of the match */
 }
 });
 }
@@ -2225,7 +2238,7 @@ if(!m||typeof m!=="object")return;
 if(m.t==="hb"){if(m.h===1)sbLastHostHb=performance.now();return}
 if(m.h!==1)return;
 if(m.to&&m.to!==sbCid&&m.to!==net.myId)return; /* addressed to another guest */
-if(m.t==="hostleft"){sbGuestHostGone();return}
+if(m.t==="hostleft"){sbGuestHostLeft();return} /* v212: a deliberate host leave ends things at once; only silence / channel errors go through the auto-reconnect path (sbGuestHostGone) */
 if(m.t==="joined"){
 sbGuestJoined=true;sbLastHostHb=performance.now();
 if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
@@ -2248,19 +2261,158 @@ sbPriv=ch;
 ch.on("broadcast",{event:"mine"},function(en){if(sbPriv!==ch)return;var m=en&&en.payload;if(m&&typeof m==="object")svOnMsg(m)});
 try{ch.subscribe()}catch(e){}
 }
-/* the host is gone (its hostleft message arrived, or its
-heartbeat has been silent ~6s): the host IS the match on this
-transport, so losing it ends the match. In the lobby / after
-the match it reads as the room dissolving. */
-function sbGuestHostGone(){
-if(net.leaving||net.dissolved)return;
-if(!sbGuestJoined)return;
+/* the match-ending half of losing the host, shared by the
+deliberate hostleft path and by an auto-reconnect that ran
+out of budget: the host IS the match on this transport, so
+losing it ends the match. In the lobby / after the match it
+reads as the room dissolving. */
+function sbGuestEndMatch(msg){
 if(running&&mode==="online"&&net.started&&!matchOver){
 if(net.code&&net.myId)sbRejoinInfo={code:net.code,pid:net.myId}; /* v210: remember WHO we were in this room (memory only) — if the "gone" host was merely frozen and the match is still running there, re-entering the same code reclaims this participant id and the host hands our fighter back from the CPU (see sbRoomJoin's rejoin branch) */
-cleanupNet();toMenu();openOnline("ホストとの接続が切れたため、試合は終了しました。");
+cleanupNet();toMenu();openOnline(msg||"ホストとの接続が切れたため、試合は終了しました。");
 }else{
 roomDissolved();
 }
+}
+/* the host's own hostleft message arrived: the host left on
+purpose (its teardown says so), so there is nothing to
+reconnect TO — the match ends at once, as before. */
+function sbGuestHostLeft(){
+if(net.leaving||net.dissolved)return;
+if(!sbGuestJoined&&!sbRecon.active)return;
+sbReconStop();
+sbGuestEndMatch();
+}
+/* the host went silent (heartbeat watchdog) or our channel
+reported an error mid-match: v212 tries to reconnect first.
+Outside a running match the old behavior is unchanged. */
+function sbGuestHostGone(){
+if(net.leaving||net.dissolved)return;
+if(!sbGuestJoined&&!sbRecon.active)return;
+if(running&&mode==="online"&&net.started&&!matchOver){
+if(sbReconStart())return;
+}
+sbGuestEndMatch();
+}
+/* ---- v212 guest auto-reconnect ----
+   Entered the moment a mid-match channel loss is detected
+   (heartbeat silence via sbGuestHostGone, or a channel error
+   status). The match is NOT torn down: the local simulation
+   keeps running on predictions exactly as it does across any
+   input gap, the recorder notes the outage (and persists it),
+   and attempts run on a 1s tick — each builds a FRESH channel
+   under the same room code and re-joins with the v210 rejoin
+   pid, so the host revives this participant (CPU hand-back in
+   sbHostRevivePlayer) and resyncs the match. The joined reply
+   landing stops the attempts; the addressed start that
+   follows rebuilds this end and the host's resync state is
+   adopted over it (see the start branch in svOnMsg, which
+   also records the successful return). After ~30s the match
+   ends the old way (sbReconGiveUp). */
+function sbReconStop(){
+if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}
+sbRecon.active=false;sbRecon.pending=false;
+}
+function sbReconStart(){
+if(sbRecon.active)return true;
+if(!(running&&mode==="online"&&net.started&&!matchOver&&sbGuestJoined))return false;
+if(!net.code||!net.myId)return false;
+sbRecon.active=true;sbRecon.pending=false;sbRecon.at=performance.now();sbRecon.lastTry=0;sbRecon.tries=0;
+sbRejoinInfo={code:net.code,pid:net.myId};
+mrecEvent("接続が切れました。自動再接続を開始しました");
+showCenter("接続が切れました\n再接続しています…",3000);
+sbReconAttempt();
+sbRecon.timer=setInterval(sbReconTick,1000);
+return true;
+}
+function sbReconAttempt(){
+sbRecon.lastTry=performance.now();sbRecon.tries++;
+var code=net.code;if(!code)return;
+if(sbPriv){try{sbPriv.unsubscribe()}catch(e){}sbPriv=null}
+if(sbChan){var old=sbChan;sbChan=null;try{old.unsubscribe()}catch(e){}}
+sbGuestJoined=false;
+if(!sbEnsureClient())return;
+sbCid="c"+Math.random().toString(36).slice(2,10);
+var chan=null;
+try{chan=sbClient.channel("jb-room-"+code,{config:{broadcast:{self:false}}})}catch(e){return}
+sbChan=chan;
+sbGuestWire(chan);
+chan.subscribe(function(status){
+if(sbChan!==chan)return;
+if(status==="SUBSCRIBED"){
+sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID,rejoin:(sbRejoinInfo&&sbRejoinInfo.code===code)?sbRejoinInfo.pid:undefined});
+sbLastHostHb=performance.now();
+sbStartHeartbeat();
+}
+});
+}
+function sbReconTick(){
+if(!sbRecon.active)return;
+if(sbGuestJoined){if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}sbRecon.pending=true;return} /* the joined reply landed; the addressed start (and with it the resync) is on its way — attempts stop here, and success is recorded in the start branch via the pending flag */
+if(performance.now()-sbRecon.at>SB_RECON_GIVEUP_MS){sbReconGiveUp();return}
+if(performance.now()-sbRecon.lastTry>SB_RECON_RETRY_MS)sbReconAttempt();
+}
+function sbReconGiveUp(){
+sbReconStop();
+mrecEvent("自動再接続に失敗しました");
+sbGuestEndMatch("再接続できなかったため、試合は終了しました。タイトル画面から前回の試合ログをダウンロードできます。");
+}
+/* ---- v212 host auto-reconnect ----
+   The mirror problem on the host: its room state (and the
+   match itself) lives on this device, so a dropped host
+   channel must not dissolve anything. Attempts re-create the
+   channel under the same room code; when one lands, every
+   player's liveness stamp is re-based to now (nobody is
+   judged gone for the host's own outage) and the heartbeat
+   restarts — guests see the host simply come back, and any
+   guest that used the silence to start its own reconnect
+   re-joins through the normal rejoin branch and is revived.
+   After ~30s the room ends the old way. In the lobby the
+   same recovery runs silently (there is no match to log). */
+function sbHostReconStop(){
+if(sbHostRecon.timer){clearInterval(sbHostRecon.timer);sbHostRecon.timer=null}
+sbHostRecon.active=false;
+}
+function sbHostReconStart(){
+if(sbHostRecon.active||!sbRoom)return;
+sbHostRecon.active=true;sbHostRecon.at=performance.now();sbHostRecon.lastTry=0;sbHostRecon.tries=0;sbHostRecon.subbed=false;
+if(running&&mode==="online"&&net.started&&!matchOver){mrecEvent("ホストの接続が切れました。自動再接続を開始しました");showCenter("接続が切れました\n再接続しています…",3000)}
+sbHostReconAttempt();
+sbHostRecon.timer=setInterval(sbHostReconTick,1000);
+}
+function sbHostReconAttempt(){
+sbHostRecon.lastTry=performance.now();sbHostRecon.tries++;sbHostRecon.subbed=false;
+var room=sbRoom;if(!room)return;
+if(sbChan){var old=sbChan;sbChan=null;try{old.unsubscribe()}catch(e){}}
+if(!sbEnsureClient())return;
+var chan=null;
+try{chan=sbClient.channel("jb-room-"+room.code,{config:{broadcast:{self:false}}})}catch(e){return}
+sbChan=chan;
+sbHostWire(chan);
+chan.subscribe(function(status){
+if(sbChan!==chan)return;
+if(status==="SUBSCRIBED"){
+sbHostRecon.subbed=true;
+if(sbRoom){var nowH=Date.now();for(var hi=0;hi<sbRoom.players.length;hi++)sbRoom.players[hi].lastHb=nowH} /* grace re-base: the silence during OUR outage is not the guests' departure */
+sbStartHeartbeat();
+if(sbHostRecon.active){
+sbHostReconStop();
+if(running&&mode==="online"&&net.started&&!matchOver){mrecEvent("ホストの接続が復旧しました（自動再接続）");showCenter("再接続しました",2200)}
+}
+}
+});
+}
+function sbHostReconTick(){
+if(!sbHostRecon.active)return;
+if(!sbRoom){sbHostReconStop();return}
+if(performance.now()-sbHostRecon.at>SB_RECON_GIVEUP_MS){
+sbHostReconStop();
+var wasMatch=running&&mode==="online"&&net.started&&!matchOver;
+if(wasMatch)mrecEvent("自動再接続に失敗しました");
+cleanupNet();toMenu();openOnline(wasMatch?"再接続できなかったため、試合は終了しました。タイトル画面から前回の試合ログをダウンロードできます。":"接続が復旧しなかったため、ルームを終了しました。");
+return;
+}
+if(!sbHostRecon.subbed&&performance.now()-sbHostRecon.lastTry>SB_RECON_RETRY_MS)sbHostReconAttempt();
 }
 /* ---- host match: step hook, guest input source, KO hook ---- */
 /* called at the top of every fixed step in loop() (right after
@@ -2549,7 +2701,8 @@ function svOnMsg(m){
       occur here */
    net.role=net.isHost?"host":"guest";
    $("modal").classList.remove("on");
-   openCharSelect(net.isHost?"online-host":"online-guest");
+   if(sbRecon.active||sbRecon.pending){sbRecon.pending=true;/* v212 auto-reconnect: this joined reply is our own return mid-match — the addressed start that follows rebuilds the match, so the character select must NOT open over the live game */}
+   else openCharSelect(net.isHost?"online-host":"online-guest");
    return;
  }
  if(m.t==="roster"){
@@ -2583,6 +2736,7 @@ function svOnMsg(m){
    $("lobbyScreen").classList.remove("on");$("charSelect").classList.remove("on");showCenter("",0);
    startMatch("online");
    if(m.ls)lsBegin();else lsReset(); /* ls:1 start = rollback input-sync match (the seed startMatch just consumed via svReset is the shared PRNG seed on every end) */
+   if(sbRecon.active||sbRecon.pending){sbReconStop();mrecEvent("自動再接続に成功し、同じ参加者として試合に復帰しました");showCenter("再接続しました",2200)} /* v212: the return is complete — the host's revive (back / lsret) and its full-state resync (lsrs) land right after this start and heal whatever the outage diverged; the event is recorded into the fresh match record lsBegin just opened */
    return;
  }
  if(m.t==="chk"){lsOnChk(m);return} /* rollback layer: host state checksum for a confirmed frame */
@@ -2615,6 +2769,7 @@ function svOnMsg(m){
  if(m.t==="end"){sv.endResults=m.results||null;matchOver=true;return}
  if(m.t==="tolobby"){
    clearRematchWatch();
+   sbReconStop(); /* v212: the match is over — no reconnect may be pending into the next one */
    ls.active=false; /* the rollback match is over; the next start re-arms it via lsBegin */
    toLobbyCharSelect();
    return;
@@ -4249,22 +4404,27 @@ function fighterDispName(f){
  return cname(f.char);
 }
 /* ================= MATCH RECORDER (v207) =================
-   While an online match runs, this device keeps an in-memory
-   diagnostic record of the input-sync layer: the participants'
-   build ids and this end's role, the mode transitions (with
-   time / frame / reason), the checkpoint checksum verdicts,
-   the rollback count and max depth, the remote input arrival
-   gaps, this device's own frame-time max, and (v210) every
-   frame gap over 2s (a freeze: time / frame / length) plus
-   every return / rejoin / resync it caused. NOTHING is
-   written anywhere during the match. When the results screen
-   shows, the record is rendered to text and held in memory
-   only; the results panel's 「ログをダウンロード」 button is
-   the ONLY way it leaves the device, and only when the player
-   presses it. Leaving the results screen without pressing it
-   (rematch / character select / menu — every such path runs
-   hideResults, and session teardown runs cleanupNet) discards
-   the record unconditionally: an un-downloaded log is gone.
+   While an online match runs, this device keeps a diagnostic
+   record of the input-sync layer: the participants' build ids
+   and this end's role, the mode transitions (with time / frame
+   / reason), the checkpoint checksum verdicts, the rollback
+   count and max depth, the remote input arrival gaps, this
+   device's own frame-time max, and (v210) every frame gap over
+   2s (a freeze: time / frame / length) plus every return /
+   rejoin / resync it caused.
+   (v212) The record is ALSO persisted to this device's
+   localStorage as the match runs (mrecPersist: on match start,
+   on every recorded event, every 5s, when the tab hides, and
+   at finalize), so a match that ends abnormally — a disconnect
+   that never reaches the results screen — still leaves its log
+   on the device. A new match's record overwrites the previous
+   one at its start. The saved copy can be downloaded any time
+   from the title screen's 「前回の試合ログをダウンロード」
+   button (shown only while a saved log exists); the results
+   panel's 「ログをダウンロード」 button works exactly as
+   before. Leaving the results screen / tearing the session
+   down still discards the IN-MEMORY record (mrecDiscard), but
+   never the saved copy — only the next match overwrites it.
    No addresses or connection data are ever recorded — player
    names and build ids only. */
 var mrec={on:false,fin:false,text:null,startAt:0,wall:null,parts:[],trans:[],chk:[],chkSeen:{},chkOk:0,chkNg:0,chkDist:0,chkReport:0,arrLast:{},arrMax:0,arrOver:0,frameMax:0,fbWhy:{},fb:false,rs:[],frz:[],evt:[],press:{jump:0,j:0,k:0,l:0,ult:0},pressSeen:{}}; /* press / pressSeen (v211): how many of MY OWN presses the calculation actually applied, per action — internal names jump / j / k / l (= the U shoot key) / ult (= the L key); pressSeen dedupes by press frame so rollback re-simulation can never count one press twice */
@@ -4281,7 +4441,27 @@ function mrecStart(){
   mrec.parts.push({name:mm.name||"PLAYER",build:(i===net.myIdx)?BUILD_ID:(b||"不明"),me:i===net.myIdx,host:i===0});
  }
  mrec.trans.push({el:0,f:0,txt:"入力同期で開始"});
+ mrecPersist(); /* v212: a new match overwrites the previous match's saved log, from its very first frame */
 }
+/* (v212) the saved-log slot on this device. mrecPersist renders
+   the current record (the frozen final text once finalized) and
+   stores it; it is called on match start (overwrite), on every
+   recorded event below, on a 5s timer while a match runs, when
+   the tab is hidden / the page is unloaded, and at finalize —
+   so even a match killed by a disconnect leaves its log behind
+   on this device for the title screen's download button. */
+var MREC_STORE_KEY="jailbreaker.matchlog.v1";
+function mrecPersist(){
+ try{
+  var txt=null;
+  if(mrec.fin&&mrec.text)txt=mrec.text;
+  else if(mrec.on)txt=mrecBuildText();
+  if(txt)localStorage.setItem(MREC_STORE_KEY,txt);
+ }catch(e){}
+ mrecRefreshTitleBtn();
+}
+function mrecSavedExists(){try{return !!localStorage.getItem(MREC_STORE_KEY)}catch(e){return false}}
+function mrecRefreshTitleBtn(){var b=$("lastLogBtn");if(b)b.style.display=mrecSavedExists()?"":"none"}
 function mrecElapsed(){return mrec.startAt?((performance.now()-mrec.startAt)/1000):0}
 /* one of MY OWN presses was applied to the calculation (v211):
    called from the deterministic applier (rbApplyInput) at the
@@ -4330,6 +4510,7 @@ function mrecChkDist(F){
 function mrecFreeze(gapMs){
  if(!mrec.on)return;
  if(mrec.frz.length<50)mrec.frz.push({el:mrecElapsed(),f:ls.frame,ms:Math.round(gapMs)});
+ mrecPersist();
 }
 /* a return / rejoin event (v210): this device froze and came
    back, a departed participant returned and its CPU takeover
@@ -4337,6 +4518,7 @@ function mrecFreeze(gapMs){
 function mrecEvent(txt){
  if(!mrec.on)return;
  if(mrec.evt.length<50)mrec.evt.push({el:mrecElapsed(),f:ls.frame,txt:txt});
+ mrecPersist(); /* v212: events (returns / reconnects / resyncs) hit the saved copy the moment they are recorded */
 }
 function mrecReasonBase(code){
  if(code==="cap")return "巻き戻し上限超過（相手入力の遅れが30フレームを超えた、または巻き戻し先の保存状態がなかった）";
@@ -4352,12 +4534,14 @@ function mrecReasonBase(code){
 function mrecResync(F,n,code){
  if(!mrec.on)return;
  if(mrec.rs.length<50)mrec.rs.push({el:mrecElapsed(),f:F,n:n,code:code||"chk"});
+ mrecPersist();
 }
 function mrecTransition(reason){
  if(!mrec.on||mrec.fb)return;
  mrec.fb=true;
  mrec.trans.push({el:mrecElapsed(),f:ls.frame,txt:"写真（保険）へ切替 — "+reason});
  mrec.fbWhy[reason]=(mrec.fbWhy[reason]||0)+1;
+ mrecPersist();
 }
 function mrecPad(n){return (n<10?"0":"")+n}
 function mrecBuildText(){
@@ -4419,18 +4603,19 @@ function mrecFinalize(){
  if(!mrec.on||mrec.fin)return;
  mrec.fin=true;mrec.on=false; /* the record is frozen; hooks stop here */
  mrec.text=mrecBuildText();
+ mrecPersist(); /* v212: the final text replaces the running saved copy */
  var row=$("resLogRow");if(row)row.style.display=mrec.text?"":"none";
 }
 function mrecDiscard(){
  mrecReset();
  var row=$("resLogRow");if(row)row.style.display="none";
 }
-function mrecDownload(){
- if(!mrec.text)return;
+function mrecDownloadText(txt,wall){
+ if(!txt)return;
  try{
-  var w=mrec.wall||new Date();
+  var w=wall||new Date();
   var fn="jailbreaker-match-log-"+w.getFullYear()+mrecPad(w.getMonth()+1)+mrecPad(w.getDate())+"-"+mrecPad(w.getHours())+mrecPad(w.getMinutes())+mrecPad(w.getSeconds())+".txt";
-  var blob=new Blob([mrec.text],{type:"text/plain;charset=utf-8"});
+  var blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
   var url=URL.createObjectURL(blob);
   var a=document.createElement("a");a.href=url;a.download=fn;
   document.body.appendChild(a);a.click();
@@ -4438,8 +4623,34 @@ function mrecDownload(){
   setTimeout(function(){try{URL.revokeObjectURL(url)}catch(e){}},4000);
  }catch(e){}
 }
+function mrecDownload(){
+ if(!mrec.text)return;
+ mrecDownloadText(mrec.text,mrec.wall);
+}
+/* (v212) the title screen's download: whatever the last match
+   left in this device's saved-log slot, whenever the player
+   asks for it — including after a disconnect dumped them back
+   at the title. The file name reuses the match-start stamp
+   recorded in the log's own header line. */
+function mrecDownloadSaved(){
+ var txt=null;try{txt=localStorage.getItem(MREC_STORE_KEY)}catch(e){}
+ if(!txt)return;
+ var w=null,mm=/試合開始: (\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})/.exec(txt);
+ if(mm)w=new Date(+mm[1],+mm[2]-1,+mm[3],+mm[4],+mm[5],+mm[6]);
+ mrecDownloadText(txt,w);
+}
 var resLogBtnEl=$("resLogBtn");
 if(resLogBtnEl)resLogBtnEl.onclick=function(){beep(700,.06);mrecDownload()};
+var lastLogBtnEl=$("lastLogBtn");
+if(lastLogBtnEl)lastLogBtnEl.onclick=function(){beep(700,.06);mrecDownloadSaved()};
+mrecRefreshTitleBtn();
+/* (v212) keep the saved copy fresh while a match runs, and
+   flush it whenever the tab is about to go away — the moments
+   a disconnect is most likely to take the in-memory record
+   with it */
+setInterval(function(){if(mrec.on)mrecPersist()},5000);
+document.addEventListener("visibilitychange",function(){if(document.hidden)mrecPersist()});
+window.addEventListener("pagehide",function(){mrecPersist()});
 function showResults(rows){
  var sorted=rows.slice().sort(function(a,b){return (b.score-a.score)||(b.kills-a.kills)||(b.hp-a.hp)});
  var html="";
@@ -4449,7 +4660,7 @@ function showResults(rows){
  $("resultsPanel").classList.add("on");
  if(mode==="online")mrecFinalize(); /* match recorder: freeze the record and offer the download button — nothing is saved unless the player presses it */
 }
-function hideResults(){var p=$("resultsPanel");if(p)p.classList.remove("on");mrecDiscard()} /* leaving the results screen discards any un-downloaded match log, for good */
+function hideResults(){var p=$("resultsPanel");if(p)p.classList.remove("on");mrecDiscard()} /* leaving the results screen discards the in-memory record; the on-device saved copy (v212) stays available from the title screen until the next match overwrites it */
 function showLocalResults(){
  showResults(fighters.map(function(f){return{name:fighterDispName(f),score:f.score||0,assists:f.assists||0,kills:f.kills||0,deaths:f.deaths||0,hp:Math.max(0,Math.round(f.hp)),me:f===P1}}));
 }
