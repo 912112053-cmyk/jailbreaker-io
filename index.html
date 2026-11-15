@@ -426,6 +426,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["13:06"],tag:"調整",title:"MIMI&SHADEの↓+J「こけちゃうよ／こけロ」を調整",
+  items:["SHADEのKBを520→660に上げました（吹き飛ばし方向は真上のままです）",
+         "SHADEの発生を0.16秒→0.2秒に遅くしました",
+         "MIMI側（ダメージ6／KB 680／発生 即時）など、その他の性能に変更はありません"]},
  {date:"2026/11/15",times:["13:04"],tag:"修正",title:"MIMI&SHADE：U「助けて！」の次のKが「いってらっしゃいSHADE」になるように",
   items:["MIMI&SHADEのU「助けて！」でSHADEのそばへワープした後は、K「助けてSHADE！！」の呼び戻しと同じくSHADEが「そばにいる」状態になるよう修正しました",
          "これまでは、前方へ送り出したSHADEへワープした後にKを押すと、すでにそばにいるのに「助けてSHADE！！」（呼び戻し）になってしまいました。これからは次にKを押すと「いってらっしゃいSHADE」（送り出し）になります",
@@ -492,13 +496,6 @@ var UPDATE_LOG=[
          "ゲストが「状態をどこまで受け取ったか」を、自分の入力と一緒にホストへ知らせるようにしました。ホストはゲストごとに未達分を直接数え、約0.23秒分を超えて遅れているゲストには新しい状態を送らず、受け取りが追いついてからその時点の最新状態を送ります。端末側の計測に頼らないため、どの環境でも遅延が秒単位に育つことはなくなります。詰まりが長引いた場合も、一定間隔で最新状態を1つ送って追いつくきっかけを作るため、画面が止まったままにはなりません",
          "エフェクト（ヒットエフェクトやKOバナーなど）の通知もゲストごとの保持に変えました。詰まっているゲストの分はそのゲスト用にためておき、流れが戻った時点でまとめて届きます。1人の詰まりで他のゲストの表示が止まることもありません",
          "変更は直接接続（P2P）のときだけです。サーバー経由の対戦、技・数値・物理には変更はありません"]},
- {date:"2026/11/15",times:["08:10"],tag:"修正",title:"直接接続（P2P）：ゲストの遅延が約3秒まで膨らむ問題を修正",
-  items:["P2P対戦でゲスト（2人目以降）の画面が約3秒遅れる問題を修正しました。原因は配信の「詰まり」でした：ホストが毎フレーム状態を送り続ける一方、接続の送信待ち行列は順番厳守で古いデータを一切捨てないため、回線の処理が少しでも追いつかないと、古い状態が秒単位で溜まってゲストに届いていました。ゲストは数秒前の世界を見続け、自分のキャラも古い状態に引き戻されていたため、遅延がどんどん大きく感じられました",
-         "ホスト側の配信を「最新だけ送る」方式に変えました。ゲスト宛の送信待ちが一定量を超えている間は、その回の状態送信を見送り、次に送れるタイミングでその時点の最新状態を送ります。状態は毎回まるごと送る形式なので、見送っても情報は失われず、待ち行列が秒単位に膨らむこと自体が起きなくなりました。エフェクトの通知も、詰まっている間は捨てずに保持し、流れが戻ってから送ります",
-         "ゲスト側にも「遅れの検知と追いつき」を入れました。届いた状態の古さをフレーム番号から推定し、約0.3秒以上遅れていたら、古い分の補間を捨てて最新の状態へ即座に追いつきます。あわせて、自分のキャラの予測表示との照合も「状態が作られた時刻」で行うようになり、古い状態が届いても自分のキャラが数秒前の位置へ引き戻されなくなりました",
-         "画面右上の遅延表示（ms）にも、この「届くまでの古さ」を含めるようにしました。詰まりが起きれば数字に出て、解消されれば低い数字に戻ります",
-         "変更は直接接続（P2P）のときだけです。サーバー経由の対戦、技・数値・物理には変更はありません"]},
-
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -749,7 +746,7 @@ var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一�
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — あっちいって！！／ちかづくナ！</b><p>MIMIは前進して両手で思い切り突き飛ばし、少し遅れてSHADEが腕を振る。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 13')+mvS('KB','800／770')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.52秒')+mvS('後硬直','0.58秒')+mvS('判定','MIMI 80×62／SHADE 134×98')+mvS('被弾硬直','0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。SHADEの手は当たった相手を<b>真上</b>へ吹き飛ばす。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／520（真上）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — こけちゃうよ／こけロ</b><p>MIMIは足元に人形を振り、少し遅れてSHADEが足元に手を滑り込ませる。低い判定の足元攻撃。SHADEの手は当たった相手を<b>真上</b>へ吹き飛ばす。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 12')+mvS('KB','680／660（真上）')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.32秒')+mvS('後硬直','0.3秒')+mvS('判定','MIMI 68×34／SHADE 92×40')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 回るよ！／こいつカ？</b><p>MIMIは空中で一回転して周囲を攻撃（最大3ヒット）。同時にSHADEは、自分の近くにいる相手を<b>掴んで0.4秒間固定（完全硬直）してからMIMIの方へ投げる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','MIMI 4×最大3／SHADE 12（掴み投げ）')+mvS('KB','MIMI 300／SHADE 760（0.4秒後にMIMI方向）')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','MIMI 周囲78／SHADE 周囲124')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落として！！</b><p>MIMIは<b>発動と同時に0.32秒間 空中で静止</b>し、そのまま真下へ<b>ぬいぐるみで2回攻撃</b>する（1回目 発生即時／2回目 0.16秒後）。同時にSHADEは<b>すさまじい速度で拳を振り下ろし</b>、真下の相手を<b>メテオ</b>で叩き落とす。旧「落ちちゃう！」のお尻ダイブ・着地衝撃波・闇フィールドは<b>削除</b>された。</p>'+mvSpec(mvS('ダメージ','MIMI 5＋5／SHADE 24')+mvS('KB','MIMI 560／SHADE 700（下方向）')+mvS('発生','MIMI 即時／SHADE 0.36秒')+mvS('全体','MIMI 0.32秒／SHADE 0.66秒')+mvS('後硬直','0.36秒')+mvS('判定','MIMI 下方向98×68／SHADE 下方向112×92')+mvS('被弾硬直','MIMI 0.32秒')+mvS('追加効果','MIMIは0.32秒間 空中で静止／SHADE メテオ判定'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 一人でもやれるもん！／ソラまでふきとべ！</b> <span style="color:#f472b6;font-weight:900">MIMI 単発＋SHADE 遅出しアッパー</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。MIMIは手から光の魔法を一発放つ。同時にSHADEは<b>発生の遅い高ダメージのアッパー</b>（0.28秒後）を放つ。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','MIMI 9／SHADE 28')+mvS('KB','720・SHADE 1130（真上）')+mvS('発生','即時／SHADE 0.28秒')+mvS('全体','0.48秒')+mvS('後硬直','0.62秒')+mvS('判定','MIMI 70×62／SHADE 周囲102')+mvS('着地硬直','空中で出した場合0.22秒'))+'</div></div>'
@@ -6215,12 +6212,12 @@ function startMimiAttack(f,type,foe){
      /* こけちゃうよ／こけロ: MIMI sweeps the bunny doll at the feet
         (user balance spec: 6 dmg / KB 680, box 68x34, move now lasts
         0.32s, foe stun 0.32s); SHADE slides a hand in along the
-        ground at its own feet — its hit is DELAYED 0.16s (shHitKind
-        "low"): 12 dmg / KB 520 straight up, box 92x40, stun 0.32s */
+        ground at its own feet — its hit is DELAYED 0.2s (shHitKind
+        "low"): 12 dmg / KB 660 straight up, box 92x40, stun 0.32s */
      f.state="mlowj";f.stateT=0.32;f.attackCd=0.23;f.comboWin=0;
      f.vx=f.face*300;
      meleeHit(f,foe,68,34,6,680,f.face,0.06,0.32);
-     if(shadeAlive(f)){f.shState="slow";f.shStateT=0.32;f.shHitT=0.16;f.shHitKind="low"}
+     if(shadeAlive(f)){f.shState="slow";f.shStateT=0.32;f.shHitT=0.2;f.shHitKind="low"}
      spawnParticles(f.x+f.face*22,f.y+f.h-6,8,"#fbcfe8",140);
      beep(760,.07,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
@@ -6922,7 +6919,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
       since the balance pass gave
       SHADE's J-chain / push / low hits their own startup — the
       claw (J1, 0.18s), chain upper (J2, 0.16s), fist (J3, 0.2s),
-      arm sweep (fwd+J, 0.18s) and low slide (down+J, 0.16s). Each
+      arm sweep (fwd+J, 0.18s) and low slide (down+J, 0.2s). Each
       fires from wherever SHADE stands when the timer expires */
    if(f.shHitT>0){f.shHitT-=dt;if(f.shHitT<=0){var shk=f.shHitKind;f.shHitKind="";
      if(shk==="supper"){shadeHit(f,f.shX+f.shFace*42,f.shY-60,102,102,28,1130,f.shFace,-1.25);shadeBurst(f,12);spawnRing(f.shX+f.shFace*42,f.shY-70,"#a855f7",40);shake=Math.max(shake,4);beep(300,.12,"sawtooth",.055)} /* J+K upper (user balance spec): 24 -> 28 dmg / KB 1050 -> 1130, box 96x96 -> 周囲102 */
@@ -6932,7 +6929,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      else if(shk==="fist"){shadeHit(f,f.shX+f.shFace*68,f.shY-52,136,88,20,1000,f.shFace,-0.35);shadeBurst(f,12);shake=Math.max(shake,4);beep(240,.1,"sawtooth",.05)} /* J3 fist: 20 dmg / KB 1000, box 136x88 */
      else if(shk==="sweep"){shadeHit(f,f.shX+f.shFace*67,f.shY-52,134,98,13,770,f.shFace,-0.25,0.22);shadeBurst(f,9);beep(1100,.06,"square",.05)} /* fwd+J sweep: 13 dmg / KB 770, box 134x98, stun 0.22s */
      else if(shk==="smeteor"){shadeHit(f,f.shX,f.shY-16,112,92,24,700,0,1.05);shadeBurst(f,12);spawnRing(f.shX,f.shY-4,"#a855f7",46);shake=Math.max(shake,5);beep(140,.14,"sawtooth",.06)} /* 落として！！ SHADE meteor fist: 24 dmg / KB 700 STRAIGHT DOWN (meteor: dir 0, up 1.05 — the same downward launch the other meteor hits use), box 下方向112x92 centred low over SHADE's feet, 発生 0.36s */
-     else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,520,0,-1.0,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 520 straight up (dir 0, up -1.0), box 92x40, stun 0.32s — KB 320 -> 520 and launch direction changed to 真上 (user spec) */
+     else if(shk==="low"){shadeHit(f,f.shX+f.shFace*46,f.shY-14,92,40,12,660,0,-1.0,0.32);spawnParticles(f.shX+f.shFace*30,f.shY-6,6,"#7e22ce",130);beep(760,.07,"square",.045)} /* down+J slide: 12 dmg / KB 660 straight up (dir 0, up -1.0), box 92x40, stun 0.32s — KB 520 -> 660 (user spec) */
    }}
    } /* 【闇ゲージ】 while SHADE is vanished the whole block above (follow movement + delayed hits) is skipped — there is no body to move and no hand to strike with */
    /* 回るよ！ ticks: a hit on both sides every 0.11s, up to 3 — a
