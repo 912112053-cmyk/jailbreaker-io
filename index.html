@@ -426,6 +426,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/15",times:["10:50"],tag:"調整",title:"継続ダメージでもSHADEの闇ゲージが減るように",
+  items:["燃焼・毒・出血など、MIMI&SHADEが受けている継続ダメージのたびに、SHADEの闇ゲージもMIMIへのダメージと同じぶん減るようになりました",
+         "SARAの火炎放射やORCHIDのサンフラワー、毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけゲージが減ります",
+         "ゲージが0になれば通常どおりSHADEは18秒間消失します"]},
  {date:"2026/11/15",times:["10:24"],tag:"新機能",title:"SHADEに「闇ゲージ」を追加",
   items:["MIMI&SHADEのSHADEに、上限250の「闇ゲージ」を追加しました",
          "ゲージが残っている間、SHADEはノックバックを完全に受けません（KB完全無効）",
@@ -765,7 +769,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','400')+mvS('空中速度','388')+mvS('受けKB','×1.12')+mvS('ダッシュ','1080')+mvS('ウルト溜まり','遅め（×0.44）'))
 +mvLegend
-+'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限250</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るが、<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くにいる間</b>は毎秒10ずつ回復する（K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','250')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くで毎秒10'))+'</div></div>'
++'<div class="moveRow"><div><b>SHADE — 闇ゲージ</b> <span style="color:#c084fc;font-weight:900">SHADE専用ゲージ／上限250</span><p>SHADEには<b>闇ゲージ</b>がある。性質はHPと同じで、敵の攻撃が<b>SHADEの体</b>に当たるとそのぶん減るほか、<b>燃焼・毒・出血などの継続ダメージを受けている間も、MIMIへのダメージと同じぶん減る</b>（炎のビームや毒霧など範囲系の継続ダメージは、SHADEの体が範囲に入っている間だけ減る）。ただし<b>ノックバックは完全に無効</b>（SHADEは吹っ飛ばず、硬直もしない）。ゲージが0になるとSHADEは<b>18秒間消失</b>し、その間はSHADEの技が一切出ず、K・↑+K・U・ウルトも使えない。18秒たつと<b>MIMIの位置に、ゲージ全回復で復活</b>する。SHADEが<b>MIMIの近くにいる間</b>は毎秒10ずつ回復する（K「助けてSHADE！！」の呼び戻し、↑+K「SHADEブランコして！！」、U「助けて！」のワープなどでそばにいる状態がこれにあたる）。</p>'+mvSpec(mvS('上限','250')+mvS('KB','完全無効')+mvS('消失','ゲージ0で18秒間')+mvS('復活','18秒後にMIMIの位置・全回復')+mvS('回復','MIMIの近くで毎秒10'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 1段目 — こないで！！／ワタシのMIMIにさわるナ！（引っ掻き）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.9秒</span><p>MIMIはうさぎの人形を下から上に振り回し、少し遅れてSHADEが引っ掻く。猶予（0.9秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','MIMI 5／SHADE 12')+mvS('KB','180／300')+mvS('発生','MIMI 即時／SHADE 0.18秒')+mvS('全体','0.4秒')+mvS('後硬直','0.2秒')+mvS('判定','MIMI 68×62／SHADE 116×74')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — こないで！！／ワタシのMIMIにさわるナ！（アッパー）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>MIMIは人形を上から下に振り回し、少し遅れてSHADEがアッパーで打ち上げる。</p>'+mvSpec(mvS('ダメージ','MIMI 6／SHADE 14')+mvS('KB','220／320（真上寄り）')+mvS('発生','MIMI 即時／SHADE 0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.22秒')+mvS('判定','MIMI 68×62／SHADE 120×94')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — こないで！！／ワタシのMIMIにさわるナ！（拳）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>MIMIは両手で思い切り突き飛ばし、少し遅れてSHADEが拳で突く<b>超ふっとばし</b>。3段目だけ短い突進付きで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','MIMI 10／SHADE 20')+mvS('KB','320／1000')+mvS('発生','MIMI 即時／SHADE 0.2秒')+mvS('全体','0.6秒')+mvS('後硬直','0.65秒')+mvS('判定','MIMI 86×72／SHADE 136×88'))+'</div></div>'
@@ -5865,7 +5869,11 @@ function shadeBurst(f,n){spawnParticles(f.shX,f.shY-52,n||8,"#7e22ce",170);spawn
    at KO); it is a separate pool with its own fate. At 0 the gauge
    breaks: SHADE vanishes for 18 seconds (no body, no hits, no
    counterpart moves — K / up+K / U / ult all need it present), then
-   revives AT MIMI'S POSITION with the gauge full. While SHADE is
+   revives AT MIMI'S POSITION with the gauge full. Damage over time
+   drains it too (applyShadeDot): burn / poison / bleed ticks riding
+   on the pair drain it alongside MIMI's HP, and channeled / area
+   ticks (flame beams, poison mist, dark field, the AXE ult grind)
+   drain it while SHADE's body is in the area. While SHADE is
    NEAR MIMI (beside her after a K recall / up+K swing / U warp, or
    simply standing close) the gauge refills 10 per second. */
 var SHADE_HP_MAX=250,SHADE_VANISH_TIME=18,SHADE_REGEN_RATE=10;
@@ -5896,6 +5904,29 @@ function applyShadeHit(att,owner,dmg,cx,cy,isUlt){
  att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
  if((att.isPlayer||att.remote)&&!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg));
  beep(150+Math.random()*70,.06,"square",.05);
+ if(owner.shHp<=0)shadeVanish(owner);
+ return true;
+}
+/* 【闇ゲージ×継続ダメージ】 (user request): damage-over-time ALSO drains
+   SHADE's darkness gauge. applyShadeDot is the QUIET counterpart of
+   applyShadeHit for DoT ticks: same guards (dead / invuln / vanished /
+   self), same SARA-chaos boost the tick itself gets through applyHit,
+   and it can break the gauge into shadeVanish — but NO hitstop, NO
+   shake, NO beep and NO extra combo / ult-meter credit: the paired
+   applyHit (or the area tick's own bookkeeping) already paid those
+   for this tick, the gauge drain is the same damage event reaching
+   the pair's second body. Status DoTs (burn / poison / bleed) ride on
+   the fighter, so their ticks drain the gauge by the tick's damage
+   alongside MIMI's HP; channeled / area DoTs (flame beams, poison
+   mist, dark field) drain it only while SHADE's BODY is inside the
+   area, checked at each call site. */
+function applyShadeDot(att,owner,dmg){
+ if(!att||!owner||att===owner||owner.char!=="mimi"||owner.dead||owner.invuln>0||(owner.shGoneT||0)>0)return false;
+ if(att.char==="sara"&&att.chaos)dmg=Math.round(dmg*1.3); /* mirror the tick's own chaos boost (applyHit) — the SMILEY Berserker boost never applies to noKb DoT ticks, so it is not mirrored here either */
+ if(owner.shHp==null)owner.shHp=SHADE_HP_MAX;
+ owner.shHp=Math.max(0,owner.shHp-dmg);owner.shFlash=Math.max(owner.shFlash||0,0.1);
+ spawnParticles(owner.shX,owner.shY-52,3,"#a855f7",120);
+ pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.55,col:"#d8b4fe"});
  if(owner.shHp<=0)shadeVanish(owner);
  return true;
 }
@@ -6998,9 +7029,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.flameTick<=0){f.flameTick=0.16;
        for(var fli=0;fli<fighters.length;fli++){var flt=fighters[fli];if(flt===f||flt.dead||flt.invuln>0)continue;
          var fdx=(flt.x-f.x)*f.face,fdy=(flt.y+flt.h/2)-(f.y+f.h*0.45);
-         if(f.flameMode===1){if(fdx>6&&fdx<230&&Math.abs(fdy)<80){applyHit(f,flt,9,210,f.face,-0.15,true,flt.x,flt.y+flt.h*0.45,false);flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}} /* 火炎放射 (user spec): KB なし -> 210, 判定 6〜215 -> 6〜230, 燃焼は放射後に滞在時間で精算 */
-         else if(f.flameMode===3){if(fdx>6&&fdx<670&&Math.abs(fdy)<95)applyHit(f,flt,9,0,f.face,0,true,flt.x,flt.y+flt.h*0.45,true)} /* サンフラワー: huge forward beam, damage only — no knockback, no burn */
-         else{var udx=Math.abs(flt.x-f.x),udy=f.y-flt.y;if(udx<105&&udy>4&&udy<215){applyHit(f,flt,8,0,f.face,0,false,flt.x,flt.y+flt.h*0.5,true);flt.burnT=Math.max(flt.burnT||0,2.0);flt.burnBy=f}}
+         if(f.flameMode===1){if(fdx>6&&fdx<230&&Math.abs(fdy)<80){applyHit(f,flt,9,210,f.face,-0.15,true,flt.x,flt.y+flt.h*0.45,false);flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}if(shadeAlive(flt)){var shdx1=(flt.shX-f.x)*f.face,shdy1=(flt.shY-52)-(f.y+f.h*0.45);if(shdx1>6&&shdx1<230&&Math.abs(shdy1)<80){applyShadeDot(f,flt,9);if(!(fdx>6&&fdx<230&&Math.abs(fdy)<80)){flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}}}} /* 【闇ゲージ】 the jet is continuous damage: while SHADE's body is inside it, its darkness drains 9 per tick too (and the pair still ignites from SHADE-only exposure, via flameExp) */ /* 火炎放射 (user spec): KB なし -> 210, 判定 6〜215 -> 6〜230, 燃焼は放射後に滞在時間で精算 */
+         else if(f.flameMode===3){if(fdx>6&&fdx<670&&Math.abs(fdy)<95)applyHit(f,flt,9,0,f.face,0,true,flt.x,flt.y+flt.h*0.45,true);if(shadeAlive(flt)){var shdx3=(flt.shX-f.x)*f.face,shdy3=(flt.shY-52)-(f.y+f.h*0.45);if(shdx3>6&&shdx3<670&&Math.abs(shdy3)<95)applyShadeDot(f,flt,9)}} /* 【闇ゲージ】 the sunflower beam is continuous damage: SHADE's body inside it drains 9 per tick too */ /* サンフラワー: huge forward beam, damage only — no knockback, no burn */
+         else{var udx=Math.abs(flt.x-f.x),udy=f.y-flt.y;if(udx<105&&udy>4&&udy<215){applyHit(f,flt,8,0,f.face,0,false,flt.x,flt.y+flt.h*0.5,true);flt.burnT=Math.max(flt.burnT||0,2.0);flt.burnBy=f}if(shadeAlive(flt)){var shdx2=Math.abs(flt.shX-f.x),shdy2=f.y-(flt.shY-104);if(shdx2<105&&shdy2>4&&shdy2<215){applyShadeDot(f,flt,8);if(!(udx<105&&udy>4&&udy<215)){flt.burnT=Math.max(flt.burnT||0,2.0);flt.burnBy=f}}}} /* 【闇ゲージ】 the breath cone is continuous damage: SHADE's body inside it drains 8 per tick too (SHADE-only exposure still ignites the pair) */
        }
      }
      if(f.flameT<=0){if(f.flameMode===1){for(var fei=0;fei<fighters.length;fei++){var fet=fighters[fei];if(fet.flameExpBy===f&&(fet.flameExp||0)>0){var fbd=Math.floor(fet.flameExp/0.25)*0.5;if(fbd>0&&!fet.dead){fet.burnT=Math.max(fet.burnT||0,fbd);fet.burnBy=f}fet.flameExp=0;fet.flameExpBy=null}}}f.flameT=0;f.flameMode=0} /* 火炎放射の燃焼精算: 当てていた時間0.25秒ごとに0.5秒の燃焼を放射後に付与 */
@@ -7015,7 +7046,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.burnT>0){
    f.burnT-=dt;f.burnTick-=dt;
    if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*26,f.y+f.h*0.45,1,Math.random()<0.5?"#fb923c":"#ef4444",80);
-   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB} /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
+   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB;applyShadeDot(bb,f,3)} /* 【闇ゲージ】 burn is a status on the pair: each tick also thins SHADE's darkness by the same 3 */ /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
  }
  /* POISON (ORCHID's toxin DoT): while poisonT lasts, the victim takes
     2 damage every 0.2s — NO knockback, NO hitstun (spec). The tick
@@ -7025,7 +7056,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.poisonT>0){
    f.poisonT-=dt;f.poisonTick-=dt;
    if(Math.random()<0.4)spawnParticles(f.x+(Math.random()-0.5)*24,f.y+f.h*0.5,1,Math.random()<0.5?"#a3e635":"#c084fc",70);
-   if(f.poisonTick<=0){f.poisonTick=0.2;var pbq=f.poisonBy;if(pbq&&pbq!==f&&!f.dead&&f.invuln<=0){var hsSv=hitstop,shSv=shake;applyHit(pbq,f,2,0,pbq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv;shake=shSv}}
+   if(f.poisonTick<=0){f.poisonTick=0.2;var pbq=f.poisonBy;if(pbq&&pbq!==f&&!f.dead&&f.invuln<=0){var hsSv=hitstop,shSv=shake;applyHit(pbq,f,2,0,pbq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv;shake=shSv;applyShadeDot(pbq,f,2)}} /* 【闇ゲージ】 poison ticks drain SHADE's darkness by the same 2 per tick */
  }
  /* BLEED (SMILEY Berserker's rider): while bleedT lasts, the victim
     takes 2 damage every 0.4s for 1.6s — NO knockback, NO hitstun.
@@ -7036,7 +7067,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.bleedT>0){
    f.bleedT-=dt;f.bleedTick-=dt;
    if(Math.random()<0.5)spawnParticles(f.x+(Math.random()-0.5)*22,f.y+f.h*(0.3+Math.random()*0.4),1,Math.random()<0.6?"#dc2626":"#991b1b",55);
-   if(f.bleedTick<=0){f.bleedTick=0.4;var blq=f.bleedBy;if(blq&&blq!==f&&!f.dead&&f.invuln<=0){var hsSv2=hitstop,shSv2=shake;applyHit(blq,f,2,0,blq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv2;shake=shSv2}}
+   if(f.bleedTick<=0){f.bleedTick=0.4;var blq=f.bleedBy;if(blq&&blq!==f&&!f.dead&&f.invuln<=0){var hsSv2=hitstop,shSv2=shake;applyHit(blq,f,2,0,blq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv2;shake=shSv2;applyShadeDot(blq,f,2)}} /* 【闇ゲージ】 bleed ticks drain SHADE's darkness by the same 2 per tick */
  }
  f.wasGround=f.onGround;
  if(f.onGround)f.coyote=COYOTE_S;else if(f.coyote>0)f.coyote-=dt;
@@ -7095,7 +7126,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.onGround)f.vy=0;
      if(Math.random()<0.4)spawnParticles(f.x-f.pushBy.ultDir*20,f.y+f.h*0.6,1,"#fdba74",90);
      f.pushDmgT=(f.pushDmgT||0)+dt;
-     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);pushFloater({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;if(f.hp<=0)killFighter(f,pa)}
+     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);pushFloater({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;applyShadeDot(pa,f,pd);if(f.hp<=0)killFighter(f,pa)} /* 【闇ゲージ】 the grind is continuous damage: a pinned MIMI&SHADE also loses darkness per tick */
    }
  }
  /* AXE ULT — the charge itself: full invincibility for exactly 1.5s,
@@ -9021,7 +9052,7 @@ function loop(ts){
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
-   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)pushParticle({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if(Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner}}return ob.t>0});
+   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)pushParticle({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if((Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92)||(shadeAlive(of)&&Math.abs(of.shX-ob.x)<92&&Math.abs(of.shY-ob.y)<92)){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner} /* 【闇ゲージ】 SHADE's body in a fire orb ignites the pair too — the burn ticks then drain the gauge via applyShadeDot */}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
       into its enlarged 160x60 trigger (±80 across / 60 around the feet
       line, up from ±55 / 46), then bursts for 20 damage / KB 560 away
@@ -9033,8 +9064,8 @@ function loop(ts){
    mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<80&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,560,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist: hangs in place ~6s; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
    /* MIMI&SHADE placed dark field: the system stays only so fields already in flight (or arriving in an online snapshot) still tick out — 4 damage every 0.5s, no knockback / no hitstun. NO current move places one: the field belonged to the deleted 落ちちゃう！／たすけるヨ！ dive, replaced by 落として！！ */
-   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}}}return df.t>0});
-   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}}}return mb.t>0});
+   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}if(shadeAlive(dff)&&Math.abs(dff.shX-df.x)<95&&Math.abs(dff.shY-df.y)<70){var shInD=applyShadeDot(df.owner,dff,4);if(shInD&&!(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70)&&df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the field drains 4 per tick too (combo credited once per pair per tick) */}return df.t>0});
+   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*190,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<118&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<118&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
  }
