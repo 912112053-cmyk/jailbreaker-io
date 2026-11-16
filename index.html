@@ -330,7 +330,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>与えたダメージがそのままスコアになるスコア制バトル（キル・アシスト共通）<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>与えたダメージがそのままスコア＋キルした人にボーナス+100のスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -434,6 +434,16 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["01:11"],tag:"演出",title:"KOJIRO：空中J「空斬り」を緑の豪華な風の斬撃に変更しました",
+   items:["空中J「空斬り」のエフェクトを、空中で風を横一文字に切り裂くような緑の豪華なエフェクトに変更しました。翡翠のグロー帯・緑の斬撃帯・白緑のコアの三層が横一文字に広がり、前後の斬撃の弧も緑の剣気になりました",
+          "帯の上下には風切り線が左右へ流れ、両端では風が小さく渦巻きます。発生時のパーティクル・衝撃波・閃光も緑に統一し、風テクスチャも大きくしました",
+          "その他の技のエフェクトは変更ありません。ダメージ・KB・判定・硬直など技の性能も一切変更ありません",
+          "オンライン対戦のビルド版数をv251に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["01:06"],tag:"調整",title:"キルボーナスを追加：倒した本人にスコア+100",
+   items:["敵を倒した（キルした）プレイヤーに、スコアボーナスとして+100点が入るようになりました。与えたダメージ分のスコアに上乗せされます",
+          "ボーナスは最後の一撃で倒した本人だけが対象です。アシスト（ダメージを与えただけの人）はこれまで通り与えたダメージ分のみで、ボーナスは付きません。倒した人がいない落下死などではボーナスは発生しません",
+          "KO時のバナー表示は、ダメージ分とボーナスを合わせた合計得点を表示します。通常対戦・CPU・オンライン対戦のすべてに適用されます",
+          "オンライン対戦のビルド版数をv250に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["00:58"],tag:"演出",title:"KOJIRO：U「居合斬り」のモーションを直立不動に変更しました",
    items:["U「居合斬り」発動中の体のモーションを、これまでの前傾姿勢（前に寄って少し沈み込む動き）から、直立した待機姿勢のまま静止する「直立不動」に変更しました",
           "居合斬りのエフェクト（緑の剣気・移動前〜移動後を結ぶ白い一直線・パーティクル）はこれまで通り表示されます。前進する移動そのものも変更ありません",
@@ -986,14 +996,14 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。さらに、<b style="color:#fde047">最後の一撃で倒した本人にはボーナス+100点</b>が上乗せされます（アシストには付きません）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
 
 /* ================= GAME ENGINE =================
    Physics & layout measured against real bandit.rip gameplay footage:
-   - HP-based arena brawler, score = damage dealt (settled per KO, kill and assists alike), respawn, out-of-combat regen
+   - HP-based arena brawler, score = damage dealt (settled per KO, kill and assists alike) + a flat +100 bonus to the killer, respawn, out-of-combat regen
    - big scrolling stage, camera follows the player with a dead zone +
      critically-damped ease and a small smoothed lookahead (updateCamera):
      precise placement without the sway that causes camera sickness
@@ -1594,7 +1604,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v249";
+var BUILD_ID="v251";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6559,7 +6569,7 @@ function startKojiroAttack(f,type,foe){
      f.state="airslash";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 後硬直 0.43 -> 0.38秒: attackCd 0.31 + 0.07 (user spec) */
      if(f.vy>60)f.vy=60;
      var kjAirList=[];meleeHit(f,foe,104,92,14,360,f.face,-0.3,0.34,false,0,kjAirList);meleeHit(f,foe,104,92,14,360,-f.face,-0.15,0.34,false,0,kjAirList); /* 空斬り (user spec): damage 前13/後7 -> 14, KB 前360/後200 -> 360, box 前84x92/後60x76 -> 周囲104x92 (both sides, shared hitList so one foe is hit once), 被弾硬直 0.22 -> 0.34秒 */
-     spawnParticles(f.x,f.y+f.h*0.45,14,"#fecaca",240);spawnRing(f.x,f.y+f.h*0.45,"#f87171",48);spawnSparks(f.x+f.face*36,f.y+f.h*0.4,f.face,"#fff1f2",5);spawnSparks(f.x-f.face*36,f.y+f.h*0.4,-f.face,"#fff1f2",5); /* 空斬り: 横一文字の斬撃帯・斬撃の弧と同時に閃光のパーティクル (弧と帯は drawKojiro 側、風テクスチャは描画側の kjfx) */
+     spawnParticles(f.x,f.y+f.h*0.45,20,"#bbf7d0",280);spawnParticles(f.x,f.y+f.h*0.45,10,"#4ade80",190);spawnRing(f.x,f.y+f.h*0.45,"#22c55e",58);spawnRing(f.x,f.y+f.h*0.45,"#86efac",38);spawnSparks(f.x+f.face*44,f.y+f.h*0.4,f.face,"#f0fdf4",7);spawnSparks(f.x-f.face*44,f.y+f.h*0.4,-f.face,"#f0fdf4",7);spawnSparks(f.x,f.y+f.h*0.45,0,"#a7f3d0",6); /* 空斬り: 緑の風が横一文字に切り裂く豪華な斬撃 — 緑の閃光・風の破片と二重の衝撃波 (帯・弧・風の流れは drawKojiro 側、風テクスチャは描画側の kjfx) */
      beep(1050,.06,"square",.045);
    }else if(downHeld){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
@@ -8448,8 +8458,10 @@ function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="koji
    reduction is already reflected and overkill past 0 HP never counts.
    At KO, killFighter pays every contributor SCORE equal to their total
    (kill and assist alike), counts ASSISTS, and heals only the killer by
-   20% of their own total. Self-damage (SARA's chaos cost) never passes
-   through here and is never recorded. */
+   20% of their own total. On top of the damage payout, the killer alone
+   also receives a flat KILL_BONUS (+100) score bonus — see killFighter.
+   Self-damage (SARA's chaos cost) never passes through here and is
+   never recorded. */
 function recordDmg(att,def,amount){
  if(!att||att===def||!(amount>0))return;
  var idx=fighters.indexOf(att);if(idx<0)return;
@@ -8604,6 +8616,18 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.hp<=0)killFighter(def,att);
  return true;
 }
+/* Kill bonus (user spec): on top of the v99 damage-proportional
+   payout, the fighter who lands the finishing blow (the attributed
+   killer — including an attributed knockback fall kill) receives a
+   flat +100 SCORE bonus. Assists get no bonus, and unattributed
+   deaths (no killer) pay none. The bonus is folded into killerGain,
+   so the KO banner — local, and the online banner event via
+   sbKillHook alike — shows the killer's total gain for that KO,
+   damage and bonus together. killFighter is the single settlement
+   point shared by every mode (local sim, CPU, rollback online), so
+   the bonus applies everywhere with no extra sync field: score
+   already rides the snapshot (sc) and the rollback checksum. */
+var KILL_BONUS=100;
 function killFighter(def,att){
  def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
  for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}if(fighters[kf].heldBy===def){fighters[kf].heldT=0;fighters[kf].heldBy=null;fighters[kf].heldKb=0}} /* a dead grabber releases whoever it was holding, with no throw */
@@ -8617,12 +8641,15 @@ function killFighter(def,att){
     attacker who damaged this life gains SCORE equal to their recorded
     total (floored) — the killer and assists under the SAME rule — and
     everyone except the killer who dealt >=1 counts an ASSIST. The
-    record then resets for the next life. */
+    record then resets for the next life. The killer additionally
+    receives the flat KILL_BONUS (+100) below, on top of their damage
+    payout. */
  def.deaths=(def.deaths||0)+1;
  var dmgRec=def.dmgBy||{};def.dmgBy={};
  var killerGain=0;
  for(var dk in dmgRec){var contrib=fighters[+dk];if(!contrib)continue;var gain=Math.floor(dmgRec[dk]);if(gain>0){contrib.score+=gain;if(contrib===att)killerGain=gain;else contrib.assists=(contrib.assists||0)+1}}
  if(att&&att!==def){
+   att.score=(att.score||0)+KILL_BONUS;killerGain+=KILL_BONUS; /* kill bonus (user spec): +100 SCORE to the killer only, on top of their damage payout — applied before the banner calls below so the banner total (and the online banner event's gain) includes it; a pure knockback fall kill with 0 damage dealt still earns the full bonus */
    att.kills=(att.kills||0)+1; /* the finishing blow — including an attributed knockback fall kill with 0 damage dealt */
    /* KO heal (v99, replaces the flat / 40%-of-max rules): ONLY the
       killer heals, by 20% of the damage THEY dealt to this victim this
@@ -11051,13 +11078,19 @@ function drawKojiro(f){
   ctx.strokeStyle="rgba(254,202,202,.6)";ctx.lineWidth=2;for(var yl=0;yl<3;yl++){var yy2=8+yl*18;ctx.beginPath();ctx.moveTo(-6,yy2);ctx.lineTo(-26-yl*4,yy2);ctx.stroke()}
  }
  else if(f.state==="airslash"){
-  /* 空中J 空斬り: 横一文字に切り裂く豪華な斬撃 — 周囲全体へ広がる斬撃帯と前後の斬撃の弧 (判定は周囲104x92) */
-  var ap=1-Math.max(0,f.stateT)/0.3,asw=0.25+ap*0.75;
-  ctx.strokeStyle=glowC;ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-56,26);ctx.lineTo(56,26);ctx.stroke();
-  ctx.strokeStyle=coreC;ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(-62,26);ctx.lineTo(62,26);ctx.stroke();
-  kjArc(0,26,56,-asw,asw,glowC,coreC,3.6);kjArc(0,26,46,-asw*0.9,asw*0.9,glowC,coreC,2.2);
-  kjArc(0,26,56,Math.PI-asw,Math.PI+asw,glowC,coreC,3.6);kjArc(0,26,46,Math.PI-asw*0.9,Math.PI+asw*0.9,glowC,coreC,2.2);
-  ctx.strokeStyle="rgba(255,241,242,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(52,10);ctx.lineTo(60,4);ctx.moveTo(-52,42);ctx.lineTo(-60,48);ctx.moveTo(50,44);ctx.lineTo(58,50);ctx.stroke();
+  /* 空中J 空斬り: 空中で風を横一文字に切り裂く緑の豪華な斬撃 — 緑の剣気が周囲全体へ横一文字に広がり、風の流れと閃光が左右へ走る (判定は周囲104x92) */
+  var ap=1-Math.max(0,f.stateT)/0.3,asw=0.25+ap*0.75,aExt=56+ap*20;
+  ctx.strokeStyle="rgba(34,197,94,.28)";ctx.lineWidth=17;ctx.beginPath();ctx.moveTo(-aExt,26);ctx.lineTo(aExt,26);ctx.stroke();
+  ctx.strokeStyle="rgba(74,222,128,.55)";ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(-aExt-4,26);ctx.lineTo(aExt+4,26);ctx.stroke();
+  ctx.strokeStyle="#22c55e";ctx.lineWidth=5.5;ctx.beginPath();ctx.moveTo(-aExt-8,26);ctx.lineTo(aExt+8,26);ctx.stroke();
+  ctx.strokeStyle="#f0fdf4";ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(-aExt-14,26);ctx.lineTo(aExt+14,26);ctx.stroke();
+  kjArc(0,26,60,-asw,asw,grnGlow,grnCore,4);kjArc(0,26,49,-asw*0.9,asw*0.9,grnGlow,grnCore,2.4);
+  kjArc(0,26,60,Math.PI-asw,Math.PI+asw,grnGlow,grnCore,4);kjArc(0,26,49,Math.PI-asw*0.9,Math.PI+asw*0.9,grnGlow,grnCore,2.4);
+  ctx.strokeStyle="rgba(134,239,172,.75)";ctx.lineWidth=2.2;
+  for(var aw=0;aw<4;aw++){var awy=26+(aw<2?-13-aw*6:13+(aw-2)*6),awx=Math.sin(time*30+aw*1.7)*4;ctx.beginPath();ctx.moveTo(-aExt+8+awx,awy);ctx.lineTo(aExt-8+awx,awy);ctx.stroke()}
+  ctx.strokeStyle="rgba(220,252,231,.9)";ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(aExt+6,20,7,-0.6,2.4);ctx.stroke();ctx.beginPath();ctx.arc(-aExt-6,32,7,Math.PI-0.6,Math.PI+2.4);ctx.stroke();
+  ctx.strokeStyle="rgba(240,253,244,.9)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(aExt-4,10);ctx.lineTo(aExt+6,2);ctx.moveTo(-aExt+4,42);ctx.lineTo(-aExt-6,50);ctx.moveTo(aExt-2,44);ctx.lineTo(aExt+8,52);ctx.moveTo(-aExt+2,8);ctx.lineTo(-aExt-8,0);ctx.stroke();
  }
  else if(f.state==="krise"){
   /* 空中↑+K 昇り斬り: 上昇しながらの二連撃の剣撃 — 1段目は前方下から頭上へ、2段目 (hitDone 後) は逆方向へ大きく振り抜く弧。上昇の線が体に沿って下へ流れる */
@@ -11439,7 +11472,7 @@ function draw(){
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
      if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
-     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],airslash:[0,150],krise:[30,130],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,140]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
+     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],airslash:[0,178],krise:[30,130],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,140]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
