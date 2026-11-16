@@ -434,6 +434,20 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["23:28"],tag:"調整",title:"KOJIRO：Jチェーン・下段斬り・空斬り・落下斬り・風波・居合・斬空を調整／退き斬り・昇り斬り（↑+J）を削除",
+   items:["J 1段目「袈裟斬り」：被弾硬直 0.24秒→0.34秒に上方修正しました",
+          "J 2段目「斬り上げ」：被弾硬直 0.26秒→0.36秒に上方修正しました",
+          "J 3段目「三突き」：KB 230→170、判定 92×68→98×66、被弾硬直 0.26秒→0.34秒に上方修正しました",
+          "J 4段目「横薙ぎ」：発生が即時（移動中）に変更。+20先へ高速移動し、移動の経路の間にいた相手にも当たるようになりました（ヒットは1回まで）",
+          "前+J「疾風突き」：3回命中時の硬直が、その場で0.32秒硬直（移動・ジャンプ不可）→後硬直0.44秒（完全硬直）に変化するよう下方修正しました",
+          "後ろ+J「退き斬り」と↑+J「昇り斬り」を削除しました（空中↑+K「昇り斬り」はこれまで通り使えます）",
+          "↓+J「下段斬り」：ダメージ 8×最大2ヒット→7＋7、KB 480→200／400（真上方向）、発生 即時→即時／0.16秒、全体 0.28秒→0.32秒、後硬直 0.44秒→0.22秒、判定 82×34→82×36、被弾硬直 0.18秒→0.34秒に上方修正しました",
+          "空中J「空斬り」：ダメージ 前13／後7→14、KB 前360／後200→360、後硬直 0.43秒→0.38秒、判定 前84×92／後60×76→周囲104×92、被弾硬直 0.22秒→0.34秒、着地硬直 0.2秒→0.18秒に上方修正しました",
+          "空中↓+J「落下斬り」：ダメージ 本体16→18／着地 前12・後12→12、KB 本体420／着地 前620・後620→620、判定 本体74×62→真下62×74／着地144×58→周囲122×54、着地硬直 0.44秒→0.5秒に変更し、落下中は常に本体の判定が出続けるようになりました（ヒットは1回まで）",
+          "↓+K「風波」：後硬直 1.35秒（完全硬直）→1.45秒（完全硬直）、判定 210×230→周囲200×200に下方修正しました",
+          "U「居合斬り」：ダメージ 18→19、発生 即時（移動後）→即時（移動中）（移動の経路の相手にも当たります。ヒットは1回まで）、再使用 1.8秒→1.6秒に変更しました",
+          "L「斬空」：ダメージ 66→56、後硬直 0.33秒（完全硬直）→0.36秒（完全硬直）に下方修正しました",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv241に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["22:56"],tag:"調整",title:"WARDEN：Jチェーンと「電気警棒」を調整",
   items:["J 1段目「横薙ぎ」：後硬直 0.21秒→0.2秒、判定 74×66→80×66、被弾硬直 0.22秒→0.32秒に上方修正しました",
          "J 2段目「平返し」：被弾硬直 0.22秒→0.34秒に上方修正しました",
@@ -631,23 +645,21 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れの剣士。袈裟斬り・斬り上げ・三突き・横薙ぎの<b>四段チェーン</b>に、竜巻の風波、緑の剣気の燕返し、居合と、剣の軌跡も体の動きも踏み込み方も一技ごとに違う、近接特化のキャラ。<b>飛び道具は一切持たない</b>（唯一の例外はウルトの斬撃だけ）。間合いの中で剣を振り分けて戦う。HPは240に下がった代わりに、チェーンの回転とダッシュが速くなった。</p>'
 +mvSpec(mvS('HP','240')+mvS('地上速度','464')+mvS('空中速度','450')+mvS('受けKB','×1.08')+mvS('ダッシュ','1180')+mvS('ウルト溜まり','約0.9倍'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 袈裟斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒</span><p>上から下に刀を振り下ろして攻撃する（旧「突き」から変更）。後硬直が大幅に短くなり、チェーンの起点として振り続けられる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.16秒')+mvS('判定','80×52')+mvS('被弾硬直','0.24秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','230')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','92×68')+mvS('被弾硬直','0.26秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 4段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段（新設）</span><p>3段目に引き続いて横に刀を振り抜いて攻撃する、チェーンの締め。広く重い一薙ぎで吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.40秒')+mvS('判定','96×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。踏み込みはすぐ始まるが、突きの判定が出るのは0.12秒後。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。<b>命中するたびにカウントされ、3回命中するとその場で0.32秒硬直する</b>（硬直中は移動・ジャンプ不可。カウントは3回目でリセットされる）。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','0.12秒')+mvS('全体','0.32秒')+mvS('後硬直','0.35秒')+mvS('判定','94×60')+mvS('3回命中時','その場で0.32秒硬直（移動・ジャンプ不可）'))+'</div></div>'
-+'<div class="moveRow"><div><b>後ろ+J — 退き斬り</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','310')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','76×58'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+J — 昇り斬り</b><p>斬り上げながら跳び上がる対空技。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','380（上吹き強）')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.47秒')+mvS('判定','66×88')+mvS('上昇','vy -540'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。各ヒットに被弾硬直0.18秒付き。</p>'+mvSpec(mvS('ダメージ','8×最大2ヒット')+mvS('KB','480')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.44秒')+mvS('判定','82×34')+mvS('被弾硬直','0.18秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。前後両方に判定がある。各ヒットに被弾硬直0.22秒付き。</p>'+mvSpec(mvS('ダメージ','前13／後7')+mvS('KB','前360／後200')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','前84×92／後60×76')+mvS('被弾硬直','0.22秒')+mvS('着地硬直','0.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>着地点に左右に斬撃</b>が発生する。着地すると<b>着地硬直0.44秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体16／着地 前12・後12')+mvS('KB','本体420／着地 前620・後620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体74×62／着地144×58')+mvS('着地硬直','0.44秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 袈裟斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒</span><p>上から下に刀を振り下ろして攻撃する（旧「突き」から変更）。後硬直が大幅に短くなり、チェーンの起点として振り続けられる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.16秒')+mvS('判定','80×52')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.36秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 3段目 — 三突き</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>三回に分けた突きの攻撃（旧「振り下ろし」から変更）。1発の威力は小さいが、最大3ヒットで刻める。</p>'+mvSpec(mvS('ダメージ','5×最大3ヒット')+mvS('KB','170')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.20秒')+mvS('判定','98×66')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 4段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目に引き続いて横に刀を振り抜いて攻撃する、チェーンの締め。広く重い一薙ぎで吹っ飛ばす。発動と同時に<b>+20先へ高速移動</b>し、<b>移動の経路の間にいた相手にも当たる</b>（ヒットは1回まで）。</p>'+mvSpec(mvS('ダメージ','20')+mvS('KB','560')+mvS('発生','即時（移動中）')+mvS('全体','0.26秒')+mvS('後硬直','0.40秒')+mvS('判定','96×56')+mvS('移動','+20先へ高速移動（経路にも当たる・1回まで）'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — 疾風突き</b><p>素早く踏み込んでの突き。突っ込む軌跡が一直線。踏み込みはすぐ始まるが、突きの判定が出るのは0.12秒後。当たると相手をはっきり吹っ飛ばすノックバック付き。後硬直の間はその場で動けなくなる。ダッシュ中・走行中の J でも出る。<b>命中するたびにカウントされ、3回命中すると後硬直が0.44秒（完全硬直）に変化する</b>（完全硬直中は移動・ジャンプ・ワザのすべてができない。カウントは3回目でリセットされる）。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','620')+mvS('発生','0.12秒')+mvS('全体','0.32秒')+mvS('後硬直','0.35秒')+mvS('判定','94×60')+mvS('3回命中時','後硬直0.44秒（完全硬直）'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら相手の足元を二連撃で攻撃する。当たった相手は<b>真上</b>へ吹っ飛ぶ。各ヒットに被弾硬直0.34秒付き。</p>'+mvSpec(mvS('ダメージ','7＋7')+mvS('KB','200／400（真上）')+mvS('発生','即時／0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.22秒')+mvS('判定','82×36')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。判定は周囲全体にあり、ヒットは1回まで。各ヒットに被弾硬直0.34秒付き。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','周囲104×92')+mvS('被弾硬直','0.34秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>落下中は常に本体の判定が出続ける</b>（ヒットは1回まで）。<b>着地点に周囲へ斬撃</b>が発生する。着地すると<b>着地硬直0.5秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体18／着地 12')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体 真下62×74／着地 周囲122×54')+mvS('着地硬直','0.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 三日月斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>三日月型の斬撃の攻撃をする。判定は振りの途中（約0.12秒後）に出る。出は遅いが一撃の威力と吹っ飛ばしは最大級。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','770')+mvS('発生','約0.12秒')+mvS('全体','0.42秒')+mvS('後硬直','0.44秒')+mvS('判定','82×80'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 空中三日月斬り</b><p>空中で三日月型の斬撃の攻撃をする。判定は約0.10秒後に出る。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','740')+mvS('発生','約0.10秒')+mvS('全体','0.36秒')+mvS('後硬直','0.34秒')+mvS('判定','76×76')+mvS('着地硬直','0.3秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けず、<b>後硬直（完全硬直）の間も移動・ジャンプ・ワザができない</b>。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.35秒（完全硬直）')+mvS('判定','210×230'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こす（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けず、<b>後硬直（完全硬直）の間も移動・ジャンプ・ワザができない</b>。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.45秒（完全硬直）')+mvS('判定','周囲200×200'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — 昇り斬り</b><p>真上方向へ勢いよく上昇しながら二連撃の剣撃を行う（1回目は発動と同時、2回目は上昇中の約0.24秒後）。1段目は相手を<b>真上に吹っ飛ばす</b>。着地すると<b>着地硬直0.28秒</b>がある。</p>'+mvSpec(mvS('ダメージ','13＋13')+mvS('KB','820（真上）／540')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.46秒')+mvS('後硬直','0.39秒')+mvS('判定','76×86')+mvS('上昇','vy -820')+mvS('再使用','2.2秒')+mvS('着地硬直','0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.8秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で約118前進して間合いを一気に詰め、斬り抜ける。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','500')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','102×58')+mvS('再使用','1.8秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直（完全硬直）は短くなったが、その間は移動もジャンプもワザもできない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','66')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.33秒（完全硬直）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
++'<div class="moveRow"><div><b>U — 居合斬り</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.6秒</span><p>飛び道具の代わりの接近技。鞘から抜く一閃で約118前進して間合いを一気に詰め、斬り抜ける。<b>移動中にも判定があり、経路の相手にも当たる</b>（ヒットは1回まで）。遠距離攻撃は持たないので、間合いを詰める手段はこの居合と疾風突きとダッシュだけ。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','500')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','102×58')+mvS('再使用','1.6秒'))+'</div></div>'
++'<div class="moveRow"><div><b>L — 斬空（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージ1本分から発動可（最大3本ストック）・キーボードは L</span><p>前方に巨大な三日月状の斬撃を一発、高速で放つ。このキャラ唯一の飛び道具で、当たれば大ダメージ＋強烈な吹っ飛ばし。発動後の硬直（完全硬直）は短くなったが、その間は移動もジャンプもワザもできない。攻撃を当てるほどゲージが溜まり、<b>溜まりは速い</b>（必殺を回転させて戦う設計）。ゲージは<b>最大3本分までストック</b>でき、1本分たまればすぐ撃てる（発動ごとに1本消費）。ストックがある間は体に赤い電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','56')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.50秒')+mvS('後硬直','0.36秒（完全硬直）')+mvS('弾速','1520')+mvS('射程','約860')+mvS('消費','ゲージ1本'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を担ぐ重戦士。送ってくれた写真のキャラ（上半身裸の巨漢、オレンジの髭、ドクロのベルト）がモチーフ。<b>足は全キャラで一番遅く、一つ一つの技に大きな隙と長い硬直がある</b>。その代わり<b>体力は360</b>（他は250）で吹っ飛ばされにくく、斧のリーチ（範囲）と一撃の火力は随一。<b>飛び道具はKの投岩だけ</b>——床を走る衝撃波もなし。それ以外は全部、体と斧が届く範囲で殴る近接技だけ。当てれば勝てる、外せば殴られる、重量級らしいキャラ。</p>'
@@ -1143,7 +1155,7 @@ function acrossMainFloor(a,b){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?5:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:(char==="warden"?5:(char==="sara"?2:(char==="travis"?6:3))),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1153,7 +1165,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?5:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=(f.char==="warden"?5:(f.char==="sara"?2:(f.char==="travis"?6:3)));f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
@@ -1539,7 +1551,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v240";
+var BUILD_ID="v241";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2984,7 +2996,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","diveHitMask","meteorArm","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -6452,6 +6464,20 @@ function startWardenAttack(f,type,foe){
    }
  }
 }
+/* KOJIRO 落下斬り body hit (user spec): while the plunge lasts, the
+   62x74 box directly BELOW him (真下) stays live EVERY frame — a foe
+   who moves into it mid-fall is hit just like one who was there on
+   the press — but each foe can be hit only ONCE per dive: the
+   fighters-index bitmask f.diveHitMask records who has been hit
+   (a plain number, so it rides the rollback snapshot like any other
+   field). Damage 18 / KB 620, spiked down-forward (up 0.85, the
+   dive's meteor angle) toward whichever side the foe is on. */
+function kojiroDiveBodyHit(f){
+ var cx=f.x,cy=f.y+f.h*0.5+37;
+ dbgBox(cx,cy,62,74,"255,45,120",16); /* hitbox viewer (おかき only): the 真下62x74 box hanging under him */
+ for(var i=0;i<fighters.length;i++){var tg=fighters[i];if(tg===f||tg.dead)continue;if(f.diveHitMask&(1<<i))continue;
+  if(Math.abs(tg.x-cx)<31+tg.w/2&&Math.abs((tg.y+tg.h/2)-cy)<37+tg.h/2){if(applyHit(f,tg,18,620,tg.x>=f.x?1:-1,0.85,false,cx,cy)){f.diveHitMask|=(1<<i);spawnParticles(f.x,f.y+f.h*0.85,8,"#fecaca",190)}}}
+}
 function startKojiroAttack(f,type,foe){
  /* KOJIRO — a pure melee swordsman. Every technique is its own motion:
     thrust (straight line, body low), rising slash (bottom-to-top arc),
@@ -6476,45 +6502,33 @@ function startKojiroAttack(f,type,foe){
    if(!f.onGround&&downHeld){
      /* 落下斬り: diagonal plunge slash; reaching the floor erupts the
         dive-landing shockwave (diveArmed) — KOJIRO's landing wave is
-        12/12 dmg, KB 620/620, box 144x58 (landing block), and the dive
-        pays 0.44s of landing lag (LAND_LAG diveclaw) */
-     f.state="diveclaw";f.stateT=0.32;f.attackCd=0.38;f.comboWin=0;f.diveArmed=true;
+        12 dmg, KB 620, box 周囲122x54 (landing block), and the dive
+        pays 0.5s of landing lag (LAND_LAG diveclaw) */
+     f.state="diveclaw";f.stateT=0.32;f.attackCd=0.38;f.comboWin=0;f.diveArmed=true;f.diveHitMask=0;
      f.vx=f.face*290;f.vy=Math.max(f.vy,620);f.fastfall=false;
-     meleeHit(f,foe,74,62,16,420,f.face,0.85);spawnFxBurst(FXIMG.wind,f.x,f.y+f.h*0.5,115,0.3,1.57,f.face,0.75);beep(500,.08,"sawtooth",.05); /* 本体 KB 470 -> 420 (user spec). 落下斬り (見た目変更): wind streams off the tip-down plunge */
+     kojiroDiveBodyHit(f);spawnFxBurst(FXIMG.wind,f.x,f.y+f.h*0.5,115,0.3,1.57,f.face,0.75);beep(500,.08,"sawtooth",.05); /* 落下斬り 本体 (user spec): damage 16 -> 18, KB 420 -> 620, box 74x62 -> 真下62x74, and the box stays live for the whole fall via kojiroDiveBodyHit in stepFighter (1 hit per foe). 落下斬り (見た目変更): wind streams off the tip-down plunge */
    }else if(!f.onGround){
      /* 空斬り: one wide horizontal cut in mid-air, brief hover.
-        Boxes grew (user spec): front 84x66 -> 84x92, back 60x56 ->
-        60x76, and BOTH hits now carry 被弾硬直 0.22秒 fixed on the
-        hit foe, separate from the KB */
-     f.state="airslash";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
+        Now a single surrounding hit (user spec): 周囲104x92 on both
+        sides at 14 dmg / KB 360, carrying 被弾硬直 0.34秒 fixed on
+        the hit foe, separate from the KB */
+     f.state="airslash";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 後硬直 0.43 -> 0.38秒: attackCd 0.31 + 0.07 (user spec) */
      if(f.vy>60)f.vy=60;
-     meleeHit(f,foe,84,92,13,360,f.face,-0.3,0.22);meleeHit(f,foe,60,76,7,200,-f.face,-0.15,0.22);
+     var kjAirList=[];meleeHit(f,foe,104,92,14,360,f.face,-0.3,0.34,false,0,kjAirList);meleeHit(f,foe,104,92,14,360,-f.face,-0.15,0.34,false,0,kjAirList); /* 空斬り (user spec): damage 前13/後7 -> 14, KB 前360/後200 -> 360, box 前84x92/後60x76 -> 周囲104x92 (both sides, shared hitList so one foe is hit once), 被弾硬直 0.22 -> 0.34秒 */
      spawnParticles(f.x,f.y+f.h*0.45,14,"#fecaca",200);spawnFxBurst(FXIMG.slash,f.x+f.face*26,f.y+f.h*0.45,155,0.3,0,f.face,0.9);spawnFxBurst(FXIMG.slash,f.x-f.face*22,f.y+f.h*0.45,110,0.26,0,-f.face,0.7);beep(1050,.06,"square",.045); /* 空斬り (見た目変更): flashy slash bursts fore AND aft, matching the two-sided hit */
    }else if(downHeld){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
-        first cut lands on the press, the second ticks out ~0.14s later
-        in stepFighter (state "lowcut", spinHits counts cuts). Each cut
-        is 8 dmg / KB 480, box 82x34, 被弾硬直 0.18秒 fixed on the hit
-        foe, separate from the KB. attackCd 0.37 + universal 0.07 tail
-        = 後硬直 0.44 (user spec) */
-     f.state="lowcut";f.stateT=0.28;f.attackCd=0.37;f.comboWin=0;
+        first cut lands on the press, the second ticks out 0.16s later
+        in stepFighter (state "lowcut", spinHits counts cuts). The cuts
+        are 7 dmg each, launched STRAIGHT UP (真上) at KB 200 (1st) /
+        400 (2nd), box 82x36, 被弾硬直 0.34秒 fixed on the hit foe,
+        separate from the KB. attackCd 0.15 + universal 0.07 tail
+        = 後硬直 0.22 (user spec) */
+     f.state="lowcut";f.stateT=0.32;f.attackCd=0.15;f.comboWin=0; /* 全体 0.28 -> 0.32秒, 後硬直 0.44 -> 0.22秒: attackCd 0.15 + 0.07 (user spec) */
      f.spinHits=1;f.spinTick=0;
-     meleeHit(f,foe,82,34,8,480,f.face,0.04,0.18); /* 下段斬り: KB 440 -> 480 (user spec) */
+     meleeHit(f,foe,82,36,7,200,0,-1.0,0.34,false,0,null,false,f.face); /* 下段斬り 1発目 (user spec): damage 8 -> 7, KB 480 -> 200 (真上: dir 0 / up -1.0, box stays in front via boxDir), box 82x34 -> 82x36, 被弾硬直 0.18 -> 0.34秒 */
      spawnParticles(f.x+f.face*24,f.y+f.h-6,8,"#fecaca",150);beep(700,.06,"square",.045);
-   }else if(upHeld){
-     /* 昇り斬り: rising slash that carries Kojiro up with it (anti-air);
-        landing it REFUNDS the double jump, like a launcher chase tool */
-     f.state="riseup";f.stateT=0.32;f.attackCd=0.4;f.comboWin=0;
-     f.vy=-540;f.onGround=false;f.fastfall=false;
-     if(meleeHit(f,foe,66,88,14,380,f.face,-1.15)){f.jumps=1;spawnParticles(f.x,f.y+f.h,8,"#fecaca",140)}
-     spawnParticles(f.x+f.face*14,f.y+f.h*0.3,8,"#fecaca",160);
-     beep(950,.07,"square",.05);
-   }else if(backHeld){
-     /* 退き斬り: cuts in front while stepping back — makes space */
-     f.state="backslash";f.stateT=0.26;f.attackCd=0.34;f.comboWin=0;
-     f.vx=-f.face*350;
-     meleeHit(f,foe,76,58,12,310,f.face,-0.22);beep(880,.06,"square",.045);
-   }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
+   }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){ /* ↑+J 昇り斬り and 後ろ+J 退き斬り are DELETED (user spec): those inputs now fall through to 疾風突き / the plain J chain below (the air up+K 昇り斬り is a different move and stays) */
      /* 疾風突き: a real dash-in thrust — a straight-line lunge, no teleport.
         The lunge starts on the press, but the hit itself now lands
         0.12s later (発生 即時 -> 0.12秒, user spec): the meleeHit
@@ -6536,13 +6550,13 @@ function startKojiroAttack(f,type,foe){
        f.comboWin=0.8;
        f.state="chop";f.stateT=0.26;f.attackCd=0.09; /* 袈裟斬り: overhead kesa cut (was the 突き thrust) */
        f.vx+=f.face*55;capVx(f,RUN_MAX*1.15);
-       meleeHit(f,foe,80,52,10,220,f.face,-0.18,0.24); /* 袈裟斬り: KB 250 -> 220 (user spec). 被弾硬直 0.24秒: hit foe is stunned exactly 0.24s, separate from the KB (user spec) */
+       meleeHit(f,foe,80,52,10,220,f.face,-0.18,0.34); /* 袈裟斬り: KB 250 -> 220 (user spec). 被弾硬直 0.24 -> 0.34秒: hit foe is stunned exactly 0.34s, separate from the KB (user spec) */
        spawnParticles(f.x+f.face*20,f.y+f.h*0.4,8,"#fecaca",170);
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.8;
        f.state="rise";f.stateT=0.26;f.attackCd=0.11;
-       meleeHit(f,foe,68,84,12,250,f.face,-1.0,0.26); /* 斬り上げ: KB 340 -> 280 -> 250 (still a strong upward launch), 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
+       meleeHit(f,foe,68,84,12,250,f.face,-1.0,0.36); /* 斬り上げ: KB 340 -> 280 -> 250 (still a strong upward launch), 被弾硬直 0.26 -> 0.36秒 fixed on the hit foe, separate from the KB (user spec) */
        spawnParticles(f.x+f.face*16,f.y+f.h*0.3,7,"#fecaca",150);
        beep(800,.06,"square",.045);
      }else if(f.comboStep===2){
@@ -6552,14 +6566,14 @@ function startKojiroAttack(f,type,foe){
        f.state="thrust3";f.stateT=0.36;f.attackCd=0.13;
        f.spinHits=1;f.spinTick=0;
        f.vx+=f.face*80;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,92,68,5,230,f.face,-0.18,0.26); /* 三突き: 18 -> 5 x max 3 hits, KB 540 -> 330 -> 230, box 82x72 -> 92x68, 被弾硬直 0.26秒 fixed on the hit foe, separate from the KB */
+       meleeHit(f,foe,98,66,5,170,f.face,-0.18,0.34); /* 三突き: 5 x max 3 hits, KB 230 -> 170, box 92x68 -> 98x66, 被弾硬直 0.26 -> 0.34秒 fixed on the hit foe, separate from the KB (user spec) */
        spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fecaca",180);
        beep(1100,.05,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0;
-       f.state="yokonagi";f.stateT=0.26;f.attackCd=0.33; /* 横薙ぎ (NEW 4th stage): sweeps the blade horizontally through */
+       f.state="yokonagi";f.stateT=0.26;f.attackCd=0.33; /* 横薙ぎ (4th stage, user spec): now a high-speed step — he flashes +20 ahead DURING the cut and the blade sweeps the whole path: the hit is tested at stepped positions from the start to +20 ahead with one shared hitList, so a foe anywhere along the path is hit, but only ONCE */
+       var ykList=[],ykStart=f.x;for(var ykS=0;ykS<=5;ykS++){f.x=ykStart+f.face*20*(ykS/5);if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;meleeHit(f,foe,96,56,20,560,f.face,-0.3,0,false,0,ykList)}f.x=ykStart+f.face*20;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
        f.vx+=f.face*110;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,96,56,20,560,f.face,-0.3);
        spawnParticles(f.x+f.face*26,f.y+f.h*0.45,12,"#f87171",210);
        beep(600,.08,"sawtooth",.05);
      }
@@ -6568,11 +6582,11 @@ function startKojiroAttack(f,type,foe){
    if(downHeld&&f.onGround){
      /* 風波 (user spec): crouches and raises a tornado around himself —
         NO damage at all, pure knockback: KB 820 on BOTH sides out of a
-        huge 210x230 box. He is rooted for the whole move (vx pinned in
-        stepFighter) and the total lockout is 1.35s (attackCd 1.28 +
-        the universal 0.07 tail; user spec, up from 0.88s) */
-     f.state="sweep";f.stateT=0.6;f.attackCd=1.28;f.comboWin=0;f.vx=0;applyFullLock(f); /* 後硬直は完全硬直: 合計1.35秒の間は移動・ジャンプ不可 */
-     meleeHit(f,foe,210,230,0,820,f.face,-0.35);meleeHit(f,foe,210,230,0,820,-f.face,-0.35);
+        huge 周囲200x200 box. He is rooted for the whole move (vx pinned in
+        stepFighter) and the total lockout is 1.45s (attackCd 1.38 +
+        the universal 0.07 tail; user spec, up from 1.35s) */
+     f.state="sweep";f.stateT=0.6;f.attackCd=1.38;f.comboWin=0;f.vx=0;applyFullLock(f); /* 後硬直は完全硬直: 合計1.45秒の間は移動・ジャンプ不可 (1.35 -> 1.45秒, user spec) */
+     var kjSweepList=[];meleeHit(f,foe,200,200,0,820,f.face,-0.35,0,false,0,kjSweepList);meleeHit(f,foe,200,200,0,820,-f.face,-0.35,0,false,0,kjSweepList); /* 風波 判定 (user spec): 210x230 -> 周囲200x200 (both sides, shared hitList so one foe is blown away once) */
      spawnParticles(f.x,f.y+f.h*0.5,20,"#a7f3d0",240);spawnParticles(f.x,f.y+f.h*0.3,12,"#fecaca",200);spawnRing(f.x,f.y+f.h*0.5,"#a7f3d0",64);beep(400,.16,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
      /* 空中↑+K: 昇り斬り — rises at vy -820, cutting upward TWICE on
@@ -6603,11 +6617,10 @@ function startKojiroAttack(f,type,foe){
    /* 居合斬り: NO projectile — a sheathed-draw dash cut that closes the
       distance in one flash and slashes through. Cooldown-based. */
    if(f.specCd>0){beep(200,.07);return}
-   f.specCd=1.8;f.state="iaido";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 居合 (user spec): CD 2.2s -> 1.8s, attackCd 0.31 + 0.07 = 後硬直 0.38 */
+   f.specCd=1.6;f.state="iaido";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 居合 (user spec): CD 1.8s -> 1.6s, attackCd 0.31 + 0.07 = 後硬直 0.38 */
    spawnParticles(f.x,f.y+f.h*0.5,10,"#fecaca",160);
-   f.x+=f.face*118;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+   var iaList=[],iaStart=f.x;for(var iaS=0;iaS<=6;iaS++){f.x=iaStart+f.face*118*(iaS/6);if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;meleeHit(f,foe,102,58,19,500,f.face,-0.28,0,false,0,iaList)}f.x=iaStart+f.face*118;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50; /* 居合斬り (user spec): damage 18 -> 19, 発生 即時（移動後）-> 即時（移動中）— the cut is tested at stepped positions along the whole 118 dash with one shared hitList, so a foe anywhere on the path is hit, but only ONCE. KB 500 / 判定 102x58 unchanged */
    f.vx=f.face*300;
-   meleeHit(f,foe,102,58,18,500,f.face,-0.28); /* ダメージ 15 -> 18, KB 440 -> 500, 判定 92x60 -> 102x58 (user spec) */
    spawnParticles(f.x+f.face*20,f.y+f.h*0.5,10,"#fff1f2",190);spawnFxBurst(FXIMG.slash,f.x+f.face*46,f.y+f.h*0.48,175,0.34,0,f.face,0.95); /* 居合斬り (見た目変更): one huge slash flash tears the air along the draw */
    beep(1500,.06,"square",.05);setTimeout(function(){beep(700,.07,"sawtooth",.04)},50);
  }else if(type==="ult"){
@@ -6615,7 +6628,7 @@ function startKojiroAttack(f,type,foe){
       and it charges fast (his meter-gain multiplier lives in applyHit).
       STOCK system: his meter caps at 300 (= 3 stocks of 100); firing
       spends ONE stock (100), so a single full stock is enough to fire */
-   if(f.meter<100)return;f.meter-=100;f.state="ult";f.stateT=0.5;f.attackCd=0.26;applyFullLock(f); /* 後硬直0.33秒は完全硬直: その間は移動・ジャンプ・ワザ不可 */shake=10; /* attackCd 0.26 + 0.07 = 後硬直 0.33 (user spec, down from 0.67); the wave itself is 66 dmg / KB 740 at the projectile hit, range ~860 = 1520 x 0.566s */
+   if(f.meter<100)return;f.meter-=100;f.state="ult";f.stateT=0.5;f.attackCd=0.29;applyFullLock(f); /* 後硬直0.36秒は完全硬直: その間は移動・ジャンプ・ワザ不可 */shake=10; /* attackCd 0.29 + 0.07 = 後硬直 0.36 (user spec, up from 0.33); the wave itself is 56 dmg / KB 740 at the projectile hit, range ~860 = 1520 x 0.566s */
    projectiles.push({x:f.x+f.face*44,y:f.y+f.h*0.42,vx:f.face*1520,vy:0,owner:f,life:0.566,kind:"slash"});
    spawnParticles(f.x+f.face*30,f.y+f.h*0.45,26,"#fecaca",260);
    beep(160,.3,"sawtooth",.08);setTimeout(function(){beep(1300,.22,"sine",.05)},70);
@@ -6855,7 +6868,7 @@ function applyFullLock(f){f.recLockT=Math.max(f.recLockT||0,f.attackCd+0.07)}
 var LAND_LAG={
  kairo:{airclaw:0.21,taildrop:0.38,tail:0.30,fspin:0.44,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) 着地硬直 0.2 -> 0.21; メテオドロップ (taildrop) 着地硬直 0.34 -> 0.38; フロストスピン (fspin) 着地硬直 0.40 -> 0.44. 旧 急降下斬り (diveclaw) の着地硬直 0.30 は技自体の削除に伴い項目も削除 — 後継の メテオネイル (mnail) は着地硬直の指定がないため項目なし */
  warden:{airclaw:0.34,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* WARDEN (user spec): 回転警棒 (airclaw) 着地硬直 0.33 -> 0.34 */
- kojiro:{airslash:0.2,airheavy:0.3,taildrop:0.30,diveclaw:0.44,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.26 -> 0.2, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
+ kojiro:{airslash:0.18,airheavy:0.3,taildrop:0.30,diveclaw:0.5,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.2 -> 0.18, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44 -> 0.5, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{airclaw:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
  orchid:{ohook:0.28,otackle:0.25,jkcombo:0.25,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
@@ -8833,27 +8846,29 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     3-HIT PENALTY (user spec): every landed thrust counts up
     f.thrustHits (misses do not count; one use counts once even if
     it clips several foes). On the 3rd hit the count resets and
-    Kojiro himself stiffens ON THE SPOT for 0.32s: the lunge
-    velocity is cut to 0 and the landLagT full lockout (no movement
-    / facing change / jump / fastfall / drop-through / dash /
-    guard / moves — the same lockout 着地硬直 uses) plus attackCd
-    both run 0.32s from the hit, so he can neither move nor jump
-    for exactly that span */
- if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.landLagT=Math.max(f.landLagT||0,0.32);f.attackCd=Math.max(f.attackCd,0.32);pushFloater({x:f.x,y:f.y-30,txt:"硬直 0.32秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中でその場0.32秒硬直 (user spec) */
+    the move's recovery becomes 0.44s of FULL LOCK （完全硬直）:
+    the lunge velocity is cut to 0 and recLockT (no movement /
+    facing change / jump / fastfall / drop-through / dash / guard
+    / moves) plus attackCd both run 0.44s from the hit */
+ if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.recLockT=Math.max(f.recLockT||0,0.44);f.attackCd=Math.max(f.attackCd,0.44);pushFloater({x:f.x,y:f.y-30,txt:"硬直 0.44秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中で後硬直0.44秒（完全硬直）に変化 (user spec) */
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
  if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#fecaca",190);spawnFxBurst(FXIMG.slash,f.x+f.face*8,f.y+f.h*0.3,135,0.28,-2.0,f.face,0.85);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). 見た目変更: second rising cut flashes mid-climb */
+ /* KOJIRO 落下斬り (air down+J): the 真下62x74 body box stays live
+    for the WHOLE fall (user spec) — retested every frame until he
+    lands, one hit per foe per dive (diveHitMask in kojiroDiveBodyHit) */
+ if(f.char==="kojiro"&&f.state==="diveclaw"&&!f.onGround)kojiroDiveBodyHit(f);
  /* KOJIRO 三突き (J 3rd stage) thrusts 2-3 and 下段斬り (down+J) second
     cut: the first hit landed on the press (startKojiroAttack); the
     follow-up hits tick out on spinTick while the state lasts */
  if(f.char==="kojiro"&&f.state==="thrust3"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,92,68,5,230,f.face,-0.18,0.26);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,7,"#fecaca",170);beep(1100,.05,"square",.04)} /* 三突き 2・3発目も KB 230 (user spec) */
+   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,98,66,5,170,f.face,-0.18,0.34);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,7,"#fecaca",170);beep(1100,.05,"square",.04)} /* 三突き 2・3発目も KB 170・判定98x66・被弾硬直 0.34秒 (user spec) */
  }
  if(f.char==="kojiro"&&f.state==="lowcut"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.14&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,34,8,480,f.face,0.04,0.18);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目も KB 480・被弾硬直 0.18秒 (user spec) */
+   if(f.spinTick>=0.16&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,36,7,400,0,-1.0,0.34,false,0,null,false,f.face);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目 (user spec): 発生0.16秒, damage 7, KB 400 (真上), 判定82x36, 被弾硬直 0.34秒 */
  }
  /* KOJIRO 風波 (down+K): rooted in place while the tornado lasts */
  if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0;if(Math.random()<0.7){spawnParticles(f.x+(Math.random()-0.5)*70,f.y+f.h-6,1,"#a7f3d0",120);spawnParticles(f.x+(Math.random()-0.5)*46,f.y+f.h*0.35,1,"#fecaca",110)}}
@@ -9496,8 +9511,8 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    /* DIVE LANDING SHOCKWAVE: a dive attack that reaches the floor erupts on
       landing — ice spikes / impact ring hit grounded foes on BOTH sides */
    if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?92:(f.char==="warden"?108:96),dvH=f.char==="kairo"?68:(f.char==="warden"?80:58); /* WARDEN ウェーブショット landing box 108x80 (user spec) */
-     if(f.char==="kojiro"){ /* KOJIRO 落下斬り landing (user spec): waves on BOTH sides — 12 dmg / KB 620 front AND back (back was 9 / 340), box 144x58 (dvRg/dvH carry the generic 96x58, so the kojiro box is passed directly) */
-       meleeHit(f,foe,144,58,12,620,f.face,-0.28);meleeHit(f,foe,144,58,12,620,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fecaca",230);var klY=f.y+f.h-5;spawnRing(f.x-58,klY,"#f87171",54);spawnRing(f.x+58,klY,"#f87171",54);spawnFxBurst(FXIMG.slash,f.x-60,klY-12,125,0.3,0,-1,0.85);spawnFxBurst(FXIMG.slash,f.x+60,klY-12,125,0.3,0,1,0.85);spawnSparks(f.x,klY,1,"#fecaca",7);spawnSparks(f.x,klY,-1,"#fecaca",7); /* 落下斬り着地 (見た目変更): slash bursts tear out to BOTH sides of the touchdown point, mirroring the 12/12 shockwave hits */
+     if(f.char==="kojiro"){ /* KOJIRO 落下斬り landing (user spec): one surrounding wave — 12 dmg / KB 620 in a 周囲122x54 box on both sides (was 144x58), shared hitList so one foe is hit once (dvRg/dvH carry the generic 96x58, so the kojiro box is passed directly) */
+       var kjLandList=[];meleeHit(f,foe,122,54,12,620,f.face,-0.28,0,false,0,kjLandList);meleeHit(f,foe,122,54,12,620,-f.face,-0.2,0,false,0,kjLandList);spawnParticles(f.x,f.y+f.h-4,18,"#fecaca",230);var klY=f.y+f.h-5;spawnRing(f.x-58,klY,"#f87171",54);spawnRing(f.x+58,klY,"#f87171",54);spawnFxBurst(FXIMG.slash,f.x-60,klY-12,125,0.3,0,-1,0.85);spawnFxBurst(FXIMG.slash,f.x+60,klY-12,125,0.3,0,1,0.85);spawnSparks(f.x,klY,1,"#fecaca",7);spawnSparks(f.x,klY,-1,"#fecaca",7); /* 落下斬り着地 (見た目変更): slash bursts tear out to BOTH sides of the touchdown point, mirroring the 12/12 shockwave hits */
      }else if(f.char==="travis"){ /* TRAVIS ダイブマイク landing (user spec): the sound shockwave rolls out on BOTH sides — 14 dmg / KB 980 in a 96x86 box (was 10 / 430 in the generic 96x58). The single new KB 980 covers the landing hits too (spec: KB 600・430 -> 980) */
        meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);var tdY=f.y+f.h-5;spawnRing(f.x-52,tdY,"#fcd34d",50);spawnRing(f.x+52,tdY,"#fcd34d",50);spawnCharBurst("travis",f.x-54,tdY-8,96,0.3,0,-1,0.85);spawnCharBurst("travis",f.x+54,tdY-8,96,0.3,0,1,0.85);spawnSparks(f.x,tdY,1,"#fcd34d",6);spawnSparks(f.x,tdY,-1,"#fcd34d",6);spawnParticles(f.x-44,tdY,9,"#c084fc",210);spawnParticles(f.x+44,tdY,9,"#c084fc",210); /* (見た目変更) the landing shockwave now VISIBLY rolls out on both sides — a ring + sound burst + spark fan on each side, mirroring the 96x86 two-sided hit */
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
@@ -11438,7 +11453,7 @@ function simStepFrame(getInp){
    pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back */if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:13)))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
-       else if(pr.kind==="slash"){applyHit(pr.owner,foe,66,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 74 -> 66, KB 780 -> 740 */
+       else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
