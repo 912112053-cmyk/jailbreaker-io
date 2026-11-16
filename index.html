@@ -434,6 +434,14 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["17:03"],tag:"修正",title:"試合中のFPS表示が実際の描画レートを表示するように",
+  items:["試合中左上に表示されるFPSの数字が、実際に画面を描画した回数（描画レート）を表示するようになりました",
+         "これまでは内部の計算ループの速度を表示していたため、設定で描画FPSを30にしても表示は60前後のままでした。今後は描画60設定なら約60、30設定なら約30と表示されます",
+         "表示の数字の元を変えただけです。ゲームの計算・描画FPS設定・画質の自動調整の動作に変更はありません"]},
+ {date:"2026/11/16",times:["17:01"],tag:"調整",title:"KAIRO：↓+J「アイスフット」を上方修正",
+  items:["↓+J「アイスフット」：KB 530（真上方向）→440（真上方向）、後硬直 0.26秒→0.22秒、被弾硬直 0.36秒→0.42秒に変更しました。当たった相手はこれまで通り横へは飛ばず真上へ吹き飛びますが、吹き飛びは弱くなります",
+         "ダメージ8・判定 前80×34・全体0.12秒・氷の床（幅150・3.5秒残る／乗った相手は凍結1.2秒）など、その他の数値は変更ありません",
+         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv230に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["16:55"],tag:"調整",title:"KAIRO：前+J「ブリンク斬り」を上方修正",
   items:["前+J「ブリンク斬り」：後硬直 0.34秒→0.30秒、被弾硬直 0.4秒→0.44秒に変更しました",
          "ダメージ14・KB 180・判定 80×62・全体0.30秒など、その他の数値は変更ありません。連続使用ペナルティ（1ヒット目から2秒以内にもう2度使うと後硬直が0.66秒の完全硬直に変化）もこれまで通りです",
@@ -531,17 +539,6 @@ var UPDATE_LOG=[
          "↓+J：「スパイラルポイズン」→「ニーダウン」に差し替え。相手の足元へツタを鞭のように忍び込ませる即時発生の単発技になりました（ダメージ8／KB 640／全体0.33秒／後硬直0.22秒／判定 前98×44／被弾硬直0.32秒）。旧技の両側への継続毒ダメージ・再使用1.35秒は廃止です",
          "空中J「ツタフック」：ダメージ 7＋7→10＋10、KB 300／320→660、判定 124×56→160×76／148×58→172×66 に強化しました",
          "技一覧の表示もすべて実装の数値に合わせて更新しました"]},
- {date:"2026/11/15",times:["20:12"],tag:"修正",title:"MIMI&SHADE：送り出したSHADEが他のプレイヤーに引っ張られる問題を修正",
-  items:["MIMI&SHADEのK「いってらっしゃいSHADE」でSHADEを前方へ送り出して追尾状態（SHADEがMIMIと同じ動きをする状態）にした後、他のプレイヤーがSHADEの近くに行くと、SHADEの動きがそのプレイヤーに引っ張られるように乱れる問題を修正しました",
-         "原因は、追尾の基準点（前回の計算時点でのMIMIの位置）が、オンライン対戦の巻き戻し（ロールバック）・再同期・スナップショット採用で状態を復元する際の保存対象に入っていなかったことです。復元されるたびに基準点だけが復元前の位置に残り、次の計算で「MIMIが移動した」と誤認したぶんがSHADEへコピーされていました。他のプレイヤーの入力が届いて巻き戻しや補正が起きるたびにSHADEが引きずられていたのはこのためです。基準点を保存・復元の対象に含め、スナップショット採用時と強制再同期時には採用した位置へ基準点を置き直すようにしました",
-         "あわせて、オンライン対戦で相手キャラの表示位置をなめらかに追随させる処理（グライド）がMIMI本体だけに効いてSHADEには効いておらず、補正のたびにSHADEだけが取り残されて見える問題も直しました。SHADEも本体と同じだけグライドします",
-         "技の性能・数値・操作に変更はありません"]},
- {date:"2026/11/15",times:["19:30"],tag:"修正",title:"相手キャラの表示を安定化",
-  items:["オンライン対戦（入力同期）で、相手キャラの描画方法を変えました。これまでは相手を「予測した最新の状態」で描いていたため、相手の入力が固まって届いて予測が外れるたびに、表示位置が直されてブレ・瞬間移動・急加速に見えていました。これからは相手キャラを約8フレーム（約133ms）過去の状態から描き、その前後の状態の間を補間して滑らかに動かします。その時点の状態は入力が確定済みであることがほとんどなので、予測の当たり外れに表示が引っ張られなくなります",
-         "自分のキャラは従来どおり最新の状態を遅延ゼロで描きます。計算・当たり判定・予測・巻き戻し（ロールバック）の仕組み自体には一切手を入れていません。変えたのは相手キャラの描画に使う状態だけです",
-         "例外的に深い巻き戻しが描画位置まで届いて位置が飛ぶ場合は、従来の追随（グライド）で緩和する仕組みも併用します",
-         "試合ログに「見た目の補正回数」（相手キャラの描画位置が25pxを超えて飛んだ回数）を追加しました。次回の実機ログで、今回の対策が効いたかを数字で判定できます",
-         "ゲーム内容・技・数値・エフェクト・操作に変更はありません"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -620,7 +617,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>J 2段目 — 返し斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.9秒</span><p>1段目から切り返す斬り。こちらも突進は付かない。1→2→3段の間隔は少し長めに調整してある。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.22秒')+mvS('判定','72×64')+mvS('被弾硬直','0.36秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 突進フィニッシュ（回転斬り）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>3段目だけが短い突進（約52前進）付きの回転フィニッシュ。出したあとはクールタイム長めで、チェーンはここで終了（次は1段目から）。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.4秒')+mvS('後硬直','0.65秒')+mvS('判定','80×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — ブリンク斬り</b><p>氷の軌跡を残して約105先へ<b>高速移動</b>し、移動しながら<b>大きな氷の爪でひっかく</b>。経路の間にいた相手にも当たる（ヒットは1回まで）。ダッシュ中・走行中の J でも出る。さらに、<b>1ヒット目を当ててから2秒以内にもう2度使うと、その回の後硬直が0.66秒（完全硬直）に変化する</b>（もう一度使っただけでは通常の後硬直のまま。その間は移動・ジャンプ・ダッシュ・次の技のすべてができない）。ヒットするたびに2秒の猶予は数え直される。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','180')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.30秒')+mvS('判定','80×62')+mvS('被弾硬直','0.44秒')+mvS('追加効果','2秒以内にもう2度使うと後硬直が0.66秒（完全硬直）に変化'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を前方へ突き出して足払いをする。判定は前方だけに出る（背後の相手には当たらない）。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','530（真上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.26秒')+mvS('判定','前80×34')+mvS('被弾硬直','0.36秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — アイスフット</b><p>しゃがみながら足を前方へ突き出して足払いをする。判定は前方だけに出る（背後の相手には当たらない）。出が速く硬直も短い。足元の地面が凍り、幅150・3.5秒残る<b>氷の床</b>になる。乗った相手は<b>凍結 1.2秒</b>（移動速度 0.45倍）になり、乗っている間は凍結が更新され続ける。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','440（真上方向）')+mvS('発生','即時')+mvS('全体','0.12秒')+mvS('後硬直','0.22秒')+mvS('判定','前80×34')+mvS('被弾硬直','0.42秒')+mvS('凍結','氷の床に乗ると1.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ホバースピン</b><p>空中に滞留しながら回転し、0.08秒間隔で<b>最大5ヒット</b>（前後両側）。ただし1回の滞空で出せるのは<b>2回まで</b>（着地で回復）なので、浮遊し続けることはできない。着地すると<b>着地硬直0.2秒</b>がある。</p>'+mvSpec(mvS('ダメージ','前5／後5 ×最大5')+mvS('KB','前330／後330')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','66×64')+mvS('着地硬直','0.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — メテオネイル</b> <span style="color:#f59e0b;font-weight:900">新技（急降下斬りから変更）</span><p>本人は突っ込まず、<b>重力が70%軽減</b>されてゆっくり落ちながら、0.26秒後に<b>真下へ氷の釘（ネイル）を叩き落とす</b>。<b>メテオ判定</b>あり（当たった相手は真下へ叩き落とされる）。旧「急降下斬り」の斜め突っ込みと着地衝撃波は削除された。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','700（真下方向）')+mvS('発生','0.26秒')+mvS('全体','0.56秒（重力70%軽減）')+mvS('後硬直','0.47秒')+mvS('判定','96×70（真下方向）'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — アイスファング・コンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。<b>氷を纏った拳</b>の2連打（正拳→打ち込み）で大きく吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','16＋20')+mvS('KB','300／710')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.48秒')+mvS('後硬直','0.47秒')+mvS('判定','72×64／80×70')+mvS('被弾硬直','0.3秒／なし'))+'</div></div>'
@@ -955,7 +952,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 530・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大5ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（重力70%軽減で滞空し、真下へメテオ判定の氷の釘） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。全キャラともサーバーからの情報を補間して滑らかに表示します（自分のキャラの予測表示は現在オフになっています）。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大5ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（重力70%軽減で滞空し、真下へメテオ判定の氷の釘） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。専用サーバーが試合を60fpsで計算して全員に配信する「サーバー方式」です。全キャラともサーバーからの情報を補間して滑らかに表示します（自分のキャラの予測表示は現在オフになっています）。ホストは部屋の管理役（ルーム作成と試合開始）で、対戦の計算はサーバーが行います。アカウント登録やAPIキーは不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1563,7 +1560,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v229";
+var BUILD_ID="v230";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6064,6 +6061,11 @@ var RENDER_FPS_KEY="jailbreaker.renderFps.v1";
 var renderFps=60;
 try{var rfSaved=localStorage.getItem(RENDER_FPS_KEY);if(rfSaved==="30")renderFps=30}catch(e){}
 var lastDrawTs=0;
+var drawFpsEMA=renderFps,prevDrawTs=0;
+function markDraw(ts){
+ if(prevDrawTs>0){var dd=ts-prevDrawTs;if(dd>4&&dd<500){var inst=1000/dd;if(inst>240)inst=240;drawFpsEMA=drawFpsEMA*0.85+inst*0.15}}
+ prevDrawTs=ts;lastDrawTs=ts;
+}
 function renderDue(ts){
  if(renderFps!==30)return true;
  if(!lastDrawTs)return true;
@@ -6072,7 +6074,7 @@ function renderDue(ts){
 function setRenderFps(v){
  renderFps=(v===30)?30:60;
  try{localStorage.setItem(RENDER_FPS_KEY,String(renderFps))}catch(e){}
- lastDrawTs=0; /* the next frame draws immediately under the new setting */
+ lastDrawTs=0;prevDrawTs=0;drawFpsEMA=renderFps; /* the next frame draws immediately under the new setting, and the FPS readout restarts from the new rate */
 }
 function settingsHTML(msg){
  var order=["j","k","l","ult","dash"],rows="";
@@ -8201,9 +8203,9 @@ function startAttack(f,type){
         quick low sweep (user spec: アイスフット). It still chills the
         floor it crosses: a slick ice patch stays behind for a few seconds
         and chills (slows) any foe standing on it */
-     f.state="lowclaw";f.stateT=0.12;f.attackCd=0.19;f.comboWin=0; /* アイスフット 後硬直 (user spec): 0.30秒 -> 0.26秒 — attackCd 0.23 -> 0.19, so the displayed recovery (attackCd + the shared 0.07) goes 0.30s -> 0.26s; 全体 (stateT) 0.12s unchanged */
+     f.state="lowclaw";f.stateT=0.12;f.attackCd=0.15;f.comboWin=0; /* アイスフット 後硬直 (user spec): 0.26秒 -> 0.22秒 — attackCd 0.19 -> 0.15, so the displayed recovery (attackCd + the shared 0.07) goes 0.26s -> 0.22s; 全体 (stateT) 0.12s unchanged */
      f.vx=f.face*344;
-     meleeHit(f,foe,80,34,8,530,0,-1.0,0.36,false,0,null,false,f.face); /* アイスフット (user spec): KB 620（真上: dir 0 / up -1.0, the house straight-up convention — same as ORCHID ツタアッパー）-> 530（真上: dir 0 / up -1.0 unchanged, so a hit foe still flies straight up with no sideways drift, just weaker）, box 前80x34 / 被弾硬直 0.36s / damage 8 unchanged */
+     meleeHit(f,foe,80,34,8,440,0,-1.0,0.42,false,0,null,false,f.face); /* アイスフット (user spec): KB 530（真上: dir 0 / up -1.0, the house straight-up convention — same as ORCHID ツタアッパー）-> 440（真上: dir 0 / up -1.0 unchanged, so a hit foe still flies straight up with no sideways drift, just weaker）, box 前80x34 / 被弾硬直 0.36s -> 0.42s / damage 8 unchanged */
      icePatches.push({x:f.x+f.face*36,y:f.y+f.h,w:150,t:3.5,owner:f});
      spawnParticles(f.x+f.face*22,f.y+f.h-6,9,"#bae6fd",150);
      beep(760,.07,"square",.045);
@@ -8333,7 +8335,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
     direction instead of dir — dir keeps driving only the knockback.
     A move whose box sits in front while its launch stays straight up
     (dir 0 / up -1.0) passes its facing here: KAIRO アイスフット
-    (判定 前80×34, KB 530 真上) is the current user of this split.
+    (判定 前80×34, KB 440 真上) is the current user of this split.
     hitList (optional): an array shared across several meleeHit calls
     of ONE move — a fighter already recorded in it is skipped, so a
     two-sided move (front call + back call) never hits the same foe
@@ -11458,7 +11460,7 @@ function loop(ts){
     keeps using the real dtms (its accumulator is already clamped). */
  var pdt=Math.min(Math.max(dtms,0),50);
  if(pdt>0)fpsEMA=fpsEMA*0.95+(1000/Math.max(1,pdt))*0.05;
- fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(fpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(fpsEMA);if(typeof lsSyncModeLabel==="function")lsSyncModeLabel()} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
+ fpsTick+=pdt;if(fpsTick>250){fpsTick=0;$("fpsText").textContent=(mode==="online"&&sv.active&&!sbHostLive)?(Math.round(drawFpsEMA)+" · "+Math.round(sv.renderDelay+(sv.snapAgeMs||0))+"ms"):Math.round(drawFpsEMA);if(typeof lsSyncModeLabel==="function")lsSyncModeLabel()} /* the ms figure is the delay the player actually sees: render delay + the host-stream age svOnSnap measured (0 whenever the stream is on time), so a backed-up queue shows up here instead of hiding behind the render delay alone */
  /* PERF (lag fix): adaptive quality driver. While the smoothed frame
     rate stays under 47fps for ~0.6s, step the quality tier down (the
     canvas gets cheaper to fill — resolution only; no effect, particle
@@ -11479,12 +11481,12 @@ function loop(ts){
  if(perfCdMs<=0&&perfSlowMs>300&&perfTier<5){perfTier+=(fpsEMA<34&&perfTier<4)?2:1;if(perfTier>5)perfTier=5;perfSlowMs=0;perfCdMs=2000;applyPerfTier()}
  else if(perfCdMs<=0&&perfFastMs>5000&&perfTier>0){perfTier--;perfFastMs=0;perfCdMs=2500;applyPerfTier()}
  if(mode==="online"&&!sbHostLive&&!(typeof ls!=="undefined"&&ls&&ls.active)){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A Supabase HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
-  if(renderDue(ts)){lastDrawTs=ts;var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore()}syncHUD();return} /* render FPS setting (user-selected 30): svAdvance above still runs every frame — only the draw is time-gated, on this device only */
- if(mode==="online"&&typeof ls!=="undefined"&&ls&&ls.active){lsDrive(dtms);if(renderDue(ts)){lastDrawTs=ts;var lox=shake?(Math.random()-.5)*shake:0,loy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(lox,loy);draw();ctx.restore()}syncHUD();return} /* rollback match (host and guests alike): the local engine IS the match — lsDrive steps it (rolling back / re-simulating as remote inputs land), then the frame draws exactly like local play (subject to the same render-only FPS gate) */
+  if(renderDue(ts)){markDraw(ts);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore()}syncHUD();return} /* render FPS setting (user-selected 30): svAdvance above still runs every frame — only the draw is time-gated, on this device only */
+ if(mode==="online"&&typeof ls!=="undefined"&&ls&&ls.active){lsDrive(dtms);if(renderDue(ts)){markDraw(ts);var lox=shake?(Math.random()-.5)*shake:0,loy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(lox,loy);draw();ctx.restore()}syncHUD();return} /* rollback match (host and guests alike): the local engine IS the match — lsDrive steps it (rolling back / re-simulating as remote inputs land), then the frame draws exactly like local play (subject to the same render-only FPS gate) */
  if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
- if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;lastDrawTs=ts;draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints. The paused repaint always draws (it is a one-shot, not a rate) so the pause menu never sits over a stale frame */
+ if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;markDraw(ts);draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints. The paused repaint always draws (it is a one-shot, not a rate) so the pause menu never sits over a stale frame */
  pausedDrawn=false;
- if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;if(renderDue(ts)){lastDrawTs=ts;draw()}syncHUD();return}
+ if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;if(renderDue(ts)){markDraw(ts);draw()}syncHUD();return}
  acc+=Math.min(0.1,dtms/1000);
  var STEP=1/60;
  if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
@@ -11509,7 +11511,7 @@ function loop(ts){
     have still all run (fixed 60fps) — only this draw is skipped until
     ~33ms have passed since the last one (renderDue, time-based). */
  var ox=shake?(Math.random()-.5)*shake:0,oy=shake?(Math.random()-.5)*shake:0;
- if(renderDue(ts)){lastDrawTs=ts;ctx.save();ctx.translate(ox,oy);draw();ctx.restore()}
+ if(renderDue(ts)){markDraw(ts);ctx.save();ctx.translate(ox,oy);draw();ctx.restore()}
  syncHUD();
 }
 requestAnimationFrame(loop);
