@@ -434,6 +434,22 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["23:55"],tag:"新機能",title:"全キャラ共通：被弾で↑+Kの再使用がリセットされるシステムを追加",
+   items:["全てのキャラの↑+Kに共通のシステムを追加しました：↑+K使用後の再使用（クールダウン）継続中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で0秒になり、すぐにもう一度↑+Kが使えるようになります",
+          "ガードで防いだ攻撃や、燃焼・毒・出血などの継続ダメージでもリセットされます。自分の技のコストによる自傷ダメージではリセットされません。MIMI&SHADEは、SHADEの体だけが攻撃を受けた場合にはリセットされず、MIMI本体が攻撃を受けた場合にリセットされます",
+          "↑+K自体の再使用時間や性能に変更はありません。通常対戦・CPU・オンライン対戦のすべてに適用されます",
+          "オンライン対戦のビルド版数をv244に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/16",times:["23:42"],tag:"調整",title:"SMILEY：L「Berserker」を大幅強化",
+   items:["L「Berserker」：持続 10秒→11秒、移動速度 +14%→+15%、ダッシュ再使用 0.9秒→0.8秒に上方修正しました",
+          "L「Berserker」：出血 2ダメージ／0.4秒・1.6秒間→2ダメージ／0.5秒・1.5秒間、回復 与えたダメージの15%→20%に変更しました",
+          "L「Berserker」に効果を追加しました：発動中は全ての技の後硬直が0.12秒短縮、全ての技の着地硬直が0.06秒短縮、全ての技が相手に与える被弾硬直が0.08秒増加し、受けるノックバックが×1.12→×1.00になります",
+          "包丁ダメージ+20%など、その他の効果は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv243に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/16",times:["23:36"],tag:"調整",title:"KOJIRO：ワザエフェクトを L「斬空」以外すべて削除",
+   items:["KOJIROのワザエフェクト（斬撃の軌跡・三日月・燕・竜巻・剣気・パーティクルなど）を、L「斬空」以外のすべての技から削除しました",
+          "L「斬空」のエフェクト（斬撃波そのもの・発射時の演出・ストックがある間の赤いオーラ）はこれまで通り表示されます",
+          "ダメージ・KB・判定・硬直など技の性能は一切変更ありません。他のキャラのエフェクトにも変更はありません",
+          "オンライン対戦のビルド版数をv242に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["23:28"],tag:"調整",title:"KOJIRO：Jチェーン・下段斬り・空斬り・落下斬り・風波・居合・斬空を調整／退き斬り・昇り斬り（↑+J）を削除",
    items:["J 1段目「袈裟斬り」：被弾硬直 0.24秒→0.34秒に上方修正しました",
           "J 2段目「斬り上げ」：被弾硬直 0.26秒→0.36秒に上方修正しました",
@@ -765,7 +781,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.31秒')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>足元へ包丁を2回突き刺す<b>2段技</b>。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は1.1秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','1.1秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って10秒間「Berserker」状態になる。発動した瞬間、背後に大鎌を持った巨大な死神（キャラの約2.6倍の高さ）が1秒間だけ姿を現す。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+14%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.9秒になり、近接ヒットで「出血」を付ける（0.4秒ごとに2ダメージ、1.6秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの15%を回復</b>する。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','10秒')+mvS('移動速度','+14%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.9秒')+mvS('出血','2ダメ／0.4秒・1.6秒間')+mvS('回復','与えたダメージの15%')+mvS('無敵','なし'))+'</div></div>'
++'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って11秒間「Berserker」状態になる。発動した瞬間、背後に大鎌を持った巨大な死神（キャラの約2.6倍の高さ）が1秒間だけ姿を現す。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+15%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.8秒になり、近接ヒットで「出血」を付ける（0.5秒ごとに2ダメージ、1.5秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの20%を回復</b>する。加えて発動中は<b>全ての技の後硬直が0.12秒短く</b>なり、<b>全ての技の着地硬直が0.06秒短く</b>なり、<b>全ての技が相手に与える被弾硬直が0.08秒長く</b>なり、<b>受けるノックバックが×1.00</b>（通常は×1.12）になる。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','11秒')+mvS('移動速度','+15%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.8秒')+mvS('出血','2ダメ／0.5秒・1.5秒間')+mvS('回復','与えたダメージの20%')+mvS('後硬直','全ての技 -0.12秒')+mvS('着地硬直','全ての技 -0.06秒')+mvS('被弾硬直','全ての技 +0.08秒')+mvS('受けKB','×1.00（発動中）')+mvS('無敵','なし'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1300')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var mimiMovesHTML='<h2>🐰 MIMI&amp;SHADE（ミミ＆シェイド）— 技一覧</h2><p>白いワンピースを着たピンク髪の少女<b>MIMI</b>と、闇から出てくる巨大な真っ黒の2つの手<b>SHADE</b>（MIMIの約1.8倍）の二人一組。SHADEは普段MIMIのそばに寄り添い、<b>MIMIの移動に合わせて同じ速度で移動</b>し、<b>常にMIMIの方を向く</b>。ワザを出すと<b>二人同時に、それぞれの技が発動</b>する。KでSHADEを前方へ送り出しても、SHADEはMIMIと同じ動きをし続けるので、離れた場所からでもSHADEの技が出るようになる代わりに、MIMIの周りは手薄になる。UでMIMIがSHADEの位置へワープできる。</p>'
@@ -943,7 +959,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1551,7 +1567,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v241";
+var BUILD_ID="v244";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6295,7 +6311,7 @@ function tryDash(f,dir){
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
  f.jBoostT=0; /* a dash cancels a pending first-jump height decision: the burst holds vy at 0, so no boost may fire after it */
- f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:(f.char==="sara"?2.2:(f.char==="smiley"?((f.awakenT||0)>0?0.9:1.8):DASH_CD)));f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec). SMILEY dash CD 2.2s -> 1.8s, and 0.9s while Berserker lasts (user spec); SARA dash CD 2.4s -> 2.2s (user spec); TRAVIS keeps the shared 2.4s */
+ f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:(f.char==="sara"?2.2:(f.char==="smiley"?((f.awakenT||0)>0?0.8:1.8):DASH_CD)));f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec). SMILEY dash CD 2.2s -> 1.8s, and 0.9s -> 0.8s while Berserker lasts (user spec); SARA dash CD 2.4s -> 2.2s (user spec); TRAVIS keeps the shared 2.4s */
  if(!f.onGround)f.airDashed=true;
  spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnCharBurst(f.char,f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5);beep(f.isPlayer?880:440,.06,"sawtooth",.03);
  return true;
@@ -6476,7 +6492,7 @@ function kojiroDiveBodyHit(f){
  var cx=f.x,cy=f.y+f.h*0.5+37;
  dbgBox(cx,cy,62,74,"255,45,120",16); /* hitbox viewer (おかき only): the 真下62x74 box hanging under him */
  for(var i=0;i<fighters.length;i++){var tg=fighters[i];if(tg===f||tg.dead)continue;if(f.diveHitMask&(1<<i))continue;
-  if(Math.abs(tg.x-cx)<31+tg.w/2&&Math.abs((tg.y+tg.h/2)-cy)<37+tg.h/2){if(applyHit(f,tg,18,620,tg.x>=f.x?1:-1,0.85,false,cx,cy)){f.diveHitMask|=(1<<i);spawnParticles(f.x,f.y+f.h*0.85,8,"#fecaca",190)}}}
+  if(Math.abs(tg.x-cx)<31+tg.w/2&&Math.abs((tg.y+tg.h/2)-cy)<37+tg.h/2){if(applyHit(f,tg,18,620,tg.x>=f.x?1:-1,0.85,false,cx,cy)){f.diveHitMask|=(1<<i)}}}
 }
 function startKojiroAttack(f,type,foe){
  /* KOJIRO — a pure melee swordsman. Every technique is its own motion:
@@ -6497,7 +6513,7 @@ function startKojiroAttack(f,type,foe){
    f.state="jkcombo";f.stateT=0.5;f.attackCd=0.42;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*120;capVx(f,RUN_MAX*1.2);
    meleeHit(f,foe,74,60,12,300,f.face,-0.2);
-   spawnParticles(f.x+f.face*30,f.y+f.h*0.45,10,"#4ade80",190);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,5,"#bbf7d0",160);spawnFxBurst(FXIMG.slash,f.x+f.face*30,f.y+f.h*0.45,120,0.26,-0.8,f.face,0.8);beep(900,.06,"square",.05); /* 燕返し 1段目 (見た目変更): opening diagonal of the cross gets a slash burst */
+   beep(900,.06,"square",.05); /* 燕返し 1段目: ワザエフェクト削除済み (KOJIROは L「斬空」のエフェクトのみ残す) */
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
      /* 落下斬り: diagonal plunge slash; reaching the floor erupts the
@@ -6506,7 +6522,7 @@ function startKojiroAttack(f,type,foe){
         pays 0.5s of landing lag (LAND_LAG diveclaw) */
      f.state="diveclaw";f.stateT=0.32;f.attackCd=0.38;f.comboWin=0;f.diveArmed=true;f.diveHitMask=0;
      f.vx=f.face*290;f.vy=Math.max(f.vy,620);f.fastfall=false;
-     kojiroDiveBodyHit(f);spawnFxBurst(FXIMG.wind,f.x,f.y+f.h*0.5,115,0.3,1.57,f.face,0.75);beep(500,.08,"sawtooth",.05); /* 落下斬り 本体 (user spec): damage 16 -> 18, KB 420 -> 620, box 74x62 -> 真下62x74, and the box stays live for the whole fall via kojiroDiveBodyHit in stepFighter (1 hit per foe). 落下斬り (見た目変更): wind streams off the tip-down plunge */
+     kojiroDiveBodyHit(f);beep(500,.08,"sawtooth",.05); /* 落下斬り 本体 (user spec): damage 16 -> 18, KB 420 -> 620, box 74x62 -> 真下62x74, and the box stays live for the whole fall via kojiroDiveBodyHit in stepFighter (1 hit per foe). ワザエフェクトは削除済み */
    }else if(!f.onGround){
      /* 空斬り: one wide horizontal cut in mid-air, brief hover.
         Now a single surrounding hit (user spec): 周囲104x92 on both
@@ -6515,7 +6531,7 @@ function startKojiroAttack(f,type,foe){
      f.state="airslash";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 後硬直 0.43 -> 0.38秒: attackCd 0.31 + 0.07 (user spec) */
      if(f.vy>60)f.vy=60;
      var kjAirList=[];meleeHit(f,foe,104,92,14,360,f.face,-0.3,0.34,false,0,kjAirList);meleeHit(f,foe,104,92,14,360,-f.face,-0.15,0.34,false,0,kjAirList); /* 空斬り (user spec): damage 前13/後7 -> 14, KB 前360/後200 -> 360, box 前84x92/後60x76 -> 周囲104x92 (both sides, shared hitList so one foe is hit once), 被弾硬直 0.22 -> 0.34秒 */
-     spawnParticles(f.x,f.y+f.h*0.45,14,"#fecaca",200);spawnFxBurst(FXIMG.slash,f.x+f.face*26,f.y+f.h*0.45,155,0.3,0,f.face,0.9);spawnFxBurst(FXIMG.slash,f.x-f.face*22,f.y+f.h*0.45,110,0.26,0,-f.face,0.7);beep(1050,.06,"square",.045); /* 空斬り (見た目変更): flashy slash bursts fore AND aft, matching the two-sided hit */
+     beep(1050,.06,"square",.045); /* 空斬り: ワザエフェクト削除済み */
    }else if(downHeld){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
         first cut lands on the press, the second ticks out 0.16s later
@@ -6527,7 +6543,7 @@ function startKojiroAttack(f,type,foe){
      f.state="lowcut";f.stateT=0.32;f.attackCd=0.15;f.comboWin=0; /* 全体 0.28 -> 0.32秒, 後硬直 0.44 -> 0.22秒: attackCd 0.15 + 0.07 (user spec) */
      f.spinHits=1;f.spinTick=0;
      meleeHit(f,foe,82,36,7,200,0,-1.0,0.34,false,0,null,false,f.face); /* 下段斬り 1発目 (user spec): damage 8 -> 7, KB 480 -> 200 (真上: dir 0 / up -1.0, box stays in front via boxDir), box 82x34 -> 82x36, 被弾硬直 0.18 -> 0.34秒 */
-     spawnParticles(f.x+f.face*24,f.y+f.h-6,8,"#fecaca",150);beep(700,.06,"square",.045);
+     beep(700,.06,"square",.045);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){ /* ↑+J 昇り斬り and 後ろ+J 退き斬り are DELETED (user spec): those inputs now fall through to 疾風突き / the plain J chain below (the air up+K 昇り斬り is a different move and stays) */
      /* 疾風突き: a real dash-in thrust — a straight-line lunge, no teleport.
         The lunge starts on the press, but the hit itself now lands
@@ -6537,7 +6553,7 @@ function startKojiroAttack(f,type,foe){
         up from 0.23); box 94x60, damage 13 / KB 620 unchanged */
      f.state="dashthrust";f.stateT=0.32;f.attackCd=0.28;f.comboWin=0;f.dashT=0;f.hitDone=false;
      f.vx=f.face*560;
-     spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);spawnFxBurst(FXIMG.wind,f.x+f.face*24,f.y+f.h*0.45,125,0.3,0,f.face,0.85);spawnParticles(f.x+f.face*10,f.y+f.h*0.45,7,"#a7f3d0",200);beep(1150,.05,"square",.05); /* 疾風突き (見た目変更): a burst of wind wraps the thrust */
+     beep(1150,.05,"square",.05); /* 疾風突き: ワザエフェクト削除済み */
    }else{
      /* 四段チェーン (user spec) — four genuinely different motions:
         1 袈裟斬り (top-to-bottom overhead) -> 2 斬り上げ (bottom-to-top
@@ -6551,13 +6567,13 @@ function startKojiroAttack(f,type,foe){
        f.state="chop";f.stateT=0.26;f.attackCd=0.09; /* 袈裟斬り: overhead kesa cut (was the 突き thrust) */
        f.vx+=f.face*55;capVx(f,RUN_MAX*1.15);
        meleeHit(f,foe,80,52,10,220,f.face,-0.18,0.34); /* 袈裟斬り: KB 250 -> 220 (user spec). 被弾硬直 0.24 -> 0.34秒: hit foe is stunned exactly 0.34s, separate from the KB (user spec) */
-       spawnParticles(f.x+f.face*20,f.y+f.h*0.4,8,"#fecaca",170);
+       
        beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.8;
        f.state="rise";f.stateT=0.26;f.attackCd=0.11;
        meleeHit(f,foe,68,84,12,250,f.face,-1.0,0.36); /* 斬り上げ: KB 340 -> 280 -> 250 (still a strong upward launch), 被弾硬直 0.26 -> 0.36秒 fixed on the hit foe, separate from the KB (user spec) */
-       spawnParticles(f.x+f.face*16,f.y+f.h*0.3,7,"#fecaca",150);
+       
        beep(800,.06,"square",.045);
      }else if(f.comboStep===2){
        f.comboWin=0.8;
@@ -6567,14 +6583,14 @@ function startKojiroAttack(f,type,foe){
        f.spinHits=1;f.spinTick=0;
        f.vx+=f.face*80;capVx(f,RUN_MAX*1.2);
        meleeHit(f,foe,98,66,5,170,f.face,-0.18,0.34); /* 三突き: 5 x max 3 hits, KB 230 -> 170, box 92x68 -> 98x66, 被弾硬直 0.26 -> 0.34秒 fixed on the hit foe, separate from the KB (user spec) */
-       spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fecaca",180);
+       
        beep(1100,.05,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0;
        f.state="yokonagi";f.stateT=0.26;f.attackCd=0.33; /* 横薙ぎ (4th stage, user spec): now a high-speed step — he flashes +20 ahead DURING the cut and the blade sweeps the whole path: the hit is tested at stepped positions from the start to +20 ahead with one shared hitList, so a foe anywhere along the path is hit, but only ONCE */
        var ykList=[],ykStart=f.x;for(var ykS=0;ykS<=5;ykS++){f.x=ykStart+f.face*20*(ykS/5);if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;meleeHit(f,foe,96,56,20,560,f.face,-0.3,0,false,0,ykList)}f.x=ykStart+f.face*20;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
        f.vx+=f.face*110;capVx(f,RUN_MAX*1.2);
-       spawnParticles(f.x+f.face*26,f.y+f.h*0.45,12,"#f87171",210);
+       
        beep(600,.08,"sawtooth",.05);
      }
    }
@@ -6587,7 +6603,7 @@ function startKojiroAttack(f,type,foe){
         the universal 0.07 tail; user spec, up from 1.35s) */
      f.state="sweep";f.stateT=0.6;f.attackCd=1.38;f.comboWin=0;f.vx=0;applyFullLock(f); /* 後硬直は完全硬直: 合計1.45秒の間は移動・ジャンプ不可 (1.35 -> 1.45秒, user spec) */
      var kjSweepList=[];meleeHit(f,foe,200,200,0,820,f.face,-0.35,0,false,0,kjSweepList);meleeHit(f,foe,200,200,0,820,-f.face,-0.35,0,false,0,kjSweepList); /* 風波 判定 (user spec): 210x230 -> 周囲200x200 (both sides, shared hitList so one foe is blown away once) */
-     spawnParticles(f.x,f.y+f.h*0.5,20,"#a7f3d0",240);spawnParticles(f.x,f.y+f.h*0.3,12,"#fecaca",200);spawnRing(f.x,f.y+f.h*0.5,"#a7f3d0",64);beep(400,.16,"sawtooth",.05);
+     beep(400,.16,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
      /* 空中↑+K: 昇り斬り — rises at vy -820, cutting upward TWICE on
         the way: the first cut lands on the press (13 dmg / KB 820,
@@ -6600,7 +6616,7 @@ function startKojiroAttack(f,type,foe){
      f.flyCd=2.2;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
      f.vy=-820;f.vx=0;f.onGround=false;f.fastfall=false;
      meleeHit(f,foe,76,86,13,820,0,-1.0); /* 1段目 KB 240 -> 820・真上吹き (user spec) */
-     spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#fecaca",170);spawnFxBurst(FXIMG.slash,f.x+f.face*10,f.y+f.h*0.3,145,0.3,-1.1,f.face,0.9);spawnFxBurst(FXIMG.wind,f.x,f.y+f.h*0.6,110,0.28,0,f.face,0.7);beep(980,.07,"square",.05); /* 昇り斬り 1段目 (見た目変更): vertical slash + wind burst as he rockets straight up */
+     beep(980,.07,"square",.05); /* 昇り斬り 1段目: ワザエフェクト削除済み */
    }else if(!f.onGround){
      /* 空中三日月斬り: crescent cut in the air (delayed hit in
         stepFighter). NOTE: 空中↓+K 急降下斬り was DELETED (user spec) —
@@ -6618,10 +6634,9 @@ function startKojiroAttack(f,type,foe){
       distance in one flash and slashes through. Cooldown-based. */
    if(f.specCd>0){beep(200,.07);return}
    f.specCd=1.6;f.state="iaido";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 居合 (user spec): CD 1.8s -> 1.6s, attackCd 0.31 + 0.07 = 後硬直 0.38 */
-   spawnParticles(f.x,f.y+f.h*0.5,10,"#fecaca",160);
    var iaList=[],iaStart=f.x;for(var iaS=0;iaS<=6;iaS++){f.x=iaStart+f.face*118*(iaS/6);if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;meleeHit(f,foe,102,58,19,500,f.face,-0.28,0,false,0,iaList)}f.x=iaStart+f.face*118;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50; /* 居合斬り (user spec): damage 18 -> 19, 発生 即時（移動後）-> 即時（移動中）— the cut is tested at stepped positions along the whole 118 dash with one shared hitList, so a foe anywhere on the path is hit, but only ONCE. KB 500 / 判定 102x58 unchanged */
    f.vx=f.face*300;
-   spawnParticles(f.x+f.face*20,f.y+f.h*0.5,10,"#fff1f2",190);spawnFxBurst(FXIMG.slash,f.x+f.face*46,f.y+f.h*0.48,175,0.34,0,f.face,0.95); /* 居合斬り (見た目変更): one huge slash flash tears the air along the draw */
+   /* 居合斬り: ワザエフェクト削除済み */
    beep(1500,.06,"square",.05);setTimeout(function(){beep(700,.07,"sawtooth",.04)},50);
  }else if(type==="ult"){
    /* 斬空: ONE huge slash wave straight ahead — Kojiro's only projectile,
@@ -6881,6 +6896,7 @@ function landLagFor(ch,st){var t=LAND_LAG[ch];return t?(t[st]||0):0}
 function applyLandLag(f,wasAir){
  if(!wasAir||f.attackCd<=0)return; /* ground starts — and presses that never became a move (CD-blocked rises, empty guns, meter-less ults leave attackCd at 0) — mark nothing */
  var lag=landLagFor(f.char,f.state);if(lag<=0)return;
+ if(f.char==="smiley"&&(f.awakenT||0)>0)lag=Math.max(0.01,lag-0.06); /* SMILEY Berserker rider (user spec): while Berserker lasts, EVERY move's landing lag is 0.06s shorter — evaluated at the press, matching the sjail direct mark in startSmileyAttack (sairj 0.18 -> 0.12 / diveclaw 0.38 -> 0.32 / jkcombo 0.18 -> 0.12 / sjail 0.33 -> 0.27) */
  if(f.diveArmed)f.airLag=lag; /* a dive replaces any earlier pending lag with its own */
  else f.airLag=Math.max(f.airLag||0,lag);
 }
@@ -7551,11 +7567,12 @@ function startSmileyAttack(f,type,foe){
         straight up at vy -1080. attackCd 0.31 + the 0.07 tail =
         後硬直 0.38. 着地硬直 0.33 is marked as airLag right here
         (he is airborne from this instant) and via LAND_LAG for air
-        starts, so it applies however the move was started.
+        starts, so it applies however the move was started. While
+        Berserker lasts the mark is 0.27 (the -0.06s rider).
         CD 2.4s on the shared flyCd (user spec) */
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.4;f.state="sjail";f.stateT=0.31;f.attackCd=0.31;f.comboWin=0;
-     f.vy=-1080;f.onGround=false;f.fastfall=false;f.airLag=Math.max(f.airLag||0,0.33);
+     f.vy=-1080;f.onGround=false;f.fastfall=false;f.airLag=Math.max(f.airLag||0,((f.awakenT||0)>0?0.27:0.33)); /* Berserker rider: 着地硬直 0.33 -> 0.27 while Berserker lasts (the -0.06s cut, matching applyLandLag for air starts) */
      spawnParticles(f.x,f.y+f.h,10,"#fef08a",170);spawnRing(f.x,f.y+f.h*0.6,"#fde047",30);
      beep(980,.07,"square",.045);
    }else if(!f.onGround){
@@ -7596,15 +7613,20 @@ function startSmileyAttack(f,type,foe){
    if(f.reloadT<=0)f.reloadT=1.1; /* リロード: per-shot trickle starts on the first spent knife (see stepFighter) */
  }else if(type==="ult"){
    /* Berserker (L ult — renamed from 覚醒， user spec): spends the
-      WHOLE gauge to transform for 10s (was 8s) — the mask turns dark
+      WHOLE gauge to transform for 11s (was 10s) — the mask turns dark
       red and warps into a creepy grin and blood soaks the suit
       (drawCharSprite swaps to the baked awakened sheet while
-      awakenT lasts). While it lasts: move speed +14% (movement
-      chain), hocho damage +20% (applyHit), dash cooldown 0.9s
-      (tryDash), melee hits apply bleed (2 dmg every 0.4s for 1.6s,
-      meleeHit), and he HEALS 15% of the damage he deals (applyHit).
+      awakenT lasts). While it lasts: move speed +15% (movement
+      chain), hocho damage +20% (applyHit), dash cooldown 0.8s
+      (tryDash), melee hits apply bleed (2 dmg every 0.5s for 1.5s,
+      meleeHit), he HEALS 20% of the damage he deals (applyHit),
+      EVERY move's recovery is 0.12s shorter (startAttack) and its
+      landing lag 0.06s shorter (applyLandLag / sjail press mark),
+      every hit he deals inflicts +0.08s of hitstun (applyHit), and
+      knockback TAKEN is x1.00 instead of his base x1.12 (applyHit /
+      releaseGrab).
       NO invincibility, NO chain recharge; dying ends it on the spot */
-   if(f.meter<100)return;f.meter=0;f.awakenT=10;f.attackCd=0.35;f.comboWin=0;shake=7;
+   if(f.meter<100)return;f.meter=0;f.awakenT=11;f.attackCd=0.35;f.comboWin=0;shake=7;
    spawnVecBurst("smiley",f.x,f.y+f.h*0.45,165,2.4,0.5,1,1.15);
    spawnParticles(f.x,f.y+f.h/2,26,"#dc2626",260);spawnParticles(f.x,f.y+f.h/2,16,"#7f1d1d",200);
    beep(110,.4,"sawtooth",.085);setTimeout(function(){beep(880,.3,"square",.05)},90);
@@ -8166,7 +8188,7 @@ function startAttack(f,type){
  if(f.char==="sara"){startSaraAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(f.char==="orchid"){startOrchidAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(f.char==="travis"){startTravisAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
- if(f.char==="smiley"){startSmileyAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
+ if(f.char==="smiley"){startSmileyAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);if((f.awakenT||0)>0&&f.attackCd>0){f.attackCd=Math.max(0.02,f.attackCd-0.12);if((f.recLockT||0)>0)f.recLockT=Math.max(0.02,f.recLockT-0.12)}return} /* SMILEY Berserker rider (user spec): while Berserker lasts, EVERY move's recovery （後硬直 — attackCd including the universal 0.07 tail added just above) is 0.12s shorter. The cut runs AFTER addRecovery so the listed recovery drops by exactly 0.12 (floored at 0.02 so a recovery still registers); a 完全硬直 move's recLockT — set by applyFullLock to that same total — is cut by the same 0.12 so the two spans stay matched. The ult press itself also qualifies (awakenT is already running when this runs). awakenT is synced state (rollback fields + snapshots), so local / CPU / online all cut identically */
  if(f.char==="mimi"){startMimiAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(f.char==="no66"){startNo66Attack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(type==="jk"){
@@ -8373,7 +8395,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
    if(!grab&&t.char==="mimi"&&shadeAlive(t)&&Math.abs(t.shX-cx)<range*0.72+58&&Math.abs((t.shY-52)-cy)<h*0.5+54){if(applyShadeHit(att,t,dmg,cx,cy,false)){hitAny=true;if(hitList)hitList.push(t)}} /* 【闇ゲージ】 a swing that reaches SHADE's body drains its darkness gauge (KB fully nullified) — a separate body, so it can be struck alongside MIMI herself; a shared hitList still caps one move at one strike per pair */
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.4;t.bleedT=Math.max(t.bleedT||0,1.6);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.4s for 1.6s (was 0.3s / 1.5s) */}}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.5;t.bleedT=Math.max(t.bleedT||0,1.5);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.5s for 1.5s (was 0.4s / 1.6s) */}}
  }
  return hitAny;
 }
@@ -8455,7 +8477,7 @@ function releaseGrab(f){
  if(!att||att.dead||f.dead||kb<=0)return;
  var dir=(kind===1)?(att.shFace||att.face||1):(att.face||1); /* the throw goes wherever the grabber faces NOW, at release — not where it faced when the grab connected */
  var lowHp=1-Math.max(0,f.hp)/(f.maxHp||MAXHP);
- var kbs=kb*0.8*(1+lowHp*1.15)*(f.kbMul||1); /* the same knockback scaling applyHit uses, so the move's listed KB is directly comparable */
+ var kbs=kb*0.8*(1+lowHp*1.15)*((f.char==="smiley"&&(f.awakenT||0)>0)?1.00:(f.kbMul||1)); /* the same knockback scaling applyHit uses, so the move's listed KB is directly comparable — including the SMILEY Berserker rider: a Berserker SMILEY thrown by a grab also takes KB at x1.00, not his base x1.12 */
  f.vx=dir*kbs;f.vy=up*kbs-(lowHp>0.55?70:0);if(f.vy<0)f.onGround=false;
  f.hitstun=Math.min(0.5,0.13+kbs/3600);f.dashT=0;f.fastfall=false;
  hitstop=isUlt?0.07:0.03;shake=Math.min(11,Math.max(shake,3+kbs*0.009));
@@ -8465,6 +8487,24 @@ function releaseGrab(f){
 }
 function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.dead||def.invuln>0)return false;
+ /* ↑+K 被弾リセット (user spec, ALL characters): every ↑+K in the
+    game pays its reuse cooldown into the shared flyCd slot, and a
+    fighter whose flyCd is still running when a hit from ANOTHER
+    fighter lands on them gets it wiped to 0 on the spot — being hit
+    refunds the ↑+K. This one line is the whole system: every hit
+    that reaches a fighter's body funnels through applyHit (melee /
+    projectiles / ults / the grab opener via applyGrabHit / flame
+    beams / burn・poison・bleed DoT ticks), the guard branch below
+    included, so local / CPU / rollback online all behave identically
+    and the reset rides the existing flyCd sync (snapshot fcd +
+    rollback state) with no new field. Self-damage never routes
+    through here (SARA's chaos cost and No.66's blast cost are direct
+    hp edits), and damage to SHADE's body alone (applyShadeHit /
+    applyShadeDot) does NOT reset MIMI's flyCd — she herself was not
+    hit. The few damage routes that bypass applyHit (the AXE ult
+    grind tick, ORCHID's placed poison mist, the legacy dark field)
+    reset flyCd at their own tick sites instead. */
+ if(att&&att!==def)def.flyCd=0;
  /* SARA モードカオス: while her chaos mode is on (13s max), EVERY
     damage she deals is +30% (paid for with 1/3 of her HP at
     activation) — burn ticks included, since the burn DoT in
@@ -8473,7 +8513,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  /* SMILEY Berserker: while it lasts, EVERY hocho attack deals +20%
     (rounded like SARA's chaos boost; was +25% as 覚醒）. noKb hits
     are DoT ticks — the bleed's own 2-damage ticks call in with noKb
-    and stay 2. The 15% lifesteal rider is paid out below, where the
+    and stay 2. The 20% lifesteal rider is paid out below, where the
     damage actually lands */
  if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!noKb)dmg=Math.round(dmg*1.20);
  /* ORCHID 栄養補給 rider: after using her U, EVERY attack she lands
@@ -8494,7 +8534,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
    var gSide=(att&&att!==def)?(att.x>=def.x?1:-1):(dir<0?1:-1);
    if(gSide===(def.guardDir||def.face)){
      var gd=Math.max(1,Math.round(dmg*0.1));
-     var hpBeforeG=def.hp;def.hp-=gd;recordDmg(att,def,hpBeforeG-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+Math.round((hpBeforeG-Math.max(0,def.hp))*0.15)); /* SMILEY Berserker lifesteal: even through guard, he heals 15% of the HP he actually took (user spec) */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.08;
+     var hpBeforeG=def.hp;def.hp-=gd;recordDmg(att,def,hpBeforeG-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+Math.round((hpBeforeG-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal: even through guard, he heals 20% of the HP he actually took (user spec; was 15%) */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.08;
      def.vx=noKb?0:dir*22;def.vy=def.onGround?0:def.vy; /* a few mm of pushback only, no launch, no hitstun — and damage-only hits (noKb) do not even push */
      if(!hitFxMute){hitstop=0.012;shake=Math.min(shake+1.5,4);
      spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
@@ -8506,11 +8546,11 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
      return true;
    }
  }
- var hpBeforeH=def.hp;def.hp-=dmg;recordDmg(att,def,hpBeforeH-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+Math.round((hpBeforeH-Math.max(0,def.hp))*0.15)); /* SMILEY Berserker lifesteal (user spec): heals 15% of the HP he actually took with every hit he deals while Berserker lasts — bleed ticks included, overkill past 0 HP excluded (same measure as the damage ledger) */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.14;
+ var hpBeforeH=def.hp;def.hp-=dmg;recordDmg(att,def,hpBeforeH-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+Math.round((hpBeforeH-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal (user spec): heals 20% of the HP he actually took with every hit he deals while Berserker lasts — bleed ticks included, overkill past 0 HP excluded (same measure as the damage ledger; was 15%) */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.14;
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
- var kbs=kb*0.8*(1+lowHp*1.15)*(def.kbMul||1); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off */
+ var kbs=kb*0.8*(1+lowHp*1.15)*((def.char==="smiley"&&(def.awakenT||0)>0)?1.00:(def.kbMul||1)); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off. SMILEY Berserker rider (user spec): while Berserker lasts, knockback TAKEN uses x1.00 instead of his base x1.12 */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
- else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
+ else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0)def.hitstun+=0.08;def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). SMILEY Berserker rider (user spec): while Berserker lasts, EVERY hit SMILEY deals — listed-hs and derived alike, melee / delayed ticks / projectiles all route through here — inflicts +0.08s of hitstun on top (noKb DoT ticks never reach this branch, so bleed stays stun-free as specced; guarded hits stay stun-free in the guard block above). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
  if(!hitFxMute){hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011)}
  if(!hitFxMute){spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  pushFloater({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
@@ -8643,7 +8683,7 @@ function stepFighter(f,dt,input,foe){
     ends on the spot (it also ends on death: killFighter / resetFighter).
     No stacking: startSaraAttack refuses to re-activate while f.chaos */
  if(f.chaos){f.chaosT=Math.max(0,(f.chaosT||0)-dt);if(f.chaosT<=0){f.chaos=false;pushFloater({x:f.x,y:f.y-30,txt:"モードカオス終了",life:.9,col:"#fca5a5"})}}
- /* SMILEY 覚醒 duration: 8s — the mask stays dark red and warped
+ /* SMILEY Berserker duration: 11s — the mask stays dark red and warped
     (drawCharSprite swaps to the awakened sheet) until the timer runs
     out or he dies (killFighter / resetFighter clear awakenT) */
  if(f.char==="smiley"&&(f.awakenT||0)>0){f.awakenT=Math.max(0,f.awakenT-dt);if(f.awakenT<=0)pushFloater({x:f.x,y:f.y-30,txt:"Berserker終了",life:.9,col:"#fca5a5"});else if(Math.random()<0.35)spawnParticles(f.x+(Math.random()-0.5)*30,f.y+f.h*(0.25+Math.random()*0.5),1,Math.random()<0.6?"#dc2626":"#7f1d1d",60)}
@@ -8702,7 +8742,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     is pinned for 0.4s and then thrown (the grab system above
     applyGrabHit). No hitstun of its own （被弾硬直 なし） */
  if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,146,84,16,800,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16))),f.char==="kojiro"?660:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="kojiro"?"#4ade80":((f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee")))),230);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="kojiro")spawnFxBurst(FXIMG.slash,f.x+f.face*28,f.y+f.h*0.45,125,0.28,0.85,f.face,0.85); /* 燕返し 2段目 (見た目変更): the crossing cut gets its own slash burst, tilted the other way */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16))),f.char==="kojiro"?660:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char!=="kojiro")spawnParticles(f.x,f.y+f.h*0.45,14,(f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: ワザエフェクト削除済み (他キャラは従来通り) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* MIMI&SHADE per-step work: SHADE's follow movement, its delayed
     hits (shHitT), MIMI's air-spin and light-barrage ticks, and the
     down+K light pillar */
@@ -8837,8 +8877,8 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  /* KOJIRO delayed heavy hits: 三日月斬り (ground K) and 空中三日月斬り
     (air K) land partway through their swings, not on the press —
     ~0.12s / ~0.10s after it (user spec) */
- if(f.char==="kojiro"&&f.state==="heavy"&&!f.hitDone&&f.stateT<=0.3){f.hitDone=true;meleeHit(f,foe,82,80,24,770,f.face,-0.42);spawnParticles(f.x+f.face*26,f.y+f.h*0.5,14,"#fecaca",220);spawnFxBurst(FXIMG.slash,f.x+f.face*30,f.y+f.h*0.5,150,0.32,0.5,f.face,0.9);beep(150,.13,"sawtooth",.06)} /* 三日月斬り: KB 650 -> 770, box 86x74 -> 82x80 (user spec). 見た目変更: slash burst blooms as the crescent cut lands */
- if(f.char==="kojiro"&&f.state==="airheavy"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,76,76,22,740,f.face,0.9);spawnParticles(f.x,f.y+f.h*0.7,12,"#fecaca",210);spawnFxBurst(FXIMG.slash,f.x+f.face*16,f.y+f.h*0.6,140,0.3,2.2,f.face,0.9);beep(140,.12,"sawtooth",.06)} /* 空中三日月斬り: KB 690 -> 740, box 82x76 -> 76x76 (user spec). 見た目変更: tilted slash burst for the falling crescent */
+ if(f.char==="kojiro"&&f.state==="heavy"&&!f.hitDone&&f.stateT<=0.3){f.hitDone=true;meleeHit(f,foe,82,80,24,770,f.face,-0.42);beep(150,.13,"sawtooth",.06)} /* 三日月斬り: KB 650 -> 770, box 86x74 -> 82x80 (user spec). ワザエフェクトは削除済み */
+ if(f.char==="kojiro"&&f.state==="airheavy"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,76,76,22,740,f.face,0.9);beep(140,.12,"sawtooth",.06)} /* 空中三日月斬り: KB 690 -> 740, box 82x76 -> 76x76 (user spec). ワザエフェクトは削除済み */
  /* KOJIRO 疾風突き (fwd+J): the lunge starts on the press, but the
     thrust itself lands 0.12s later (発生 0.12秒, user spec) —
     stateT 0.32 -> threshold 0.20. Damage 13 / KB 620 / box 94x60
@@ -8850,11 +8890,11 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     the lunge velocity is cut to 0 and recLockT (no movement /
     facing change / jump / fastfall / drop-through / dash / guard
     / moves) plus attackCd both run 0.44s from the hit */
- if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);spawnParticles(f.x+f.face*30,f.y+f.h*0.45,8,"#fecaca",170);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.recLockT=Math.max(f.recLockT||0,0.44);f.attackCd=Math.max(f.attackCd,0.44);pushFloater({x:f.x,y:f.y-30,txt:"硬直 0.44秒",life:.9,col:"#fda4af"});spawnParticles(f.x,f.y+f.h*0.5,10,"#fda4af",150);beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中で後硬直0.44秒（完全硬直）に変化 (user spec) */
+ if(f.char==="kojiro"&&f.state==="dashthrust"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var thHit=meleeHit(f,foe,94,60,13,620,f.face,-0.38);beep(1150,.05,"square",.05);if(thHit){f.thrustHits=(f.thrustHits||0)+1;if(f.thrustHits>=3){f.thrustHits=0;f.vx=0;f.recLockT=Math.max(f.recLockT||0,0.44);f.attackCd=Math.max(f.attackCd,0.44);pushFloater({x:f.x,y:f.y-30,txt:"硬直 0.44秒",life:.9,col:"#fda4af"});beep(220,.12,"sawtooth",.05)}}} /* 疾風突き: the delayed thrust connects — same clear launch as before (user fix kept). 3回命中で後硬直0.44秒（完全硬直）に変化 (user spec) */
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
- if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#fecaca",190);spawnFxBurst(FXIMG.slash,f.x+f.face*8,f.y+f.h*0.3,135,0.28,-2.0,f.face,0.85);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). 見た目変更: second rising cut flashes mid-climb */
+ if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). ワザエフェクトは削除済み */
  /* KOJIRO 落下斬り (air down+J): the 真下62x74 body box stays live
     for the WHOLE fall (user spec) — retested every frame until he
     lands, one hit per foe per dive (diveHitMask in kojiroDiveBodyHit) */
@@ -8864,14 +8904,14 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     follow-up hits tick out on spinTick while the state lasts */
  if(f.char==="kojiro"&&f.state==="thrust3"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,98,66,5,170,f.face,-0.18,0.34);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,7,"#fecaca",170);beep(1100,.05,"square",.04)} /* 三突き 2・3発目も KB 170・判定98x66・被弾硬直 0.34秒 (user spec) */
+   if(f.spinTick>=0.12&&f.spinHits<3){f.spinTick=0;f.spinHits++;meleeHit(f,foe,98,66,5,170,f.face,-0.18,0.34);beep(1100,.05,"square",.04)} /* 三突き 2・3発目も KB 170・判定98x66・被弾硬直 0.34秒 (user spec) */
  }
  if(f.char==="kojiro"&&f.state==="lowcut"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.16&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,36,7,400,0,-1.0,0.34,false,0,null,false,f.face);spawnParticles(f.x+f.face*24,f.y+f.h-6,7,"#fecaca",150);beep(700,.06,"square",.04)} /* 下段斬り 2段目 (user spec): 発生0.16秒, damage 7, KB 400 (真上), 判定82x36, 被弾硬直 0.34秒 */
+   if(f.spinTick>=0.16&&f.spinHits<2){f.spinTick=0;f.spinHits++;meleeHit(f,foe,82,36,7,400,0,-1.0,0.34,false,0,null,false,f.face);beep(700,.06,"square",.04)} /* 下段斬り 2段目 (user spec): 発生0.16秒, damage 7, KB 400 (真上), 判定82x36, 被弾硬直 0.34秒 */
  }
  /* KOJIRO 風波 (down+K): rooted in place while the tornado lasts */
- if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0;if(Math.random()<0.7){spawnParticles(f.x+(Math.random()-0.5)*70,f.y+f.h-6,1,"#a7f3d0",120);spawnParticles(f.x+(Math.random()-0.5)*46,f.y+f.h*0.35,1,"#fecaca",110)}}
+ if(f.char==="kojiro"&&f.state==="sweep"){f.vx=0} /* 風波: ワザエフェクト (竜巻パーティクル) は削除済み */
  /* AXE delayed heavy hits: the giant axe needs a long wind-up, so its K
     swings connect well after the press — and hit like a truck */
  if(f.char==="axe"&&f.state==="axeheavy"&&!f.hitDone&&f.stateT<=0.38){f.hitDone=true;projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:2.18,kind:"rock"});spawnParticles(f.x+f.face*30,f.y+f.h*0.5,14,"#fdba74",230);spawnParticles(f.x+f.face*38,f.y+f.h*0.55,10,"#a8a29e",190);shake=Math.max(shake,4);beep(110,.16,"sawtooth",.07)} /* 投岩 (user spec): 0.24s after the press (stateT 0.62 -> threshold 0.38) he HURLS the rock — a "rock" projectile, 26 dmg / KB 660 on hit (projectile filter), 弾速 330, 射程 ~720 = life 2.18s, box 114x86 in the filter's hit test. Rock shards burst at the throw */
@@ -9200,7 +9240,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    if(f.poisonTick<=0){f.poisonTick=0.2;var pbq=f.poisonBy;if(pbq&&pbq!==f&&!f.dead&&f.invuln<=0){var hsSv=hitstop,shSv=shake;applyHit(pbq,f,2,0,pbq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv;shake=shSv;applyShadeDot(pbq,f,2)}} /* 【闇ゲージ】 poison ticks drain SHADE's darkness by the same 2 per tick */
  }
  /* BLEED (SMILEY Berserker's rider): while bleedT lasts, the victim
-    takes 2 damage every 0.4s for 1.6s — NO knockback, NO hitstun.
+    takes 2 damage every 0.5s for 1.5s — NO knockback, NO hitstun.
     Ticks route through applyHit like the poison (kill credit
     behaves), with hitstop/shake restored; the red pixel specks are
     SMILEY's own expression — no other fighter's DoT visuals are
@@ -9208,7 +9248,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.bleedT>0){
    f.bleedT-=dt;f.bleedTick-=dt;
    if(Math.random()<0.5)spawnParticles(f.x+(Math.random()-0.5)*22,f.y+f.h*(0.3+Math.random()*0.4),1,Math.random()<0.6?"#dc2626":"#991b1b",55);
-   if(f.bleedTick<=0){f.bleedTick=0.4;var blq=f.bleedBy;if(blq&&blq!==f&&!f.dead&&f.invuln<=0){var hsSv2=hitstop,shSv2=shake;applyHit(blq,f,2,0,blq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv2;shake=shSv2;applyShadeDot(blq,f,2)}} /* 【闇ゲージ】 bleed ticks drain SHADE's darkness by the same 2 per tick */
+   if(f.bleedTick<=0){f.bleedTick=0.5;var blq=f.bleedBy;if(blq&&blq!==f&&!f.dead&&f.invuln<=0){var hsSv2=hitstop,shSv2=shake;applyHit(blq,f,2,0,blq.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSv2;shake=shSv2;applyShadeDot(blq,f,2)}} /* 【闇ゲージ】 bleed ticks drain SHADE's darkness by the same 2 per tick */
  }
  f.wasGround=f.onGround;
  if(f.onGround)f.coyote=COYOTE_S;else if(f.coyote>0)f.coyote-=dt;
@@ -9280,7 +9320,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.onGround)f.vy=0;
      if(Math.random()<0.4)spawnParticles(f.x-f.pushBy.ultDir*20,f.y+f.h*0.6,1,"#fdba74",90);
      f.pushDmgT=(f.pushDmgT||0)+dt;
-     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);pushFloater({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;applyShadeDot(pa,f,pd);if(f.hp<=0)killFighter(f,pa)} /* 【闇ゲージ】 the grind is continuous damage: a pinned MIMI&SHADE also loses darkness per tick */
+     if(f.pushDmgT>=0.25&&f.invuln<=0){f.pushDmgT=0;var pa=f.pushBy,pd=12; /* grind tick 13 -> 12 per 0.25s (user spec) */var hpBeforeP=f.hp;f.hp-=pd;f.flyCd=0;recordDmg(pa,f,hpBeforeP-Math.max(0,f.hp));f.lastHurt=time;f.lastAttacker=pa;f.lastAttackT=time;f.flash=0.1;spawnParticles(f.x,f.y+f.h*0.45,4,"#fdba74",130);pushFloater({x:f.x,y:f.y-14,txt:"-"+pd,life:.55,col:"#fdba74"});if(pa.comboT<=0){pa.comboHits=0;pa.comboDmg=0}pa.comboHits++;pa.comboDmg+=pd;pa.comboT=0.95;applyShadeDot(pa,f,pd);if(f.hp<=0)killFighter(f,pa)} /* 【闇ゲージ】 the grind is continuous damage: a pinned MIMI&SHADE also loses darkness per tick */
    }
  }
  /* AXE ULT — the charge itself: full invincibility for exactly 1.5s,
@@ -9329,7 +9369,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.slowT>0){RMAX*=0.88;AMAX*=0.88} /* slow debuff: -12% movement while slowT lasts (was applied by ORCHID's ポイズンショット, deleted in the balance pass — the timer / snapshot field stays so a slow already in flight still ticks out) */
  if(f.frozen>0){RMAX*=0.45;AMAX*=0.45} /* 凍結 (user spec): while frozen the movement-speed CAPS themselves drop to x0.45 (ground and air) — together with the frozenFactor on acceleration above, a frozen fighter's movement speed is 0.45x for the whole duration, even if they were already running at full speed when the freeze landed (the over-cap bleed in the movement branches drags them down to the lowered cap) */
  if(f.char==="orchid"&&f.buffT>0){RMAX*=1.09;AMAX*=1.09} /* ORCHID 栄養補給 buff: +9% movement for 9s (user balance spec — was +7% / 8s) */
- if(f.char==="smiley"&&(f.awakenT||0)>0){RMAX*=1.14;AMAX*=1.14} /* SMILEY Berserker: +14% movement speed, ground and air (user spec; was +12% as 覚醒） */
+ if(f.char==="smiley"&&(f.awakenT||0)>0){RMAX*=1.15;AMAX*=1.15} /* SMILEY Berserker: +15% movement speed, ground and air (user spec; was +14%) */
  var dirIn=(input.right?1:0)-(input.left?1:0);
  if(inUltCharge){
    f.vx=f.ultDir*240;f.face=f.ultDir; /* unstoppable, unsteerable — charge speed 210 -> 240 (user spec) */
@@ -9512,7 +9552,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
       landing — ice spikes / impact ring hit grounded foes on BOTH sides */
    if(f.diveArmed){f.diveArmed=false;shake=Math.max(shake,6);var dvRg=f.char==="kairo"?92:(f.char==="warden"?108:96),dvH=f.char==="kairo"?68:(f.char==="warden"?80:58); /* WARDEN ウェーブショット landing box 108x80 (user spec) */
      if(f.char==="kojiro"){ /* KOJIRO 落下斬り landing (user spec): one surrounding wave — 12 dmg / KB 620 in a 周囲122x54 box on both sides (was 144x58), shared hitList so one foe is hit once (dvRg/dvH carry the generic 96x58, so the kojiro box is passed directly) */
-       var kjLandList=[];meleeHit(f,foe,122,54,12,620,f.face,-0.28,0,false,0,kjLandList);meleeHit(f,foe,122,54,12,620,-f.face,-0.2,0,false,0,kjLandList);spawnParticles(f.x,f.y+f.h-4,18,"#fecaca",230);var klY=f.y+f.h-5;spawnRing(f.x-58,klY,"#f87171",54);spawnRing(f.x+58,klY,"#f87171",54);spawnFxBurst(FXIMG.slash,f.x-60,klY-12,125,0.3,0,-1,0.85);spawnFxBurst(FXIMG.slash,f.x+60,klY-12,125,0.3,0,1,0.85);spawnSparks(f.x,klY,1,"#fecaca",7);spawnSparks(f.x,klY,-1,"#fecaca",7); /* 落下斬り着地 (見た目変更): slash bursts tear out to BOTH sides of the touchdown point, mirroring the 12/12 shockwave hits */
+       var kjLandList=[];meleeHit(f,foe,122,54,12,620,f.face,-0.28,0,false,0,kjLandList);meleeHit(f,foe,122,54,12,620,-f.face,-0.2,0,false,0,kjLandList); /* 落下斬り着地: ワザエフェクト削除済み (判定は従来通り) */
      }else if(f.char==="travis"){ /* TRAVIS ダイブマイク landing (user spec): the sound shockwave rolls out on BOTH sides — 14 dmg / KB 980 in a 96x86 box (was 10 / 430 in the generic 96x58). The single new KB 980 covers the landing hits too (spec: KB 600・430 -> 980) */
        meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);var tdY=f.y+f.h-5;spawnRing(f.x-52,tdY,"#fcd34d",50);spawnRing(f.x+52,tdY,"#fcd34d",50);spawnCharBurst("travis",f.x-54,tdY-8,96,0.3,0,-1,0.85);spawnCharBurst("travis",f.x+54,tdY-8,96,0.3,0,1,0.85);spawnSparks(f.x,tdY,1,"#fcd34d",6);spawnSparks(f.x,tdY,-1,"#fcd34d",6);spawnParticles(f.x-44,tdY,9,"#c084fc",210);spawnParticles(f.x+44,tdY,9,"#c084fc",210); /* (見た目変更) the landing shockwave now VISIBLY rolls out on both sides — a ring + sound burst + spark fan on each side, mirroring the 96x86 two-sided hit */
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
@@ -10903,8 +10943,7 @@ function drawWarden(f){
 }
 function drawKojiro(f){
  /* 本体はドット絵スプライト (KAIRO と同じテイストで描き起こし)。
-    三日月・燕返し・竜巻など技のエフェクトは、従来のコード描画の
-    まま一切変更していない (下半分にそのまま残してある) */
+    ワザエフェクトは L「斬空」以外すべて削除済み (下記参照) */
  /* ult ready: charged-electric aura in Kojiro's crimson */
  if(f.meter>=100&&!f.dead)drawUltAura(f,239,68,68);
  drawSpriteTrail(f,"kojiro");
@@ -10926,28 +10965,11 @@ function drawKojiro(f){
  if(f.state==="diveclaw"||f.state==="taildrop")ctx.rotate(0.4);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"kojiro","#7f1d2e");
- /* ==== 技エフェクト (従来のコード描画のまま) ==== */
- /* crescent-moon + swallow helpers (見た目変更): a filled crescent (outer
-    disc minus an offset disc, evenodd) and a tiny fork-tailed swallow
-    silhouette, both in character-local coords */
- function crescent(cx,cy,r,rot,col){ctx.save();ctx.translate(cx,cy);ctx.rotate(rot);ctx.beginPath();ctx.arc(0,0,r,0,6.29);ctx.arc(r*0.44,-r*0.16,r*0.84,0,6.29,true);ctx.fillStyle=col;ctx.fill("evenodd");ctx.restore()}
- function swallow(x,y,s,col){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(12,0);ctx.quadraticCurveTo(4,-4.5,-7,-3);ctx.lineTo(-15,-7.5);ctx.quadraticCurveTo(-11,0,-15,7.5);ctx.lineTo(-7,3);ctx.quadraticCurveTo(3,4.5,12,0);ctx.fill();ctx.beginPath();ctx.moveTo(2,-2);ctx.quadraticCurveTo(-2,-10,-9,-13.5);ctx.quadraticCurveTo(-3,-4,4,1);ctx.fill();ctx.restore()}
- if(auraRand(Math.floor(time*2))>0.72){ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=1.6;var gx2=30,gy2=18;ctx.beginPath();ctx.moveTo(gx2-5,gy2);ctx.lineTo(gx2+5,gy2);ctx.moveTo(gx2,gy2-5);ctx.lineTo(gx2,gy2+5);ctx.stroke()}
- if(f.state==="thrust"||f.state==="dashthrust"||f.state==="thrust3"){if(f.state==="dashthrust"){ctx.lineWidth=2.4;for(var wv=0;wv<3;wv++){ctx.strokeStyle=wv===1?"rgba(255,255,255,.85)":"rgba(167,243,208,.9)";ctx.beginPath();ctx.arc(4+wv*18,25,9,time*24+wv*2.1,time*24+wv*2.1+3.9);ctx.stroke()}ctx.strokeStyle="rgba(167,243,208,.7)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,13);ctx.lineTo(-30,9);ctx.moveTo(-8,37);ctx.lineTo(-28,40);ctx.stroke()}else{ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-8,20);ctx.lineTo(-24,20);ctx.moveTo(-6,30);ctx.lineTo(-20,30);ctx.stroke();if(f.state==="thrust3"){ctx.beginPath();ctx.moveTo(-4,14);ctx.lineTo(-18,10);ctx.moveTo(-2,36);ctx.lineTo(-15,40);ctx.stroke()}}} /* 疾風突き: spiralling wind arcs coil around the body as he thrusts. 三突き: extra speed lines */
- else if(f.state==="rise"||f.state==="riseup"){ctx.strokeStyle="#fecaca";ctx.lineWidth=3;ctx.beginPath();ctx.arc(6,26,36,-1.5,-0.4);ctx.stroke()}
- else if(f.state==="chop"){ctx.strokeStyle="#f87171";ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(4,18,42,-0.9,0.9);ctx.stroke()}
- else if(f.state==="heavy"){ctx.strokeStyle="#f87171";ctx.lineWidth=4;ctx.beginPath();ctx.arc(2,16,48,-1.0,1.0);ctx.stroke();crescent(40,22,19,0.7,"rgba(253,230,138,.95)");ctx.strokeStyle="rgba(253,230,138,.8)";ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(2,16,56,-0.7,0.7);ctx.stroke()} /* 三日月斬り: a golden crescent moon rides the arc of the cut */
- else if(f.state==="airheavy"){crescent(34,26,16,2.2,"rgba(253,230,138,.95)");ctx.strokeStyle="#fde68a";ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(2,22,44,-0.4,1.2);ctx.stroke();ctx.strokeStyle="#fecaca";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-4,-6);ctx.lineTo(-10,-18);ctx.moveTo(8,-8);ctx.lineTo(4,-20);ctx.stroke()} /* 空中三日月斬り: the same golden crescent, tilted for the falling cut */
- else if(f.state==="lowcut"){if(f.spinHits>=2){ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(2,46,42,0.5,1.35);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.65)";ctx.beginPath();ctx.arc(2,46,31,0.6,1.3);ctx.stroke()}else{ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(2,44,40,0.15,1.1);ctx.stroke();ctx.strokeStyle="rgba(255,255,255,.6)";ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(2,44,29,0.25,1.0);ctx.stroke()}ctx.fillStyle="rgba(254,202,202,.5)";ctx.fillRect(16,52,26,2)} /* 下段斬り: two low sweeps rake the foe's feet */
- else if(f.state==="backslash"){ctx.strokeStyle="rgba(254,202,202,.8)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-12,16);ctx.lineTo(-26,12);ctx.stroke()}
- else if(f.state==="airslash"){ctx.strokeStyle="#f87171";ctx.lineWidth=4;ctx.beginPath();ctx.arc(2,26,47,-0.55,0.65);ctx.stroke();ctx.beginPath();ctx.arc(2,26,47,Math.PI-0.65,Math.PI+0.55);ctx.stroke();ctx.strokeStyle="#fff1f2";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(2,26,38,-0.5,0.6);ctx.stroke();ctx.beginPath();ctx.arc(2,26,38,Math.PI-0.6,Math.PI+0.5);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(39,2);ctx.lineTo(49,2);ctx.moveTo(44,-3);ctx.lineTo(44,7);ctx.moveTo(-34,44);ctx.lineTo(-24,44);ctx.moveTo(-29,39);ctx.lineTo(-29,49);ctx.stroke()} /* 空斬り: bigger twin arcs fore and aft with a white-hot core and spark crosses */
- else if(f.state==="diveclaw"||f.state==="taildrop"){ctx.strokeStyle="rgba(167,243,208,.9)";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(10,44,10,time*20,time*20+4.2);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.85)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-4,4);ctx.lineTo(-14,-12);ctx.moveTo(10,0);ctx.lineTo(4,-14);ctx.moveTo(-12,16);ctx.lineTo(-22,4);ctx.stroke()} /* 落下斬り: wind coiling around the plunge, longer speed streaks */
- else if(f.state==="yokonagi"){ctx.strokeStyle="#f87171";ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(2,26,44,-0.6,0.7);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,18);ctx.lineTo(-26,14);ctx.moveTo(-8,32);ctx.lineTo(-22,34);ctx.stroke()} /* 横薙ぎ: one wide horizontal sweep */
- else if(f.state==="sweep"){ctx.strokeStyle="#a7f3d0";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,42,42,0.1,2.7);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,30,30,time*9,time*9+3.6);ctx.stroke();ctx.beginPath();ctx.arc(0,16,19,time*11+2,time*11+5.2);ctx.stroke();ctx.strokeStyle="rgba(167,243,208,.85)";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(0,2,13,time*13+1,time*13+4.8);ctx.stroke();ctx.beginPath();ctx.arc(0,-10,8,time*15,time*15+4.4);ctx.stroke();ctx.strokeStyle="rgba(167,243,208,.8)";ctx.beginPath();ctx.arc(0,44,50,0.4,2.2);ctx.stroke()} /* 風波: the tornado spiral climbs higher above his head */
- else if(f.state==="iaido"){ctx.save();ctx.shadowColor="#f87171";ctx.shadowBlur=9; /* the glow is drawn at every quality tier (owner directive: effects are never cut) */ctx.strokeStyle="rgba(255,255,255,.95)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(38,28.5);ctx.lineTo(122,24);ctx.stroke();ctx.restore();ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(46,34);ctx.lineTo(108,30.5);ctx.moveTo(52,22);ctx.lineTo(96,19.5);ctx.stroke();ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-10,26);ctx.lineTo(-30,26);ctx.moveTo(-8,36);ctx.lineTo(-26,36);ctx.stroke()} /* 居合斬り: the draw leaves a glowing rift torn through the air itself */
- else if(f.state==="jkcombo"){var cross2=f.stateT<=0.26;ctx.strokeStyle="#4ade80";ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(4,26,38,cross2?-0.35:-1.25,cross2?1.25:0.35);ctx.stroke();ctx.strokeStyle="rgba(187,247,208,.9)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(4,26,28,cross2?-0.3:-1.2,cross2?1.15:0.3);ctx.stroke();var swp=1-Math.max(0,Math.min(1,(f.stateT-(cross2?0:0.26))/0.24));swallow(8+swp*40,cross2?40-swp*26:12+swp*26,0.85,"#166534");swallow(2+swp*30,cross2?46-swp*20:6+swp*20,0.55,"rgba(74,222,128,.75)")} /* 燕返し: the two cuts cross in an X while green swallows dart along the paths */
- else if(f.state==="krise"){ctx.strokeStyle="#f87171";ctx.lineWidth=3.6;ctx.beginPath();ctx.arc(8,22,42,-2.4,-0.9);ctx.stroke();if(f.hitDone){ctx.strokeStyle="#fff1f2";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(14,18,34,-2.5,-1.1);ctx.stroke()}ctx.strokeStyle="rgba(167,243,208,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(2,30,24,-2.2,-1.2);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.8)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-6,44);ctx.lineTo(-10,58);ctx.moveTo(8,46);ctx.lineTo(6,60);ctx.moveTo(20,44);ctx.lineTo(22,57);ctx.stroke()} /* 昇り斬り: twin rising arcs with wind and speed streaks */
- else if(f.state==="ult"){ctx.strokeStyle="#f87171";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(6,20,52,-1.1,1.0);ctx.stroke();ctx.strokeStyle="#fff1f2";ctx.lineWidth=2;ctx.beginPath();ctx.arc(6,20,44,-1.0,0.9);ctx.stroke()}
+ /* ==== 技エフェクト ==== */
+ /* KOJIROのワザエフェクトは L「斬空」以外すべて削除済み (user request):
+    斬撃の弧・三日月・燕・竜巻などのコード描画は残さず、斬空 (state
+    "ult") の弧だけを描く。本体のスプライトと姿勢は従来通り */
+ if(f.state==="ult"){ctx.strokeStyle="#f87171";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(6,20,52,-1.1,1.0);ctx.stroke();ctx.strokeStyle="#fff1f2";ctx.lineWidth=2;ctx.beginPath();ctx.arc(6,20,44,-1.0,0.9);ctx.stroke()}
  if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.5)";ctx.fillRect(-20,-6,40,62)}
  ctx.restore();
  hpBar(f);
@@ -11265,7 +11287,7 @@ function draw(){
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
      if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
-     else if(f.char==="kojiro")drawFxTex(FXIMG.slash,f.x+f.face*38,f.y+f.h*0.42,132,-0.55*f.face,f.face,0.55);
+     else if(f.char==="kojiro"){} /* KOJIRO: ワザエフェクト削除済み — L「斬空」(state "ult"、上の分岐) のみ残す */
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
@@ -11496,8 +11518,8 @@ function simStepFrame(getInp){
    mines=mines.filter(function(mn){var boom=false;for(var mni=0;mni<fighters.length;mni++){var mf2=fighters[mni];if(mf2===mn.owner||mf2.dead||mf2.invuln>0)continue;if(Math.abs(mf2.x-mn.x)<77&&Math.abs((mf2.y+mf2.h)-mn.y)<60){boom=true;applyHit(mn.owner,mf2,20,600,mf2.x>=mn.x?1:-1,-0.45,false,mn.x,mn.y-14)}}if(boom){spawnParticles(mn.x,mn.y-12,20,"#fde68a",260);spawnRing(mn.x,mn.y-10,"#f59e0b",52);spawnFxBurst(FXIMG.hit,mn.x,mn.y-14,130,0.3,0,1,0.85);shake=Math.max(shake,5);beep(140,.16,"sawtooth",.06);return false}if(mn.owner===P1&&Math.random()<0.25)particles.push({x:mn.x+(Math.random()-0.5)*10,y:mn.y-16,vx:0,vy:-24-Math.random()*20,life:.3,col:"#f59e0b",size:2});return true});
    /* ORCHID placed poison mist （ポイズンミスト): hangs in place ~8s over a 横幅 410 ellipse; foes standing in it take 2 damage every 0.1s (direct ticks, grind-style: no floaters, no hitstop) */
    /* MIMI&SHADE placed dark field: the system stays only so fields already in flight (or arriving in an online snapshot) still tick out — 4 damage every 0.5s, no knockback / no hitstun. NO current move places one: the field belonged to the deleted 落ちちゃう！／たすけるヨ！ dive, replaced by 落として！！ */
-   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}if(shadeAlive(dff)&&Math.abs(dff.shX-df.x)<95&&Math.abs(dff.shY-df.y)<70){var shInD=applyShadeDot(df.owner,dff,4);if(shInD&&!(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70)&&df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the field drains 4 per tick too (combo credited once per pair per tick) */}return df.t>0});
-   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*360,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<205&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
+   darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;dff.flyCd=0;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}if(shadeAlive(dff)&&Math.abs(dff.shX-df.x)<95&&Math.abs(dff.shY-df.y)<70){var shInD=applyShadeDot(df.owner,dff,4);if(shInD&&!(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70)&&df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the field drains 4 per tick too (combo credited once per pair per tick) */}return df.t>0});
+   poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*360,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=2;mf.flyCd=0;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<205&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
 }
