@@ -330,7 +330,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>与えたダメージがそのままスコア＋キルした人にボーナス+100のスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>与えたダメージがそのままスコアになるスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -444,11 +444,6 @@ var UPDATE_LOG=[
           "帯の上下には風切り線が左右へ流れ、両端では風が小さく渦巻きます。発生時のパーティクル・衝撃波・閃光も緑に統一し、風テクスチャも大きくしました",
           "その他の技のエフェクトは変更ありません。ダメージ・KB・判定・硬直など技の性能も一切変更ありません",
           "オンライン対戦のビルド版数をv251に更新しました。対戦前に全員がページを再読み込みしてください"]},
- {date:"2026/11/17",times:["01:06"],tag:"調整",title:"キルボーナスを追加：倒した本人にスコア+100",
-   items:["敵を倒した（キルした）プレイヤーに、スコアボーナスとして+100点が入るようになりました。与えたダメージ分のスコアに上乗せされます",
-          "ボーナスは最後の一撃で倒した本人だけが対象です。アシスト（ダメージを与えただけの人）はこれまで通り与えたダメージ分のみで、ボーナスは付きません。倒した人がいない落下死などではボーナスは発生しません",
-          "KO時のバナー表示は、ダメージ分とボーナスを合わせた合計得点を表示します。通常対戦・CPU・オンライン対戦のすべてに適用されます",
-          "オンライン対戦のビルド版数をv250に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["00:58"],tag:"演出",title:"KOJIRO：U「居合斬り」のモーションを直立不動に変更しました",
    items:["U「居合斬り」発動中の体のモーションを、これまでの前傾姿勢（前に寄って少し沈み込む動き）から、直立した待機姿勢のまま静止する「直立不動」に変更しました",
           "居合斬りのエフェクト（緑の剣気・移動前〜移動後を結ぶ白い一直線・パーティクル）はこれまで通り表示されます。前進する移動そのものも変更ありません",
@@ -1001,7 +996,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。さらに、<b style="color:#fde047">最後の一撃で倒した本人にはボーナス+100点</b>が上乗せされます（アシストには付きません）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -8463,8 +8458,7 @@ function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="koji
    reduction is already reflected and overkill past 0 HP never counts.
    At KO, killFighter pays every contributor SCORE equal to their total
    (kill and assist alike), counts ASSISTS, and heals only the killer by
-   20% of their own total. On top of the damage payout, the killer alone
-   also receives a flat KILL_BONUS (+100) score bonus — see killFighter.
+   20% of their own total.
    Self-damage (SARA's chaos cost) never passes through here and is
    never recorded. */
 function recordDmg(att,def,amount){
@@ -8621,18 +8615,6 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(def.hp<=0)killFighter(def,att);
  return true;
 }
-/* Kill bonus (user spec): on top of the v99 damage-proportional
-   payout, the fighter who lands the finishing blow (the attributed
-   killer — including an attributed knockback fall kill) receives a
-   flat +100 SCORE bonus. Assists get no bonus, and unattributed
-   deaths (no killer) pay none. The bonus is folded into killerGain,
-   so the KO banner — local, and the online banner event via
-   sbKillHook alike — shows the killer's total gain for that KO,
-   damage and bonus together. killFighter is the single settlement
-   point shared by every mode (local sim, CPU, rollback online), so
-   the bonus applies everywhere with no extra sync field: score
-   already rides the snapshot (sc) and the rollback checksum. */
-var KILL_BONUS=100;
 function killFighter(def,att){
  def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
  for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}if(fighters[kf].heldBy===def){fighters[kf].heldT=0;fighters[kf].heldBy=null;fighters[kf].heldKb=0}} /* a dead grabber releases whoever it was holding, with no throw */
@@ -8646,15 +8628,12 @@ function killFighter(def,att){
     attacker who damaged this life gains SCORE equal to their recorded
     total (floored) — the killer and assists under the SAME rule — and
     everyone except the killer who dealt >=1 counts an ASSIST. The
-    record then resets for the next life. The killer additionally
-    receives the flat KILL_BONUS (+100) below, on top of their damage
-    payout. */
+    record then resets for the next life. */
  def.deaths=(def.deaths||0)+1;
  var dmgRec=def.dmgBy||{};def.dmgBy={};
  var killerGain=0;
  for(var dk in dmgRec){var contrib=fighters[+dk];if(!contrib)continue;var gain=Math.floor(dmgRec[dk]);if(gain>0){contrib.score+=gain;if(contrib===att)killerGain=gain;else contrib.assists=(contrib.assists||0)+1}}
  if(att&&att!==def){
-   att.score=(att.score||0)+KILL_BONUS;killerGain+=KILL_BONUS; /* kill bonus (user spec): +100 SCORE to the killer only, on top of their damage payout — applied before the banner calls below so the banner total (and the online banner event's gain) includes it; a pure knockback fall kill with 0 damage dealt still earns the full bonus */
    att.kills=(att.kills||0)+1; /* the finishing blow — including an attributed knockback fall kill with 0 damage dealt */
    /* KO heal (v99, replaces the flat / 40%-of-max rules): ONLY the
       killer heals, by 20% of the damage THEY dealt to this victim this
