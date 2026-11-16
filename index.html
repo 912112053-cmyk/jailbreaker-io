@@ -740,24 +740,22 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を担ぐ重戦士。送ってくれた写真のキャラ（上半身裸の巨漢、オレンジの髭、ドクロのベルト）がモチーフ。<b>足は全キャラで一番遅く、一つ一つの技に大きな隙と長い硬直がある</b>。その代わり<b>体力は360</b>（他は250）で吹っ飛ばされにくく、斧のリーチ（範囲）と一撃の火力は随一。<b>飛び道具はKの投岩だけ</b>——床を走る衝撃波もなし。それ以外は全部、体と斧が届く範囲で殴る近接技だけ。当てれば勝てる、外せば殴られる、重量級らしいキャラ。</p>'
-+mvSpec(mvS('HP','360')+mvS('地上速度','300')+mvS('空中速度','270')+mvS('受けKB','×0.72（とても吹っ飛びにくい）')+mvS('ダッシュ','840')+mvS('ウルト溜まり','標準（約0.6倍）'))
++mvSpec(mvS('HP','360')+mvS('地上速度','300')+mvS('空中速度','270')+mvS('受けKB','×0.72（とても吹っ飛びにくい）')+mvS('ダッシュ','840')+mvS('ウルト溜まり','約0.24倍（×0.4に下方修正）'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — 壊斧</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予1.0秒・全2段</span><p>正面に斧を振りかざして攻撃する。チェーンは3段から2段に短縮され、その代わり後硬直が大幅に短くなり（0.77秒→0.36秒）、当てた相手には<b>被弾硬直0.4秒</b>が保証される。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','400')+mvS('発生','即時')+mvS('全体','0.48秒')+mvS('後硬直','0.36秒')+mvS('被弾硬直','0.4秒')+mvS('判定','106×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — ヘッドロック</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>斧ではなく<b>頭突き</b>で相手の頭を粉砕する<b>掴み技</b>。ヒットした相手を目の前に<b>0.4秒間固定（完全硬直）</b>し、その後、向いている方向へKB770で投げ飛ばす、チェーンの締め。ダメージは掴んだ瞬間に入る。</p>'+mvSpec(mvS('ダメージ','30')+mvS('KB','770（0.4秒後に発生）')+mvS('発生','即時')+mvS('全体','0.54秒')+mvS('後硬直','0.78秒')+mvS('判定','112×72')+mvS('掴み','0.4秒固定→投げ'))+'</div></div>'
 +'<div class="moveRow"><div><b>前+J — 突進</b><p>前方に突進（速度720）しながら攻撃する。全体0.30秒・後硬直0.88秒に短縮され、ダメージと吹っ飛ばしも強化された。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','740')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.88秒')+mvS('判定','110×66')+mvS('突進速度','720'))+'</div></div>'
-+'<div class="moveRow"><div><b>後ろ+J — 退き薙ぎ</b><p>斬りながら後ろへ下がる。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','420')+mvS('発生','即時')+mvS('全体','0.52秒')+mvS('後硬直','0.79秒')+mvS('判定','102×66'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+J — 昇り薙ぎ</b><p>斬り上げながら跳ぶ対空。当てると<b>2段ジャンプが回復</b>する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','460（上吹き強）')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.81秒')+mvS('判定','92×92')+mvS('上昇','vy -420'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — 掘斧撃</b> <span style="color:#f59e0b;font-weight:900">新技・↓+Kの震撃とは別技</span><p>斧を地面に掘り込み、0.30秒後に正面で斧が突き上がって攻撃する。旧・震撃+よりずっと速く小回りが利くが、判定は120×100と小さくなった。当てた相手には<b>被弾硬直0.6秒</b>。技中はその場から動けず、後硬直（完全硬直）の間も移動・ジャンプ・ワザができない。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','540')+mvS('発生','0.30秒')+mvS('全体','0.60秒')+mvS('後硬直','0.44秒（完全硬直）')+mvS('被弾硬直','0.6秒')+mvS('判定','120×100'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — 宙斧</b><p>空中で宙返りして持続の長い攻撃をする。発生0.24秒のあと回転が続く間ヒットし続け、横方向に当たれば22ダメージ、上下方向に当たれば18ダメージ（同じ相手には最大2ヒットまで。判定は前方が大きく、後方は少し小さい）。</p>'+mvSpec(mvS('ダメージ','前後22／上下18')+mvS('KB','前後550／上下500')+mvS('発生','0.24秒')+mvS('全体','0.58秒')+mvS('後硬直','0.81秒')+mvS('判定','前112×108／後84×64')+mvS('着地硬直','0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — 下斧</b><p>急降下しながら、0.32秒後に下へ斧を振りかざして攻撃する。本体のダメージが44に大幅強化され、<b>メテオ判定</b>あり（真下へ叩き落とす）。着地時には衝撃波が復活し、前24／後18ダメージを与える。</p>'+mvSpec(mvS('ダメージ','本体44／着地 前24・後18')+mvS('KB','720')+mvS('発生','0.32秒')+mvS('全体','0.64秒')+mvS('後硬直','0.77秒')+mvS('判定','下方向98×102')+mvS('着地硬直','0.40秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — 掘斧撃</b> <span style="color:#f59e0b;font-weight:900">新技・↓+Kの震撃とは別技</span><p>斧を地面に掘り込み、0.30秒後に正面で斧が突き上がって攻撃する。旧・震撃+よりずっと速く小回りが利くが、判定は126×100。当てた相手には<b>被弾硬直0.72秒</b>。技中はその場から動けず、後硬直（完全硬直）の間も移動・ジャンプ・ワザができない。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','540')+mvS('発生','0.30秒')+mvS('全体','0.60秒')+mvS('後硬直','0.38秒（完全硬直）')+mvS('被弾硬直','0.72秒')+mvS('判定','126×100'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ぶった切り</b><p>空中で前方へ大きく斧をぶった切る一撃。発生0.24秒で判定が出て、0.2秒間持続する。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','660')+mvS('発生','0.24秒')+mvS('全体','0.56秒')+mvS('後硬直','0.8秒')+mvS('判定','前方114×108')+mvS('判定持続','0.2秒')+mvS('着地硬直','0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — 下斧</b><p>発動すると空中で静止し（左右移動は可能）、0.22秒後に下へ斧を振り下ろす。<b>メテオ判定</b>あり（真下へ叩き落とす）。旧仕様の急降下と着地衝撃波は廃止。</p>'+mvSpec(mvS('ダメージ','44')+mvS('KB','770')+mvS('発生','0.22秒')+mvS('全体','0.64秒')+mvS('後硬直','0.73秒')+mvS('判定','下方向112×98')+mvS('着地硬直','0.40秒')+mvS('仕様','判定発生まで空中で静止（左右移動可能）'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — ダブルアックス</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直は最長クラス</span><p>横薙ぎから振り下ろしへつなぐ2ヒット（旧名・一閃重ね）。2段目の発生が約0.42秒に早まり、KBも720に強化。全体も0.68秒に短縮された。当たれば大ダメージだが、硬直は最長クラス。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','18＋18')+mvS('KB','430／720')+mvS('発生','即時／2段目 約0.42秒')+mvS('全体','0.68秒')+mvS('後硬直','0.67秒')+mvS('判定','106×70／86×74'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 投岩</b> <span style="color:#f59e0b;font-weight:900">唯一の飛び道具</span><p>斧で岩をすくい上げ、正面へ放り投げる（旧・破砕ショットの近接攻撃は廃止）。岩は0.24秒後に飛び出し、まっすぐ飛んで当たった相手を吹っ飛ばす。投げた後の後硬直は完全硬直。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','660')+mvS('発生','0.24秒')+mvS('全体','0.62秒')+mvS('後硬直','0.58秒（完全硬直）')+mvS('判定','114×86')+mvS('弾速','330')+mvS('射程','約720'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中K — 砲岩</b> <span style="color:#f59e0b;font-weight:900">飛び道具</span><p>空中で0.32秒後に、地上Kの投岩と<b>同じ岩</b>を放り投げる。ただし空中から投げる分、岩は<b>重力で放物線を描いて落ちていく</b>。地上の投岩と同じ26ダメージ／KB660。後硬直は完全硬直。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','660')+mvS('発生','0.32秒')+mvS('全体','0.66秒')+mvS('後硬直','0.55秒（完全硬直）')+mvS('判定','114×86')+mvS('弾速','330')+mvS('追加効果','重力で落下する'))+'</div></div>'
++'<div class="moveRow"><div><b>空中K — 砲岩</b> <span style="color:#f59e0b;font-weight:900">飛び道具</span><p>空中で0.32秒後に、地上Kの投岩と<b>同じ岩</b>を放り投げる。ただし空中から投げる分、岩は<b>重力で放物線を描いて落ちていく</b>。岩が<b>地面に触れると、地面に沿って直進</b>するようになる。地上の投岩と同じ26ダメージ／KB660。後硬直は完全硬直。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','660')+mvS('発生','0.32秒')+mvS('全体','0.66秒')+mvS('後硬直','0.55秒（完全硬直）')+mvS('判定','114×86')+mvS('弾速','330')+mvS('追加効果','重力で落下／接地後は地面を直進'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオドロップ</b> <span style="color:#f59e0b;font-weight:900">新技</span><p>空中で0.34秒静止してから、お尻で急降下する。ダメージは空中ではなく<b>着地した瞬間</b>に、落下の勢いのまま左右両方へ発生する。後硬直は完全硬直。</p>'+mvSpec(mvS('ダメージ','32')+mvS('KB','700')+mvS('発生','着地時（0.34秒静止→急降下）')+mvS('全体','0.58秒')+mvS('後硬直','0.57秒（完全硬直）')+mvS('判定','左右102×72'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — 震撃</b><p>0.42秒後に正面へ砕けた岩が多数出現して攻撃する。KBが710に強化された。↓+Jは掘斧撃という別技になったため、震撃はこの↓+Kだけの技。技中はその場から動けず、後硬直（完全硬直）の間も移動・ジャンプ・ワザができない。<b>空中では発動できない</b>（空中↓+Kはメテオドロップになる）。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','710')+mvS('発生','0.42秒')+mvS('全体','1.35秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','前方230×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — ヘッドロケット</b><p>真上に隕石のように素早く飛び上がり、岩砕きを起こしながら攻撃する。前後どちら側でも同じ26ダメージ／KB620の単一判定。上昇速度が vy -880 に大幅アップし、再使用も3.5秒に短縮された。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.42秒')+mvS('後硬直','0.8秒')+mvS('判定','112×130')+mvS('上昇','vy -880')+mvS('再使用','3.5秒')+mvS('着地硬直','0.40秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — 豪腕ラリアット（突進体当たり）</b> <span style="color:#38bdf8;font-weight:900">接近技・クールタイム約1.7秒・飛び道具なし・ガード貫通</span><p>旧・投げ斧は廃止。代わりに巨体ごと肩から突っ込む短距離ラリアット。斧ではなく腕と肩で殴るのでリーチは短いが、密着すれば<b>38ダメージ</b>＋強烈な吹っ飛ばし。しかも<b>ガード貫通</b>：ガード中の相手にも軽減なしでそのまま当たる。踏み込み距離は短く、外すと硬直が長い。遠くへは何も飛ばない、間合いを詰めるための近接技。</p>'+mvSpec(mvS('ダメージ','38')+mvS('KB','860')+mvS('発生','即時')+mvS('全体','0.52秒')+mvS('後硬直','0.76秒')+mvS('判定','122×78')+mvS('追加効果','ガード貫通')+mvS('再使用','1.7秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進中は<b>近くの相手を斧のほうへ引き寄せる吸引</b>が発生するので、端に逃げても吸い戻されやすい。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','240'))+'</div></div>'
++'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進中は<b>近くの相手を斧のほうへ引き寄せる吸引</b>が発生する（吸引速度は1.2倍に強化され、攻撃判定の位置まで吸い寄せる）ので、端に逃げても吸い戻されやすい。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','240'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。巨体ゆえ他のキャラよりダッシュ自体も少し遅い。</p>'+mvSpec(mvS('速度','840')+mvS('持続','0.18秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.7</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ（KBなし）</b>を受け続ける。</p>'
@@ -1628,7 +1626,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v257";
+var BUILD_ID="v258";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6736,7 +6734,12 @@ function startAxeAttack(f,type,foe){
     through the swing in stepFighter), so the wind-up is real,
     dodgeable time. His J chain is only 2 stages now (壊斧 ->
     ヘッドロック, the old 3rd stage is deleted). Air K returned as
-    砲岩 / メテオドロップ, alongside 空中↑+K ヘッドロケット. */
+    砲岩 / メテオドロップ, alongside 空中↑+K ヘッドロケット.
+    昇り薙ぎ (↑+J) / 退き薙ぎ (後ろ+J) / 宙斧 (旧・空中J) are
+    DELETED (user spec): air J is now ぶった切り, and ground
+    ↑ / 後ろ +J fall through to the plain J chain. 下斧 no
+    longer dives or erupts on landing — it hangs in the air
+    until the axe falls (see the gravity step). */
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
  var fwdHeld=f.isPlayer?((f.face===1&&(!!keys.right||stick.dx>0.28))||(f.face===-1&&(!!keys.left||stick.dx<-0.28))):(f.remote?f.hFwd:Math.abs(f.vx)>200);
@@ -6749,46 +6752,42 @@ function startAxeAttack(f,type,foe){
    spawnParticles(f.x+f.face*30,f.y+f.h*0.45,13,"#fdba74",210);beep(240,.09,"sawtooth",.06);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
-     /* 空中↓+J: 下斧 — he plunges, and the axe comes down 0.32s
-        after the press (delayed hit in stepFighter): a single
-        downward 44 dmg / KB 720 METEOR hit in a 98x102 box below
-        him, and on landing a shockwave erupts (front 24 / back
-        18 — the landing block). Recovery counts from the hit: attackCd
-        1.02 + 0.07 - 0.32 startup = 後硬直 0.77s */
-     f.state="diveclaw";f.stateT=0.64;f.attackCd=1.02;f.comboWin=0;f.hitDone=false;f.diveArmed=true; /* 下斧 (user spec): the landing shockwave is back, so the dive is armed again; 着地硬直 0.32 -> 0.40 (LAND_LAG) */
-     f.vx=f.face*250;f.vy=Math.max(f.vy,600);f.fastfall=false;
+     /* 空中↓+J: 下斧 (作り替え, user spec) — he HANGS STILL in
+        the air until the axe falls: vy is held at 0 by the gravity
+        step while hitDone is false (vx is NOT zeroed — 左右移動
+        可能), and 0.22s after the press the axe comes down
+        (delayed hit in stepFighter): a single downward 44 dmg /
+        KB 770 METEOR hit in a 112x98 box below him. NO dive and
+        NO landing shockwave any more (diveArmed stays false; the
+        着地硬直 0.40 lives in LAND_LAG). 後硬直 0.73s counts from
+        the hit: attackCd 0.88 + 0.07 - 0.22 startup */
+     f.state="diveclaw";f.stateT=0.64;f.attackCd=0.88;f.comboWin=0;f.hitDone=false;f.diveArmed=false;
+     f.vx*=0.3;f.vy=0;f.fastfall=false;
      beep(170,.11,"sawtooth",.06);
    }else if(!f.onGround){
-     /* 空中J: 宙斧 — a full somersault spin: NO hit on the press.
-        The first hit lands 0.24s later and the spin keeps ticking
-        in stepFighter (state "airclaw"): foes caught mostly
-        horizontally take 22 dmg / KB 550, foes caught mostly
-        vertically (above / below) take 18 dmg / KB 500, inside a
-        112x108 box around him (user spec) */
-     f.state="airclaw";f.stateT=0.58;f.attackCd=0.74;f.comboWin=0;
-     f.spinHits=0;f.hitDone=false;
+     /* 空中J: ぶった切り (NEW — 宙斧 is DELETED, user spec):
+        one big front cleave. NO hit on the press: the cut lands
+        0.24s later (delayed hit in stepFighter, state
+        "buttagiri") and the box stays live for 0.2s — 22 dmg /
+        KB 660 in a front 114x108 box. 全体 0.56s, 後硬直 0.8s
+        counts from the hit: attackCd 0.97 + 0.07 - 0.24 startup.
+        着地硬直 0.28s lives in LAND_LAG */
+     f.state="buttagiri";f.stateT=0.56;f.attackCd=0.97;f.comboWin=0;
+     f.hitDone=false;
      if(f.vy>60)f.vy=60;
-     spawnParticles(f.x,f.y+f.h*0.45,12,"#fdba74",200);beep(300,.1,"sawtooth",.06);
+     spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#fdba74",200);beep(300,.1,"sawtooth",.06);
    }else if(downHeld){
      /* ↓+J: 掘斧撃 (user spec — SPLIT from ↓+K 震撃, no longer the
      same move): he digs the axe into the ground and 0.30s
      later it bursts up IN FRONT of him (delayed hit in
-     stepFighter, state "digaxe"): 24 dmg / KB 540 (was 640)
-     in a much smaller 120x100 box (was 230x102), with a fixed
-     被弾硬直 0.6s on the foe. Much faster than the old shared
-     震撃: 全体 1.35 -> 0.60s, 後硬直 0.53 -> 0.44s (完全硬直) —
-     attackCd 0.97 + 0.07 = 0.60 + 0.44, rooted while it lasts */
-     f.state="digaxe";f.stateT=0.60;f.attackCd=0.97;f.comboWin=0;f.hitDone=false;f.vx=0;applyFullLock(f); /* 後硬直0.44秒は完全硬直: 全体と合わせて1.04秒の間は移動・ジャンプ・ワザ不可 */
+     stepFighter, state "digaxe"): 24 dmg / KB 540 in a
+     126x100 box (buffed from 120x100), with a fixed
+     被弾硬直 0.72s on the foe (buffed from 0.6s). Much faster
+     than the old shared 震撃: 全体 0.60s, 後硬直 0.38s
+     (完全硬直, buffed from 0.44s) — attackCd 0.91 + 0.07
+     = 0.60 + 0.38, rooted while it lasts */
+     f.state="digaxe";f.stateT=0.60;f.attackCd=0.91;f.comboWin=0;f.hitDone=false;f.vx=0;applyFullLock(f); /* 後硬直0.38秒は完全硬直: 全体と合わせて0.98秒の間は移動・ジャンプ・ワザ不可 (user buff: 後硬直 0.44 -> 0.38) */
      spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",160);beep(90,.16,"sawtooth",.07);
-   }else if(upHeld){
-     f.state="clawup";f.stateT=0.55;f.attackCd=0.74;f.comboWin=0;
-     f.vy=-420;f.onGround=false;f.fastfall=false;
-     if(meleeHit(f,foe,92,92,19,460,f.face,-1.1)){f.jumps=1;spawnParticles(f.x,f.y+f.h,9,"#fdba74",150)}
-     spawnParticles(f.x+f.face*16,f.y+f.h*0.3,9,"#fdba74",170);
-     beep(260,.1,"sawtooth",.06);
-   }else if(backHeld){
-     f.state="backclaw";f.stateT=0.52;f.attackCd=0.72;f.comboWin=0;
-     f.vx=-f.face*230;meleeHit(f,foe,102,66,17,420,f.face,-0.22);beep(280,.09,"sawtooth",.055);
    }else if(f.dashT>0||Math.abs(f.vx)>300||(fwdHeld&&f.comboWin<=0)){
      /* 前+J: 突進 — a short, fast lunge at 720 u/s (was 660) and
      the move itself lasts 0.30s (was 0.22s): 26 dmg / KB 740
@@ -6961,7 +6960,7 @@ var LAND_LAG={
  kairo:{airclaw:0.21,taildrop:0.38,tail:0.30,fspin:0.44,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* KAIRO (user spec): ホバースピン (airclaw) 着地硬直 0.2 -> 0.21; メテオドロップ (taildrop) 着地硬直 0.34 -> 0.38; フロストスピン (fspin) 着地硬直 0.40 -> 0.44. 旧 急降下斬り (diveclaw) の着地硬直 0.30 は技自体の削除に伴い項目も削除 — 後継の メテオネイル (mnail) は着地硬直の指定がないため項目なし */
  warden:{airclaw:0.34,taildrop:0.36,diveclaw:0.25,wbash:0.28,dashclaw:0.25,jkcombo:0.25,shard:0.18}, /* WARDEN (user spec): 回転警棒 (airclaw) 着地硬直 0.33 -> 0.34 */
  kojiro:{airslash:0.18,airheavy:0.3,taildrop:0.30,diveclaw:0.5,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.2 -> 0.18, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44 -> 0.5, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
- axe:{airclaw:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): 宙斧 landing lag 0.40 -> 0.28, ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
+ axe:{buttagiri:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): ぶった切り landing lag 0.28 (旧・宙斧は削除され空中Jは ぶった切り に差し替え), ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
  orchid:{ohook:0.28,otackle:0.25,jkcombo:0.25,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
@@ -8482,7 +8481,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
    his 1.45 base rate underneath those divisors. KOJIRO tuning (user spec):
    his ult meter gain is multiplied by a further 0.869 on top of all that
    (total ~x0.7, nerfed from ~x0.9). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.36; /* AXE ult gain (user spec): x0.24 total (1/1.5 x 0.36) — ウルト溜め x0.4倍の下方修正 (was x0.6 total) */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -8998,14 +8997,19 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  boulder as ground K 投岩 (a "rock" projectile: 26 dmg / KB 660,
  box 114x86, speed 330 at the filter), except this one is thrown
  from the air and GRAVITY bends it down (pr.grav in the projectile
- step: vy += 980/s like the javelin) */
- if(f.char==="axe"&&f.state==="axeair"&&!f.hitDone&&f.stateT<=0.34){f.hitDone=true;projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:2.18,kind:"rock",grav:1});spawnParticles(f.x+f.face*30,f.y+f.h*0.5,16,"#fdba74",240);spawnParticles(f.x+f.face*38,f.y+f.h*0.55,8,"#a8a29e",180);shake=Math.max(shake,6);beep(105,.15,"sawtooth",.07)}
- /* AXE 下斧 (air down+J): the downward axe lands 0.32s after the
-    press (stateT 0.64 -> threshold 0.32): a single METEOR hit
-    straight below him — 44 dmg / KB 720 in a 98x102 box under
-    the axe. Custom geometry (not meleeHit) so the box hangs
-    directly underneath instead of slanting forward */
- if(f.char==="axe"&&f.state==="diveclaw"&&!f.hitDone&&f.stateT<=0.32){f.hitDone=true;dbgBox(f.x,f.y+f.h*0.5+33,144,158,"255,45,120",16); /* hitbox viewer (おかき only): the meteor box hanging under him — foe centres 46 above to 112 below his centre */var dHit=false;for(var dxi=0;dxi<fighters.length;dxi++){var dtg=fighters[dxi];if(dtg===f||dtg.dead)continue;var ddx=dtg.x-f.x,ddy=(dtg.y+dtg.h/2)-(f.y+f.h*0.5);if(Math.abs(ddx)<72+dtg.w/2&&ddy>-46&&ddy<112){if(applyHit(f,dtg,44,720,ddx<0?-1:1,1.05,false,f.x,f.y+f.h*0.8))dHit=true}}if(dHit)shake=Math.max(shake,5);spawnParticles(f.x,f.y+f.h*0.85,14,"#fdba74",230);beep(100,.15,"sawtooth",.07)}
+ step: vy += 980/s like the javelin). NEW (user spec): once
+ the boulder TOUCHES THE GROUND it stops falling and rolls
+ straight along the floor instead (pr.rolled / pr.air in the
+ projectile step) */
+ if(f.char==="axe"&&f.state==="axeair"&&!f.hitDone&&f.stateT<=0.34){f.hitDone=true;projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:2.18,kind:"rock",grav:1,air:1});spawnParticles(f.x+f.face*30,f.y+f.h*0.5,16,"#fdba74",240);spawnParticles(f.x+f.face*38,f.y+f.h*0.55,8,"#a8a29e",180);shake=Math.max(shake,6);beep(105,.15,"sawtooth",.07)}
+ /* AXE 下斧 (air down+J, reworked): he hangs still in the air
+    (gravity step) until the axe falls 0.22s after the press
+    (stateT 0.64 -> threshold 0.42): a single METEOR hit straight
+    below him — 44 dmg / KB 770 (was 720) in a 112x98 box under
+    the axe (was 98x102). Custom geometry (not meleeHit) so the
+    box hangs directly underneath instead of slanting forward.
+    When the hit fires he plunges with the swing (vy 600) */
+ if(f.char==="axe"&&f.state==="diveclaw"&&!f.hitDone&&f.stateT<=0.42){f.hitDone=true;f.vy=Math.max(f.vy,600);dbgBox(f.x,f.y+f.h*0.5+33,112,98,"255,45,120",16); /* hitbox viewer (おかき only): the meteor box hanging under him — foe centres 16 above to 82 below his centre */var dHit=false;for(var dxi=0;dxi<fighters.length;dxi++){var dtg=fighters[dxi];if(dtg===f||dtg.dead)continue;var ddx=dtg.x-f.x,ddy=(dtg.y+dtg.h/2)-(f.y+f.h*0.5);if(Math.abs(ddx)<56+dtg.w/2&&ddy>-16&&ddy<82){if(applyHit(f,dtg,44,770,ddx<0?-1:1,1.05,false,f.x,f.y+f.h*0.8))dHit=true}}if(dHit)shake=Math.max(shake,5);spawnParticles(f.x,f.y+f.h*0.85,14,"#fdba74",230);beep(100,.15,"sawtooth",.07)}
  /* KAIRO メテオネイル (air down+J): the nail strikes 0.26s after the
     press (stateT 0.56 -> threshold 0.30): a single METEOR hit
     straight below him — 26 dmg / KB 700 in the 96x70 box hanging
@@ -9017,11 +9021,12 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.char==="kairo"&&f.state==="mnail"&&!f.hitDone&&f.stateT<=0.30){f.hitDone=true;var mnCx=f.x,mnCy=f.y+f.h*0.5+35;dbgBox(mnCx,mnCy,96,70,"255,45,120",16);var mnHit=false;for(var mni=0;mni<fighters.length;mni++){var mtg=fighters[mni];if(mtg===f||mtg.dead)continue;if(Math.abs(mtg.x-mnCx)<48+mtg.w/2&&Math.abs((mtg.y+mtg.h/2)-mnCy)<35+mtg.h/2){if(applyHit(f,mtg,26,700,0,1.05,false,mnCx,mnCy))mnHit=true}}if(mnHit)shake=Math.max(shake,5);spawnParticles(f.x,f.y+f.h+10,12,"#a5f3fc",210);spawnParticles(f.x,f.y+f.h+16,6,"#e0f2fe",150);spawnRing(f.x,f.y+f.h+12,"#a5f3fc",30);spawnFxBurst(FXIMG.ice,f.x,f.y+f.h+18,110,0.28,1.57,1,0.8);beep(150,.13,"sawtooth",.06)}
  /* AXE 掘斧撃 (down+J): he is rooted while the state lasts, and
  0.30s after the press (stateT 0.60 -> threshold 0.30) the axe
- bursts up IN FRONT of him: 24 dmg / KB 540, box 120x100,
- with a fixed 被弾硬直 0.6s (the hs argument) */
+ bursts up IN FRONT of him: 24 dmg / KB 540, box 126x100
+ (buffed from 120x100), with a fixed 被弾硬直 0.72s
+ (buffed from 0.6s, the hs argument) */
  if(f.char==="axe"&&f.state==="digaxe"){
  f.vx=0;
- if(!f.hitDone&&f.stateT<=0.30){f.hitDone=true;meleeHit(f,foe,120,100,24,540,f.face,0.02,0.6);shake=Math.max(shake,6);spawnParticles(f.x+f.face*52,f.y+f.h-6,18,"#a8a29e",250);spawnParticles(f.x+f.face*34,f.y+f.h-10,10,"#78716c",210);spawnParticles(f.x+f.face*24,f.y+f.h-4,8,"#fdba74",170);spawnRing(f.x+f.face*44,f.y+f.h-8,"#d6d3d1",40);beep(85,.16,"sawtooth",.07)}
+ if(!f.hitDone&&f.stateT<=0.30){f.hitDone=true;meleeHit(f,foe,126,100,24,540,f.face,0.02,0.72);shake=Math.max(shake,6);spawnParticles(f.x+f.face*52,f.y+f.h-6,18,"#a8a29e",250);spawnParticles(f.x+f.face*34,f.y+f.h-10,10,"#78716c",210);spawnParticles(f.x+f.face*24,f.y+f.h-4,8,"#fdba74",170);spawnRing(f.x+f.face*44,f.y+f.h-8,"#d6d3d1",40);beep(85,.16,"sawtooth",.07)}
  }
  /* AXE 震撃 (down+K — ↓+J is 掘斧撃 now, a different move):
     he is rooted while the state lasts, and 0.42s after the press
@@ -9031,22 +9036,14 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    f.vx=0;
    if(!f.hitDone&&f.stateT<=0.93){f.hitDone=true;meleeHit(f,foe,230,102,24,710,f.face,0.02);shake=Math.max(shake,7);spawnParticles(f.x+f.face*70,f.y+f.h-6,20,"#a8a29e",260);spawnParticles(f.x+f.face*46,f.y+f.h-10,12,"#78716c",220);spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#fdba74",180);spawnRing(f.x+f.face*60,f.y+f.h-8,"#d6d3d1",44);beep(80,.18,"sawtooth",.07)}
  }
- /* AXE 宙斧 (air J): the somersault spin ticks — first hit 0.24s
-    after the press, then every ~0.13s while the 0.58s state
-    lasts (thresholds 0.34 / 0.21 / 0.08). Each tick checks the
-    112x108 box around him: foes caught mostly horizontally take
-    22 dmg / KB 550; foes caught mostly vertically (above /
-    below) take 18 dmg / KB 500. A foe can be re-hit only every
-    0.34s (the axSpinT stamp), so one spin lands at most 2 hits
-    on the same target */
- if(f.char==="axe"&&f.state==="airclaw"){
-   var axTh=[0.34,0.21,0.08];
-   while(f.spinHits<3&&f.stateT<=axTh[f.spinHits]){
-     f.spinHits++;
-     dbgBox(f.x+f.face*52,f.y+f.h*0.45,104,216,"255,45,120",10);dbgBox(f.x-f.face*38,f.y+f.h*0.45,76,128,"255,45,120",10); /* hitbox viewer (おかき only): 宙斧 tick — front box 104 across / ±108, back box 76 across / ±64 */
-     for(var axI=0;axI<fighters.length;axI++){var axFoe=fighters[axI];if(axFoe===f||axFoe.dead||axFoe.invuln>0)continue;if(axFoe.axSpinT&&time-axFoe.axSpinT<0.34)continue;var axDx=axFoe.x-f.x,axDy=(axFoe.y+axFoe.h/2)-(f.y+f.h*0.45);var axFront=(axDx*f.face)>=0;if(Math.abs(axDx)<(axFront?104:76)+axFoe.w/2&&Math.abs(axDy)<(axFront?108:64)) /* 宙斧 判定 (user spec): 前 112x108 / 後 84x64 — foes in front of him are checked against the big box, foes behind against the smaller one */{axFoe.axSpinT=time;if(Math.abs(axDx)>=Math.abs(axDy))applyHit(f,axFoe,22,550,axDx<0?-1:1,-0.3,false,axFoe.x,axFoe.y+axFoe.h*0.45);else applyHit(f,axFoe,18,500,axDx<0?-1:1,axDy<0?-1.05:0.9,false,axFoe.x,axFoe.y+axFoe.h*0.45)}}
-     spawnParticles(f.x,f.y+f.h*0.45,7,"#fdba74",200);
-   }
+ /* AXE ぶった切り (air J, NEW — replaces the deleted 宙斧 spin):
+    the cleave lands 0.24s after the press (stateT 0.56 ->
+    threshold 0.32) and the box stays live for 0.2s (checked
+    every step until stateT 0.12, one hit total via hitDone):
+    22 dmg / KB 660 in a front 114x108 box */
+ if(f.char==="axe"&&f.state==="buttagiri"&&!f.hitDone&&f.stateT<=0.32&&f.stateT>0.12){
+   dbgBox(f.x+f.face*57,f.y+f.h*0.45,114,108,"255,45,120",10); /* hitbox viewer (おかき only): ぶった切り — the front 114x108 cleave box */
+   if(meleeHit(f,foe,114,108,22,660,f.face,-0.3)){f.hitDone=true;spawnParticles(f.x+f.face*40,f.y+f.h*0.45,12,"#fdba74",230);spawnRing(f.x+f.face*52,f.y+f.h*0.42,"#fdba74",40);shake=Math.max(shake,4);beep(140,.13,"sawtooth",.07)}
  }
  /* AXE ヘッドロケット (air up+K): while he rockets up he is wrapped
     in meteor fire and sheds rock shards the whole way (okaki
@@ -9414,13 +9411,13 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      var frontX=f.x+f.ultDir*64;
      if(Math.abs(uo.x-frontX)<58&&Math.abs((uo.y+uo.h/2)-(f.y+f.h/2))<86&&uo.invuln<=0){uo.pushBy=f;uo.pushT=0.22;uo.hitstun=Math.max(uo.hitstun,0.18);uo.grabT=0;uo.grabBy=null}
    }
-   /* 猪突猛進 suction (okaki spec): while the charge lasts, nearby
+   /* 猪突猛進 suction (okaki spec; buffed, user spec: 吸引速度 x1.2 — accel 1500 -> 1800, ground slide 190 -> 228 — and the pull target is now the PIN BOX at his front (f.x + ultDir*64), so foes are reeled all the way INTO the attack判定 instead of only toward his body): while the charge lasts, nearby
       foes who are NOT already pinned get dragged toward the axe —
       a vacuum pull: airborne foes gain velocity toward him, grounded
       foes also slide along the floor, so bystanders at the edge of
       the rush get reeled in instead of strolling away. Anyone the
       pull delivers to the front is then caught by the pin above */
-   for(var sc2=0;sc2<fighters.length;sc2++){var so=fighters[sc2];if(so===f||so.dead||so.pushBy===f)continue;var sdx=f.x-so.x;if(Math.abs(sdx)<330&&Math.abs((so.y+so.h/2)-(f.y+f.h/2))<120){so.vx+=Math.sign(sdx)*1500*dt;if(so.onGround)so.x+=Math.sign(sdx)*Math.min(Math.abs(sdx),190*dt);if(Math.random()<0.35)spawnParticles(so.x+Math.sign(sdx)*20,so.y+so.h*0.5,1,"#fdba74",60)}}
+   for(var sc2=0;sc2<fighters.length;sc2++){var so=fighters[sc2];if(so===f||so.dead||so.pushBy===f)continue;var sdx=f.x-so.x;if(Math.abs(sdx)<330&&Math.abs((so.y+so.h/2)-(f.y+f.h/2))<120){var stx=(f.x+f.ultDir*64)-so.x;so.vx+=Math.sign(stx)*1800*dt;if(so.onGround)so.x+=Math.sign(stx)*Math.min(Math.abs(stx),228*dt);if(Math.random()<0.35)spawnParticles(so.x+Math.sign(stx)*20,so.y+so.h*0.5,1,"#fdba74",60)}}
    if(Math.random()<0.65)spawnParticles(f.x-f.ultDir*16,f.y+f.h-4,2,"#a8a29e",120);
    if(Math.random()<0.3)spawnParticles(f.x+f.ultDir*24,f.y+f.h*0.4,1,"#fb923c",140);
    if(f.ultChargeT<=0){
@@ -9565,6 +9562,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  else if(f.char==="travis"&&f.state==="tsingjump"&&!f.hitDone&&f.hitstun<=0){f.vy=0} /* TRAVIS シングソングジャンプ: fully stationary in the air for the whole 0.8s startup （空中で静止 — the launch in the state hook above sets hitDone and vy -960, which ends the hold) */
  else if(f.char==="mimi"&&f.state==="mdrop"&&f.hitstun<=0){f.vy=0;f.vx=0} /* MIMI 落として！！: fully stationary in the air for the whole 0.32s state （空中で静止, user spec) */
  else if(f.char==="kairo"&&f.state==="mnail"&&f.hitstun<=0){f.vy=0} /* KAIRO メテオネイル (user spec): 空中に滞留 — vy is held at 0 for the whole 0.56s state, so he neither rises nor falls while the nail strikes below him (the old 重力70%軽減 / g x0.3 slow-drift is DELETED). Unlike the MIMI / TRAVIS holds above, vx is deliberately NOT zeroed: the air-steering in the movement step above stays live, so horizontal movement is the ONLY movement possible while he hovers. Because this runs right before integration, it also overrides any vy the jump / fastfall input set earlier this step */
+ else if(f.char==="axe"&&f.state==="diveclaw"&&!f.hitDone&&f.hitstun<=0){f.vy=0} /* AXE 下斧 (user spec): 空中で静止 — vy is held at 0 from the press until the axe falls 0.22s later (hitDone flips in the delayed-hit block above and he plunges). Like KAIRO メテオネイル above, vx is deliberately NOT zeroed: air steering stays live (左右移動可能) */
  else if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.hitstun<=0){f.vy=0;f.vx=0} /* ORCHID ロープフィッシング: fully stationary in the air during the 0.3s startup （空中静止, user spec) — once the vine fires (hitDone) gravity takes her again */
  else if(f.char==="no66"&&(f.state==="n66atom"||f.state==="n66msl")&&f.hitstun<=0){f.vy=0;f.vx=0} /* No.66 ダウンアトミック / ホーミングミサイル: fully stationary in the air while the move lasts （空中でもその場で静止, user spec) */
  else if(f.char==="travis"&&f.state==="tmsong"&&f.hitstun<=0){f.vy=0;f.vx=0} /* TRAVIS メテオソング: fully stationary in the air for the whole 0.8s state （空中で静止， user spec — the ball already left on the press; vx is zeroed too, right before integration, so steering / fastfall input cannot drift him while he hangs) */
@@ -9635,7 +9633,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);var tdY=f.y+f.h-5;spawnRing(f.x-52,tdY,"#fcd34d",50);spawnRing(f.x+52,tdY,"#fcd34d",50);spawnCharBurst("travis",f.x-54,tdY-8,96,0.3,0,-1,0.85);spawnCharBurst("travis",f.x+54,tdY-8,96,0.3,0,1,0.85);spawnSparks(f.x,tdY,1,"#fcd34d",6);spawnSparks(f.x,tdY,-1,"#fcd34d",6);spawnParticles(f.x-44,tdY,9,"#c084fc",210);spawnParticles(f.x+44,tdY,9,"#c084fc",210); /* (見た目変更) the landing shockwave now VISIBLY rolls out on both sides — a ring + sound burst + spark fan on each side, mirroring the 96x86 two-sided hit */
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
        meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
-     }else if(f.char==="axe"){meleeHit(f,foe,dvRg,dvH,24,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,18,340,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fdba74",230);spawnParticles(f.x,f.y+f.h-6,10,"#a8a29e",200);spawnRing(f.x,f.y+f.h-4,"#d6d3d1",42)} /* AXE 下斧 landing (user spec): shockwave front 24 / back 18 in the generic 96x58 dive box */else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
+     }else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
  /* BECAME AIRBORNE WITHOUT JUMPING (v93): this step ended airborne after
@@ -11244,7 +11242,8 @@ function drawAxe(f){
  if(air&&f.vy>120)ctx.rotate(0.10);
  if(f.state==="claw"||f.state==="chop"||f.state==="jkcombo"||f.state==="axeheavy"||f.state==="ultcharge"||f.state==="shoulder")ctx.translate(9,0);
  if(f.state==="lowclaw"||f.state==="digaxe")ctx.translate(7,3);
- if(f.state==="clawup"||f.state==="axerise")ctx.translate(2,-3);
+ if(f.state==="axerise")ctx.translate(2,-3);
+ if(f.state==="buttagiri")ctx.translate(9,0);
  if(f.state==="diveclaw"||f.state==="taildrop")ctx.rotate(0.4);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"axe","#b45309");
@@ -11254,10 +11253,8 @@ function drawAxe(f){
  else if(f.state==="chop"){ctx.strokeStyle="#fb923c";ctx.lineWidth=4;ctx.beginPath();ctx.arc(2,16,46,-0.8,1.0);ctx.stroke()}
  else if(f.state==="axeheavy"){ctx.strokeStyle="#fb923c";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(40,14);ctx.lineTo(54,12);ctx.moveTo(40,24);ctx.lineTo(56,24);ctx.moveTo(40,34);ctx.lineTo(52,36);ctx.stroke();ctx.fillStyle="#a8a29e";ctx.fillRect(46,8,4,4);ctx.fillRect(54,30,3,3);ctx.fillRect(48,38,3,3)} /* 破砕ショット: rock shards flying off the point of impact */
  else if(f.state==="axeair"){ctx.strokeStyle="#fb923c";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(40,14);ctx.lineTo(54,12);ctx.moveTo(40,24);ctx.lineTo(56,24);ctx.stroke();ctx.fillStyle="#a8a29e";ctx.fillRect(46,8,4,4);ctx.fillRect(54,30,3,3)} /* 砲岩 (okaki rework): the same boulder-hurl motion lines as ground K — he is THROWING the rock now, not slamming */
- else if(f.state==="airclaw"){var asp=time*21;ctx.save();ctx.translate(0,27);ctx.rotate(asp);ctx.strokeStyle="rgba(253,186,116,.9)";ctx.lineWidth=3.6;ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(42,0);ctx.stroke();ctx.beginPath();ctx.arc(0,0,44,-0.5,0.5);ctx.stroke();ctx.rotate(Math.PI);ctx.beginPath();ctx.arc(0,0,44,-0.5,0.5);ctx.stroke();ctx.restore();ctx.strokeStyle="rgba(255,247,237,.75)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,27,50,0,6.29);ctx.stroke()} /* 宙斧 (okaki rework): he spins a full turn with the axe held out — a rotating cleave ring around the whole body */
+ else if(f.state==="buttagiri"){var bpr=1-Math.max(0,f.stateT)/0.56;ctx.strokeStyle="rgba(253,186,116,.9)";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(4,22,52,-1.5+bpr*1.9,-0.2+bpr*1.9);ctx.stroke();ctx.strokeStyle="#fff7ed";ctx.lineWidth=2;ctx.beginPath();ctx.arc(4,22,45,-1.4+bpr*1.9,-0.3+bpr*1.9);ctx.stroke()} /* ぶった切り: one huge front cleave — a single wide arc sweeps through the front box as the delayed cut lands */
  else if(f.state==="dashclaw"){ctx.strokeStyle="rgba(253,186,116,.85)";ctx.lineWidth=2.6;for(var dl=0;dl<5;dl++){var dly=12+dl*9;ctx.beginPath();ctx.moveTo(-12,dly);ctx.lineTo(-40-dl*5,dly);ctx.stroke()}ctx.strokeStyle="rgba(251,146,60,.5)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-8,26);ctx.lineTo(-34,26);ctx.stroke();ctx.fillStyle="rgba(214,211,209,.5)";ctx.fillRect(-16,54,5,3);ctx.fillRect(-28,56,4,2.6)} /* 突進 (okaki rework): longer, denser speed lines, a flame streak through the middle and dust kicked off the feet — faster and flashier */
- else if(f.state==="backclaw"){ctx.strokeStyle="rgba(253,186,116,.75)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(-14,16);ctx.lineTo(-28,12);ctx.stroke()}
- else if(f.state==="clawup"){ctx.strokeStyle="rgba(253,186,116,.85)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(4,26,38,-1.55,-0.35);ctx.stroke()}
  else if(f.state==="digaxe"){ctx.strokeStyle="#57534e";ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(14,28);ctx.lineTo(33,51);ctx.stroke();ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(28,49);ctx.lineTo(45,49);ctx.lineTo(41,58);ctx.lineTo(31,58);ctx.closePath();ctx.fill();ctx.strokeStyle="#78716c";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(30,56);ctx.lineTo(40,51);ctx.moveTo(38,57);ctx.lineTo(50,55);ctx.moveTo(28,58);ctx.lineTo(44,58);ctx.moveTo(46,54);ctx.lineTo(58,50);ctx.stroke();ctx.fillStyle="#a8a29e";ctx.fillRect(36,44,5,5);ctx.fillRect(48,40,3.6,3.6);ctx.fillRect(56,47,3,3);ctx.fillRect(30,48,3,3)} /* 掘斧撃 (okaki rework): the axe is visibly DUG into the ground in front of him — handle angled down, blade buried, cracked rock chunks bursting up around it */
  else if(f.state==="lowclaw"){ctx.strokeStyle="#78716c";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(30,56);ctx.lineTo(40,51);ctx.moveTo(38,57);ctx.lineTo(50,55);ctx.moveTo(28,58);ctx.lineTo(44,58);ctx.moveTo(46,54);ctx.lineTo(58,50);ctx.stroke();ctx.fillStyle="#a8a29e";ctx.fillRect(34,50,4,4);ctx.fillRect(48,46,3,3);ctx.fillRect(56,52,3,3)} /* 震撃: cracks and rock shards spreading forward */
  else if(f.state==="diveclaw"){ctx.strokeStyle="#d6d3d1";ctx.lineWidth=3.6;ctx.beginPath();ctx.moveTo(10,34);ctx.lineTo(16,62);ctx.stroke();ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(8,58);ctx.lineTo(24,58);ctx.lineTo(16,68);ctx.closePath();ctx.fill();ctx.strokeStyle="rgba(253,186,116,.85)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-8,10);ctx.lineTo(-12,-8);ctx.moveTo(4,8);ctx.lineTo(2,-12);ctx.moveTo(18,12);ctx.lineTo(20,-6);ctx.stroke()} /* 下斧 (okaki rework): the axe is thrust straight DOWN under him, blade first, as he plummets */
@@ -11722,6 +11719,10 @@ function simStepFrame(getInp){
      var grT=null;for(var gri=0;gri<platforms.length;gri++){var grp=platforms[gri];if(pr.x>grp.x-6&&pr.x<grp.x+grp.w+6&&grp.y>=pr.y-20&&(grT===null||grp.y<grT))grT=grp.y}
      if(grT!==null&&grT-pr.y<=36){pr.y=grT-6;pr.vy=0}else pr.rolled=false;
    }
+   if(pr.kind==="rock"&&pr.rolled){ /* AXE 砲岩 rolling phase (user spec): the boulder hugs the floor like the grenade above — snap to the highest floor at/below its level within reach; past a ledge edge it starts falling again (and can re-roll when it lands on the lower floor) */
+     var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
+     if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
+   }
    pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back */if(pr.kind==="javelin"&&Math.random()<0.5)pushParticle({x:pr.x,y:pr.y,vx:(Math.random()-0.5)*40,vy:-30-Math.random()*40,life:.3,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:13)))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
@@ -11747,6 +11748,7 @@ function simStepFrame(getInp){
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
      if(pr.kind==="msong"){var msGrounded=false;for(var gi=0;gi<platforms.length;gi++){var gp=platforms[gi];if(pr.x>gp.x-4&&pr.x<gp.x+gp.w+4&&pr.y+30>=gp.y&&pr.y<gp.y+26){msGrounded=true;break}}if(msGrounded){explodeMsong(pr);return false}} /* メテオソング: explodes the moment it touches the ground (接地と同時に爆発) — a swept band instead of the generic 10px test, since at 1020 speed it crosses ~17px per step and could tunnel */
      if(pr.kind==="gren"||(pr.kind==="glauncher"&&!pr.rolled)){var gnPlat=null;for(var gi2=0;gi2<platforms.length;gi2++){var gp2=platforms[gi2];if(pr.x>gp2.x-4&&pr.x<gp2.x+gp2.w+4&&pr.y+16>=gp2.y&&pr.y<gp2.y+26){gnPlat=gp2;break}}if(gnPlat){if(pr.kind==="gren"){explodeGren(pr,14,620);return false} /* ダウンアトミック grenades burst on ground contact, like the msong */ pr.rolled=true;pr.y=gnPlat.y-6;pr.vy=0;pr.vx=(pr.vx>0?1:-1)*140;spawnParticles(pr.x,pr.y+4,5,"#a8a29e",110);beep(200,.05,"square",.03)}} /* No.66 グレネードランチャー: on ground contact the grenade does NOT burst — it slows to a 140 u/s horizontal roll (rolled; the ground-hug at the top of this filter keeps it on the floor) and only bursts when it reaches a foe or its life runs out */
+     if(pr.kind==="rock"&&pr.air&&!pr.rolled){var rkPlat=null;for(var rki2=0;rki2<platforms.length;rki2++){var rp4=platforms[rki2];if(pr.vy>0&&pr.x>rp4.x-4&&pr.x<rp4.x+rp4.w+4&&pr.y+16>=rp4.y&&pr.y<rp4.y+26){rkPlat=rp4;break}}if(rkPlat){pr.rolled=true;pr.y=rkPlat.y-6;pr.vy=0;pr.vx=(pr.vx>0?1:-1)*330;spawnParticles(pr.x,pr.y+4,6,"#a8a29e",120);beep(200,.05,"square",.03)}} /* AXE 砲岩 (user spec): on ground contact the boulder does NOT stop — it keeps its 330 speed and rolls straight along the ground (rolled; the ground-hug at the top of this filter keeps it on the floor and gravity no longer applies while rolled) */
      if(pr.kind==="pbomb"){var pbPlat=null;for(var gi3=0;gi3<platforms.length;gi3++){var gp3=platforms[gi3];if(pr.vy>0&&pr.x>gp3.x-4&&pr.x<gp3.x+gp3.w+4&&pr.y+14>=gp3.y&&pr.y<gp3.y+26){pbPlat=gp3;break}}if(pbPlat){pr.bounces=(pr.bounces||0)+1;if(pr.bounces>=3){spawnParticles(pr.x,pbPlat.y-8,16,"#a855f7",210);spawnParticles(pr.x,pbPlat.y-8,9,"#a3e635",160);spawnRing(pr.x,pbPlat.y-6,"#c084fc",36);beep(180,.1,"sine",.05);return false}pr.y=pbPlat.y-13;pr.vy=-Math.max(175,Math.abs(pr.vy)*0.55);pr.vx*=0.86;spawnParticles(pr.x,pbPlat.y-4,5,"#a855f7",120);beep(260,.05,"square",.035)}} /* ORCHID ポイズンボム: the sphere BOUNCES off the ground (gravity arc via pr.grav) — contacts 1-2 rebound with a damped hop, and the THIRD bounce bursts it in a puff of poison (user spec: 地面に三回バウンドする。三回目のバウンドで消失). The generic platform-death loop below exempts pbomb, like the grenades */
      for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.kind!=="lwave"&&pr.kind!=="gren"&&pr.kind!=="glauncher"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="pbomb"&&pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){ /* lwave is exempt: its own ground-hug logic in the filter above lands it on floors instead of dying on contact. gren / glauncher are exempt too: their ground contact is handled by the swept-band block above. No.66's homing missiles are exempt as well: they launch straight UP from wherever he stands — a ledge overhead would eat them on the first frames — and home over the stage, so they pass through platforms and only end on a foe, their 3.2s life, or the world bounds */if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
