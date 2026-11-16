@@ -434,6 +434,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/16",times:["22:56"],tag:"調整",title:"WARDEN：Jチェーンと「電気警棒」を調整",
+  items:["J 1段目「横薙ぎ」：後硬直 0.21秒→0.2秒、判定 74×66→80×66、被弾硬直 0.22秒→0.32秒に上方修正しました",
+         "J 2段目「平返し」：被弾硬直 0.22秒→0.34秒に上方修正しました",
+         "前+J／ダッシュ中J「電気警棒」：追加効果を下方修正しました。1ヒット目から2秒以内にもう一度ヒットすると、その回の後硬直が1.12秒（完全硬直）→1.18秒（完全硬直）に変化します（完全硬直の間は移動・ジャンプ・ダッシュ・次の技のすべてができません）",
+         "ダメージ・KB・全体など、その他の数値は変更ありません",
+         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv240に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/16",times:["22:49"],tag:"調整",title:"WARDEN：ウルトの溜まりを下方修正",
   items:["WARDENのウルトゲージの溜まりを約0.46倍→約0.36倍に下方修正しました。与えたダメージで溜まるゲージ量が減るため、ウルトが満タンになるまでにより多くの攻撃を当てる必要があります",
          "ウルト（L「スカイフック・クレーン」）自体の性能や、他のキャラのウルトの溜まりに変更はありません",
@@ -512,10 +518,6 @@ var UPDATE_LOG=[
   items:["空中↓+J「急降下斬り」を削除しました（斜め下への突っ込み・本体34ダメージ・着地時の氷の衝撃波はなくなります）",
          "新しい空中↓+J「メテオネイル」：ダメージ26・KB700（真下方向・メテオ判定あり）・発生0.26秒・全体0.56秒・後硬直0.47秒・判定96×70（真下方向）。技の間は重力が70%軽減され、本人はゆっくり落ちながら真下へ氷の釘を叩き落とします",
          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv223に更新しました。対戦前に全員がページを再読み込みしてください"]},
- {date:"2026/11/16",times:["00:14"],tag:"調整",title:"KAIRO：↓+J「アイスフット」の吹き飛ばしを変更",
-  items:["↓+J「アイスフット」：KB 560（上方向）→620（真上方向）に変更しました。当たった相手は横へは飛ばず、真上へ吹き飛ぶようになります",
-         "ダメージ8・判定80×34・被弾硬直0.36秒・氷の床（幅150・3.5秒残る／乗った相手は凍結1.2秒）など、その他の数値は変更ありません",
-         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv222に更新しました。対戦前に全員がページを再読み込みしてください"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -609,10 +611,10 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>刑務所の看守ロボ。重量級で足は遅いぶん、一撃が重く吹っ飛ばしが強いパワータイプ。バトンで制圧し、ボルトで撃ち抜き、必殺のスカイフック・クレーンで上空から確保して叩き落とす。</p>'
 +mvSpec(mvS('HP','280')+mvS('地上速度','360')+mvS('空中速度','349')+mvS('受けKB','×0.91（吹っ飛びにくい）')+mvS('ダッシュ','920')+mvS('ウルト溜まり','やや遅め（約0.36倍）'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.65秒</span><p>横に警棒を振るう攻撃。後硬直が短くなり、被弾硬直0.22秒が付いた。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.21秒')+mvS('判定','74×66')+mvS('被弾硬直','0.22秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — 平返し</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.65秒</span><p>一段目に引き続いてバックハンドに振りかざす攻撃。上方向への吹き飛ばし。被弾硬直0.22秒付き。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','290（上吹き飛び）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.22秒')+mvS('判定','76×88')+mvS('被弾硬直','0.22秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — 横薙ぎ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.65秒</span><p>横に警棒を振るう攻撃。後硬直が短くなり、被弾硬直0.32秒が付いた。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','250')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.2秒')+mvS('判定','80×66')+mvS('被弾硬直','0.32秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — 平返し</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.65秒</span><p>一段目に引き続いてバックハンドに振りかざす攻撃。上方向への吹き飛ばし。被弾硬直0.34秒付き。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','290（上吹き飛び）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.22秒')+mvS('判定','76×88')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 振り下ろし</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>最後に警棒を振り下ろして攻撃する。<b>メテオ判定あり</b>：空中の相手に当てると真下へ叩き落とす（弧は最大・オレンジ色の衝撃エフェクトで締めだと一目で分かる）。</p>'+mvSpec(mvS('ダメージ','26')+mvS('KB','660')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.55秒')+mvS('判定','92×74'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J／ダッシュ中J — 電気警棒</b><p>正面に電気警棒で攻撃する。吹っ飛ばしは小さい代わりに<b>スタンあり</b>（被弾硬直0.8秒）。さらに、<b>1ヒット目から2秒以内にもう一度ヒットすると、その回の後硬直が1.12秒（完全硬直）に変化する</b>（その間は移動・ジャンプ・ダッシュ・次の技のすべてができない）。ヒットするたびに2秒の猶予は数え直される。なお、後ろ+J「バックバトン」と↑+J「ライジングバトン」は<b>削除</b>された（後ろ／↑を入れながらのJは、通常のJチェーンか前+Jの電気警棒になる）。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','100')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.45秒')+mvS('判定','94×60')+mvS('被弾硬直','0.8秒')+mvS('追加効果','2秒以内の再ヒットで後硬直が1.12秒（完全硬直）に変化'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J／ダッシュ中J — 電気警棒</b><p>正面に電気警棒で攻撃する。吹っ飛ばしは小さい代わりに<b>スタンあり</b>（被弾硬直0.8秒）。さらに、<b>1ヒット目から2秒以内にもう一度ヒットすると、その回の後硬直が1.18秒（完全硬直）に変化する</b>（その間は移動・ジャンプ・ダッシュ・次の技のすべてができない）。ヒットするたびに2秒の猶予は数え直される。なお、後ろ+J「バックバトン」と↑+J「ライジングバトン」は<b>削除</b>された（後ろ／↑を入れながらのJは、通常のJチェーンか前+Jの電気警棒になる）。</p>'+mvSpec(mvS('ダメージ','17')+mvS('KB','100')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.45秒')+mvS('判定','94×60')+mvS('被弾硬直','0.8秒')+mvS('追加効果','2秒以内の再ヒットで後硬直が1.18秒（完全硬直）に変化'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — ショックウェーブ</b><p>バトンで地面を叩き、床を走る衝撃波を放つ遠距離技。波は<b>ダメージのみ</b>で、吹っ飛ばしも被弾硬直も一切ない。</p>'+mvSpec(mvS('ダメージ','16')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.53秒')+mvS('波の速度','480')+mvS('射程','約420（0.875秒）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 回転警棒</b><p><b>WARDENの左右に回転する警棒が出現する</b>エフェクトに変更された（左右それぞれに警棒が1本ずつ現れて回転し続ける）。その警棒で多段ヒットの攻撃をする。周囲へ0.08秒間隔で最大4ヒット（1回のヒットは周囲へ1回だけ当たります）。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','4 ×最大4ヒット')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.41秒')+mvS('判定','周囲112×74')+mvS('着地硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ウェーブショット</b><p>真下に<b>巨大な銃弾</b>を発射し、その弾に乗って真下へ落下する。落下中は足元に真鍮色の巨大弾（尖った弾頭付き）がはっきり見える。<b>着弾した瞬間に弾が弾け、左右両方向へ衝撃波</b>が地面を走る（リング・火花・電撃バーストで左右対称に広がる）。</p>'+mvSpec(mvS('ダメージ','本体18／着地 前12・後12')+mvS('KB','本体600／着地 前430・後430')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体76×62／着地108×80')+mvS('着地硬直','0.25秒'))+'</div></div>'
@@ -1537,7 +1539,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v239";
+var BUILD_ID="v240";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6343,10 +6345,10 @@ function startWardenAttack(f,type,foe){
         0.07 tail), 被弾硬直 0.44秒 -> 0.8秒 fixed on the hit foe.
         追加仕様: landing a hit opens a 2-second window (f.batonWin);
         if the baton hits AGAIN while that window is still open, this
-        use's recovery becomes 1.12s and a FULL LOCK （後硬直1.12秒
-        （完全硬直） — attackCd is raised to 1.05 on the re-hit, so
-        attackCd + the shared 0.07 tail = 1.12s, and applyFullLock
-        roots him for the whole 1.12s: no movement /
+        use's recovery becomes 1.18s and a FULL LOCK （後硬直1.18秒
+        （完全硬直） — attackCd is raised to 1.11 on the re-hit, so
+        attackCd + the shared 0.07 tail = 1.18s, and applyFullLock
+        roots him for the whole 1.18s: no movement /
         jump / dash / next move). Every successful hit re-opens the
         window, a miss never does. NOTE: ground ↑+J ライジングバトン
         and 後ろ+J バックバトン were DELETED (user spec) — up/back+J
@@ -6355,7 +6357,7 @@ function startWardenAttack(f,type,foe){
      f.state="dashclaw";f.stateT=0.34;f.attackCd=0.38;f.comboWin=0;f.dashT=0;
      f.vx=f.face*Math.min(Math.max(Math.abs(f.vx),470),640);
      var batonHit=meleeHit(f,foe,94,60,17,100,f.face,-0.3,0.8) /* 電気警棒: KB 100 (pins instead of launching), 被弾硬直 0.8秒 */;
-     if(batonHit){if((f.batonWin||0)>0){f.attackCd=1.05;applyFullLock(f);spawnParticles(f.x,f.y+f.h*0.5,10,"#fde68a",170);spawnRing(f.x,f.y+f.h*0.45,"#f59e0b",36)}f.batonWin=2.0} /* 追加効果 (user spec): 2秒以内の再ヒットで、その回の後硬直が通常0.45秒 -> 1.12秒（完全硬直）に変化する: attackCd 1.05 + 共通0.07 = 1.12秒。applyFullLock は startAttack 末尾の addRecovery より前に呼ばれるため recLockT も 1.12秒になり、その間は移動・ジャンプ・ダッシュ・次の技のすべてができない */
+     if(batonHit){if((f.batonWin||0)>0){f.attackCd=1.11;applyFullLock(f);spawnParticles(f.x,f.y+f.h*0.5,10,"#fde68a",170);spawnRing(f.x,f.y+f.h*0.45,"#f59e0b",36)}f.batonWin=2.0} /* 追加効果 (user spec): 2秒以内の再ヒットで、その回の後硬直が通常0.45秒 -> 1.18秒（完全硬直）に変化する: attackCd 1.11 + 共通0.07 = 1.18秒。applyFullLock は startAttack 末尾の addRecovery より前に呼ばれるため recLockT も 1.18秒になり、その間は移動・ジャンプ・ダッシュ・次の技のすべてができない */
      beep(460,.06,"square",.05);
    }else{
      /* BATON RUSH chain — three VISIBLY different swings (numbers are
@@ -6367,8 +6369,8 @@ function startWardenAttack(f,type,foe){
           2段目 wswing2 = backhand return, arc reversed vs step 1
           3段目 wslam   = overhead slam finish, biggest arc, orange impact */
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;f.comboWin=0.65;
-     if(f.comboStep===0){f.state="wswing";f.stateT=0.22;f.attackCd=0.14;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,74,66,14,250,f.face,-0.24,0.22) /* J1段目 (user spec): ダメージ 16 -> 14, KB 300 -> 250 */;beep(420,.05,"square",.04)}
-     else if(f.comboStep===1){f.state="wswing2";f.stateT=0.28;f.attackCd=0.15;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,76,88,16,290,f.face,-0.95,0.22) /* J2段目 (user spec): ダメージ 18 -> 16, KB 330 -> 290 */;spawnParticles(f.x+f.face*18,f.y+f.h*0.3,9,"#fef3c7",170);beep(330,.07,"square",.045)}
+     if(f.comboStep===0){f.state="wswing";f.stateT=0.22;f.attackCd=0.13;f.vx+=f.face*105;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,80,66,14,250,f.face,-0.24,0.32) /* J1段目 横薙ぎ (user spec): 後硬直 0.21 -> 0.20秒 (attackCd 0.14 -> 0.13 + 共通0.07), 判定 74x66 -> 80x66, 被弾硬直 0.22 -> 0.32秒 */;beep(420,.05,"square",.04)}
+     else if(f.comboStep===1){f.state="wswing2";f.stateT=0.28;f.attackCd=0.15;f.vx+=f.face*64;capVx(f,RUN_MAX*1.25);meleeHit(f,foe,76,88,16,290,f.face,-0.95,0.34) /* J2段目 平返し (user spec): 被弾硬直 0.22 -> 0.34秒 */;spawnParticles(f.x+f.face*18,f.y+f.h*0.3,9,"#fef3c7",170);beep(330,.07,"square",.045)}
      else{f.state="wslam";f.stateT=0.38;f.attackCd=0.48;f.vx+=f.face*165;capVx(f,RUN_MAX*1.25);var wSlamHit=meleeHit(f,foe,92,74,26,660,f.face,-0.42) /* J3段目 (user spec): KB 620 -> 660 */;if(wSlamHit){for(var wm=0;wm<fighters.length;wm++){var wmf=fighters[wm];if(wmf!==f&&!wmf.dead&&!wmf.onGround&&wmf.lastAttacker===f&&wmf.lastAttackT===time)wmf.vy=Math.max(wmf.vy,660)}} /* メテオ判定: an airborne foe caught by the slam is spiked straight down */spawnParticles(f.x+f.face*26,f.y+f.h*0.55,18,"#fb923c",250);spawnParticles(f.x+f.face*30,f.y+f.h*0.7,8,"#fde68a",190);spawnRing(f.x+f.face*34,f.y+f.h*0.55,"#fb923c",52);spawnFxBurst(FXIMG.hit,f.x+f.face*30,f.y+f.h*0.5,150,0.3,0.4,f.face,0.85);if(wSlamHit)shake=Math.max(shake,3.5);beep(170,.11,"sawtooth",.06)}
    }
  }else if(type==="k"){
