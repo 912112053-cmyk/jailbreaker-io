@@ -434,6 +434,21 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["00:58"],tag:"演出",title:"KOJIRO：U「居合斬り」のモーションを直立不動に変更しました",
+   items:["U「居合斬り」発動中の体のモーションを、これまでの前傾姿勢（前に寄って少し沈み込む動き）から、直立した待機姿勢のまま静止する「直立不動」に変更しました",
+          "居合斬りのエフェクト（緑の剣気・移動前〜移動後を結ぶ白い一直線・パーティクル）はこれまで通り表示されます。前進する移動そのものも変更ありません",
+          "ダメージ・KB・判定・硬直など技の性能は一切変更ありません",
+          "オンライン対戦のビルド版数をv249に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["00:54"],tag:"演出",title:"KOJIRO：J 3段目「三突き」と前+J「疾風突き」のエフェクトを矢印から刀に変更しました",
+   items:["J 3段目「三突き」のエフェクトを、先端が矢印の形をした突きの閃光から、柄・金の鍔・鋼の刀身（切先まで）を描く刀の突きに変更しました。上段・中段・下段の順に刀が伸びる動きと、出た段が薄く残る見せ方はこれまで通りです",
+          "前+J「疾風突き」のエフェクトも、判定が出る瞬間に伸びる矢印の閃光から、柄・鍔・刀身を持つ刀が突き出るエフェクトに変更しました。突進中の風切り線はこれまで通りです",
+          "ダメージ・KB・判定・硬直など技の性能は一切変更ありません",
+          "オンライン対戦のビルド版数をv248に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["00:51"],tag:"演出",title:"KOJIRO：空中J「空斬り」と空中↑+K「昇り斬り」のエフェクトをもう一つ前の見た目に戻しました",
+   items:["空中J「空斬り」のエフェクトを、横一文字の斬撃帯・斬撃の弧・閃光のパーティクルと風テクスチャがあった見た目（全技エフェクト追加時の見た目）に戻しました",
+          "空中↑+K「昇り斬り」のエフェクトを、二連撃の剣撃の弧・上昇の線・パーティクルと風テクスチャ（1段目・2段目の両方）があった見た目に戻しました",
+          "その他の技のエフェクトは変更ありません。ダメージ・KB・判定・硬直など技の性能も一切変更ありません",
+          "オンライン対戦のビルド版数をv247に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["00:36"],tag:"演出",title:"KOJIRO：空中J「空斬り」と空中↑+K「昇り斬り」のエフェクトを元の見た目に戻しました",
    items:["空中J「空斬り」に追加していた横一文字の斬撃帯・斬撃の弧・閃光のパーティクルと風テクスチャを取り除き、エフェクト追加前の見た目に戻しました",
           "空中↑+K「昇り斬り」に追加していた二連撃の剣撃の弧・上昇の線・パーティクルと風テクスチャ（1段目・2段目の両方）を取り除き、エフェクト追加前の見た目に戻しました",
@@ -1579,7 +1594,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v246";
+var BUILD_ID="v249";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6544,7 +6559,8 @@ function startKojiroAttack(f,type,foe){
      f.state="airslash";f.stateT=0.3;f.attackCd=0.31;f.comboWin=0; /* 後硬直 0.43 -> 0.38秒: attackCd 0.31 + 0.07 (user spec) */
      if(f.vy>60)f.vy=60;
      var kjAirList=[];meleeHit(f,foe,104,92,14,360,f.face,-0.3,0.34,false,0,kjAirList);meleeHit(f,foe,104,92,14,360,-f.face,-0.15,0.34,false,0,kjAirList); /* 空斬り (user spec): damage 前13/後7 -> 14, KB 前360/後200 -> 360, box 前84x92/後60x76 -> 周囲104x92 (both sides, shared hitList so one foe is hit once), 被弾硬直 0.22 -> 0.34秒 */
-     beep(1050,.06,"square",.045); /* 空斬り: ワザエフェクト削除済み */
+     spawnParticles(f.x,f.y+f.h*0.45,14,"#fecaca",240);spawnRing(f.x,f.y+f.h*0.45,"#f87171",48);spawnSparks(f.x+f.face*36,f.y+f.h*0.4,f.face,"#fff1f2",5);spawnSparks(f.x-f.face*36,f.y+f.h*0.4,-f.face,"#fff1f2",5); /* 空斬り: 横一文字の斬撃帯・斬撃の弧と同時に閃光のパーティクル (弧と帯は drawKojiro 側、風テクスチャは描画側の kjfx) */
+     beep(1050,.06,"square",.045);
    }else if(downHeld){
      /* 下段斬り (user spec): crouched two-hit sweep at the legs — the
         first cut lands on the press, the second ticks out 0.16s later
@@ -6633,7 +6649,8 @@ function startKojiroAttack(f,type,foe){
      f.flyCd=2.2;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
      f.vy=-820;f.vx=0;f.onGround=false;f.fastfall=false;
      meleeHit(f,foe,76,86,13,820,0,-1.0); /* 1段目 KB 240 -> 820・真上吹き (user spec) */
-     beep(980,.07,"square",.05); /* 昇り斬り 1段目: ワザエフェクト削除済み */
+     spawnParticles(f.x+f.face*26,f.y+f.h*0.5,10,"#fecaca",210);spawnSparks(f.x+f.face*30,f.y+f.h*0.45,f.face,"#fff1f2",5); /* 昇り斬り 1段目: 上昇しながらの剣撃の弧と同時に破片と閃光 (弧と上昇の線は drawKojiro 側、風テクスチャは描画側の kjfx) */
+     beep(980,.07,"square",.05);
    }else if(!f.onGround){
      /* 空中三日月斬り: crescent cut in the air (delayed hit in
         stepFighter). NOTE: 空中↓+K 急降下斬り was DELETED (user spec) —
@@ -8912,7 +8929,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
- if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). ワザエフェクトは削除済み */
+ if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);spawnParticles(f.x+f.face*28,f.y+f.h*0.4,11,"#fecaca",220);spawnRing(f.x+f.face*30,f.y+f.h*0.4,"#f87171",40);spawnSparks(f.x+f.face*32,f.y+f.h*0.35,f.face,"#fff1f2",5);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). 判定と同時に2段目の剣撃の弧・破片・閃光 (弧は drawKojiro 側) */
  /* KOJIRO 落下斬り (air down+J): the 真下62x74 body box stays live
     for the WHOLE fall (user spec) — retested every frame until he
     lands, one hit per foe per dive (diveHitMask in kojiroDiveBodyHit) */
@@ -9709,6 +9726,7 @@ function spriteFrameIdx(f,key){
  if(f.frozen>0)return 0;
  if(f.hitstun>0)return 10;
  if(f.guarding||f.state==="guard")return 9;
+ if(f.state==="iaido")return 0; /* KOJIRO U 居合斬り (user spec): 直立不動 — 攻撃フレーム (12/13) へ切り替えず、直立した待機フレームのまま静止する。斬撃エフェクト (緑の剣気・白い一直線) は drawKojiro 側で従来通り描く */
  if(f.state!==f._animSt){f._animSt=f.state;f._animTot=f.stateT||0}
  if(f.state&&f.state!=="idle"&&f.stateT>0){
   var tot=f._animTot>0?f._animTot:f.stateT;
@@ -10972,13 +10990,14 @@ function drawKojiro(f){
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
  var isGuardJ=!!f.guarding||f.state==="guard";
- var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardJ,air=!f.onGround&&!isGuardJ;
- var crouch=isGuardJ?6:((f.state==="lowcut")?6:((f.state==="iaido"||f.state==="thrust")?2:(f.state==="sweep"?7:0))); /* 下段斬り and 風波 are thrown from a deep crouch */
+ var iaidoStill=f.state==="iaido"; /* U 居合斬り (user spec): 本体は直立不動 — 前傾 (走行傾き・ダッシュ傾き)・しゃがみ・前方への寄せを一切付けない。移動そのものと斬撃エフェクトは従来通り */
+ var run=f.onGround&&Math.abs(f.vx)>=30&&!isGuardJ&&!iaidoStill,air=!f.onGround&&!isGuardJ;
+ var crouch=isGuardJ?6:((f.state==="lowcut")?6:((f.state==="thrust")?2:(f.state==="sweep"?7:0))); /* 下段斬り and 風波 are thrown from a deep crouch */
  ctx.translate(0,crouch);
  if(run)ctx.rotate(0.07);
- if((f.dashT||0)>0)ctx.rotate(0.10);
- if(air&&f.vy>120)ctx.rotate(0.10);
- if(f.state==="thrust"||f.state==="dashthrust"||f.state==="thrust3"||f.state==="iaido")ctx.translate(10,0);
+ if((f.dashT||0)>0&&!iaidoStill)ctx.rotate(0.10);
+ if(air&&f.vy>120&&!iaidoStill)ctx.rotate(0.10);
+ if(f.state==="thrust"||f.state==="dashthrust"||f.state==="thrust3")ctx.translate(10,0);
  if(f.state==="chop"||f.state==="heavy"||f.state==="yokonagi"||f.state==="jkcombo")ctx.translate(8,0);
  if(f.state==="lowcut")ctx.translate(7,2);
  if(f.state==="rise"||f.state==="riseup"||f.state==="krise")ctx.translate(2,-3);
@@ -10997,6 +11016,18 @@ function drawKojiro(f){
  function kjCres(cx,cy,r,al){ctx.save();ctx.globalAlpha=al;ctx.translate(cx,cy);
   function one(sc,fill){ctx.save();ctx.scale(sc,sc);ctx.beginPath();ctx.arc(0,0,r,-1.3,1.3);ctx.arc(r*0.45,0,r*0.8,1.08,-1.08,true);ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.restore()}
   one(1.18,"rgba(239,68,68,.32)");one(1,"#f87171");one(0.86,"#fecaca");one(0.6,"#fff1f2");ctx.restore()}
+ function kjKatana(gx,cy,len,al,glow){ctx.save();ctx.globalAlpha=al;
+  ctx.fillStyle="#450a0a";ctx.fillRect(gx-14,cy-2.3,13,4.6);
+  ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(gx-11,cy-2.3);ctx.lineTo(gx-8,cy+2.3);ctx.moveTo(gx-6,cy-2.3);ctx.lineTo(gx-3,cy+2.3);ctx.stroke();
+  ctx.strokeStyle=glow||glowC;ctx.lineWidth=6.5;ctx.beginPath();ctx.moveTo(gx+1,cy);ctx.lineTo(gx+1+len,cy);ctx.stroke();
+  var bx=gx+2,tx=gx+2+len;
+  ctx.beginPath();ctx.moveTo(bx,cy-3.1);ctx.lineTo(tx-11,cy-2.3);ctx.lineTo(tx,cy);ctx.lineTo(tx-11,cy+1.5);ctx.lineTo(bx,cy+2.1);ctx.closePath();ctx.fillStyle="#cbd5e1";ctx.fill();
+  ctx.beginPath();ctx.moveTo(bx,cy-3.1);ctx.lineTo(tx-11,cy-2.3);ctx.lineTo(tx,cy);ctx.lineTo(tx-13,cy-0.4);ctx.lineTo(bx,cy-0.6);ctx.closePath();ctx.fillStyle="#fff1f2";ctx.fill();
+  ctx.strokeStyle="rgba(100,116,139,.8)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx+1,cy-0.5);ctx.lineTo(tx-12,cy-0.3);ctx.stroke();
+  ctx.strokeStyle="#ffffff";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(bx+1,cy+1.7);ctx.lineTo(tx-11,cy+1.2);ctx.lineTo(tx-1.5,cy+0.2);ctx.stroke();
+  ctx.fillStyle="#b45309";ctx.fillRect(gx-1.4,cy-6.2,3,12.4);
+  ctx.fillStyle="#f59e0b";ctx.fillRect(gx-0.5,cy-6.2,1.1,12.4);
+  ctx.restore()} /* 突き技用の刀エフェクト: 柄・金の鍔・鋼の刀身 (切先まで) を描く。矢印の三角は使わない */
  if(f.state==="chop"){
   /* J 1段目 袈裟斬り: 頭上後方から前方下へ、上から下に振り下ろす軌跡 */
   var cp1=1-Math.max(0,f.stateT)/0.26,ca1=-2.25+cp1*3.2;
@@ -11008,12 +11039,10 @@ function drawKojiro(f){
   kjArc(4,26,48,ra2-0.6,ra2+0.6,glowC,coreC,3.2);kjArc(4,26,39,ra2-0.5,ra2+0.5,glowC,coreC,2);
  }
  else if(f.state==="thrust3"){
-  /* J 3段目 三突き: 上段・中段・下段の順に伸びる突きの閃光 (出た段は薄く残る) */
+  /* J 3段目 三突き: 上段・中段・下段の順に伸びる刀の突き (出た段は薄く残る) — 矢印ではなく柄・鍔・刀身を持つ刀のエフェクト */
   var thY=[9,25,43],thN=f.spinHits||1;
-  for(var ti=0;ti<thN;ti++){var isLast=ti===thN-1,ext=isLast?Math.min(1,(f.spinTick||0)/0.07):1,tx1=14+64*ext;
-   ctx.strokeStyle=isLast?glowC:"rgba(248,113,113,.28)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(14,thY[ti]);ctx.lineTo(tx1,thY[ti]);ctx.stroke();
-   ctx.strokeStyle=isLast?coreC:"rgba(255,241,242,.5)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(14,thY[ti]);ctx.lineTo(tx1+4,thY[ti]);ctx.stroke();
-   if(isLast){ctx.fillStyle=coreC;ctx.beginPath();ctx.moveTo(tx1+4,thY[ti]-3.4);ctx.lineTo(tx1+11,thY[ti]);ctx.lineTo(tx1+4,thY[ti]+3.4);ctx.closePath();ctx.fill()}}
+  for(var ti=0;ti<thN;ti++){var isLast=ti===thN-1,ext=isLast?Math.min(1,(f.spinTick||0)/0.07):1;
+   kjKatana(16,thY[ti],6+64*ext,isLast?1:0.42,isLast?glowC:"rgba(248,113,113,.28)")}
  }
  else if(f.state==="yokonagi"){
   /* J 4段目 横薙ぎ: 大きく横に振り抜く一薙ぎ — 大きな弧と後ろへ流れる風切り線 */
@@ -11021,11 +11050,29 @@ function drawKojiro(f){
   kjArc(2,26,57,ya-0.72,ya+0.72,glowC,coreC,3.6);kjArc(2,26,47,ya-0.6,ya+0.6,glowC,coreC,2.2);
   ctx.strokeStyle="rgba(254,202,202,.6)";ctx.lineWidth=2;for(var yl=0;yl<3;yl++){var yy2=8+yl*18;ctx.beginPath();ctx.moveTo(-6,yy2);ctx.lineTo(-26-yl*4,yy2);ctx.stroke()}
  }
+ else if(f.state==="airslash"){
+  /* 空中J 空斬り: 横一文字に切り裂く豪華な斬撃 — 周囲全体へ広がる斬撃帯と前後の斬撃の弧 (判定は周囲104x92) */
+  var ap=1-Math.max(0,f.stateT)/0.3,asw=0.25+ap*0.75;
+  ctx.strokeStyle=glowC;ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-56,26);ctx.lineTo(56,26);ctx.stroke();
+  ctx.strokeStyle=coreC;ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(-62,26);ctx.lineTo(62,26);ctx.stroke();
+  kjArc(0,26,56,-asw,asw,glowC,coreC,3.6);kjArc(0,26,46,-asw*0.9,asw*0.9,glowC,coreC,2.2);
+  kjArc(0,26,56,Math.PI-asw,Math.PI+asw,glowC,coreC,3.6);kjArc(0,26,46,Math.PI-asw*0.9,Math.PI+asw*0.9,glowC,coreC,2.2);
+  ctx.strokeStyle="rgba(255,241,242,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(52,10);ctx.lineTo(60,4);ctx.moveTo(-52,42);ctx.lineTo(-60,48);ctx.moveTo(50,44);ctx.lineTo(58,50);ctx.stroke();
+ }
+ else if(f.state==="krise"){
+  /* 空中↑+K 昇り斬り: 上昇しながらの二連撃の剣撃 — 1段目は前方下から頭上へ、2段目 (hitDone 後) は逆方向へ大きく振り抜く弧。上昇の線が体に沿って下へ流れる */
+  ctx.strokeStyle="rgba(254,202,202,.7)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-16,6);ctx.lineTo(-19,34);ctx.moveTo(0,2);ctx.lineTo(-2,30);ctx.moveTo(17,8);ctx.lineTo(20,36);ctx.stroke();
+  ctx.strokeStyle="rgba(224,242,254,.5)";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-9,10);ctx.lineTo(-11,40);ctx.stroke();
+  if(!f.hitDone){var kp1=1-Math.max(0,f.stateT-0.22)/0.24,ka1=1.5-kp1*3.0;
+   kjArc(4,26,50,ka1-0.62,ka1+0.62,glowC,coreC,3.4);kjArc(4,26,41,ka1-0.5,ka1+0.5,glowC,coreC,2.2);
+  }else{var kp2=1-Math.max(0,f.stateT)/0.22,ka2=-1.7+kp2*3.2;
+   kjArc(5,22,54,ka2-0.64,ka2+0.64,glowC,coreC,3.6);kjArc(5,22,45,ka2-0.52,ka2+0.52,glowC,coreC,2.2)}
+ }
  else if(f.state==="dashthrust"){
   /* 前+J 疾風突き: 突進中は風を切る線が後ろへ流れ、判定が出た瞬間に突きの閃光が伸びる */
   ctx.strokeStyle="rgba(254,202,202,.75)";ctx.lineWidth=2.6;for(var dl2=0;dl2<5;dl2++){var dy2=6+dl2*11+Math.sin(time*40+dl2)*1.5;ctx.beginPath();ctx.moveTo(-14,dy2);ctx.lineTo(-44-dl2*6,dy2);ctx.stroke()}
   ctx.strokeStyle="rgba(224,242,254,.55)";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(-10,28);ctx.lineTo(-52,28);ctx.stroke();
-  if(f.hitDone){ctx.strokeStyle=glowC;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(16,24);ctx.lineTo(66,24);ctx.stroke();ctx.strokeStyle=coreC;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(16,24);ctx.lineTo(72,24);ctx.stroke();ctx.fillStyle=coreC;ctx.beginPath();ctx.moveTo(72,20.5);ctx.lineTo(82,24);ctx.lineTo(72,27.5);ctx.closePath();ctx.fill()}
+  if(f.hitDone){kjKatana(16,24,66,1,glowC)} /* 判定が出た瞬間は矢印ではなく刀が突き出る: 柄・鍔・刀身のエフェクト */
  }
  else if(f.state==="lowcut"){
   /* ↓+J 下段斬り: しゃがんで足元を斬る低い弧 — 2段目は一回り大きく */
@@ -11392,7 +11439,7 @@ function draw(){
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
      if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
-     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,140]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
+     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],airslash:[0,150],krise:[30,130],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,140]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
