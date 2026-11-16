@@ -434,6 +434,23 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["01:43"],tag:"調整",title:"KOJIRO：昇り斬りを豪華に／燕返しの燕を1.5倍に／ウルト溜まりを下方修正",
+   items:["空中↑+K「昇り斬り」のエフェクトを豪華にしました。斬撃の弧が三層になって大きく広がり、上昇の風の線・破片・二重の衝撃波・閃光も増えました（1段目・2段目とも）。風テクスチャも大きくしました",
+          "J+K「燕返し」2段目で背景に現れる緑の燕のエフェクトを1.5倍に大きくしました。燕を包む緑の剣気の暈と、背後へ流れる風切り線も合わせて拡大しました",
+          "ウルトの溜まりやすさを約0.9倍→約0.7倍に下方修正しました。与えたダメージに対してゲージが増える量が少なくなります。技一覧の表示も実装に合わせて更新しました",
+          "昇り斬り・燕返しのダメージ・KB・判定・硬直など技の性能は変更ありません",
+          "オンライン対戦のビルド版数をv257に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["01:39"],tag:"修正",title:"KOJIRO：空中K「空中三日月斬り」発動直後の急降下を修正",
+   items:["空中K「空中三日月斬り」：発動した瞬間に落下速度が最低300まで引き上げられ、急降下してしまう不具合を修正しました",
+          "発動時は空中J「空斬り」と同じ滞空処理に変更し、落下速度が速い場合だけ60まで抑えるようにしました。上昇中に出しても真下へ引っ張られることはなくなります",
+          "ダメージ22・KB740・発生約0.10秒・全体0.36秒・後硬直0.34秒・判定76×76・着地硬直0.3秒など、その他の性能は変更ありません",
+          "オンライン対戦のビルド版数をv256に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["01:36"],tag:"調整",title:"KOJIRO：J+K「燕返し」を上方修正",
+   items:["J+K「燕返し」：ダメージ 12＋16→13＋18、KB 300／660→300／720に上方修正しました",
+          "J+K「燕返し」：2段目の発生 約0.24秒→約0.22秒、後硬直 0.49秒→0.44秒に上方修正しました",
+          "J+K「燕返し」：判定 74×60／78×80→78×60／82×80に上方修正しました。着地硬直0.18秒は変更ありません",
+          "2段目のエフェクト（縦斬り・背景の大きな緑の燕）のタイミングも新しい発生に合わせました。他のキャラのJ+Kの性能は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv255に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["01:28"],tag:"演出",title:"KOJIRO：↓+K「風波」の竜巻エフェクトを大きくしました",
    items:["↓+K「風波」の竜巻エフェクトを約1.5倍に大きくしました。緑の剣気の渦・竜巻本体の輪・螺旋を描いて昇る剣気の刃が、判定（周囲200×200）を超えて広がり、頭上はるか高くまで立ち上るようになりました",
           "発動時の衝撃波の輪・巻き上がる破片・風テクスチャも竜巻の大きさに合わせて拡大しました",
@@ -703,7 +720,7 @@ var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 
 var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れの剣士。袈裟斬り・斬り上げ・三突き・横薙ぎの<b>四段チェーン</b>に、竜巻の風波、緑の剣気の燕返し、居合と、剣の軌跡も体の動きも踏み込み方も一技ごとに違う、近接特化のキャラ。<b>飛び道具は一切持たない</b>（唯一の例外はウルトの斬撃だけ）。間合いの中で剣を振り分けて戦う。HPは240に下がった代わりに、チェーンの回転とダッシュが速くなった。</p>'
-+mvSpec(mvS('HP','240')+mvS('地上速度','464')+mvS('空中速度','450')+mvS('受けKB','×1.08')+mvS('ダッシュ','1180')+mvS('ウルト溜まり','約0.9倍'))
++mvSpec(mvS('HP','240')+mvS('地上速度','464')+mvS('空中速度','450')+mvS('受けKB','×1.08')+mvS('ダッシュ','1180')+mvS('ウルト溜まり','約0.7倍'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — 袈裟斬り</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒</span><p>上から下に刀を振り下ろして攻撃する（旧「突き」から変更）。後硬直が大幅に短くなり、チェーンの起点として振り続けられる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.16秒')+mvS('判定','80×52')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — 斬り上げ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目に引き続いて下から上へ刀を振り上げて攻撃。相手を浮かせる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','250（上吹き強）')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.18秒')+mvS('判定','68×84')+mvS('被弾硬直','0.36秒'))+'</div></div>'
@@ -713,7 +730,7 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>↓+J — 下段斬り</b><p>しゃがみながら刀を低く二回突いて、相手の足元を攻撃する。当たった相手は<b>真上</b>へ吹っ飛ぶ。各ヒットに被弾硬直0.34秒付き。</p>'+mvSpec(mvS('ダメージ','7＋7')+mvS('KB','200／400（真上）')+mvS('発生','即時／0.16秒')+mvS('全体','0.32秒')+mvS('後硬直','0.22秒')+mvS('判定','82×36')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — 空斬り</b><p>空中で横一文字に斬る。少し滞空する。判定は周囲全体にあり、ヒットは1回まで。各ヒットに被弾硬直0.34秒付き。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','360')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.38秒')+mvS('判定','周囲104×92')+mvS('被弾硬直','0.34秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — 落下斬り</b><p>急降下して落下攻撃する。<b>落下中は常に本体の判定が出続ける</b>（ヒットは1回まで）。<b>着地点に周囲へ斬撃</b>が発生する。着地すると<b>着地硬直0.5秒</b>があり、その場から動けなくなる。</p>'+mvSpec(mvS('ダメージ','本体18／着地 12')+mvS('KB','620')+mvS('発生','即時')+mvS('全体','0.32秒')+mvS('後硬直','0.45秒')+mvS('判定','本体 真下62×74／着地 周囲122×54')+mvS('着地硬直','0.5秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。1段目は<b>緑の横一文字斬り</b>、2段目は<b>縦斬り</b>で、同時に<b>背景に大きな緑の燕</b>が現れる。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','12＋16')+mvS('KB','300／660')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','74×60／78×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — 燕返し</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p><b>緑の剣気</b>を纏った二連撃を放つ。1段目は<b>緑の横一文字斬り</b>、2段目は<b>縦斬り</b>で、同時に<b>背景に大きな緑の燕</b>が現れる。2ヒットで大きく吹っ飛ばす。空中で出して着地すると<b>着地硬直0.18秒</b>があり、その場から動けない。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','13＋18')+mvS('KB','300／720')+mvS('発生','即時／2段目 約0.22秒')+mvS('全体','0.50秒')+mvS('後硬直','0.44秒')+mvS('判定','78×60／82×80')+mvS('着地硬直','0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 三日月斬り</b> <span style="color:#f59e0b;font-weight:900">重い・吹っ飛ばし</span><p>三日月型の斬撃の攻撃をする。判定は振りの途中（約0.12秒後）に出る。出は遅いが一撃の威力と吹っ飛ばしは最大級。</p>'+mvSpec(mvS('ダメージ','24')+mvS('KB','770')+mvS('発生','約0.12秒')+mvS('全体','0.42秒')+mvS('後硬直','0.44秒')+mvS('判定','82×80'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 空中三日月斬り</b><p>空中で三日月型の斬撃の攻撃をする。判定は約0.10秒後に出る。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','740')+mvS('発生','約0.10秒')+mvS('全体','0.36秒')+mvS('後硬直','0.34秒')+mvS('判定','76×76')+mvS('着地硬直','0.3秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — 風波</b> <span style="color:#4ade80;font-weight:900">竜巻・ダメージなし</span><p>しゃがんで竜巻を起こし、<b>判定全体を覆う緑の剣気</b>を竜巻と一緒に放つ（旧「旋風斬り」から変更）。<b>ダメージは一切ない</b>代わりに、巨大な竜巻の判定で前後とも強烈に吹き飛ばす。技中はその場から動けず、<b>後硬直（完全硬直）の間も移動・ジャンプ・ワザができない</b>。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('KB','前820／後820')+mvS('発生','即時')+mvS('全体','0.6秒')+mvS('後硬直','1.45秒（完全硬直）')+mvS('判定','周囲200×200'))+'</div></div>'
@@ -1611,7 +1628,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v254";
+var BUILD_ID="v257";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6551,12 +6568,12 @@ function startKojiroAttack(f,type,foe){
  var backHeld=f.isPlayer?((f.face===1&&(!!keys.left||stick.dx<-0.28))||(f.face===-1&&(!!keys.right||stick.dx>0.28))):(f.remote?f.hBack:false);
  if(type==="jk"){
    /* 燕返し (user spec): a green-ki two-hit combo — first cut on the
-      press (12 dmg / KB 300, box 74x60), the second lands ~0.24s later
-      in stepFighter (16 dmg / KB 660, box 78x80). Landing lag 0.18 in
-      LAND_LAG. attackCd 0.42 + the universal 0.07 tail = 後硬直 0.49 */
-   f.state="jkcombo";f.stateT=0.5;f.attackCd=0.42;f.comboWin=0;f.hitDone=false;
+      press (13 dmg / KB 300, box 78x60), the second lands ~0.22s later
+      in stepFighter (18 dmg / KB 720, box 82x80). Landing lag 0.18 in
+      LAND_LAG. attackCd 0.37 + the universal 0.07 tail = 後硬直 0.44 */
+   f.state="jkcombo";f.stateT=0.5;f.attackCd=0.37;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*120;capVx(f,RUN_MAX*1.2);
-   meleeHit(f,foe,74,60,12,300,f.face,-0.2);
+   meleeHit(f,foe,78,60,13,300,f.face,-0.2);
    spawnParticles(f.x+f.face*30,f.y+f.h*0.4,10,"#4ade80",200);spawnSparks(f.x+f.face*34,f.y+f.h*0.4,f.face,"#bbf7d0",5); /* 燕返し 1段目: 緑の横一文字斬り — 判定と同時に剣気が飛ぶ (横一文字の帯は drawKojiro 側) */
    beep(900,.06,"square",.05);
  }else if(type==="j"){
@@ -6666,14 +6683,22 @@ function startKojiroAttack(f,type,foe){
      f.flyCd=2.2;f.state="krise";f.stateT=0.46;f.attackCd=0.32;f.hitDone=false;f.comboWin=0;
      f.vy=-820;f.vx=0;f.onGround=false;f.fastfall=false;
      meleeHit(f,foe,76,86,13,820,0,-1.0); /* 1段目 KB 240 -> 820・真上吹き (user spec) */
-     spawnParticles(f.x+f.face*26,f.y+f.h*0.5,10,"#fecaca",210);spawnSparks(f.x+f.face*30,f.y+f.h*0.45,f.face,"#fff1f2",5); /* 昇り斬り 1段目: 上昇しながらの剣撃の弧と同時に破片と閃光 (弧と上昇の線は drawKojiro 側、風テクスチャは描画側の kjfx) */
+     spawnParticles(f.x+f.face*26,f.y+f.h*0.5,22,"#fecaca",290);spawnParticles(f.x+f.face*20,f.y+f.h*0.55,13,"#f87171",230);spawnParticles(f.x,f.y+f.h*0.6,9,"#e0f2fe",190);spawnRing(f.x+f.face*26,f.y+f.h*0.45,"#f87171",54);spawnRing(f.x+f.face*22,f.y+f.h*0.5,"#fecaca",34);spawnSparks(f.x+f.face*30,f.y+f.h*0.45,f.face,"#fff1f2",9);spawnSparks(f.x-f.face*20,f.y+f.h*0.5,-f.face,"#fff1f2",4); /* 昇り斬り 1段目 (豪華化, user spec): 上昇しながらの剣撃の弧と同時に破片・二重の衝撃波・前後の閃光 (弧と上昇の線は drawKojiro 側、風テクスチャは描画側の kjfx) */
      beep(980,.07,"square",.05);
    }else if(!f.onGround){
      /* 空中三日月斬り: crescent cut in the air (delayed hit in
         stepFighter). NOTE: 空中↓+K 急降下斬り was DELETED (user spec) —
-        pressing down+K in the air now just does this move */
+        pressing down+K in the air now just does this move.
+        BUG FIX: the press used to force f.vy = Math.max(f.vy, 300),
+        snapping the fall speed to at least 300 the instant the move
+        started — a sudden dive right after activation, even out of a
+        rise. This move is NOT a dive (the real dives — 落下斬り /
+        メテオドロップ — force 600+ and arm a landing shockwave), so
+        it now gets the same brief-hover treatment as 空斬り above:
+        a fast fall is only capped down to 60, a rise is untouched,
+        and gravity resumes normally for the rest of the 0.36s move */
      f.state="airheavy";f.stateT=0.36;f.attackCd=0.27;f.hitDone=false;f.comboWin=0; /* attackCd 0.27 + 0.07 = 後硬直 0.34 (user spec) */
-     f.vy=Math.max(f.vy,300);beep(220,.11,"sawtooth",.05);
+     if(f.vy>60)f.vy=60;beep(220,.11,"sawtooth",.05);
    }else{
      /* 三日月斬り: the crescent overhead — hardest single K hit (delayed
         hit in stepFighter, state "heavy") */
@@ -8454,10 +8479,10 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
 /* ult meter gain per hit (user tuning): overall gain is divided by 1.5 —
    ults were charging too fast — and KOJIRO / WARDEN pay a further 1/1.2
    on top of that. Kairo keeps his older personal 1/1.6 rate and Kojiro
-   his 1.45 base rate underneath those divisors. KOJIRO buff (user tuning):
-   his ult meter gain is multiplied by a further 1.117 on top of all that
-   (total ~x0.9, user spec). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=1.117; /* KOJIRO ult gain (user spec): total ~x0.9 (1.45/1.5/1.2 x 1.117), down from ~x1.33 (was x1.65). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
+   his 1.45 base rate underneath those divisors. KOJIRO tuning (user spec):
+   his ult meter gain is multiplied by a further 0.869 on top of all that
+   (total ~x0.7, nerfed from ~x0.9). */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.9; /* AXE ult gain (user spec): x0.6 total (1/1.5 x 0.9), down from ~x0.67 */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -8795,7 +8820,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     is pinned for 0.4s and then thrown (the grab system above
     applyGrabHit). No hitstun of its own （被弾硬直 なし） */
  if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,146,84,16,800,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?78:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:16))),f.char==="kojiro"?660:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): KB 560 -> 660, box 86x74 -> 78x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char==="kojiro"){spawnParticles(f.x+f.face*30,f.y+f.h*0.4,13,"#4ade80",230);spawnRing(f.x+f.face*34,f.y+f.h*0.4,"#4ade80",42);spawnSparks(f.x+f.face*36,f.y+f.h*0.35,f.face,"#dcfce7",5)}else spawnParticles(f.x,f.y+f.h*0.45,14,(f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: 緑の剣気 (上の分岐 — 縦斬りの弧と燕は drawKojiro 側) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=(f.char==="kojiro"?0.28:0.26)){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?82:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:(f.char==="kojiro"?18:16)))),f.char==="kojiro"?720:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): 発生 約0.24秒 -> 約0.22秒 (KOJIRO only: threshold 0.28, other chars keep 0.26), dmg 16 -> 18, KB 660 -> 720, box 78x80 -> 82x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char==="kojiro"){spawnParticles(f.x+f.face*30,f.y+f.h*0.4,13,"#4ade80",230);spawnRing(f.x+f.face*34,f.y+f.h*0.4,"#4ade80",42);spawnSparks(f.x+f.face*36,f.y+f.h*0.35,f.face,"#dcfce7",5)}else spawnParticles(f.x,f.y+f.h*0.45,14,(f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: 緑の剣気 (上の分岐 — 縦斬りの弧と燕は drawKojiro 側) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,175,0.34,0.3,f.face,0.9);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);shake=Math.max(shake,4)} /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* MIMI&SHADE per-step work: SHADE's follow movement, its delayed
     hits (shHitT), MIMI's air-spin and light-barrage ticks, and the
     down+K light pillar */
@@ -8947,7 +8972,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  /* KOJIRO 昇り斬り (air up+K) second cut: the first cut landed on the
     press (startKojiroAttack); this second upward cut fires partway
     through the rise, at stateT 0.22 — still on the way up */
- if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);spawnParticles(f.x+f.face*28,f.y+f.h*0.4,11,"#fecaca",220);spawnRing(f.x+f.face*30,f.y+f.h*0.4,"#f87171",40);spawnSparks(f.x+f.face*32,f.y+f.h*0.35,f.face,"#fff1f2",5);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). 判定と同時に2段目の剣撃の弧・破片・閃光 (弧は drawKojiro 側) */
+ if(f.char==="kojiro"&&f.state==="krise"&&!f.hitDone&&f.stateT<=0.22){f.hitDone=true;meleeHit(f,foe,76,86,13,540,f.face,-1.05);spawnParticles(f.x+f.face*28,f.y+f.h*0.4,24,"#fecaca",300);spawnParticles(f.x+f.face*22,f.y+f.h*0.45,14,"#f87171",250);spawnParticles(f.x,f.y+f.h*0.5,9,"#e0f2fe",200);spawnRing(f.x+f.face*30,f.y+f.h*0.4,"#f87171",66);spawnRing(f.x+f.face*26,f.y+f.h*0.45,"#fecaca",44);spawnSparks(f.x+f.face*32,f.y+f.h*0.35,f.face,"#fff1f2",10);spawnSparks(f.x-f.face*22,f.y+f.h*0.4,-f.face,"#fff1f2",4);beep(1080,.07,"square",.05)} /* 2段目 KB 460 -> 540 (user spec). 判定と同時に2段目の剣撃の弧・破片・二重の衝撃波・閃光 (弧は drawKojiro 側)。エフェクト豪華化 (user spec): 破片と輪と閃光を増量 */
  /* KOJIRO 落下斬り (air down+J): the 真下62x74 body box stays live
     for the WHOLE fall (user spec) — retested every frame until he
     lands, one hit per foe per dive (diveHitMask in kojiroDiveBodyHit) */
@@ -11026,11 +11051,12 @@ function drawKojiro(f){
      描く巨大な燕のシルエット。2段目の判定が出た瞬間にふわりと現れ、
      羽をはためかせながら少し大きく広がり、技の終わりに向けて透ける。
      小さな燕が前方へ飛ぶ旧演出はこの大燕に置き換えた (描画のみの変更で、
-     判定・ダメージなど性能は一切変えていない) */
-  var bjp=1-Math.max(0,f.stateT)/0.26,bFade=Math.min(1,bjp*3.4)*Math.min(1,Math.max(0,f.stateT)/0.09+0.25),bScale=2.55+bjp*0.75,bFlap=Math.sin(time*26)*1.1;
+     判定・ダメージなど性能は一切変えていない)。燕のエフェクト全体は
+     1.5倍に拡大済み (user spec) */
+  var bjp=1-Math.max(0,f.stateT)/0.28,bFade=Math.min(1,bjp*3.4)*Math.min(1,Math.max(0,f.stateT)/0.09+0.25),bScale=(2.55+bjp*0.75)*1.5,bFlap=Math.sin(time*26)*1.1; /* 燕のエフェクトを1.5倍に拡大 (user spec): 本体のスケール・剣気の暈・風切り線をすべて1.5倍に */
   ctx.save();ctx.translate(2,20);ctx.globalAlpha=Math.max(0,bFade);
-  ctx.fillStyle="rgba(34,197,94,.14)";ctx.beginPath();ctx.ellipse(0,2,104,66,0,0,6.29);ctx.fill(); /* 燕を包む緑の剣気の暈 */
-  ctx.strokeStyle="rgba(134,239,172,.5)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-96,-20);ctx.lineTo(-58,-20);ctx.moveTo(-104,10);ctx.lineTo(-62,10);ctx.moveTo(-92,36);ctx.lineTo(-56,36);ctx.stroke(); /* 背後へ流れる風切り線 */
+  ctx.fillStyle="rgba(34,197,94,.14)";ctx.beginPath();ctx.ellipse(0,3,156,99,0,0,6.29);ctx.fill(); /* 燕を包む緑の剣気の暈 (1.5倍) */
+  ctx.strokeStyle="rgba(134,239,172,.5)";ctx.lineWidth=3.3;ctx.beginPath();ctx.moveTo(-144,-30);ctx.lineTo(-87,-30);ctx.moveTo(-156,15);ctx.lineTo(-93,15);ctx.moveTo(-138,54);ctx.lineTo(-84,54);ctx.stroke(); /* 背後へ流れる風切り線 (1.5倍) */
   ctx.scale(bScale,bScale);
   ctx.fillStyle="#15803d";ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(3,-2.8);ctx.lineTo(-6,-11.5-bFlap);ctx.lineTo(-4.2,-1.8);ctx.lineTo(-13,-6);ctx.lineTo(-9.5,0.4);ctx.lineTo(-13,7);ctx.lineTo(-4.4,2.4);ctx.lineTo(-5.5,10.5+bFlap);ctx.lineTo(2.5,3.2);ctx.closePath();ctx.fill(); /* 燕本体: 頭・上下の翼・燕尾 (小さな燕と同じ造形を大きく) */
   ctx.strokeStyle="rgba(187,247,208,.85)";ctx.lineWidth=0.7;ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(3,-2.8);ctx.lineTo(-6,-11.5-bFlap);ctx.stroke(); /* 翼の縁のハイライト */
@@ -11100,13 +11126,16 @@ function drawKojiro(f){
   ctx.strokeStyle="rgba(240,253,244,.9)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(aExt-4,10);ctx.lineTo(aExt+6,2);ctx.moveTo(-aExt+4,42);ctx.lineTo(-aExt-6,50);ctx.moveTo(aExt-2,44);ctx.lineTo(aExt+8,52);ctx.moveTo(-aExt+2,8);ctx.lineTo(-aExt-8,0);ctx.stroke();
  }
  else if(f.state==="krise"){
-  /* 空中↑+K 昇り斬り: 上昇しながらの二連撃の剣撃 — 1段目は前方下から頭上へ、2段目 (hitDone 後) は逆方向へ大きく振り抜く弧。上昇の線が体に沿って下へ流れる */
-  ctx.strokeStyle="rgba(254,202,202,.7)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-16,6);ctx.lineTo(-19,34);ctx.moveTo(0,2);ctx.lineTo(-2,30);ctx.moveTo(17,8);ctx.lineTo(20,36);ctx.stroke();
-  ctx.strokeStyle="rgba(224,242,254,.5)";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-9,10);ctx.lineTo(-11,40);ctx.stroke();
+  /* 空中↑+K 昇り斬り (豪華化, user spec): 上昇しながらの二連撃の剣撃 — 1段目は前方下から頭上へ、2段目 (hitDone 後) は逆方向へ大きく振り抜く弧。斬撃の弧は三層に太く大きくし、上昇の線は本数を増やして体に沿って下へ流れ、弧の切先には閃光が走る */
+  ctx.strokeStyle="rgba(254,202,202,.7)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-16,6);ctx.lineTo(-19,34);ctx.moveTo(0,2);ctx.lineTo(-2,30);ctx.moveTo(17,8);ctx.lineTo(20,36);ctx.moveTo(-26,14);ctx.lineTo(-30,44);ctx.moveTo(27,16);ctx.lineTo(31,46);ctx.stroke();
+  ctx.strokeStyle="rgba(224,242,254,.5)";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-9,10);ctx.lineTo(-11,40);ctx.moveTo(9,6);ctx.lineTo(11,38);ctx.stroke();
+  ctx.strokeStyle="rgba(255,241,242,.85)";ctx.lineWidth=1.8;for(var krw=0;krw<4;krw++){var krwy=4+krw*13+Math.sin(time*34+krw*1.9)*2;ctx.beginPath();ctx.moveTo(-30+krw*4,krwy);ctx.lineTo(-38+krw*4,krwy+9);ctx.stroke()} /* 上昇に置いていかれる細い風の残線 */
   if(!f.hitDone){var kp1=1-Math.max(0,f.stateT-0.22)/0.24,ka1=1.5-kp1*3.0;
-   kjArc(4,26,50,ka1-0.62,ka1+0.62,glowC,coreC,3.4);kjArc(4,26,41,ka1-0.5,ka1+0.5,glowC,coreC,2.2);
+   kjArc(4,26,63,ka1-0.72,ka1+0.72,glowC,coreC,1.9);kjArc(4,26,52,ka1-0.64,ka1+0.64,glowC,coreC,4);kjArc(4,26,42,ka1-0.52,ka1+0.52,glowC,coreC,2.5);
+   ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(4+Math.cos(ka1+0.72)*58,26+Math.sin(ka1+0.72)*58);ctx.lineTo(4+Math.cos(ka1+0.95)*70,26+Math.sin(ka1+0.95)*70);ctx.moveTo(4+Math.cos(ka1-0.72)*58,26+Math.sin(ka1-0.72)*58);ctx.lineTo(4+Math.cos(ka1-0.95)*70,26+Math.sin(ka1-0.95)*70);ctx.stroke(); /* 1段目: 弧の両端から伸びる切先の閃光 */
   }else{var kp2=1-Math.max(0,f.stateT)/0.22,ka2=-1.7+kp2*3.2;
-   kjArc(5,22,54,ka2-0.64,ka2+0.64,glowC,coreC,3.6);kjArc(5,22,45,ka2-0.52,ka2+0.52,glowC,coreC,2.2)}
+   kjArc(5,22,68,ka2-0.74,ka2+0.74,glowC,coreC,2);kjArc(5,22,56,ka2-0.66,ka2+0.66,glowC,coreC,4.2);kjArc(5,22,46,ka2-0.54,ka2+0.54,glowC,coreC,2.6);
+   ctx.strokeStyle="rgba(255,241,242,.9)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(5+Math.cos(ka2+0.74)*62,22+Math.sin(ka2+0.74)*62);ctx.lineTo(5+Math.cos(ka2+0.98)*75,22+Math.sin(ka2+0.98)*75);ctx.moveTo(5+Math.cos(ka2-0.74)*62,22+Math.sin(ka2-0.74)*62);ctx.lineTo(5+Math.cos(ka2-0.98)*75,22+Math.sin(ka2-0.98)*75);ctx.stroke()} /* 2段目: 逆方向へ振り抜く大きな三層の弧と切先の閃光 */
  }
  else if(f.state==="dashthrust"){
   /* 前+J 疾風突き: 突進中は風を切る線が後ろへ流れ、判定が出た瞬間に突きの閃光が伸びる */
@@ -11134,7 +11163,7 @@ function drawKojiro(f){
      (まっすぐ横へ伸びる緑の斬撃帯)、2段目は縦斬り (上から下へまっすぐ
      落ちる緑の斬撃帯) で、背景には大きな緑の燕が現れる (大燕そのものは
      本体の背後に描くため drawCharSprite の直前で描画している) */
-  if(!f.hitDone){var jp=1-Math.max(0,f.stateT-0.26)/0.24,jExt=16+jp*64,jY=24;
+  if(!f.hitDone){var jp=1-Math.max(0,f.stateT-0.28)/0.22,jExt=16+jp*64,jY=24;
    /* 1段目 横一文字: 空斬りと同じ三層の帯を緑で、前方へまっすぐ伸ばす */
    ctx.strokeStyle="rgba(34,197,94,.28)";ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(-12,jY);ctx.lineTo(jExt,jY);ctx.stroke();
    ctx.strokeStyle="rgba(74,222,128,.55)";ctx.lineWidth=9.5;ctx.beginPath();ctx.moveTo(-16,jY);ctx.lineTo(jExt+4,jY);ctx.stroke();
@@ -11142,7 +11171,7 @@ function drawKojiro(f){
    ctx.strokeStyle="#f0fdf4";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-24,jY);ctx.lineTo(jExt+12,jY);ctx.stroke();
    ctx.strokeStyle="rgba(134,239,172,.75)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,jY-11);ctx.lineTo(jExt-14,jY-11);ctx.moveTo(-6,jY+11);ctx.lineTo(jExt-8,jY+11);ctx.stroke(); /* 帯の上下を流れる風切り線 */
    ctx.strokeStyle="rgba(240,253,244,.9)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(jExt+2,jY-6);ctx.lineTo(jExt+10,jY-12);ctx.moveTo(jExt+4,jY+5);ctx.lineTo(jExt+12,jY+11);ctx.stroke(); /* 切先の閃光 */
-  }else{var jp2=1-Math.max(0,f.stateT)/0.26,vX=38,vTop=-26,vBot=vTop+jp2*102;
+  }else{var jp2=1-Math.max(0,f.stateT)/0.28,vX=38,vTop=-26,vBot=vTop+jp2*102;
    /* 2段目 縦斬り: 前方に上から下へまっすぐ落ちる緑の斬撃帯 */
    ctx.strokeStyle="rgba(34,197,94,.28)";ctx.lineWidth=16;ctx.beginPath();ctx.moveTo(vX,vTop);ctx.lineTo(vX,vBot);ctx.stroke();
    ctx.strokeStyle="rgba(74,222,128,.55)";ctx.lineWidth=9.5;ctx.beginPath();ctx.moveTo(vX,vTop-4);ctx.lineTo(vX,vBot+4);ctx.stroke();
@@ -11508,7 +11537,7 @@ function draw(){
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
      if(f.state==="ult")drawCharFxOverlay(f,f.x+f.face*10,f.y+f.h*0.44,205,time*3.2,f.face,0.52);
-     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],airslash:[0,178],krise:[30,130],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,305]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
+     else if(f.char==="kojiro"){var kjfx={chop:[36,120],rise:[32,124],thrust3:[40,110],yokonagi:[38,138],airslash:[0,178],krise:[30,168],dashthrust:[38,116],lowcut:[34,100],diveclaw:[30,112],jkcombo:[36,128],heavy:[40,142],airheavy:[38,134],iaido:[36,124],sweep:[0,305]}[f.state];if(kjfx)drawFxTex(FXIMG.wind,f.x+f.face*kjfx[0],f.y+f.h*0.45,kjfx[1],0.3*f.face,f.face,0.42)} /* KOJIRO: 風テクスチャを斬撃に重ねる (斬撃の弧・三日月・燕・竜巻などの本体は drawKojiro のコード描画) */
      else if(f.char==="warden"&&f.state==="wswing")drawFxTex(FXIMG.elec,f.x+f.face*32,f.y+f.h*0.42,106,-0.12*f.face,f.face,0.38); /* J1: smallest, flat sweep */
      else if(f.char==="warden"&&f.state==="wswing2")drawFxTex(FXIMG.elec,f.x+f.face*30,f.y+f.h*0.46,128,2.75*f.face,f.face,0.46); /* J2: bigger, texture flipped right over — the return stroke */
      else if(f.char==="warden"&&f.state==="wslam"){drawFxTex(FXIMG.hit,f.x+f.face*28,f.y+f.h*0.5,178,0.35*f.face,f.face,0.62);drawFxTex(FXIMG.elec,f.x+f.face*24,f.y+f.h*0.44,140,1.15*f.face,f.face,0.4)} /* J3: biggest of the chain, impact burst + elec */
