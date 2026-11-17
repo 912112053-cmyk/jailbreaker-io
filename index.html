@@ -434,6 +434,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["15:22"],tag:"調整",title:"ORCHID：空中J「ツタフック」を下方修正",
+   items:["空中J「ツタフック」：KB 660→550、判定 160×76／172×66→146×76／158×62に下方修正しました（ダメージ10＋10は変更ありません）",
+          "空中J「ツタフック」：2発目の発生 約0.22秒→約0.32秒、全体 0.42秒→0.55秒、後硬直 0.35秒→0.55秒、着地硬直 0.28秒→0.32秒に下方修正しました",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv262に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["15:10"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」の後硬直を調整",
    items:["J+K「ツタ絡みコンボ」：後硬直 0.52秒→0.38秒に短縮しました。あわせて後硬直は完全硬直になり、その間は移動・ジャンプ・ダッシュ・次の技のすべてができなくなりました",
           "ダメージ14＋16・KB 380／720（掴み）・発生（即時／2段目 約0.3秒）・全体0.84秒・判定 前134×64／前130×84・着地硬直0.28秒など、その他の性能は変更ありません",
@@ -797,7 +801,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>ダッシュ中J — ツタックル</b><p>ツタを纏って体ごと突進する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.8秒')+mvS('判定','前132×72')+mvS('突進','vx 420'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングバイン</b><p>ツタで斬り上げて浮かせ、当てると<b>2段ジャンプ回復</b>。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('判定','60×82')+mvS('上昇','vy -460'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.22秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','660')+mvS('発生','即時／2発目 約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.35秒')+mvS('判定','160×76 → 172×66')+mvS('着地硬直','0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.32秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','550')+mvS('発生','即時／2発目 約0.32秒')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('判定','146×76 → 158×62')+mvS('着地硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向98×230'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','0.38秒（完全硬直）')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
@@ -1634,7 +1638,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v261";
+var BUILD_ID="v262";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7004,7 +7008,7 @@ var LAND_LAG={
  kojiro:{airslash:0.18,airheavy:0.3,taildrop:0.30,diveclaw:0.5,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.2 -> 0.18, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44 -> 0.5, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{buttagiri:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): ぶった切り landing lag 0.28 (旧・宙斧は削除され空中Jは ぶった切り に差し替え), ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
- orchid:{ohook:0.28,otackle:0.25,jkcombo:0.28,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. ツタ絡みコンボ (jkcombo) 着地硬直 0.25 -> 0.28 (nerf). The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
+ orchid:{ohook:0.32,otackle:0.25,jkcombo:0.28,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. ツタ絡みコンボ (jkcombo) 着地硬直 0.25 -> 0.28 (nerf). ツタフック (ohook) 着地硬直 0.28 -> 0.32 (nerf). The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,jkcombo:0.18,sjail:0.33}, /* SMILEY: 回転ダガー (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / 連続斬り (jkcombo) 0.18 / チェーンジェイル (sjail) 着地硬直 0.33 (the move also marks the same airLag directly at the press, so ground starts pay it too). ダイブスタブ (taildrop) は削除されたため項目も削除； 連続エアナイフ (sairknife) は後硬直0.5秒が完全硬直 (recLockT) のため着地硬直なし */
  mimi:{mairspin:0.2,mlight:0.22,mswing:0.3}, /* MIMI&SHADE: 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too). 落として！！ (mdrop, the air down+J that replaced the 落ちちゃう！ dive) has NO landing lag — it is not a dive and its spec lists none, so the old mdive 0.3 entry is deleted with the move */
@@ -7221,12 +7225,15 @@ function startOrchidAttack(f,type,foe){
    }else if(!f.onGround){
      /* 空中J: ツタフック (spec) — two long-reaching vine strikes
         forward; the second one is DELAYED (fires in stepFighter at
-        stateT 0.2, longer reach). She hangs in the air briefly.
-        Buffed (user balance spec): 7+7 dmg -> 10+10, KB 300/320 ->
-        660 (both hits), boxes 124x56 -> 160x76 / 148x58 -> 172x66 */
-     f.state="ohook";f.stateT=0.42;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
+        stateT 0.23, longer reach). She hangs in the air briefly.
+        Nerfed (user balance spec): KB 660 -> 550 (both hits), boxes
+        160x76 -> 146x76 / 172x66 -> 158x62, 2発目 約0.22秒 -> 約0.32秒,
+        全体 0.42秒 -> 0.55秒, 後硬直 0.35秒 -> 0.55秒 (attackCd 0.8 +
+        the universal 0.07 tail − the 0.32s second-hit delay),
+        着地硬直 0.28秒 -> 0.32秒 (LAND_LAG). Damage stays 10+10 */
+     f.state="ohook";f.stateT=0.55;f.attackCd=0.8;f.comboWin=0;f.hitDone=false;
      if(f.vy>30)f.vy=30;
-     meleeHit(f,foe,160,76,10,660,f.face,-0.22);
+     meleeHit(f,foe,146,76,10,550,f.face,-0.22);
      spawnParticles(f.x+f.face*40,f.y+f.h*0.4,8,"#a3e635",180);beep(980,.06,"square",.04);
    }else if(downHeld){
      /* 地上↓+J: ニーダウン (user balance spec — REPLACES スパイラル
@@ -8985,7 +8992,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  }
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
- if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.2){f.hitDone=true;meleeHit(f,foe,172,66,10,660,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)} /* ツタフック 2発目 (user balance spec): 7 dmg -> 10, KB 320 -> 660, box 148x58 -> 172x66 */
+ if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.23){f.hitDone=true;meleeHit(f,foe,158,62,10,550,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)} /* ツタフック 2発目 (user balance spec — nerfed): 発生 約0.22秒 -> 約0.32秒 (stateT 0.55 -> threshold 0.23), KB 660 -> 550, box 172x66 -> 158x62, dmg stays 10 */
  /* ORCHID ロープフィッシング (air down+J): the vine arm spears down
     0.3s after the press (stateT 0.66 -> threshold 0.36) — until then
     she hangs still (the gravity step holds her while hitDone is
