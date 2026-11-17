@@ -434,6 +434,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["14:57"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」を下方修正",
+   items:["J+K「ツタ絡みコンボ」：ダメージ 15＋16→14＋16、KB 500／800（掴み）→380／720（掴み）、判定 前140×66／前146×84→前134×64／前130×84に下方修正しました",
+          "J+K「ツタ絡みコンボ」：2段目の発生 約0.26秒→約0.3秒、全体 0.8秒→0.84秒、後硬直 0.47秒→0.52秒、1段目の被弾硬直 0.33秒→0.34秒、空中で出した場合の着地硬直 0.25秒→0.28秒に下方修正しました（2段目の被弾硬直はなしのままです）",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv260に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["01:43"],tag:"調整",title:"KOJIRO：昇り斬りを豪華に／燕返しの燕を1.5倍に／ウルト溜まりを下方修正",
    items:["空中↑+K「昇り斬り」のエフェクトを豪華にしました。斬撃の弧が三層になって大きく広がり、上昇の風の線・破片・二重の衝撃波・閃光も増えました（1段目・2段目とも）。風テクスチャも大きくしました",
           "J+K「燕返し」2段目で背景に現れる緑の燕のエフェクトを1.5倍に大きくしました。燕を包む緑の剣気の暈と、背後へ流れる風切り線も合わせて拡大しました",
@@ -791,7 +795,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.22秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','660')+mvS('発生','即時／2発目 約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.35秒')+mvS('判定','160×76 → 172×66')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向98×230'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','15＋16')+mvS('KB','500／800（掴み）')+mvS('発生','即時／2段目 約0.26秒')+mvS('全体','0.8秒')+mvS('後硬直','0.47秒')+mvS('判定','前140×66／前146×84')+mvS('被弾硬直','0.33秒／なし'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','0.52秒')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ポイズンミスト</b> <span style="color:#4ade80;font-weight:900">設置型・クールタイム6.2秒</span><p>左右へ広範囲の毒霧を召喚する。霧は<b>その場に8秒間残り</b>、範囲内の相手に<b>0.1秒ごとに2ダメージ</b>を与え続ける（ノックバックなし）。後硬直の間は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','2／0.1秒')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.45秒')+mvS('後硬直','0.67秒（完全硬直）')+mvS('範囲','左右に広がる楕円（横幅410）')+mvS('持続','8秒')+mvS('再使用','6.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム7.0秒</span><p><b>vy-120で4秒かけて真上へ上昇し続ける</b>。上昇中は回転しながらツタを振り、<b>0.3秒ごとに両側へ6ダメージ</b>の攻撃が出る。横移動は通常どおり可能。地上・空中どちらでも出せる。着地すると<b>着地硬直0.42秒</b>がある。</p>'+mvSpec(mvS('ダメージ','6／0.3秒（両側）')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.50秒（上昇は4秒間継続）')+mvS('後硬直','0.57秒')+mvS('判定','72×66（両側）')+mvS('再使用','7.0秒')+mvS('着地硬直','0.42秒'))+'</div></div>'
@@ -1626,7 +1630,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v259";
+var BUILD_ID="v260";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6996,7 +7000,7 @@ var LAND_LAG={
  kojiro:{airslash:0.18,airheavy:0.3,taildrop:0.30,diveclaw:0.5,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.2 -> 0.18, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44 -> 0.5, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{buttagiri:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): ぶった切り landing lag 0.28 (旧・宙斧は削除され空中Jは ぶった切り に差し替え), ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
- orchid:{ohook:0.28,otackle:0.25,jkcombo:0.25,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
+ orchid:{ohook:0.28,otackle:0.25,jkcombo:0.28,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. ツタ絡みコンボ (jkcombo) 着地硬直 0.25 -> 0.28 (nerf). The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,jkcombo:0.18,sjail:0.33}, /* SMILEY: 回転ダガー (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / 連続斬り (jkcombo) 0.18 / チェーンジェイル (sjail) 着地硬直 0.33 (the move also marks the same airLag directly at the press, so ground starts pay it too). ダイブスタブ (taildrop) は削除されたため項目も削除； 連続エアナイフ (sairknife) は後硬直0.5秒が完全硬直 (recLockT) のため着地硬直なし */
  mimi:{mairspin:0.2,mlight:0.22,mswing:0.3}, /* MIMI&SHADE: 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too). 落として！！ (mdrop, the air down+J that replaced the 落ちちゃう！ dive) has NO landing lag — it is not a dive and its spec lists none, so the old mdive 0.3 entry is deleted with the move */
@@ -7183,15 +7187,17 @@ function startOrchidAttack(f,type,foe){
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
  if(type==="jk"){
-   /* ツタ絡みコンボ (user balance spec): instant 15 dmg / KB 500 in a
-      front 140x66 box with 被弾硬直 0.33秒, then a delayed second hit
-      at ~0.26s that is now a GRAB (16 dmg / KB 800, front 146x84 —
-      resolved in ORCHID's own block in stepFighter, ahead of the
-      shared jkcombo block). 全体 0.50 -> 0.8秒 (stateT); the
-      attackCd 0.66 recovery span is unchanged */
-   f.state="jkcombo";f.stateT=0.8;f.attackCd=0.66;f.comboWin=0;f.hitDone=false;
+   /* ツタ絡みコンボ (user balance spec — nerfed): instant 14 dmg /
+      KB 380 in a front 134x64 box with 被弾硬直 0.34秒, then a delayed
+      second hit at ~0.3s that is a GRAB (16 dmg / KB 720, front
+      130x84 — resolved in ORCHID's own block in stepFighter, ahead of
+      the shared jkcombo block). 全体 0.8 -> 0.84秒 (stateT); 後硬直
+      0.47 -> 0.52秒 = attackCd 0.75 + the universal 0.07 tail − the
+      0.3s second-hit delay. 着地硬直 (air starts) 0.25 -> 0.28秒 in
+      LAND_LAG */
+   f.state="jkcombo";f.stateT=0.84;f.attackCd=0.75;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*140;capVx(f,RUN_MAX*1.25);
-   meleeHit(f,foe,140,66,15,500,f.face,-0.3,0.33);
+   meleeHit(f,foe,134,64,14,380,f.face,-0.3,0.34);
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,11,"#a3e635",200);beep(880,.06,"square",.045);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
@@ -8845,14 +8851,15 @@ function stepFighter(f,dt,input,foe){
  if(f.char==="warden"&&f.state==="wbash"&&!f.hitDone&&f.stateT<=0.20){f.hitDone=true;var airB=!f.onGround;var bashHit=meleeHit(f,foe,88,70,airB?22:24,airB?720:680,f.face,airB?0.95:-0.5);spawnParticles(f.x+f.face*40,f.y+f.h*0.45,bashHit?14:8,bashHit?"#fcd34d":"#94a3b8",bashHit?240:150);if(bashHit){spawnSparks(f.x+f.face*42,f.y+f.h*0.45,f.face,"#fde68a",6);shake=Math.max(shake,3)}beep(240,.1,"sawtooth",.05)}
 if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /* AXE メテオドロップ: 空中で静止 — he hangs in the air until the hit fires at 0.34s (threshold below), then plunges */
  if(f.state==="taildrop"&&!f.hitDone&&f.stateT<=(f.char==="warden"?0.10:(f.char==="axe"?0.24:0.28))){f.hitDone=true;if(f.char==="kairo"){meleeHit(f,foe,122,84,26,700,f.face,1.05);meleeHit(f,foe,122,84,26,700,-f.face,1.05)}else if(f.char==="axe"){f.meteorArm=true;f.vy=Math.max(f.vy,880);spawnParticles(f.x,f.y+f.h*0.8,12,"#fdba74",210);spawnFxBurst(FXIMG.fire,f.x,f.y+f.h*0.55,205,0.34,0,1,0.9);spawnRing(f.x,f.y+f.h*0.6,"#fb923c",56);spawnParticles(f.x,f.y+f.h*0.5,10,"#a8a29e",190);shake=Math.max(shake,3)} /* メテオドロップ (エフェクト追加): the plunge arms HERE — a big fire bloom + ring marks the huge meteor appearing around him (drawAxe's taildrop branch draws the spiked meteor itself for the whole fall while meteorArm lasts) */ /* AXE メテオドロップ (okaki rework): NO hit in mid-air any more — the plunge just arms the slam (meteorArm) and the damage (左右102x72・32 dmg / KB 700) lands on TOUCHDOWN in the landing block, butt-first */else{meleeHit(f,foe,76,72,26,700,f.face,1.05);spawnParticles(f.x,f.y+f.h+6,12,"#fdba74",200);spawnParticles(f.x,f.y+f.h+6,6,"#78716c",150);spawnRing(f.x,f.y+f.h+8,"#f59e0b",34)} /* WARDEN メテオドロップ: his hit lands 0.32s after the press (0.42 state - 0.10 threshold); other chars keep their timing. 見た目 (user spec): THIS is the moment the atomic bomb appears under him — an ember / smoke burst + ring marks it spawning, and drawWarden's taildrop branch draws the bomb he rides for the rest of the fall */spawnParticles(f.x,f.y+f.h*0.7,10,"#7dd3fc",200);if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x,f.y+f.h*0.75,130,0.3,1.57,1,0.8); /* KAIRO メテオドロップ: 氷柱騎乗の着弾に氷片バースト */beep(170,.12,"sawtooth",.06)} /* KAIRO メテオドロップ box 122x84 -> 左右122x84 (user spec): the same 122x84 hit now lands on BOTH sides (front and back), not just the facing side; dmg 26 / KB 700 shared */
- /* ORCHID ツタ絡みコンボ 2段目 (user balance spec): resolved HERE,
-    ahead of the shared jkcombo block below (which she no longer
+ /* ORCHID ツタ絡みコンボ 2段目 (user balance spec — nerfed): resolved
+    HERE, ahead of the shared jkcombo block below (which she no longer
     uses — her hitDone is already set when that block checks). At
-    ~0.26s after the press (stateT 0.8 -> threshold 0.54) the vine
-    GRABS: 16 dmg / KB 800 （掴み） in a front 146x84 box — the foe
-    is pinned for 0.4s and then thrown (the grab system above
+    ~0.3s after the press (stateT 0.84 -> threshold 0.54, the same
+    threshold value as before: 全体 and the delay both grew by 0.04s)
+    the vine GRABS: 16 dmg / KB 720 （掴み） in a front 130x84 box —
+    the foe is pinned for 0.4s and then thrown (the grab system above
     applyGrabHit). No hitstun of its own （被弾硬直 なし） */
- if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,146,84,16,800,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
+ if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,130,84,16,720,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
  if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=(f.char==="kojiro"?0.28:0.26)){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?82:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:(f.char==="kojiro"?18:16)))),f.char==="kojiro"?720:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): 発生 約0.24秒 -> 約0.22秒 (KOJIRO only: threshold 0.28, other chars keep 0.26), dmg 16 -> 18, KB 660 -> 720, box 78x80 -> 82x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char==="kojiro"){spawnParticles(f.x+f.face*30,f.y+f.h*0.4,13,"#4ade80",230);spawnRing(f.x+f.face*34,f.y+f.h*0.4,"#4ade80",42);spawnSparks(f.x+f.face*36,f.y+f.h*0.35,f.face,"#dcfce7",5)}else spawnParticles(f.x,f.y+f.h*0.45,14,(f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: 緑の剣気 (上の分岐 — 縦斬りの弧と燕は drawKojiro 側) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,220,0.38,0.3,f.face,0.95);spawnVecBurst("axedbl",f.x+f.face*38,f.y+f.h*0.45,185,0.36,0,f.face,0.95);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);spawnRing(f.x+f.face*40,f.y+f.h*0.5,"#fb923c",64);spawnSparks(f.x+f.face*44,f.y+f.h*0.45,f.face,"#ffedd5",7);spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",210);shake=Math.max(shake,5)} /* ダブルアックス 2段目 (豪華化): crossed double-cleave flash (axedbl) over a bigger fire bloom, twin rings and rock chips */ /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* MIMI&SHADE per-step work: SHADE's follow movement, its delayed
     hits (shHitT), MIMI's air-spin and light-barrage ticks, and the
