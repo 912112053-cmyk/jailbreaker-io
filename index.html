@@ -330,7 +330,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>与えたダメージがそのままスコアになるスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>ダメージがそのままスコア＋キルした人にボーナス+100のスコア制バトル<br><span style="color:var(--muted)">ONLINE VS：ルームコードで友達とオンライン対戦／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -434,6 +434,17 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["19:59"],tag:"調整",title:"スコア：キルした本人にボーナス+100点を再追加",
+   items:["敵を倒した時、最後の一撃で倒した本人（キルした人）のスコアに、与えたダメージ分とは別にボーナス+100点が上乗せされるようになりました。他の貢献者はこれまでどおり、与えたダメージ分のみがスコアに入ります",
+          "KO回復（倒した敵に自分が与えたダメージの20%、上限は自分の最大HPの30%）はこれまでどおりで、ボーナスは回復量に影響しません",
+          "あわせてタイトルと「遊び方」のスコア説明を、ボーナス+100の仕様に合わせた文面に更新しました",
+          "ダメージ・KB・判定・硬直など、技の性能は一切変更ありません",
+          "オンライン対戦のビルド版数をv268に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/17",times:["19:55"],tag:"調整",title:"SARA：技エフェクトをすべて削除",
+   items:["SARAの技エフェクト（炎・ブレスの吹き出し・爪や尻尾の軌跡・スピンの炎・パーティクル・衝撃波の輪・火花・FXバースト・モードカオスのオーラなど）を、すべての技から削除しました",
+          "U「ファイアジャヴェリン」の弾と、着弾後に残る火の玉そのものはこれまで通り表示されます",
+          "ダメージ・KB・判定・硬直・燃焼など技の性能は一切変更ありません。他のキャラのエフェクトにも変更はありません",
+          "オンライン対戦のビルド版数をv267に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["17:23"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」の空中発動時の完全硬直を削除",
    items:["J+K「ツタ絡みコンボ」：地上で発動した場合は、これまでどおり後硬直0.38秒（完全硬直）のまま変更ありません",
           "J+K「ツタ絡みコンボ」：空中で発動した場合は、後硬直0.55秒はそのままに、後硬直にあった完全硬直をなくしました。硬直中も移動・ジャンプ・ダッシュができるようになります（次の技は後硬直が終わるまで出せません）。着地硬直0.4秒は変更ありません",
@@ -1049,7 +1060,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（最後の一撃を入れた人も、それ以外でダメージを与えた人も同じルールで、与えたダメージの合計と同点）。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計と同点）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>ONLINE VS</b>：メニューの ONLINE VS から、ルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1203,7 +1214,7 @@ function press(a){if(mode==="online"&&running&&typeof ls!=="undefined"&&ls&&ls.a
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[];
-var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. The beams' own flame / light visuals are drawn separately and stay untouched */
+var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
 /* camera follow state: velocity of the critically-damped follow
@@ -1659,7 +1670,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v266";
+var BUILD_ID="v268";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7059,7 +7070,7 @@ function startSaraAttack(f,type,foe){
    f.state="jkcombo";f.stateT=0.5;f.attackCd=0.66;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*150;capVx(f,RUN_MAX*1.25);
    meleeHit(f,foe,80,60,13,360,f.face,-0.3,0,false,2.0); /* フレイムテイル・コンボ 1段目: 燃焼2秒 (user spec) */
-   spawnParticles(f.x+f.face*24,f.y+f.h*0.45,12,"#ff8f5c",200);beep(700,.06,"square",.05);
+   beep(700,.06,"square",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
      /* 空中下J: 落下フレイムフィスト — straight-down flaming fist dive
@@ -7067,7 +7078,7 @@ function startSaraAttack(f,type,foe){
      f.state="sdive";f.stateT=0.34;f.attackCd=0.42;f.comboWin=0;f.diveArmed=true;
      f.vx=f.face*120;f.vy=Math.max(f.vy,760);f.fastfall=false;
      meleeHit(f,foe,70,62,18,660,f.face,0.85);
-     spawnParticles(f.x+f.face*10,f.y+f.h*0.6,9,"#fb923c",180);beep(300,.09,"sawtooth",.05);
+     beep(300,.09,"sawtooth",.05);
    }else if(!f.onGround&&upHeld){
      /* 空中上J: フレイムブレス — upward cone breath (buffed spec).
         ~1.0s of charge while she is fully stationary in the air, then
@@ -7077,36 +7088,36 @@ function startSaraAttack(f,type,foe){
      if(f.flameT>0||f.flameDelay>0)return;
      f.state="supflame";f.stateT=1.95;f.attackCd=2.05;f.comboWin=0;
      f.flameDelay=1.0;f.flameT=0.85;f.flameMode=2;f.flameTick=0;
-     spawnParticles(f.x,f.y+f.h*0.3,8,"#ff8f5c",110);beep(140,.3,"sawtooth",.05);
+     beep(140,.3,"sawtooth",.05);
    }else if(!f.onGround){
      /* 空中J: スピンフレイム — spins with flaming fists, up to 5 small
         hits tick out in stepFighter (state "sspin"), 0.2s stun each */
      f.state="sspin";f.stateT=0.55;f.attackCd=0.6;f.comboWin=0;
      f.spinHits=0;f.spinTick=0.05;
      if(f.vy>30)f.vy=30;
-     spawnParticles(f.x,f.y+f.h*0.45,10,"#fb923c",190);beep(900,.07,"square",.045);
+     beep(900,.07,"square",.045);
    }else if(downHeld){
      /* 地上下J: ハンドフレア — arms wide, flames jet from both hands:
         continuous ticks both sides (stepFighter, state "sflare"),
         slow startup, her own movement is heavily slowed (RMAX cut in
         stepFighter) and the recovery afterwards is long */
      f.state="sflare";f.stateT=1.05;f.attackCd=1.30;f.comboWin=0;f.flareTick=0.32; /* ハンドフレア (user spec): 発生 0.38 -> 0.32秒, 後硬直(終了後) 0.37 -> 0.32秒（完全硬直 — stepFighter の sflare 終了フックで recLockT を立てる） */
-     spawnParticles(f.x,f.y+f.h*0.45,10,"#ff8f5c",130);beep(160,.18,"sawtooth",.05);
+     beep(160,.18,"sawtooth",.05);
    }else if(upHeld){
      /* 地上上J: ライジングフレア (PROVISIONAL — the spec left this slot
         undecided): a rising flame upper that launches the foe and
         refunds the double jump on hit, like the other risers */
      f.state="srise";f.stateT=0.32;f.attackCd=0.42;f.comboWin=0;
      f.vy=-470;f.onGround=false;f.fastfall=false;
-     if(meleeHit(f,foe,64,86,13,380,f.face,-1.15)){f.jumps=1;spawnParticles(f.x,f.y+f.h,8,"#ff8f5c",140)}
-     spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#fb923c",170);beep(620,.08,"square",.05);
+     if(meleeHit(f,foe,64,86,13,380,f.face,-1.15)){f.jumps=1}
+     beep(620,.08,"square",.05);
    }else if(f.dashT>0||Math.abs(f.vx)>330){
      /* ダッシュJ: ホーンチャージ — horn-first charge, mid damage,
         real knockback */
      f.state="shorn";f.stateT=0.36;f.attackCd=0.59;f.comboWin=0;f.dashT=0;
      f.vx=f.face*620;
      meleeHit(f,foe,94,76,16,720,f.face,-0.34); /* ホーンチャージ (user spec): KB 600 -> 720, 判定 88x58 -> 94x76, 後硬直 0.59 -> 0.66秒 */
-     spawnParticles(f.x+f.face*30,f.y+f.h*0.4,11,"#ff8f5c",200);beep(480,.07,"sawtooth",.05);
+     beep(480,.07,"sawtooth",.05);
    }else{
      /* ラッシュ: the 4-stage J chain (user spec). Every stage carries
         ~0.2s of stun: at full HP the kb values below give hitstun
@@ -7118,26 +7129,25 @@ function startSaraAttack(f,type,foe){
        f.comboWin=0.85;
        f.state="sclaw1";f.stateT=0.2;f.attackCd=0.15;
        meleeHit(f,foe,62,52,8,250,f.face,-0.2,0.26); /* 爪ひっかき (user spec): KB 290 -> 250, 後硬直 0.34 -> 0.22秒, 被弾硬直 0.26秒 */
-       spawnParticles(f.x+f.face*22,f.y+f.h*0.42,6,"#ff8f5c",150);beep(1250,.05,"square",.04);
+       beep(1250,.05,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.85;
        f.state="sbreath";f.stateT=0.3;f.attackCd=0.15;
        meleeHit(f,foe,64,54,5,180,f.face,-0.18,0.3,false,2.0); /* 火の粉ブレス (user spec): KB 270 -> 180, 後硬直 0.41 -> 0.22秒, 被弾硬直 0.3秒, 燃焼 2.0秒 */
        meleeHit(f,foe,78,54,5,180,f.face,-0.18,0.3,false,2.0); /* second puff reaches a touch further: the 2-hit breath */
-       spawnParticles(f.x+f.face*30,f.y+f.h*0.3,12,"#fb923c",170);spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.32,86,0.22,0,f.face,0.7);beep(500,.09,"sawtooth",.045);
+       beep(500,.09,"sawtooth",.045);
      }else if(f.comboStep===2){
        f.comboWin=0.85;
        f.state="supper";f.stateT=0.28;f.attackCd=0.21;
        meleeHit(f,foe,80,94,10,300,f.face,-1.15,0.3); /* アッパー (user spec): ダメージ 9 -> 10, KB 340 -> 300, 後硬直 0.43 -> 0.28秒, 判定 64x80 -> 80x94, 被弾硬直 0.3秒 */
-       spawnParticles(f.x+f.face*14,f.y+f.h*0.3,8,"#ff8f5c",160);beep(760,.06,"square",.045);
+       beep(760,.06,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0; /* chain is spent — the next J restarts at stage 1 */
        f.state="stail";f.stateT=0.42;f.attackCd=0.6;
        f.vx+=f.face*120;capVx(f,RUN_MAX*1.2);
        meleeHit(f,foe,118,76,22,720,f.face,-0.42); /* 尻尾フィニッシュ (user spec): 前ダメージ 20 -> 22, 前KB 640 -> 720, 判定 前102x72 -> 118x76 */
        meleeHit(f,foe,70,60,11,380,-f.face,-0.2); /* 後ダメージ 10 -> 11 (KB 380 据え置き) */ /* the tail sweeps behind her too */
-       shake=Math.max(shake,4);
-       spawnParticles(f.x+f.face*30,f.y+f.h*0.5,16,"#fb923c",240);spawnRing(f.x+f.face*30,f.y+f.h*0.5,"#fb923c",50);beep(240,.11,"sawtooth",.06);
+       beep(240,.11,"sawtooth",.06);
      }
    }
  }else if(type==="k"){
@@ -7157,8 +7167,7 @@ function startSaraAttack(f,type,foe){
      f.state="schaos";f.stateT=0.5;f.attackCd=0.25;f.comboWin=0;applyFullLock(f); /* 後硬直 0.67 -> 0.32秒（完全硬直） (user spec) */
      pushFloater({x:f.x,y:f.y-32,txt:"与ダメ+30%（13秒）",life:1.15,col:"#fca5a5"}); /* 技名部分のみ削除し、効果情報の表示は残す (user request) */
      pushFloater({x:f.x,y:f.y-14,txt:"-"+cut+" HP",life:.9,col:"#fda4af"});
-     spawnParticles(f.x,f.y+f.h*0.45,30,"#ef4444",250);spawnParticles(f.x,f.y+f.h*0.45,18,"#fb923c",210);spawnRing(f.x,f.y+f.h*0.45,"#ef4444",64);
-     shake=Math.max(shake,5);beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
+     beep(90,.3,"sawtooth",.08);setTimeout(function(){beep(520,.16,"square",.05)},90);
    }else if(upHeld){
      /* 上K: 飛翔 — instantly rises straight up on her wings at vy -1020
         (nerfed from -980) and refunds the double jump (jumps=1).
@@ -7166,7 +7175,7 @@ function startSaraAttack(f,type,foe){
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.5;f.state="sfly";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
      f.vy=-1020;f.onGround=false;f.fastfall=false;f.jumps=1; /* 飛翔 (user spec): 上昇 vy -500 -> -1020 */
-     spawnParticles(f.x,f.y+f.h,16,"#ff8f5c",190);spawnParticles(f.x,f.y+f.h-6,8,"#fca5a5",140);beep(980,.14,"sine",.05);setTimeout(function(){beep(1400,.12,"sine",.04)},60);
+     beep(980,.14,"sine",.05);setTimeout(function(){beep(1400,.12,"sine",.04)},60);
    }else if(downHeld&&!f.onGround){
      /* air down+K falls back to the dive fist, same as air down+J */
      f.state="sdive";f.stateT=0.34;f.attackCd=0.42;f.comboWin=0;f.diveArmed=true;
@@ -7179,7 +7188,7 @@ function startSaraAttack(f,type,foe){
         now lands ~0.52s after the press instead of ~0.26s): the wind-up
         is real, dodgeable time. Cooldown stays 0.72s */
      f.state="snova";f.stateT=0.78;f.attackCd=0.72;f.hitDone=false;f.comboWin=0;
-     spawnParticles(f.x-f.face*8,f.y+f.h*0.45,7,"#fb923c",130);beep(170,.16,"sawtooth",.055);
+     beep(170,.16,"sawtooth",.055);
    }
  }else if(type==="l"){
    /* U: ファイアジャヴェリン — throws a fire orb at speed 520 in an
@@ -7191,7 +7200,7 @@ function startSaraAttack(f,type,foe){
    if(f.ammo<=0){beep(200,.07);return}
  f.ammo--;if(f.javT<=0)f.javT=8;f.specCd=0.8;f.state="sjavelin";f.stateT=0.3;f.attackCd=0.44;f.comboWin=0; /* ファイアジャヴェリン (user spec): 装填数2・8秒ごとに1発装填・再使用 4.2 -> 0.8秒 */
    projectiles.push({x:f.x+f.face*38,y:f.y+f.h*0.4,vx:f.face*520,vy:-190,owner:f,life:2.6,kind:"javelin"});
-   spawnParticles(f.x+f.face*26,f.y+f.h*0.4,8,"#fb923c",160);beep(840,.09,"sine",.05);
+   beep(840,.09,"sine",.05);
  }else if(type==="ult"){
    /* L: 火炎放射 — her ult slot: consumes the full meter to 0 and
       breathes a wide flame jet forward for ~1.75s (stepFighter,
@@ -7200,7 +7209,7 @@ function startSaraAttack(f,type,foe){
    if(f.meter<100)return;f.meter=0;f.state="sflame";f.stateT=1.8;f.attackCd=1.90;f.comboWin=0; /* 火炎放射 (user spec): 全体 1.91 -> 1.8秒 */
    f.flameDelay=0;f.flameT=1.75;f.flameMode=1;f.flameTick=0;
  for(var ufi=0;ufi<fighters.length;ufi++){fighters[ufi].flameExp=0;fighters[ufi].flameExpBy=null} /* fresh exposure tally for this jet */
-   spawnParticles(f.x+f.face*20,f.y+f.h*0.4,20,"#fb923c",230);
+   
    beep(110,.4,"sawtooth",.08);setTimeout(function(){beep(240,.3,"sawtooth",.06)},80);
  }
 }
@@ -8577,9 +8586,9 @@ function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="koji
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
    HP decrease — measured as hp-before minus max(0, hp-after) — so guard
    reduction is already reflected and overkill past 0 HP never counts.
-   At KO, killFighter pays every contributor SCORE equal to their total
-   (kill and assist alike), counts ASSISTS, and heals only the killer by
-   20% of their own total.
+   At KO, killFighter pays every contributor SCORE equal to their total,
+   counts ASSISTS, heals only the killer by 20% of their own total, and
+   pays the killer a flat +100 SCORE bonus on top of their damage total.
    Self-damage (SARA's chaos cost) never passes through here and is
    never recorded. */
 function recordDmg(att,def,amount){
@@ -8747,15 +8756,18 @@ function killFighter(def,att){
  beep(90,.35,"sawtooth",.08);
  /* v99 settlement (bandit.rip-style): DEATHS +1 for the victim; every
     attacker who damaged this life gains SCORE equal to their recorded
-    total (floored) — the killer and assists under the SAME rule — and
-    everyone except the killer who dealt >=1 counts an ASSIST. The
-    record then resets for the next life. */
+    total (floored), and everyone except the killer who dealt >=1
+    counts an ASSIST. On top of that, the fighter credited with the
+    kill gets a flat +100 SCORE bonus (owner decision — re-added after
+    the v99 removal; see the kills block below). The record then
+    resets for the next life. */
  def.deaths=(def.deaths||0)+1;
  var dmgRec=def.dmgBy||{};def.dmgBy={};
  var killerGain=0;
  for(var dk in dmgRec){var contrib=fighters[+dk];if(!contrib)continue;var gain=Math.floor(dmgRec[dk]);if(gain>0){contrib.score+=gain;if(contrib===att)killerGain=gain;else contrib.assists=(contrib.assists||0)+1}}
  if(att&&att!==def){
    att.kills=(att.kills||0)+1; /* the finishing blow — including an attributed knockback fall kill with 0 damage dealt */
+   att.score=(att.score||0)+100;killerGain+=100; /* kill bonus +100 (owner decision, re-added): ONLY the fighter credited with the kill gets this flat bonus on top of their damage total — killerGain carries it so the KO banner shows the full gain. Other contributors still get damage only, and the KO heal below is computed from damage (myDmg) alone, so the bonus never feeds the heal */
    /* KO heal (v99, replaces the flat / 40%-of-max rules): ONLY the
       killer heals, by 20% of the damage THEY dealt to this victim this
       life, capped at 30% of the killer's own max HP, rounded. A pure
@@ -8910,7 +8922,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     the foe is pinned for 0.4s and then thrown (the grab system above
     applyGrabHit). No hitstun of its own （被弾硬直 なし） */
  if(f.char==="orchid"&&f.state==="jkcombo"&&!f.hitDone&&f.stateT<=0.54){f.hitDone=true;meleeHit(f,foe,130,84,16,720,f.face,-0.52,0,false,0,null,true);spawnParticles(f.x+f.face*46,f.y+f.h*0.45,12,"#a3e635",210);spawnRing(f.x+f.face*48,f.y+f.h*0.45,"#a3e635",36);beep(340,.09,"sawtooth",.05)}
- if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=(f.char==="kojiro"?0.28:0.26)){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?82:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:(f.char==="kojiro"?18:16)))),f.char==="kojiro"?720:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): 発生 約0.24秒 -> 約0.22秒 (KOJIRO only: threshold 0.28, other chars keep 0.26), dmg 16 -> 18, KB 660 -> 720, box 78x80 -> 82x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char==="kojiro"){spawnParticles(f.x+f.face*30,f.y+f.h*0.4,13,"#4ade80",230);spawnRing(f.x+f.face*34,f.y+f.h*0.4,"#4ade80",42);spawnSparks(f.x+f.face*36,f.y+f.h*0.35,f.face,"#dcfce7",5)}else spawnParticles(f.x,f.y+f.h*0.45,14,(f.char==="axe"||f.char==="sara")?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: 緑の剣気 (上の分岐 — 縦斬りの弧と燕は drawKojiro 側) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,220,0.38,0.3,f.face,0.95);spawnVecBurst("axedbl",f.x+f.face*38,f.y+f.h*0.45,185,0.36,0,f.face,0.95);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);spawnRing(f.x+f.face*40,f.y+f.h*0.5,"#fb923c",64);spawnSparks(f.x+f.face*44,f.y+f.h*0.45,f.face,"#ffedd5",7);spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",210);shake=Math.max(shake,5)} /* ダブルアックス 2段目 (豪華化): crossed double-cleave flash (axedbl) over a bigger fire bloom, twin rings and rock chips */ /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
+ if(f.state==="jkcombo"&&!f.hitDone&&f.stateT<=(f.char==="kojiro"?0.28:0.26)){f.hitDone=true;meleeHit(f,foe,f.char==="kojiro"?82:(f.char==="kairo"?80:(f.char==="travis"?78:(f.char==="smiley"?74:86))),f.char==="kojiro"?80:(f.char==="kairo"?70:(f.char==="travis"?68:(f.char==="smiley"?60:74))),f.char==="kairo"?20:(f.char==="axe"?18:(f.char==="travis"?11:(f.char==="smiley"?9:(f.char==="kojiro"?18:16)))),f.char==="kojiro"?720:(f.char==="kairo"?710:(f.char==="warden"?640:(f.char==="axe"?720:(f.char==="travis"?770:(f.char==="smiley"?500:(f.char==="sara"?820:560)))))),f.face,-0.52,f.char==="smiley"?0.3:0,false,f.char==="sara"?2.0:0 /* KOJIRO 燕返し 2段目 (user spec): 発生 約0.24秒 -> 約0.22秒 (KOJIRO only: threshold 0.28, other chars keep 0.26), dmg 16 -> 18, KB 660 -> 720, box 78x80 -> 82x80, 緑の剣気. WARDEN スタンバッシュ 2段目 KB 560 -> 640 (user spec). AXE ダブルアックス 2段目 (user spec): dmg 18, KB 660 -> 720. TRAVIS マイク&パンチ 2段目 (user spec): 11 dmg / KB 770, box 78x68. SMILEY 連続斬り 2段目 (user spec): 7 -> 9 dmg / KB 380 -> 500, box 74x60, 被弾硬直 0.3秒 (the hs argument). SARA フレイムテイル 2段目 (user spec): KB 560 -> 820 + 燃焼2秒 (the burn argument above). KAIRO アイスファング・コンボ 2段目 (user spec): dmg 16 -> 20, KB 660 -> 710, box 78x68 -> 80x70, 被弾硬直なし (hs stays 0 for Kairo) */);if(f.char==="kojiro"){spawnParticles(f.x+f.face*30,f.y+f.h*0.4,13,"#4ade80",230);spawnRing(f.x+f.face*34,f.y+f.h*0.4,"#4ade80",42);spawnSparks(f.x+f.face*36,f.y+f.h*0.35,f.face,"#dcfce7",5)}else if(f.char!=="sara")spawnParticles(f.x,f.y+f.h*0.45,14,f.char==="axe"?"#fb923c":((f.char==="orchid")?"#a3e635":((f.char==="warden"||f.char==="travis")?"#fcd34d":((f.char==="smiley")?"#fef08a":"#22d3ee"))),230); /* KOJIRO 燕返し 2段目: 緑の剣気 (上の分岐 — 縦斬りの弧と燕は drawKojiro 側) */if(f.char==="kairo")spawnFxBurst(FXIMG.ice,f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.8); /* KAIRO J+K 2段目は氷の拳: 氷片バーストを重ねる */if(f.char==="axe"){spawnFxBurst(FXIMG.fire,f.x+f.face*30,f.y+f.h*0.45,220,0.38,0.3,f.face,0.95);spawnVecBurst("axedbl",f.x+f.face*38,f.y+f.h*0.45,185,0.36,0,f.face,0.95);spawnRing(f.x+f.face*34,f.y+f.h*0.45,"#fdba74",48);spawnRing(f.x+f.face*40,f.y+f.h*0.5,"#fb923c",64);spawnSparks(f.x+f.face*44,f.y+f.h*0.45,f.face,"#ffedd5",7);spawnParticles(f.x+f.face*30,f.y+f.h-4,10,"#a8a29e",210);shake=Math.max(shake,5)} /* ダブルアックス 2段目 (豪華化): crossed double-cleave flash (axedbl) over a bigger fire bloom, twin rings and rock chips */ /* AXE ダブルアックス 2段目 (okaki rework): the second axe's blow blooms much bigger — a fire burst, a ring and a shake on top of the shared hit dressing */if(f.char==="travis"){spawnCharBurst("travis",f.x+f.face*34,f.y+f.h*0.3,125,0.32,0,f.face,0.95);spawnRing(f.x+f.face*36,f.y+f.h*0.28,"#c084fc",48);spawnSparks(f.x+f.face*38,f.y+f.h*0.26,f.face,"#fcd34d",6);shake=Math.max(shake,3)} /* TRAVIS マイク&パンチ 2段目 (見た目変更): the flashy uppercut blooms at the top of its arc — burst, ring, upward sparks and a small shake */if(f.char==="smiley"){spawnVecBurst("smiley",f.x+f.face*38,f.y+f.h*0.42,125,0.3,0,f.face,0.95);spawnRing(f.x+f.face*42,f.y+f.h*0.42,"#fde047",36);shake=Math.max(shake,3)} /* SMILEY 連続斬り 2段目 (見た目変更): the heart-piercing thrust blooms as it lands — vec burst + ring + a small shake (presentation only) */beep(420,.1,"sawtooth",.05)}
  /* MIMI&SHADE per-step work: SHADE's follow movement, its delayed
     hits (shHitT), MIMI's air-spin and light-barrage ticks, and the
     down+K light pillar */
@@ -9326,24 +9338,24 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     slow wind-up, not on the press. Spec: damage 50, KB 920, range 108x88, burn 3.0s,
     CD 0.72s, and a LONG delay — stateT starts at 0.78 and the hit fires
     at 0.26, so it connects ~0.52s after the press */
- if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;var nvHit=meleeHit(f,foe,108,88,50,920,f.face,-0.42,0,false,3.0);spawnParticles(f.x+f.face*34,f.y+f.h*0.45,16,"#fb923c",240);spawnFxBurst(FXIMG.fire,f.x+f.face*34,f.y+f.h*0.45,150,0.3,0,f.face,0.85);if(nvHit){shake=Math.max(shake,5);spawnRing(f.x+f.face*36,f.y+f.h*0.45,"#fb923c",52)}beep(210,.12,"sawtooth",.06)}
+ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=true;meleeHit(f,foe,108,88,50,920,f.face,-0.42,0,false,3.0);beep(210,.12,"sawtooth",.06)}
  /* SARA air J (スピンフレイム): while the spin state lasts the fall is
     nearly cancelled and the spin ticks out up to 5 small hits, both
     sides, ~0.2s stun each (kb-sized like her chain openers) */
  if(f.char==="sara"&&f.state==="sspin"){
    if(f.vy>30)f.vy=30;
    f.spinTick+=dt;
-   if(f.spinTick>=0.1&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,76,74,4,280,f.face,-0.25,0.3);meleeHit(f,foe,76,74,4,280,-f.face,-0.2,0.3); /* スピンフレイム (user spec): 判定 66x64 -> 76x74, 後KB 240 -> 280, 被弾硬直 0.3秒 */spawnParticles(f.x,f.y+f.h*0.45,6,"#fb923c",180)}
+   if(f.spinTick>=0.1&&f.spinHits<5){f.spinTick=0;f.spinHits++;meleeHit(f,foe,76,74,4,280,f.face,-0.25,0.3);meleeHit(f,foe,76,74,4,280,-f.face,-0.2,0.3); /* スピンフレイム (user spec): 判定 66x64 -> 76x74, 後KB 240 -> 280, 被弾硬直 0.3秒 */}
  }
  /* SARA ground down+J (ハンドフレア): after a wind-up (~0.32s),
     flames jet from both hands and tick damage on BOTH sides; anyone
     caught also starts burning */
  if(f.char==="sara"&&f.state==="sflare"){
    f.flareTick-=dt;
-   if(Math.random()<0.6){spawnParticles(f.x+f.face*30,f.y+f.h*0.45,1,"#fb923c",150);spawnParticles(f.x-f.face*30,f.y+f.h*0.45,1,"#fb923c",150)}
+   
    if(f.flareTick<=0){f.flareTick=0.22;
      var flHit=meleeHit(f,foe,112,88,5,140,f.face,-0.05,0,false,2.0);var flHit2=meleeHit(f,foe,112,88,5,140,-f.face,-0.05,0,false,2.0); /* ハンドフレア (user spec): KB 110 -> 140, 判定 86x56 -> 112x88, 燃焼 2.0秒 */
-         spawnParticles(f.x+f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);spawnParticles(f.x-f.face*36,f.y+f.h*0.45,5,"#ff8f5c",180);
+         
    }
  }
  /* ORCHID ground down+J is ニーダウン now (user balance spec): a
@@ -9369,17 +9381,13 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    if(f.flameDelay>0){
      f.flameDelay-=dt;
      f.vy=0; /* charge: she is fully stationary in the air (gravity is also held for flameDelay in the gravity step) */
-     if(Math.random()<0.55)spawnParticles(f.x+(Math.random()-0.5)*22,f.y+f.h*0.3,1,"#ff8f5c",70);
+     
      if(f.flameDelay<=0)beep(300,.22,"sawtooth",.06);
    }else if(f.flameT>0){
      f.flameT-=dt;f.flameTick-=dt;
      if(f.flameMode===1||f.flameMode===3)f.vx-=f.vx*Math.min(1,dt*9); /* rooted while breathing the ult jet / sunflower beam */
      if(f.flameMode===2&&f.vy>20)f.vy=20;
-     if(Math.random()<0.8){
-       if(f.flameMode===1)spawnParticles(f.x+f.face*(44+Math.random()*120),f.y+f.h*0.42+(Math.random()-0.5)*44,2,"#fb923c",120);
-       else if(f.flameMode===3)spawnParticles(f.x+f.face*(50+Math.random()*480),f.y+f.h*0.35+(Math.random()-0.5)*54,2,Math.random()<0.6?"#fde047":"#a3e635",130);
-       else spawnParticles(f.x+(Math.random()-0.5)*70,f.y-30-Math.random()*90,2,"#fb923c",110);
-     }
+     if(f.flameMode===3&&Math.random()<0.8)spawnParticles(f.x+f.face*(50+Math.random()*480),f.y+f.h*0.35+(Math.random()-0.5)*54,2,Math.random()<0.6?"#fde047":"#a3e635",130); /* SARA flameMode 1 (火炎放射) ・ 2 (フレイムブレス): 技エフェクト全削除のため炎パーティクルなし (user request)。ORCHID サンフラワー (3) は変更なし */
      if(f.flameTick<=0){f.flameTick=0.16;
        if(f.flameMode===1)dbgBox(f.x+f.face*118,f.y+f.h*0.45,224,160,"255,123,45",10);else if(f.flameMode===3)dbgBox(f.x+f.face*338,f.y+f.h*0.45,664,190,"255,123,45",10);else dbgBox(f.x,f.y-110,210,211,"255,123,45",10); /* hitbox viewer (おかき only): this flame tick's test area — jet forward 6..230 / ±80, sunflower 6..670 / ±95, breath cone ±105 across and 4..215 above */
        hitFxMute=(f.flameMode===1||f.flameMode===3)?1:0; /* SARA 火炎放射 (flameMode 1) / ORCHID サンフラワー (flameMode 3): ヒット時のエフェクトを出さない (user request) — the tick's damage, knockback, burn settlement and combo / kill bookkeeping all run as usual through applyHit / applyShadeDot; only their hit feedback is muted. flameMode 2 (空中上J breath) is NOT muted and keeps its hit effects */
@@ -9731,7 +9739,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
        meleeHit(f,foe,96,86,14,980,f.face,-0.28);meleeHit(f,foe,96,86,14,980,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fcd34d",230);spawnRing(f.x,f.y+f.h-4,"#c084fc",44);var tdY=f.y+f.h-5;spawnRing(f.x-52,tdY,"#fcd34d",50);spawnRing(f.x+52,tdY,"#fcd34d",50);spawnCharBurst("travis",f.x-54,tdY-8,96,0.3,0,-1,0.85);spawnCharBurst("travis",f.x+54,tdY-8,96,0.3,0,1,0.85);spawnSparks(f.x,tdY,1,"#fcd34d",6);spawnSparks(f.x,tdY,-1,"#fcd34d",6);spawnParticles(f.x-44,tdY,9,"#c084fc",210);spawnParticles(f.x+44,tdY,9,"#c084fc",210); /* (見た目変更) the landing shockwave now VISIBLY rolls out on both sides — a ring + sound burst + spark fan on each side, mirroring the 96x86 two-sided hit */
      }else if(f.char==="smiley"){ /* SMILEY 落下斬り landing (v102 spec): slashes tear out on BOTH sides — 10 dmg / KB 560, box 120x58 */
        meleeHit(f,foe,120,58,10,560,f.face,-0.28);meleeHit(f,foe,120,58,10,560,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fef08a",230);spawnRing(f.x-52,f.y+f.h-5,"#fde047",46);spawnRing(f.x+52,f.y+f.h-5,"#fde047",46);
-     }else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2);spawnParticles(f.x,f.y+f.h-4,18,"#fb923c",230);spawnRing(f.x,f.y+f.h-4,"#fb923c",42)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
+     }else if(f.char==="sara"){meleeHit(f,foe,dvRg,dvH,12,680,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,9,680,-f.face,-0.2)} /* SARA 落下フレイムフィスト着地 (user spec): 前12・後9 / KB 前430 -> 680・後340 -> 680 */else{meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:12,430,f.face,-0.28);meleeHit(f,foe,dvRg,dvH,f.char==="kairo"?16:(f.char==="warden"?12:9),f.char==="warden"?430:340,-f.face,-0.2); /* WARDEN landing shock: back side is also 12 dmg / KB 430 (user spec) */spawnParticles(f.x,f.y+f.h-4,18,f.char==="warden"?"#fde68a":"#a5f3fc",230);if(f.char==="warden"){/* ウェーブショット着弾 (見た目変更): the shell bursts on impact and shockwaves roll out along the ground on BOTH sides — a ring at the impact point plus a ring, sideways spark fan, dust and an electric burst on each side, mirroring the 12 dmg / KB 430 hits that just landed front and back */var wlY=f.y+f.h-6;spawnRing(f.x,wlY,"#fde68a",62);spawnRing(f.x-58,wlY,"#f59e0b",52);spawnRing(f.x+58,wlY,"#f59e0b",52);spawnSparks(f.x,wlY,1,"#fde68a",11);spawnSparks(f.x,wlY,-1,"#fde68a",11);spawnParticles(f.x-46,wlY,9,"#fbbf24",215);spawnParticles(f.x+46,wlY,9,"#fbbf24",215);spawnFxBurst(FXIMG.hit,f.x,wlY-6,165,0.32,0,1,0.85);spawnFxBurst(FXIMG.elec,f.x-54,wlY-4,112,0.28,0,1,0.6);spawnFxBurst(FXIMG.elec,f.x+54,wlY-4,112,0.28,0,-1,0.6)}} /* KAIRO dive landing buffed to 16/16 (user spec); other chars keep 12/9 */
      beep(130,.13,"sawtooth",.055)}
  }
  /* BECAME AIRBORNE WITHOUT JUMPING (v93): this step ended airborne after
@@ -10158,8 +10166,9 @@ function drawKairo(f){
 }
 function drawSara(f){
  /* 本体はドット絵スプライト (KAIRO と同じテイストで描き起こし)。
-    炎・ブレス・カオスのオーラなど技のエフェクトは、従来のコード
-    描画のまま一切変更していない (下半分にそのまま残してある) */
+    技エフェクトはすべて削除済み (user request): 炎・ブレス・爪や尻尾の
+    軌跡・カオスのオーラなど、技に付随するコード描画は一切出ない。
+    本体のスプライトと姿勢 (傾きなど) は変更なし */
  /* ult ready: charged-electric aura in dragon-fire orange */
  if(f.meter>=100&&!f.dead)drawUltAura(f,249,115,22);
  drawSpriteTrail(f,"sara");
@@ -10183,20 +10192,7 @@ function drawSara(f){
  if(f.state==="sclaw1"||f.state==="supper"||f.state==="stail"||f.state==="sflare"||f.state==="sjavelin")ctx.translate(8,0);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"sara","#ff8f5c");
- /* ==== 技エフェクト (従来のコード描画のまま) ==== */
- function flameAt(x,y,s){ctx.fillStyle=accC;ctx.beginPath();ctx.moveTo(x-s,y);ctx.quadraticCurveTo(x,y-s*1.5,x+s,y);ctx.quadraticCurveTo(x,y+s*0.55,x-s,y);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(x-s*0.5,y);ctx.quadraticCurveTo(x,y-s*0.8,x+s*0.5,y);ctx.quadraticCurveTo(x,y+s*0.3,x-s*0.5,y);ctx.fill()}
- if(f.state==="stail"){ctx.strokeStyle=hairC;ctx.lineWidth=8;ctx.beginPath();ctx.arc(2,30,46,-0.4,1.5);ctx.stroke();ctx.fillStyle=accC;ctx.beginPath();ctx.moveTo(44,58);ctx.lineTo(56,66);ctx.lineTo(40,68);ctx.closePath();ctx.fill()}
- if(f.state==="sclaw1"){ctx.strokeStyle="#f8fafc";ctx.lineWidth=2.6;for(var c1=0;c1<3;c1++){ctx.beginPath();ctx.moveTo(36,14+c1*6);ctx.lineTo(49,11+c1*6);ctx.stroke()}}
- else if(f.state==="supper"){ctx.strokeStyle="rgba(249,115,22,.7)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(10,20,30,-1.3,-0.4);ctx.stroke()}
- else if(f.state==="sflare"){flameAt(44,26,8+Math.sin(time*31)*1.6);flameAt(-44,26,8+Math.cos(time*29)*1.6)}
- else if(f.state==="sspin"){var spS=time*26;ctx.save();ctx.translate(0,27);ctx.rotate(spS);ctx.strokeStyle=accC;ctx.lineWidth=4.5;for(var bS=0;bS<2;bS++){ctx.save();ctx.rotate(bS*3.14);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore()}
- else if(f.state==="sdive"){flameAt(22,54,7)}
- else if(f.state==="snova"){if(f.stateT>0.26){flameAt(2,30,5+(0.52-f.stateT)*22)}else{flameAt(42,26,11);ctx.strokeStyle="rgba(249,115,22,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,20);ctx.lineTo(-28,20);ctx.moveTo(-10,32);ctx.lineTo(-24,32);ctx.stroke()}}
- else if(f.state==="sflame"){var jw=Math.sin(time*34)*3;ctx.fillStyle="rgba(239,68,68,.5)";ctx.beginPath();ctx.moveTo(30,22);ctx.lineTo(150,29+jw);ctx.lineTo(30,40);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(249,115,22,.65)";ctx.beginPath();ctx.moveTo(30,25);ctx.lineTo(128,30+jw);ctx.lineTo(30,37);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(253,230,138,.85)";ctx.beginPath();ctx.moveTo(30,28);ctx.lineTo(96,31+jw*0.6);ctx.lineTo(30,34);ctx.closePath();ctx.fill()}
- else if(f.state==="supflame"){if(f.flameDelay<=0&&f.flameT>0){var uw=Math.sin(time*30)*3;ctx.fillStyle="rgba(239,68,68,.5)";ctx.beginPath();ctx.moveTo(-8,-6);ctx.lineTo(4+uw,-96);ctx.lineTo(22,-6);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(249,115,22,.65)";ctx.beginPath();ctx.moveTo(-3,-6);ctx.lineTo(6+uw,-76);ctx.lineTo(16,-6);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(253,230,138,.85)";ctx.beginPath();ctx.moveTo(1,-6);ctx.lineTo(6+uw,-52);ctx.lineTo(11,-6);ctx.closePath();ctx.fill()}else flameAt(10,-4,5+Math.sin(time*24)*1.4)}
- if(f.state==="sbreath"){var bw=Math.sin(time*30)*2;ctx.fillStyle="rgba(249,115,22,.7)";ctx.beginPath();ctx.moveTo(15,13);ctx.lineTo(44,10+bw);ctx.lineTo(42,20+bw);ctx.lineTo(15,18);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(253,230,138,.85)";ctx.beginPath();ctx.moveTo(15,14);ctx.lineTo(34,13+bw);ctx.lineTo(33,17+bw);ctx.lineTo(15,16);ctx.closePath();ctx.fill()}
- /* モードカオス aura: licking flames all around the body while chaos is on */
- if(f.chaos){for(var cf=0;cf<7;cf++){var ca=cf*0.9+Math.sin(time*13+cf)*0.2,cx2=Math.cos(ca)*22,cy2=26+Math.sin(ca)*26;flameAt(cx2,cy2,5.5+Math.sin(time*17+cf*2)*1.6)}ctx.strokeStyle="rgba(239,68,68,.55)";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,26,34+Math.sin(time*11)*2,0,6.29);ctx.stroke()}
+ /* ==== 技エフェクト: すべて削除済み (user request) ==== */
  ctx.restore();
  hpBar(f);
 }
@@ -11829,7 +11825,7 @@ function simStepFrame(getInp){
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
        else if(pr.kind==="throwaxe"){applyHit(pr.owner,foe,21,560,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y)}
        else if(pr.kind==="rock"){applyHit(pr.owner,foe,26,660,pr.vx>0?1:-1,-0.32,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#a8a29e",210);spawnParticles(pr.x,pr.y,6,"#78716c",160);shake=Math.max(shake,4)} /* AXE 投岩: 26 dmg / KB 660 (user spec) */
-       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,720,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.5);foe.burnBy=pr.owner;spawnParticles(pr.x,pr.y,12,"#fb923c",180)} /* SARA fire javelin (user spec): direct hit KB 300 -> 720, burn 2.0 -> 2.5s */
+       else if(pr.kind==="javelin"){applyHit(pr.owner,foe,24,720,pr.vx>0?1:-1,-0.2,false,pr.x,pr.y);foe.burnT=Math.max(foe.burnT||0,2.5);foe.burnBy=pr.owner} /* SARA fire javelin (user spec): direct hit KB 300 -> 720, burn 2.0 -> 2.5s */
        else if(pr.kind==="blast"){applyHit(pr.owner,foe,9,220,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y)} /* TRAVIS ソニックブラスト (user spec): 12 -> 9 dmg / KB 300 -> 220 */
        else if(pr.kind==="msong"){applyHit(pr.owner,foe,40,800,foe.x>=pr.x?1:-1,-0.3,false,pr.x,pr.y);explodeMsong(pr)} /* TRAVIS メテオソング (user spec): direct hit 本体 40 dmg / KB 800 (box 96x66 via the hit test above) — and the impact sets the explosion off on the spot */
        else if(pr.kind==="knife"){applyHit(pr.owner,foe,10,240,pr.vx>0?1:-1,-0.14,false,pr.x,pr.y)} /* SMILEY スローイングナイフ: 10 dmg / KB 240 — fast (弾速 900 -> 1060, user spec) and light */
@@ -11848,14 +11844,14 @@ function simStepFrame(getInp){
      if(pr.kind==="gren"||(pr.kind==="glauncher"&&!pr.rolled)){var gnPlat=null;for(var gi2=0;gi2<platforms.length;gi2++){var gp2=platforms[gi2];if(pr.x>gp2.x-4&&pr.x<gp2.x+gp2.w+4&&pr.y+16>=gp2.y&&pr.y<gp2.y+26){gnPlat=gp2;break}}if(gnPlat){if(pr.kind==="gren"){explodeGren(pr,14,620);return false} /* ダウンアトミック grenades burst on ground contact, like the msong */ pr.rolled=true;pr.y=gnPlat.y-6;pr.vy=0;pr.vx=(pr.vx>0?1:-1)*140;spawnParticles(pr.x,pr.y+4,5,"#a8a29e",110);beep(200,.05,"square",.03)}} /* No.66 グレネードランチャー: on ground contact the grenade does NOT burst — it slows to a 140 u/s horizontal roll (rolled; the ground-hug at the top of this filter keeps it on the floor) and only bursts when it reaches a foe or its life runs out */
      if(pr.kind==="rock"&&pr.air&&!pr.rolled){var rkPlat=null;for(var rki2=0;rki2<platforms.length;rki2++){var rp4=platforms[rki2];if(pr.vy>0&&pr.x>rp4.x-4&&pr.x<rp4.x+rp4.w+4&&pr.y+16>=rp4.y&&pr.y<rp4.y+26){rkPlat=rp4;break}}if(rkPlat){pr.rolled=true;pr.y=rkPlat.y-6;pr.vy=0;pr.vx=(pr.vx>0?1:-1)*330;spawnParticles(pr.x,pr.y+4,6,"#a8a29e",120);beep(200,.05,"square",.03)}} /* AXE 砲岩 (user spec): on ground contact the boulder does NOT stop — it keeps its 330 speed and rolls straight along the ground (rolled; the ground-hug at the top of this filter keeps it on the floor and gravity no longer applies while rolled) */
      if(pr.kind==="pbomb"){var pbPlat=null;for(var gi3=0;gi3<platforms.length;gi3++){var gp3=platforms[gi3];if(pr.vy>0&&pr.x>gp3.x-4&&pr.x<gp3.x+gp3.w+4&&pr.y+14>=gp3.y&&pr.y<gp3.y+26){pbPlat=gp3;break}}if(pbPlat){pr.bounces=(pr.bounces||0)+1;if(pr.bounces>=3){spawnParticles(pr.x,pbPlat.y-8,16,"#a855f7",210);spawnParticles(pr.x,pbPlat.y-8,9,"#a3e635",160);spawnRing(pr.x,pbPlat.y-6,"#c084fc",36);beep(180,.1,"sine",.05);return false}pr.y=pbPlat.y-13;pr.vy=-Math.max(175,Math.abs(pr.vy)*0.55);pr.vx*=0.86;spawnParticles(pr.x,pbPlat.y-4,5,"#a855f7",120);beep(260,.05,"square",.035)}} /* ORCHID ポイズンボム: the sphere BOUNCES off the ground (gravity arc via pr.grav) — contacts 1-2 rebound with a damped hop, and the THIRD bounce bursts it in a puff of poison (user spec: 地面に三回バウンドする。三回目のバウンドで消失). The generic platform-death loop below exempts pbomb, like the grenades */
-     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.kind!=="lwave"&&pr.kind!=="gren"&&pr.kind!=="glauncher"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="pbomb"&&pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){ /* lwave is exempt: its own ground-hug logic in the filter above lands it on floors instead of dying on contact. gren / glauncher are exempt too: their ground contact is handled by the swept-band block above. No.66's homing missiles are exempt as well: they launch straight UP from wherever he stands — a ledge overhead would eat them on the first frames — and home over the stage, so they pass through platforms and only end on a foe, their 3.2s life, or the world bounds */if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});spawnParticles(pr.x,pl.y-6,12,"#fb923c",150);spawnRing(pr.x,pl.y-4,"#fb923c",34);beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
+     for(var pi=0;pi<platforms.length;pi++){var pl=platforms[pi];if(pr.kind!=="lwave"&&pr.kind!=="gren"&&pr.kind!=="glauncher"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="pbomb"&&pr.x>pl.x&&pr.x<pl.x+pl.w&&pr.y>pl.y&&pr.y<pl.y+10){ /* lwave is exempt: its own ground-hug logic in the filter above lands it on floors instead of dying on contact. gren / glauncher are exempt too: their ground contact is handled by the swept-band block above. No.66's homing missiles are exempt as well: they launch straight UP from wherever he stands — a ledge overhead would eat them on the first frames — and home over the stage, so they pass through platforms and only end on a foe, their 3.2s life, or the world bounds */if(pr.kind==="javelin"){fireOrbs.push({x:pr.x,y:pl.y,t:8,owner:pr.owner});beep(300,.08,"sawtooth",.04)}return false}} /* SARA javelin lands: it stays as a placed fire orb (fireOrbs) */
      return pr.life>0&&pr.x>-60&&pr.x<WORLD_W+60&&pr.y<WORLD_H+200});
    particles=particles.filter(function(p){p.x+=p.vx*STEP;p.y+=p.vy*STEP;p.vy+=(p.amb?-4:300)*STEP;p.vx*=0.97;return(p.life-=STEP)>0});
    if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (a fixed ceiling of 460, independent of the quality tier) */
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
    icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
-   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;if(Math.random()<0.3)pushParticle({x:ob.x+(Math.random()-0.5)*22,y:ob.y-6,vx:(Math.random()-0.5)*24,vy:-44-Math.random()*36,life:.4,col:Math.random()<0.5?"#fb923c":"#ef4444",size:2+Math.random()*3});for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if((Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92)||(shadeAlive(of)&&Math.abs(of.shX-ob.x)<92&&Math.abs(of.shY-ob.y)<92)){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner} /* 【闇ゲージ】 SHADE's body in a fire orb ignites the pair too — the burn ticks then drain the gauge via applyShadeDot */}return ob.t>0});
+   fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if((Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92)||(shadeAlive(of)&&Math.abs(of.shX-ob.x)<92&&Math.abs(of.shY-ob.y)<92)){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner} /* 【闇ゲージ】 SHADE's body in a fire orb ignites the pair too — the burn ticks then drain the gauge via applyShadeDot */}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
       into its 154x60 trigger (±77 across / 60 around the feet line,
       narrowed from 160x60, user spec), then bursts for 20 damage /
