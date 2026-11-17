@@ -434,6 +434,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["17:06"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」の空中発動時の硬直を再調整",
+   items:["J+K「ツタ絡みコンボ」：地上で発動した場合は、これまでどおり後硬直0.38秒（完全硬直）のまま変更ありません",
+          "J+K「ツタ絡みコンボ」：空中で発動した場合は、後硬直が0.55秒になりました（完全硬直は0.55秒のみ）。あわせて着地硬直が0.44秒→0.4秒に変わりました",
+          "ダメージ14＋16・KB 380／720（掴み）・発生（即時／2段目 約0.3秒）・全体0.84秒・判定 前134×64／前130×84など、その他の性能は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv265に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["15:32"],tag:"調整",title:"ORCHID：U「ポイズンボム」に装填数3・リロード2.2秒を追加して下方修正",
    items:["U「ポイズンボム」：これまで発数に制限がありませんでしたが、装填数3発を追加しました。撃った分は2.2秒ごとに1発ずつ自動リロードされます",
           "ダメージ18・KB 210・毒1.2秒・発生0.2秒・全体0.4秒・後硬直0.54秒・弾速660・地面に3回バウンドし3回目で消失する仕様など、その他の性能は変更ありません",
@@ -812,7 +817,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.32秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','550')+mvS('発生','即時／2発目 約0.32秒')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('判定','146×76 → 158×62')+mvS('着地硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向98×230'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。地上で出すと後硬直の間は<b>完全硬直</b>。空中で出すと完全硬直は<b>0.38秒のみ</b>になり、代わりに着地時に<b>着地硬直0.44秒</b>が追加される。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','0.38秒（完全硬直）')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('完全硬直','空中では0.38秒のみ')+mvS('着地硬直','空中で出した場合0.44秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。地上で出すと後硬直<b>0.38秒</b>の間は<b>完全硬直</b>。空中で出すと後硬直は<b>0.55秒</b>になり、完全硬直は<b>0.55秒のみ</b>で、着地時に<b>着地硬直0.4秒</b>が追加される。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','地上0.38秒（完全硬直）／空中0.55秒')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('完全硬直','空中では0.55秒のみ')+mvS('着地硬直','空中で出した場合0.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ポイズンミスト</b> <span style="color:#4ade80;font-weight:900">設置型・クールタイム6.2秒</span><p>左右へ広範囲の毒霧を召喚する。霧は<b>その場に8秒間残り</b>、範囲内の相手に<b>0.1秒ごとに2ダメージ</b>を与え続ける（ノックバックなし）。後硬直の間は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','2／0.1秒')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.45秒')+mvS('後硬直','0.67秒（完全硬直）')+mvS('範囲','左右に広がる楕円（横幅410）')+mvS('持続','8秒')+mvS('再使用','6.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム7.0秒</span><p><b>vy-120で4秒かけて真上へ上昇し続ける</b>。上昇中は回転しながらツタを振り、<b>0.3秒ごとに両側へ6ダメージ</b>の攻撃が出る。横移動は通常どおり可能。地上・空中どちらでも出せる。着地すると<b>着地硬直0.42秒</b>がある。</p>'+mvSpec(mvS('ダメージ','6／0.3秒（両側）')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.50秒（上昇は4秒間継続）')+mvS('後硬直','0.57秒')+mvS('判定','72×66（両側）')+mvS('再使用','7.0秒')+mvS('着地硬直','0.42秒'))+'</div></div>'
@@ -1649,7 +1654,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v264";
+var BUILD_ID="v265";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7019,7 +7024,7 @@ var LAND_LAG={
  kojiro:{airslash:0.18,airheavy:0.3,taildrop:0.30,diveclaw:0.5,krise:0.28,dashthrust:0.25,jkcombo:0.18}, /* KOJIRO (user spec): 空斬り (airslash) landing lag 0.2 -> 0.18, 空中三日月斬り (airheavy) landing lag 0.34 -> 0.3, 落下斬り landing lag 0.44 -> 0.5, 昇り斬り (air up+K) 0.20 -> 0.28, 燕返し 0.18 */
  axe:{buttagiri:0.28,diveclaw:0.40,axerise:0.40,dashclaw:0.34,jkcombo:0.34}, /* AXE (user spec): ぶった切り landing lag 0.28 (旧・宙斧は削除され空中Jは ぶった切り に差し替え), ヘッドロケット 0.36 -> 0.40, 下斧 着地硬直 0.32 -> 0.40 (user spec); no taildrop entry — メテオドロップ pays its 0.57s 完全硬直 through recLockT instead */
  sara:{sspin:0.23,sdive:0.25,snova:0.28,supflame:0.30,shorn:0.25,jkcombo:0.25}, /* SARA スピンフレイム着地硬直 0.30 -> 0.23 (user spec) */
- orchid:{ohook:0.32,otackle:0.25,jkcombo:0.44,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. ツタ絡みコンボ (jkcombo) 着地硬直 0.25 -> 0.28 -> 0.44 (user spec: air starts pay this on touchdown, and in exchange their 完全硬直 lasts 0.38秒のみ — see the jk branch in startOrchidAttack). ツタフック (ohook) 着地硬直 0.28 -> 0.32 (nerf). The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
+ orchid:{ohook:0.32,otackle:0.25,jkcombo:0.40,ofly:0.42}, /* ORCHID (user balance spec): 飛翔 (ofly) gains 着地硬直 0.42 — the press also marks airLag directly, so ground-started flights pay it too. ツタ絡みコンボ (jkcombo) 着地硬直 0.25 -> 0.28 -> 0.44 -> 0.4 (user spec: air starts pay this on touchdown; their 後硬直 is 0.55秒 and the 完全硬直 lasts 0.55秒のみ — see the jk branch in startOrchidAttack). ツタフック (ohook) 着地硬直 0.28 -> 0.32 (nerf). The odive / oshot entries were deleted with ドロップポーション / ポイズンショット */
  travis:{tairwhip:0.22,diveclaw:0.44,tkick:0.54,jkcombo:0.33,tsingjump:0.34}, /* TRAVIS (user spec): 空中コードウィップ (tairwhip) 0.22 / ダイブマイク (diveclaw) 0.30 -> 0.44 / エアドロップキック (tkick) 0.54 / マイク&パンチ (jkcombo) 0.25 -> 0.33 / シングソングジャンプ (tsingjump) 着地硬直 0.34 (the launch also marks the same airLag directly, so ground starts pay it too). エアスピンマイク・メテオマイクは削除されたため、旧項目 (airclaw / taildrop) も削除 */
  smiley:{sairj:0.18,diveclaw:0.38,jkcombo:0.18,sjail:0.33}, /* SMILEY: 回転ダガー (sairj) 0.18 / 落下斬り (diveclaw) 0.38 / 連続斬り (jkcombo) 0.18 / チェーンジェイル (sjail) 着地硬直 0.33 (the move also marks the same airLag directly at the press, so ground starts pay it too). ダイブスタブ (taildrop) は削除されたため項目も削除； 連続エアナイフ (sairknife) は後硬直0.5秒が完全硬直 (recLockT) のため着地硬直なし */
  mimi:{mairspin:0.2,mlight:0.22,mswing:0.3}, /* MIMI&SHADE: 回るよ！ (mairspin) 0.2 / 一人でもやれるもん！ (mlight) 0.18 -> 0.22 (user balance spec) / SHADEブランコ (mswing) 0.3 (the swing also marks the same airLag directly at the press, so ground starts pay it too). 落として！！ (mdrop, the air down+J that replaced the 落ちちゃう！ dive) has NO landing lag — it is not a dive and its spec lists none, so the old mdive 0.3 entry is deleted with the move */
@@ -7217,14 +7222,17 @@ function startOrchidAttack(f,type,foe){
       attackCd + the 0.07 tail = 0.68秒 from the press — no movement /
       jump / dash / next move for the whole span).
       GROUND vs AIR (user spec): a GROUND start keeps that full lock
-      exactly as above. An AIR start caps the 完全硬直 at 0.38秒のみ
-      (the recLockT override right below: movement / dash come back
-      0.38s after the press, while attackCd still gates the next move
-      until the same 0.68s mark — the listed 後硬直 0.38秒 itself is
-      unchanged), and in exchange the air start pays 着地硬直
-      0.28 -> 0.44秒 on touchdown (LAND_LAG jkcombo) */
-   f.state="jkcombo";f.stateT=0.84;f.attackCd=0.61;f.comboWin=0;f.hitDone=false;applyFullLock(f);
-   if(!f.onGround)f.recLockT=Math.min(f.recLockT||0,0.38); /* 空中発動 (user spec): 完全硬直は0.38秒のみ — the full lock ends 0.38s after the press instead of spanning the whole recovery; 着地硬直 0.44 (LAND_LAG) is the air start's added cost */
+      exactly as above (後硬直 0.38秒（完全硬直）, unchanged). An AIR
+      start instead gets 後硬直 0.55秒 (attackCd 0.78 + the 0.07 tail
+      − the 0.3s second-hit delay, set right below) and caps the
+      完全硬直 at 0.55秒のみ (the recLockT override: movement / dash
+      come back 0.55s after the press, while attackCd still gates the
+      next move until the 0.85s mark), and the air start also pays
+      着地硬直 0.4秒 on touchdown (LAND_LAG jkcombo, down from 0.44) */
+   f.state="jkcombo";f.stateT=0.84;f.attackCd=0.61;f.comboWin=0;f.hitDone=false;
+   if(!f.onGround)f.attackCd=0.78; /* 空中発動 (user spec): 後硬直 0.55秒 = attackCd 0.78 + 共通0.07 − 2段目の遅延0.3秒。地上発動は attackCd 0.61 のまま (後硬直 0.38秒（完全硬直）) */
+   applyFullLock(f);
+   if(!f.onGround)f.recLockT=Math.min(f.recLockT||0,0.55); /* 空中発動 (user spec): 完全硬直は0.55秒のみ — the full lock ends 0.55s after the press instead of spanning the whole recovery; 着地硬直 0.4 (LAND_LAG) is the air start's added cost */
    f.vx+=f.face*140;capVx(f,RUN_MAX*1.25);
    meleeHit(f,foe,134,64,14,380,f.face,-0.3,0.34);
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,11,"#a3e635",200);beep(880,.06,"square",.045);
