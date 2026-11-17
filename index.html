@@ -434,6 +434,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["15:10"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」の後硬直を調整",
+   items:["J+K「ツタ絡みコンボ」：後硬直 0.52秒→0.38秒に短縮しました。あわせて後硬直は完全硬直になり、その間は移動・ジャンプ・ダッシュ・次の技のすべてができなくなりました",
+          "ダメージ14＋16・KB 380／720（掴み）・発生（即時／2段目 約0.3秒）・全体0.84秒・判定 前134×64／前130×84・着地硬直0.28秒など、その他の性能は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv261に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["14:57"],tag:"調整",title:"ORCHID：J+K「ツタ絡みコンボ」を下方修正",
    items:["J+K「ツタ絡みコンボ」：ダメージ 15＋16→14＋16、KB 500／800（掴み）→380／720（掴み）、判定 前140×66／前146×84→前134×64／前130×84に下方修正しました",
           "J+K「ツタ絡みコンボ」：2段目の発生 約0.26秒→約0.3秒、全体 0.8秒→0.84秒、後硬直 0.47秒→0.52秒、1段目の被弾硬直 0.33秒→0.34秒、空中で出した場合の着地硬直 0.25秒→0.28秒に下方修正しました（2段目の被弾硬直はなしのままです）",
@@ -795,7 +799,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.22秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','660')+mvS('発生','即時／2発目 約0.22秒')+mvS('全体','0.42秒')+mvS('後硬直','0.35秒')+mvS('判定','160×76 → 172×66')+mvS('着地硬直','0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向98×230'))+'</div></div>'
-+'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','0.52秒')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','0.38秒（完全硬直）')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('着地硬直','空中で出した場合0.28秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ポイズンミスト</b> <span style="color:#4ade80;font-weight:900">設置型・クールタイム6.2秒</span><p>左右へ広範囲の毒霧を召喚する。霧は<b>その場に8秒間残り</b>、範囲内の相手に<b>0.1秒ごとに2ダメージ</b>を与え続ける（ノックバックなし）。後硬直の間は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','2／0.1秒')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.45秒')+mvS('後硬直','0.67秒（完全硬直）')+mvS('範囲','左右に広がる楕円（横幅410）')+mvS('持続','8秒')+mvS('再使用','6.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム7.0秒</span><p><b>vy-120で4秒かけて真上へ上昇し続ける</b>。上昇中は回転しながらツタを振り、<b>0.3秒ごとに両側へ6ダメージ</b>の攻撃が出る。横移動は通常どおり可能。地上・空中どちらでも出せる。着地すると<b>着地硬直0.42秒</b>がある。</p>'+mvSpec(mvS('ダメージ','6／0.3秒（両側）')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.50秒（上昇は4秒間継続）')+mvS('後硬直','0.57秒')+mvS('判定','72×66（両側）')+mvS('再使用','7.0秒')+mvS('着地硬直','0.42秒'))+'</div></div>'
@@ -1630,7 +1634,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v260";
+var BUILD_ID="v261";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7187,15 +7191,18 @@ function startOrchidAttack(f,type,foe){
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
  if(type==="jk"){
-   /* ツタ絡みコンボ (user balance spec — nerfed): instant 14 dmg /
-      KB 380 in a front 134x64 box with 被弾硬直 0.34秒, then a delayed
-      second hit at ~0.3s that is a GRAB (16 dmg / KB 720, front
-      130x84 — resolved in ORCHID's own block in stepFighter, ahead of
-      the shared jkcombo block). 全体 0.8 -> 0.84秒 (stateT); 後硬直
-      0.47 -> 0.52秒 = attackCd 0.75 + the universal 0.07 tail − the
-      0.3s second-hit delay. 着地硬直 (air starts) 0.25 -> 0.28秒 in
-      LAND_LAG */
-   f.state="jkcombo";f.stateT=0.84;f.attackCd=0.75;f.comboWin=0;f.hitDone=false;
+   /* ツタ絡みコンボ (user balance spec — nerfed, then recovery adjusted):
+      instant 14 dmg / KB 380 in a front 134x64 box with 被弾硬直 0.34秒,
+      then a delayed second hit at ~0.3s that is a GRAB (16 dmg /
+      KB 720, front 130x84 — resolved in ORCHID's own block in
+      stepFighter, ahead of the shared jkcombo block). 全体 0.84秒
+      (stateT, unchanged); 後硬直 0.52 -> 0.38秒 = attackCd 0.61 +
+      the universal 0.07 tail − the 0.3s second-hit delay, and the
+      recovery is now 完全硬直 (applyFullLock: recLockT spans
+      attackCd + the 0.07 tail = 0.68秒 from the press — no movement /
+      jump / dash / next move for the whole span). 着地硬直 (air
+      starts) 0.28秒 in LAND_LAG (unchanged) */
+   f.state="jkcombo";f.stateT=0.84;f.attackCd=0.61;f.comboWin=0;f.hitDone=false;applyFullLock(f);
    f.vx+=f.face*140;capVx(f,RUN_MAX*1.25);
    meleeHit(f,foe,134,64,14,380,f.face,-0.3,0.34);
    spawnParticles(f.x+f.face*24,f.y+f.h*0.45,11,"#a3e635",200);beep(880,.06,"square",.045);
