@@ -434,6 +434,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/17",times:["22:50"],tag:"調整",title:"SARA：攻撃時の半透明パーティクルと燃焼の被弾パーティクルを削除",
+   items:["SARAの攻撃が当たったときに発生していた半透明のパーティクル（ヒット時の粒子・火花・FXバースト）を削除しました。ダッシュ開始時のパーティクルと、残像に重なる炎のテクスチャも出なくなります",
+          "燃焼の継続ダメージ（0.5秒ごとの3ダメージ）が当たったときに発生していた被弾パーティクルも削除しました。SARAの燃焼・No.66の灼熱による燃焼のどちらも対象です",
+          "ダメージ・KB・判定・硬直・燃焼の時間など性能は一切変更ありません。ダメージ数字・衝撃波の輪・ヒットストップ・画面の揺れ・ヒット音はこれまで通り出ます。他のキャラの攻撃のパーティクルにも変更はありません",
+          "オンライン対戦のビルド版数をv269に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/17",times:["19:59"],tag:"調整",title:"スコア：キルした本人にボーナス+100点を再追加",
    items:["敵を倒した時、最後の一撃で倒した本人（キルした人）のスコアに、与えたダメージ分とは別にボーナス+100点が上乗せされるようになりました。他の貢献者はこれまでどおり、与えたダメージ分のみがスコアに入ります",
           "KO回復（倒した敵に自分が与えたダメージの20%、上限は自分の最大HPの30%）はこれまでどおりで、ボーナスは回復量に影響しません",
@@ -1215,6 +1220,7 @@ function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delet
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[];
 var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
+var noHitParticles=0; /* noHitParticles: while 1, applyHit / applyShadeDot deal their damage and bookkeeping exactly as usual but spawn NO hit PARTICLES (the translucent particle squares, spark streaks and FX-burst textures) — ring, damage floater, hitstop, shake, beep and hurt flash all still fire. It is set only around the burn DoT ticks in stepFighter (user request: 燃焼の継続ダメージで発生する被弾パーティクルも削除). Independently of this flag, a hit whose ATTACKER is SARA never spawns hit particles either (user request: SARAが攻撃を発動した時の半透明のパーティクルを削除) — that attacker-side rule lives in applyHit / applyShadeHit / applyShadeDot themselves */
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
 /* camera follow state: velocity of the critically-damped follow
@@ -1670,7 +1676,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v268";
+var BUILD_ID="v269";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -6450,7 +6456,7 @@ function tryDash(f,dir){
  f.jBoostT=0; /* a dash cancels a pending first-jump height decision: the burst holds vy at 0, so no boost may fire after it */
  f.dashT=f.char==="axe"?0.18:DASH_TIME;f.dashCd=f.char==="kairo"?2.2:(f.char==="kojiro"?2.0:(f.char==="sara"?2.2:(f.char==="smiley"?((f.awakenT||0)>0?0.8:1.8):DASH_CD)));f.fastfall=false;f.vy=0; /* dash is horizontal ONLY — never any vertical component. KAIRO dash CD 2.4s -> 2.2s, KOJIRO dash CD 2.4s -> 2.0s, AXE dash duration 0.15s -> 0.18s (user spec). SMILEY dash CD 2.2s -> 1.8s, and 0.9s -> 0.8s while Berserker lasts (user spec); SARA dash CD 2.4s -> 2.2s (user spec); TRAVIS keeps the shared 2.4s */
  if(!f.onGround)f.airDashed=true;
- spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnCharBurst(f.char,f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5);beep(f.isPlayer?880:440,.06,"sawtooth",.03);
+ if(f.char!=="sara"){spawnParticles(f.x,f.y+f.h*0.45,8,"#67e8f9",120);spawnCharBurst(f.char,f.x-f.face*10,f.y+f.h*0.45,120,0.3,0,f.face,0.5)}beep(f.isPlayer?880:440,.06,"sawtooth",.03); /* SARA: no dash-start particles / burst either (user request — her translucent particles are gone everywhere) */
  return true;
 }
 function startWardenAttack(f,type,foe){
@@ -7884,7 +7890,7 @@ function applyShadeHit(att,owner,dmg,cx,cy,isUlt){
     darkness simply thins. Feedback stays small: a violet burst, a
     ring, the damage number over SHADE and a brief hitstop */
  hitstop=Math.max(hitstop,isUlt?0.05:0.02);shake=Math.min(13,Math.max(shake,2));
- spawnParticles(cx,cy,10,"#a855f7",190);spawnParticles(cx,cy,6,"#2e1065",150);
+ if(att.char!=="sara"){spawnParticles(cx,cy,10,"#a855f7",190);spawnParticles(cx,cy,6,"#2e1065",150)} /* SARA's hits on SHADE spawn no particles either (user request) — ring / floater / hitstop below still fire */
  spawnRing(cx,cy,"#7e22ce",30);
  pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.7,col:"#d8b4fe"});
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
@@ -7912,7 +7918,7 @@ function applyShadeDot(att,owner,dmg){
  if(att.char==="sara"&&att.chaos)dmg=Math.round(dmg*1.3); /* mirror the tick's own chaos boost (applyHit) — the SMILEY Berserker boost never applies to noKb DoT ticks, so it is not mirrored here either */
  if(owner.shHp==null)owner.shHp=SHADE_HP_MAX;
  owner.shHp=Math.max(0,owner.shHp-dmg);if(!hitFxMute)owner.shFlash=Math.max(owner.shFlash||0,0.1);owner.shHurtT=0; /* 【下方修正】 a DoT tick is damage too: it restarts the same 1.2s no-refill wait, so an active burn / poison keeps the refill closed until 1.2s after its last tick */
- if(!hitFxMute){spawnParticles(owner.shX,owner.shY-52,3,"#a855f7",120);
+ if(!hitFxMute){if(!noHitParticles&&att.char!=="sara")spawnParticles(owner.shX,owner.shY-52,3,"#a855f7",120);
  pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.55,col:"#d8b4fe"})}
  if(owner.shHp<=0)shadeVanish(owner);
  return true;
@@ -8686,6 +8692,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
     activation) — burn ticks included, since the burn DoT in
     stepFighter also deals its damage through this function */
  if(att&&att!==def&&att.char==="sara"&&att.chaos)dmg=Math.round(dmg*1.3);
+ var noParts=noHitParticles||(att&&att.char==="sara"); /* noParts: this hit spawns NO translucent hit particles (particle squares / spark streaks / FX-burst textures) — raised for burn DoT ticks (noHitParticles) and for EVERY hit SARA deals (user request). Ring, damage floater, hitstop, shake, beep and hurt flash are NOT particles and still fire exactly as before */
  /* SMILEY Berserker: while it lasts, EVERY hocho attack deals +20%
     (rounded like SARA's chaos boost; was +25% as 覚醒）. noKb hits
     are DoT ticks — the bleed's own 2-damage ticks call in with noKb
@@ -8713,8 +8720,8 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
      var hpBeforeG=def.hp;def.hp-=gd;recordDmg(att,def,hpBeforeG-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+Math.round((hpBeforeG-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal: even through guard, he heals 20% of the HP he actually took (user spec; was 15%) */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.08;
      def.vx=noKb?0:dir*22;def.vy=def.onGround?0:def.vy; /* a few mm of pushback only, no launch, no hitstun — and damage-only hits (noKb) do not even push */
      if(!hitFxMute){hitstop=0.012;shake=Math.min(shake+1.5,4);
-     spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
-     spawnRing(def.x,def.y+def.h*0.45,"#a5f3fc",40);spawnSparks(def.x,def.y+def.h*0.45,dir,"#a5f3fc",5);spawnFxBurst(FXIMG.hit,def.x+(def.guardDir||def.face)*24,def.y+def.h*0.45,72,0.18,(Math.random()-0.5)*0.8,dir,0.75);
+     if(!noParts)spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
+     spawnRing(def.x,def.y+def.h*0.45,"#a5f3fc",40);if(!noParts){spawnSparks(def.x,def.y+def.h*0.45,dir,"#a5f3fc",5);spawnFxBurst(FXIMG.hit,def.x+(def.guardDir||def.face)*24,def.y+def.h*0.45,72,0.18,(Math.random()-0.5)*0.8,dir,0.75)}
      pushFloater({x:def.x,y:def.y-16,txt:"GUARD -"+gd,life:.7,col:"#a5f3fc"});
      beep(980,.05,"square",.045)}
      if(att){if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}att.comboHits++;att.comboDmg+=gd;att.comboT=0.95;if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,gd))}
@@ -8728,15 +8735,15 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce){
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
  else{def.vx=dir*kbs;def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0)def.hitstun+=0.08;def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). SMILEY Berserker rider (user spec): while Berserker lasts, EVERY hit SMILEY deals — listed-hs and derived alike, melee / delayed ticks / projectiles all route through here — inflicts +0.08s of hitstun on top (noKb DoT ticks never reach this branch, so bleed stays stun-free as specced; guarded hits stay stun-free in the guard block above). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
  if(!hitFxMute){hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011)}
- if(!hitFxMute){spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
+ if(!hitFxMute){if(!noParts)spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  pushFloater({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
- spawnRing(cx||def.x,cy||def.y+def.h*0.45,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?78:36);spawnSparks(cx||def.x,cy||def.y+def.h*0.45,dir,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?11:6);
+ spawnRing(cx||def.x,cy||def.y+def.h*0.45,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?78:36);if(!noParts)spawnSparks(cx||def.x,cy||def.y+def.h*0.45,dir,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?11:6);
  if(att&&(att.char==="travis"||att.char==="smiley")){ /* TRAVIS / SMILEY hits burst with their own vector art only — never the shared hit / signature FX textures */
-   spawnVecBurst(att.char,cx||def.x,cy||def.y+def.h*0.45,isUlt?190:130,isUlt?0.42:0.3,att.char==="smiley"?(Math.random()-0.5)*0.9:Math.random()*6.28,dir,0.9);
-   if(att.char==="smiley"){spawnParticles(cx||def.x,cy||def.y+def.h*0.45,5,"#dc2626",150);spawnParticles(cx||def.x,cy||def.y+def.h*0.45,2,"#991b1b",110)} /* SMILEY: a few small red pixel blood specks on a clean knife hit (dot-art, not gore) */
+   if(!noParts)spawnVecBurst(att.char,cx||def.x,cy||def.y+def.h*0.45,isUlt?190:130,isUlt?0.42:0.3,att.char==="smiley"?(Math.random()-0.5)*0.9:Math.random()*6.28,dir,0.9);
+   if(att.char==="smiley"&&!noParts){spawnParticles(cx||def.x,cy||def.y+def.h*0.45,5,"#dc2626",150);spawnParticles(cx||def.x,cy||def.y+def.h*0.45,2,"#991b1b",110)} /* SMILEY: a few small red pixel blood specks on a clean knife hit (dot-art, not gore) */
  }else{
- spawnFxBurst(FXIMG.hit,cx||def.x,cy||def.y+def.h*0.45,isUlt?176:106,isUlt?0.34:0.24,(Math.random()-0.5)*0.9,dir,0.95);
- spawnFxBurst(charFxImg(att?att.char:"kairo"),cx||def.x,cy||def.y+def.h*0.45,isUlt?196:122,isUlt?0.42:0.3,Math.random()*6.28,dir,0.8);
+ if(!noParts)spawnFxBurst(FXIMG.hit,cx||def.x,cy||def.y+def.h*0.45,isUlt?176:106,isUlt?0.34:0.24,(Math.random()-0.5)*0.9,dir,0.95);
+ if(!noParts)spawnFxBurst(charFxImg(att?att.char:"kairo"),cx||def.x,cy||def.y+def.h*0.45,isUlt?196:122,isUlt?0.42:0.3,Math.random()*6.28,dir,0.8);
  }}
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
  att.comboHits++;att.comboDmg+=dmg;att.comboT=0.95;
@@ -9390,7 +9397,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
      if(f.flameMode===3&&Math.random()<0.8)spawnParticles(f.x+f.face*(50+Math.random()*480),f.y+f.h*0.35+(Math.random()-0.5)*54,2,Math.random()<0.6?"#fde047":"#a3e635",130); /* SARA flameMode 1 (火炎放射) ・ 2 (フレイムブレス): 技エフェクト全削除のため炎パーティクルなし (user request)。ORCHID サンフラワー (3) は変更なし */
      if(f.flameTick<=0){f.flameTick=0.16;
        if(f.flameMode===1)dbgBox(f.x+f.face*118,f.y+f.h*0.45,224,160,"255,123,45",10);else if(f.flameMode===3)dbgBox(f.x+f.face*338,f.y+f.h*0.45,664,190,"255,123,45",10);else dbgBox(f.x,f.y-110,210,211,"255,123,45",10); /* hitbox viewer (おかき only): this flame tick's test area — jet forward 6..230 / ±80, sunflower 6..670 / ±95, breath cone ±105 across and 4..215 above */
-       hitFxMute=(f.flameMode===1||f.flameMode===3)?1:0; /* SARA 火炎放射 (flameMode 1) / ORCHID サンフラワー (flameMode 3): ヒット時のエフェクトを出さない (user request) — the tick's damage, knockback, burn settlement and combo / kill bookkeeping all run as usual through applyHit / applyShadeDot; only their hit feedback is muted. flameMode 2 (空中上J breath) is NOT muted and keeps its hit effects */
+       hitFxMute=(f.flameMode===1||f.flameMode===3)?1:0; /* SARA 火炎放射 (flameMode 1) / ORCHID サンフラワー (flameMode 3): ヒット時のエフェクトを出さない (user request) — the tick's damage, knockback, burn settlement and combo / kill bookkeeping all run as usual through applyHit / applyShadeDot; only their hit feedback is muted. flameMode 2 (空中上J breath) is NOT muted and keeps its hit feedback — except particles, which no SARA hit ever spawns (see noParts in applyHit) */
         for(var fli=0;fli<fighters.length;fli++){var flt=fighters[fli];if(flt===f||flt.dead||flt.invuln>0)continue;
          var fdx=(flt.x-f.x)*f.face,fdy=(flt.y+flt.h/2)-(f.y+f.h*0.45);
          if(f.flameMode===1){if(fdx>6&&fdx<230&&Math.abs(fdy)<80){applyHit(f,flt,9,210,f.face,-0.15,true,flt.x,flt.y+flt.h*0.45,false);flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}if(shadeAlive(flt)){var shdx1=(flt.shX-f.x)*f.face,shdy1=(flt.shY-52)-(f.y+f.h*0.45);if(shdx1>6&&shdx1<230&&Math.abs(shdy1)<80){applyShadeDot(f,flt,9);if(!(fdx>6&&fdx<230&&Math.abs(fdy)<80)){flt.flameExp=(flt.flameExp||0)+0.16;flt.flameExpBy=f}}}} /* 【闇ゲージ】 the jet is continuous damage: while SHADE's body is inside it, its darkness drains 9 per tick too (and the pair still ignites from SHADE-only exposure, via flameExp) */ /* 火炎放射 (user spec): KB なし -> 210, 判定 6〜215 -> 6〜230, 燃焼は放射後に滞在時間で精算 */
@@ -9405,11 +9412,14 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     3-damage tick with NO knockback every 0.5s (user spec: KB 110 -> none)
     credited to whoever lit them. Ticks route through applyHit with
     noKb like poison / bleed, and hitstop / shake are restored
-    afterwards so the tick deals damage only. Set by the javelin orb,
+    afterwards so the tick deals damage only; noHitParticles is also
+    held up across the tick, so it spawns NO hit particles either
+    (user request: 燃焼の被弾パーティクル削除 — the floater stays).
+    Set by the javelin orb,
     ハンドフレア, 火炎放射, 空中上J breath and direct javelin hits. */
  if(f.burnT>0){
    f.burnT-=dt;f.burnTick-=dt;
-   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB;applyShadeDot(bb,f,3)} /* 【闇ゲージ】 burn is a status on the pair: each tick also thins SHADE's darkness by the same 3 */ /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
+   if(f.burnTick<=0){f.burnTick=0.5;var bb=f.burnBy;if(bb&&bb!==f&&!f.dead&&f.invuln<=0){var hsSvB=hitstop,shSvB=shake;noHitParticles=1;applyHit(bb,f,3,0,bb.x<=f.x?1:-1,0,false,f.x,f.y+f.h*0.5,true);hitstop=hsSvB;shake=shSvB;applyShadeDot(bb,f,3);noHitParticles=0} /* noHitParticles (user request): a burn tick spawns NO hit particles on the victim (or on SHADE) — damage and the damage floater still land as usual */ /* 【闇ゲージ】 burn is a status on the pair: each tick also thins SHADE's darkness by the same 3 */ /* 燃焼 (user spec): 0.5秒ごとに3ダメージ、KB 110 -> なし（吹っ飛ばし・被弾硬直なし） */}
  }
  /* POISON (ORCHID's toxin DoT): while poisonT lasts, the victim takes
     2 damage every 0.2s — NO knockback, NO hitstun (spec). The tick
@@ -10172,7 +10182,7 @@ function drawSara(f){
  /* ult ready: charged-electric aura in dragon-fire orange */
  if(f.meter>=100&&!f.dead)drawUltAura(f,249,115,22);
  drawSpriteTrail(f,"sara");
- f.trail.forEach(function(t){drawFxTex(FXIMG.fire,t.x,t.y+30,88,0,t.face,t.life/0.2*.45)});
+ /* 残像に重なる半透明の炎テクスチャは削除済み (user request): SARA の半透明パーティクルは出さない — the shared sprite afterimage (drawSpriteTrail above) stays, as it does for every fighter */
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
