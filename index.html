@@ -375,7 +375,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   <div id="charSelect">
     <div class="csTitle brush" id="csTitle">キャラを選んでください</div>
     <div id="csNote" style="display:none;color:#fda4af;font-weight:900;font-size:14px;text-align:center">倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）</div>
-    <div class="csCards">
+    <div class="csCards" id="csCards">
       <button class="csCard" id="csKairo"><span class="csTag">選択中</span><div class="csArtW" aria-hidden="true"><img src="data:image/png;base64,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" alt="KAIRO" width="104" height="104" style="image-rendering:pixelated;image-rendering:crisp-edges;width:104px;height:104px;object-fit:contain"></div><div class="csName">KAIRO</div><div class="csDesc">氷の狐。高速チェーンと氷弾。当てると再チャージされるウルト（連続5回まで）。</div></button>
       <button class="csCard" id="csWarden"><span class="csTag">選択中</span><div class="csArtW" aria-hidden="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFd0lEQVR4nO3dPYhdRRiH8bPBNBEJSRDEQi2WBbVYCAbFYi0UwUA6W7GwSSEsyKLsipW4oKyCYGFjFexSRCMJCAqJIEoksEUUli1EUghiJIg2wY/CxhnljuP5mDPzPL9uuOfeO1z48857zp1zljoF7jh63x9/H393fDl4/Z6r+8H45xvfLo0/K43lQOkJSCUZAKEZAKHh16+pNX+KPUHdrABCMwBCMwBCc70a8ToAixVAaAZAaAZAaLeVnsDcPfHbkdJT0IisAEIzAEIzAELzHHZCfF1gZfVE8Pre7pVg7HWBulgBhGYAhGYAhGYAhGYAhGYAhGYAhIY/Zx2f58+Vui5QG9p1DCuA0AyA0AyA0HD7AeI1/6FjDw36+UN/XgHB79N6T2AFEJoBEJoBEBquBxja9eu9LiOoMCuA0AyA0AyA0AyA0AyA0AyA0AyA0AyA0AyA0AyA0AyA0Jr/L1Bqz+9H596caipFfHn1m6zjN9e/Gmkm82QFEJoBEJoBEFpzPUDqfv6x089vBON339kZflKaLSuA0AyA0AyA0KrvAXLX/Cl9e4Ll9eeC8eHt7V7zubm11ev9y4nX3392I3FE26wAQjMAQjMAQqu+B8h1+ZkLwXjtzMlRv6/vGl7jsgIIzQAIzQAIDdcDjL3mV12sAEIzAEIzAEKrvgeIn2G1t9v1+m9Q3/0A+2+/1+v9Q8vdE0xjBRCaARCaARBa9T1ALNUTxD797NK4E9KsWQGEZgCEZgCE1lwPEIt7gngPsefJ2awAQjMAQjMAQmu+B0h5+Pj9pacwKnucxawAQjMAQjMAQjMAQjMAQjMAQjMAQjMAQjMAQjMAQjMAQltKH9K2eH8AXbx/onVWAKEZAKEZAKGh1ntd55o/V+s9gRVAaAZAaAZAaE2v77run2v+73d+KDWVKt21cWcwbq0nsAIIzQAIzQAIrfr7Anlef1qp37u2HsEKIDQDIDQDILTqeoB4DZr7HOCuuzDgbNqzduZkMF5ZzXt//Ey2ufcEVgChGQChGQChVdcD9HX35r0LXz989MhEMynj5o2fFr6+/MBEE5kJK4DQDIDQDIDQcD1A7LWdt4LxG9uvFpqJSrACCM0ACM0ACA3fA7y88UIwTl0HeHHrlTGnMzh7msWsAEIzAEIzAELD9wC5zn/4QTD+4vKlrPc/svZY1vFjfz6dFUBoBkBoBkBo9gA95a65z790Nuv4U93TWccrjxVAaAZAaAZAaPYAI8td86fef+p1e4IhWQGEZgCEZgCEZg9Q2MEHLwbjW9eeKjSTv+x/fa3o90/NCiA0AyA0AyC06nuA2tespdf8dFYAoRkAoRkAoVXfA8xd/N+d7P0Alf3358DBQ8E4fqbb3J4ZZgUQmgEQmgEQmj3AxGpb0/9+69eFr8dr/tTrc+sJrABCMwBCMwBCm9U52f8jXlOmxGtS2jPCUs8Jjn+PzfXTwThes8e/f6oniHsKewCpIAMgNAMgtOp7gJTcNWrqGWG1S/UAsdSaPff3zf38sVkBhGYAhGYAhNZ8DxDLvW6wsnpi0O/f272SdXzp789dk9fWE1gBhGYAhGYAhIbbD5BaU+b2CH2lzqtP/f1Df17fnmBsVgChGQChGQCh4XqAXKXvPVr6+6c29R5iK4DQDIDQDIDQ7AE0qtR1gR8//iU4/tiTty98/9CsAEIzAEIzAELD7QeIpf57M/b/8VNr5Kn3A0y9J7f0vUKtAEIzAEIzAELD9QDxmvPRx8s+p/fzTy4G47nNp/S9O8dmBRCaARCaARBa0+u7fzO3ParxfXDmNh97AKlhBkBoBkBoBkBoBkBoBkBoBkBoTZ/j/S+mvhdnrPS9QWOtn/ePWQGEZgCEZgCE9ift3EIMxvyi1gAAAABJRU5ErkJggg==" alt="WARDEN" width="104" height="104" style="image-rendering:pixelated;image-rendering:crisp-edges;width:104px;height:104px;object-fit:contain"></div><div class="csName">WARDEN</div><div class="csDesc">看守ロボ。重量級パワー。必殺スカイフック・クレーンで確保して叩き落とす。</div></button>
       <button class="csCard" id="csKojiro"><span class="csTag">選択中</span><div class="csArtW" aria-hidden="true"><img src="data:image/png;base64,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" alt="KOJIRO" width="104" height="104" style="image-rendering:pixelated;image-rendering:crisp-edges;width:104px;height:104px;object-fit:contain"></div><div class="csName">KOJIRO</div><div class="csDesc">剣士。袈裟斬り→斬り上げ→三突き→横薙ぎの四段チェーンと、竜巻の風波・緑の剣気の燕返し。飛び道具はウルトの斬撃のみの純粋な近接型。</div></button>
@@ -391,6 +391,11 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
       <div class="csCfgRow"><span class="csCfgLabel">CPUの人数</span><span id="cpuCountOpts"></span></div>
       <div id="cpuCharOpts"></div>
       <div style="font-size:11.5px;color:#9db4d6;font-weight:700">試合は最大8人まで（あなた＋CPU最大7人）</div>
+    </div>
+    <div class="csConfig" id="csSpecConfig" style="display:none">
+      <div class="csCfgRow"><span class="csCfgLabel">CPUの人数</span><span id="specCountOpts"></span></div>
+      <div id="specCharOpts"></div>
+      <div style="font-size:11.5px;color:#9db4d6;font-weight:700">全員CPU同士の対戦です（最大8人）。枠ごとに戦わせたいキャラを選んでください。「おまかせ」はランダムです</div>
     </div>
     <div class="csBtns"><button class="gbtn primary" id="csStart">▶ バトル開始</button><button class="gbtn" id="csMoves">📖 全キャラの技を見る</button><button class="gbtn" id="csBack">← メニューへ</button></div>
   </div>
@@ -455,6 +460,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["00:07"],tag:"新機能",title:"CREATIVE MODE：観戦で対戦するCPUのキャラを選べるように",
+   items:["観戦開始前に、対戦するCPUの顔ぶれを選べる画面を追加しました：CPUの人数（2〜8人）と、各枠のキャラを枠ごとに選べます（「おまかせ」はランダム、全員一括指定も可能）。自分のキャラを選ぶ画面ではなく、全員CPU同士の顔ぶれを選ぶための画面です",
+          "人数や枠の扱いはCPU対戦の設定と同じで、選んだキャラ同士で観戦試合が始まります。試合後の「キャラ変更」からも顔ぶれを選び直せます（「もう一度たたかう」は同じ顔ぶれのまま再戦します）",
+          "視点切替（全体視点／各キャラ視点）は従来どおり、試合中にいつでも切り替えられます",
+          "オンライン対戦のビルド版数をv280に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/18",times:["23:20"],tag:"新機能",title:"CREATIVE MODE：カスタマイズ拡張（技の詳細ステータス）と観戦の開始方法を変更",
    items:["カスタマイズで変更できる項目が増えました：ダメージ／KBに加えて、技ごとに実在する詳細ステータス（発生・全体・後硬直・着地硬直・被弾硬直・判定サイズ・再使用時間・装填数・リロード・弾速・燃焼／凍結／毒などの効果時間）を、キャラ別の一覧で個別に変更できます",
           "追加した項目もこれまで通り、CREATIVE MODE の試合でのみ有効で、通常の VS CPU / TRAINING には影響しません。オンラインではルームを作った人（オーナー）の設定が、追加項目も含めて全プレイヤーに適用されます",
@@ -1163,7 +1173,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計と同点）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>ではキャラ選択画面が出ず、そのままCPU同士の対戦を観戦でき、試合中はいつでも全体視点と各キャラの視点を切り替えられます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンラインではルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計と同点）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>では開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません。全員CPU同士の対戦です）。試合中はいつでも全体視点と各キャラの視点を切り替えられます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンラインではルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1677,7 +1687,7 @@ var P1=null,P2=null;
 var fighters=[];
 var SPAWNS_ALL=[{x:420,y:950},{x:2180,y:950},{x:700,y:950},{x:1900,y:950},{x:1300,y:950},{x:560,y:830},{x:2040,y:830},{x:1300,y:830}];
 var cpuCount=1,cpuCharSel="mix";
-var cpuChars=["mix","mix","mix","mix","mix","mix","mix"];
+var cpuChars=["mix","mix","mix","mix","mix","mix","mix","mix"]; /* 8 slots: VS CPU uses [0..cpuCount-1] as opponents; spectate uses [0..cpuCount] (slot 0 is the first CPU fighter, + cpuCount more) */
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
@@ -1867,7 +1877,7 @@ function refreshCpuOpts(){
  var allSame=cpuChars.slice(0,cpuCount).every(function(v){return v===cpuChars[0]});
  opts.forEach(function(pr){
    var b=document.createElement("button");b.className="csOpt"+((allSame&&cpuCount>1&&cpuChars[0]===pr[0])?" sel":"");b.textContent=pr[1];
-   b.onclick=function(){for(var i=0;i<7;i++)cpuChars[i]=pr[0];cpuCharSel=pr[0];refreshCpuOpts();beep(600,.05)};
+   b.onclick=function(){for(var i=0;i<cpuChars.length;i++)cpuChars[i]=pr[0];cpuCharSel=pr[0];refreshCpuOpts();beep(600,.05)};
    bulk.appendChild(b);
  });
  wrap.appendChild(bulk);
@@ -1886,6 +1896,60 @@ function refreshCpuOpts(){
  })(si)}
  ch.appendChild(wrap);
 }
+/* ---- spectate setup (CREATIVE MODE 観戦） ----
+   Picking the CPUs' characters BEFORE a spectate match. This is
+   NOT a player character select: every slot is a CPU fighter.
+   The slot/count handling mirrors the CPU-match settings on
+   purpose — the same cpuCount / cpuChars store is used, with
+   spectate fielding cpuCount+1 fighters in total: cpuChars[0]
+   is the first fighter (the old 1P slot, CPU-driven like the
+   rest) and cpuChars[1..cpuCount] are the remaining CPUs, which
+   is exactly how startMatch's specFirst branch already reads
+   them. The count picker below therefore shows the TOTAL number
+   of CPU fighters (2..8) and stores total-1 into cpuCount. */
+function refreshSpecOpts(){
+ var total=cpuCount+1;
+ var cc=$("specCountOpts");if(cc){cc.innerHTML="";for(var n=2;n<=8;n++){(function(n){var b=document.createElement("button");b.className="csOpt"+(total===n?" sel":"");b.textContent=n+"人";b.onclick=function(){cpuCount=n-1;refreshSpecOpts();beep(600,.05)};cc.appendChild(b)})(n)}}
+ var ch=$("specCharOpts");if(!ch)return;
+ ch.innerHTML="";
+ var opts=[["mix","おまかせ"],["kairo","KAIRO"],["warden","WARDEN"],["kojiro","KOJIRO"],["axe","AXE"],["sara","SARA"],["orchid","ORCHID"],["travis","TRAVIS"],["smiley","SMILEY"],["mimi","MIMI&SHADE"],["no66","No.66"]];
+ if(!canUseNo66()){opts=opts.filter(function(pr){return pr[0]!=="no66"});for(var zi=0;zi<cpuChars.length;zi++){if(cpuChars[zi]==="no66")cpuChars[zi]="mix"}} /* same No.66 gate as the CPU-match picks */
+ var wrap=document.createElement("div");wrap.className="csPerCpu";
+ var bulk=document.createElement("div");bulk.className="csPerRow csBulkRow";
+ var bl=document.createElement("span");bl.className="csPerLabel bulk";bl.textContent="全員一括";bulk.appendChild(bl);
+ var allSame=cpuChars.slice(0,total).every(function(v){return v===cpuChars[0]});
+ opts.forEach(function(pr){
+   var b=document.createElement("button");b.className="csOpt"+((allSame&&total>1&&cpuChars[0]===pr[0])?" sel":"");b.textContent=pr[1];
+   b.onclick=function(){for(var i=0;i<cpuChars.length;i++)cpuChars[i]=pr[0];refreshSpecOpts();beep(600,.05)};
+   bulk.appendChild(b);
+ });
+ wrap.appendChild(bulk);
+ for(var si=0;si<total;si++){(function(idx){
+   var row=document.createElement("div");row.className="csPerRow";
+   var lab=document.createElement("span");lab.className="csPerLabel";lab.textContent="CPU "+(idx+1);
+   lab.style.color=FIGHTER_COLORS[idx%FIGHTER_COLORS.length];
+   row.appendChild(lab);
+   opts.forEach(function(pr){
+     var b=document.createElement("button");b.className="csOpt"+(cpuChars[idx]===pr[0]?" sel":"");b.textContent=pr[1];
+     b.onclick=function(){cpuChars[idx]=pr[0];refreshSpecOpts();beep(600,.05)};
+     row.appendChild(b);
+   });
+   wrap.appendChild(row);
+ })(si)}
+ ch.appendChild(wrap);
+}
+function openSpectateSelect(){
+ /* spectate setup: same overlay as the character select, but in
+    "spectate" csMode the player cards are hidden (refreshCsCards)
+    and only the CPU lineup picker shows — there is no own
+    character to pick, everyone on the field is a CPU */
+ crSpec=true;csMode="spectate";pendingMode="creative";
+ $("menu").style.display="none";$("gameScreen").classList.add("on");$("modal").classList.remove("on");
+ $("endBtns").classList.remove("on");hideResults();hideBanner();showCenter("",0);
+ tryFullscreen();
+ resize();refreshCsCards();$("charSelect").classList.add("on");
+ window.scrollTo(0,0);
+}
 function refreshCsCards(){
  if(playerChar==="no66"&&!canUseNo66()){playerChar="kairo";$("charBtn").textContent=cname("kairo")} /* No.66 gate: a pick made under an allowed username does not survive a sign-out / account switch */
  var no66Card=$("csNo66"),no66Ok=canUseNo66();
@@ -1902,17 +1966,24 @@ function refreshCsCards(){
  $("csNo66").classList.toggle("sel",playerChar==="no66");
 
  var isRespawn=(csMode==="respawn");
- $("csTitle").textContent=isRespawn?"キャラを変えて復活！":"キャラを選んでください";
+ var isSpec=(csMode==="spectate");
+ $("csTitle").textContent=isRespawn?"キャラを変えて復活！":(isSpec?"観戦 — 対戦するCPUを選んでください":"キャラを選んでください");
+ /* spectate setup: no player cards and no CPU-match config — only
+    the CPU lineup picker (csSpecConfig) is shown */
+ $("csCards").style.display=isSpec?"none":"";
+ $("csMoves").style.display=isSpec?"none":"";
  var csN=$("csNote");
  if(isRespawn){csN.textContent="倒された… キャラを選び直して復活できます（スコアはそのまま引き継ぎます）";csN.style.color="#fda4af";csN.style.display="block"}
  else if(pendingMode==="online-host"&&net.code){csN.textContent="ルームコード： "+net.code+"（相手に伝えてください。キャラを選ぶとロビーに入ります）";csN.style.color="#7dd3fc";csN.style.display="block"}
- else if(pendingMode==="creative"&&crSpec){csN.textContent="観戦モード：CPU同士が戦います。1P側のキャラと、CPUの人数・キャラを選んでください（視点は試合中にいつでも切り替えられます）";csN.style.color="#7dd3fc";csN.style.display="block"}
+ else if(pendingMode==="creative"&&crSpec){csN.textContent="観戦モード：全員CPU同士が戦います。対戦するCPUの人数と、各枠のキャラを選んでください（自分のキャラを選ぶ画面ではありません）。視点は試合中にいつでも切り替えられます";csN.style.color="#7dd3fc";csN.style.display="block"}
  else if(pendingMode==="creative"){csN.textContent="CREATIVE MODE：カスタム設定が有効なCPU対戦です";csN.style.color="#7dd3fc";csN.style.display="block"}
  else csN.style.display="none";
- $("csCpuConfig").style.display=(!isRespawn&&pendingMode!=="online-host"&&pendingMode!=="online-guest")?"block":"none";
+ $("csCpuConfig").style.display=(!isRespawn&&!isSpec&&pendingMode!=="online-host"&&pendingMode!=="online-guest")?"block":"none";
+ $("csSpecConfig").style.display=isSpec?"block":"none";
  $("csBack").style.display=isRespawn?"none":"";
  if(isRespawn)$("csStart").textContent="▶ このキャラで復活";
  else $("csStart").textContent=(pendingMode==="training"?"▶ トレーニング開始":((pendingMode==="creative"&&crSpec)?"▶ 観戦開始":"▶ バトル開始"));
+ if(isSpec)refreshSpecOpts();
  refreshCpuOpts();
 }
 function openRespawnSelect(){
@@ -1939,6 +2010,11 @@ $("csSmiley").onclick=function(){selectChar("smiley");refreshCsCards()};
 $("csMimi").onclick=function(){selectChar("mimi");refreshCsCards()};
 $("csNo66").onclick=function(){selectChar("no66");refreshCsCards()};
 $("csStart").onclick=function(){
+ if(csMode==="spectate"){
+   /* spectate setup: the picked CPU lineup (cpuCount / cpuChars)
+      is already stored — start the all-CPU match with it */
+   csMode="start";startCreativeSpectate();return;
+ }
  if(csMode==="respawn"){
    $("charSelect").classList.remove("on");beep(700,.07);
    var keepScore=P1.score,keepMeter=P1.meter;
@@ -2010,7 +2086,7 @@ function requestRematch(waitMsg){
  };
 }
 $("againBtn").onclick=function(){
- if(mode==="creative"&&crSpec){startCreativeSpectate();return} /* 観戦：キャラ選択画面は出さない */
+ if(mode==="creative"&&crSpec){startCreativeSpectate();return} /* 観戦：同じ顔ぶれのまま、もう一度観戦 */
  if(mode==="online"){
    /* the server returns EVERYONE to the lobby on any player's
       rematch (characters stay picked; anyone may re-pick first);
@@ -2028,7 +2104,7 @@ $("againBtn").onclick=function(){
    starts the next match for everyone at once. */
 $("endCharBtn").onclick=function(){
  beep(600,.06);
- if(mode==="creative"&&crSpec){startCreativeSpectate();return} /* 観戦：キャラ選択画面は出さない（そのまま観戦し直す） */
+ if(mode==="creative"&&crSpec){openSpectateSelect();return} /* 観戦：顔ぶれを選び直して観戦し直す */
  if(mode==="online"){
    requestRematch("キャラ変更をリクエストしました\nホストの開始を待っています…");
    return;
@@ -2083,7 +2159,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v279";
+var BUILD_ID="v280";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2125,7 +2201,7 @@ function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0
 function onlineHTML(msg){
  return '<h2>CREATIVE MODE</h2>'
  +'<p>カスタム設定で遊ぶモードです。観戦・カスタマイズ・CPU対戦・オンライン対戦ができます。カスタマイズの変更は <b style="color:#fff">CREATIVE MODE の試合でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。</p>'
- +'<div class="bindRow"><div><span class="bname">👁 観戦（CPU vs CPU）</span><br><span class="bnote">CPU同士を戦わせて観戦。キャラ選択画面は出ず、そのまま観戦試合が始まります（顔ぶれはCPU対戦の設定・おまかせで決まります）。試合中はいつでも全体視点と各キャラの視点を切り替えられます</span></div><button class="bindKey" id="crSpecBtn">観戦する</button></div>'
+ +'<div class="bindRow"><div><span class="bname">👁 観戦（CPU vs CPU）</span><br><span class="bnote">CPU同士を戦わせて観戦。開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません）。試合中はいつでも全体視点と各キャラの視点を切り替えられます</span></div><button class="bindKey" id="crSpecBtn">観戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">⚔ CPU対戦</span><br><span class="bnote">カスタム設定を有効にして、いつものCPU対戦</span></div><button class="bindKey" id="crCpuBtn">対戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">🎨 カスタマイズ</span><br><span class="bnote">全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更</span></div><button class="bindKey" id="crCustomBtn">カスタマイズ</button></div>'
  +'<p style="margin-top:14px">友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。全員の端末が同じ計算を回し、Supabase の Realtime 経由で各自の操作だけを送り合う方式です。自分の操作は即座に反映され、相手の操作は届いた時点で巻き戻して計算し直す（ロールバック）ため、通信の揺れがそのまま画面のブレになりません（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
@@ -2137,13 +2213,14 @@ function onlineHTML(msg){
  +'<p id="bindMsg">'+(msg||"")+'</p>';
 }
 function startCreativeSpectate(){
- /* 観戦 (owner instruction): NO character select screen — the
-    spectate match starts at once with CPU fighters only. The
-    lineup follows the usual CPU-match rules inside startMatch:
-    the stored CPU count / per-CPU character picks (おまかせ =
-    random from the pool) decide every fighter, first one included.
-    The viewpoint bar (全体 / each fighter) works during the match
-    exactly as before. */
+ /* 観戦： start the all-CPU match with the lineup picked on the
+    spectate setup screen (openSpectateSelect). The lineup follows
+    the usual CPU-match rules inside startMatch: the stored CPU
+    count / per-slot character picks (おまかせ = random from the
+    pool) decide every fighter, first one included — there is no
+    player character in a spectate match. The viewpoint bar
+    (全体 / each fighter) works during the match exactly as
+    before. Also used directly for a same-lineup rematch. */
  crSpec=true;tryFullscreen();
  $("modal").classList.remove("on");$("charSelect").classList.remove("on");
  beep(700,.07);startMatch("creative");
@@ -2153,7 +2230,7 @@ function wireOnlineBtns(){
  if(mk)mk.onclick=createRoom;
  if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
  var sp=$("crSpecBtn"),cp=$("crCpuBtn"),cu=$("crCustomBtn");
- if(sp)sp.onclick=function(){beep(600,.06);startCreativeSpectate()};
+ if(sp)sp.onclick=function(){beep(600,.06);openSpectateSelect()};
  if(cp)cp.onclick=function(){beep(600,.06);crSpec=false;tryFullscreen();openCharSelect("creative")};
  if(cu)cu.onclick=function(){beep(600,.06);openCustomize()};
 }
