@@ -434,6 +434,15 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/18",times:["22:29"],tag:"調整",title:"SARA：↓+U「イグニスボム」を強化（全ての火種＋判定継続1.4秒）",
+   items:["↓+U「イグニスボム」を強化：これまでは自分の火種1つの位置にだけ火柱が出ていましたが、場にある自分の火種すべての位置に同時に火柱が出るようになりました",
+          "火柱の判定継続を1.4秒に強化：火柱は1.4秒間その場に残り続け、その間に判定（62×210）へ入った相手にも当たります（各火柱につき、ヒットは1人1回まで）。ダメージ14／KB 330は変更ありません",
+          "火種がないと発動しない点、火種自体は消えない点、全体0.30秒／後硬直0.26秒（完全硬直）は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv274に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/18",times:["22:24"],tag:"調整",title:"SARA：フレイムクロー／メテオダイブ調整",
+   items:["ダッシュ中J「フレイムクロー」を調整：前方へ+95高速移動しながら爪で攻撃するようになりました。移動中は攻撃判定が常に出続けます（ヒットは1人1回まで）。ダメージ12／KB 620（真上）／判定 前方82×68／被弾硬直 0.62秒／全体 0.44秒／後硬直 0.34秒（完全硬直）は変更ありません",
+          "空中↓+J「メテオダイブ」を調整：発動直後に空中で0.2秒間静止（0.22秒から短縮）した直後、真下の地面へ即着して着地ダメージを与えるようになりました。着地時の周囲96×58へ 11ダメージ／KB 680・着地硬直 0.34秒は変更ありません",
+          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv273に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/18",times:["18:56"],tag:"調整",title:"SARA：上方・下方修正（パッシブ／ホバリング追加・技の入替と性能変更）",
    items:["パッシブ「火は友達」を追加：Uで自分が出した火種のダメージ判定（半径92）の中にいる間、毎秒3回復します",
           "W長押し「ホバリング」を追加：空中でWを押し続けている間その場に浮きます（上昇中は発動しません）。ホバリング中は回復できません",
@@ -841,16 +850,16 @@ var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少
 +'<div class="moveRow"><div><b>J 2段目 — 火の粉ブレス</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.85秒</span><p>火の粉を吹いて<b>小ダメージ2ヒット</b>（2発目は少し遠くまで届く）。当たった相手は<b>燃焼2.0秒</b>。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','180')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.22秒')+mvS('判定','64×54 → 78×54')+mvS('被弾硬直','0.36秒')+mvS('追加効果','燃焼2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — アッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.85秒</span><p>相手を空へ浮かせる一撃。浮かせた相手は空中Jで追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','260（上方向）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.28秒')+mvS('判定','80×94')+mvS('被弾硬直','0.38秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 4段目 — 尻尾フィニッシュ</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>振り返って尻尾を大きく振るう<b>大ダメージ・広範囲・強吹っ飛ばし</b>。押してから<b>0.12秒遅れて</b>前方に判定が出る。間が空くと1段目に戻る。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','700')+mvS('発生','0.12秒')+mvS('全体','0.54秒')+mvS('後硬直','0.67秒')+mvS('判定','118×78'))+'</div></div>'
-+'<div class="moveRow"><div><b>ダッシュ中J — フレイムクロー</b><p>移動しながら炎の爪で引っかき、相手を<b>真上</b>へ打ち上げる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','620（真上）')+mvS('発生','即時（移動中）')+mvS('全体','0.44秒')+mvS('後硬直','0.34秒（完全硬直）')+mvS('判定','前方82×68')+mvS('被弾硬直','0.62秒'))+'</div></div>'
++'<div class="moveRow"><div><b>ダッシュ中J — フレイムクロー</b><p>前方へ<b>+95</b>高速移動しながら炎の爪で引っかき、相手を<b>真上</b>へ打ち上げる。<b>移動中は攻撃判定が出続け</b>ます（ヒットは1人1回まで）。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','620（真上）')+mvS('発生','即時（移動中ずっと）')+mvS('移動','+95（高速移動）')+mvS('全体','0.44秒')+mvS('後硬直','0.34秒（完全硬直）')+mvS('判定','前方82×68')+mvS('被弾硬直','0.62秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — フレアテール</b><p>尻尾に炎を纏って前方を薙ぐ。押してから<b>0.18秒遅れて</b>判定が出て、後硬直は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','670')+mvS('発生','0.18秒')+mvS('全体','0.42秒')+mvS('後硬直','0.26秒（完全硬直）')+mvS('判定','前方102×62'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — イグニッシュ</b><p>周囲に炎を爆発させる<b>全方位</b>の一撃。着地すると<b>着地硬直0.18秒</b>がある。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','450')+mvS('発生','即時')+mvS('全体','0.36秒')+mvS('後硬直','0.24秒')+mvS('判定','周囲68×48')+mvS('被弾硬直','0.24秒')+mvS('着地硬直','0.18秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — メテオダイブ</b><p>空中で<b>0.22秒静止</b>してから真下へ急降下し、着地時に周囲へ衝撃波。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','680')+mvS('発生','0.22秒（空中で静止）')+mvS('全体','0.56秒')+mvS('後硬直','0.49秒')+mvS('判定','周囲96×58')+mvS('着地硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — メテオダイブ</b><p>空中で<b>0.2秒静止</b>した直後、真下の地面へ<b>即着</b>し、着地時に周囲へ衝撃波でダメージを与える。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','680')+mvS('発生','0.2秒（空中で静止→即着）')+mvS('全体','0.56秒')+mvS('後硬直','0.49秒')+mvS('判定','周囲96×58')+mvS('着地硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — フレイムテイル→イグニッシュフィスト</b> <span style="color:#f472b6;font-weight:900">2ヒット・硬直長め</span><p>爪の一撃→回転尻尾の2ヒットで吹っ飛ばす。当たった相手は<b>燃焼2秒</b>。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','13＋16')+mvS('KB','360／820')+mvS('発生','即時／2段目 約0.24秒')+mvS('全体','0.50秒')+mvS('後硬直','0.49秒')+mvS('判定','78×58／82×70')+mvS('追加効果','燃焼2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — フレイムノヴァ</b> <span style="color:#f59e0b;font-weight:900">大ダメージ・長めの遅延ヒット・吹っ飛ばし</span><p>正面に炎を纏った拳を突き出す看板技。溜めが長く、押してから<b>約0.52秒遅れて</b>ヒットする（避けられやすい代わりに一撃は重い）。当たった相手は<b>燃焼3.0秒</b>。空中でも同じ拳が出る。</p>'+mvSpec(mvS('ダメージ','50')+mvS('KB','1020')+mvS('発生','約0.52秒')+mvS('全体','0.78秒')+mvS('後硬直','0.34秒（完全硬直）')+mvS('判定','108×88')+mvS('追加効果','燃焼3.0秒')+mvS('着地硬直','空中で出した場合0.36秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ドラゴニック・ロア</b> <span style="color:#ef4444;font-weight:900">自己強化・HPコスト・13秒間</span><p>発動時に<b>自分の現在HPを30%削る</b>代わりに、<b>13秒間</b>、<b>すべての攻撃の与ダメージが+30%</b>になる（<b>燃焼の継続ダメージ（tick）も対象</b>）。その代わり発動中は<b>受ける回復量が35%減少</b>する（自動回復・キル回復の両方）。さらに発動中は<b>受けるダメージが0.9倍</b>、<b>受けるKB（吹っ飛ばし）も0.9倍</b>に軽減される。効果は13秒で切れ、倒されても終了する。<b>重ねがけは不可</b>（発動中に押しても延長・再発動しない）。HPは残り1未満にはならない。後硬直は<b>完全硬直</b>。炎のオーラを纏うので発動中かどうかは見た目で分かる。</p>'+mvSpec(mvS('ダメージ','なし（自己強化）')+mvS('発生','—')+mvS('全体','0.50秒')+mvS('後硬直','0.32秒（完全硬直）')+mvS('コスト','現在HPの30％')+mvS('効果時間','13秒')+mvS('被ダメージ','×0.9')+mvS('受けKB','×0.9'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — ライジングウイング</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム2.5秒</span><p>翼をはためかせて<b>その場で真上へ vy -1020 で即座に上昇</b>し、<b>2段ジャンプが回復</b>する。復帰・回避・空中コンボの起点に。地上・空中どちらでも出せる。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','—')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('上昇','vy -1020')+mvS('再使用','2.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ファイアジャヴェリン</b> <span style="color:#38bdf8;font-weight:900">設置型・装填2発・再使用0.8秒</span><p>炎の玉を<b>投射速度520・放物線</b>で投げる。<b>装填数は2発</b>で、<b>8秒ごとに1発ずつ装填</b>される。地面・台に着弾するとその場に<b>設置型の火種</b>として約8秒残り、<b>半径92以内</b>の相手を<b>燃焼1.1秒</b>で燃やし続ける。直撃した相手は<b>燃焼2.5秒</b>。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','直撃24')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.51秒')+mvS('弾速','520')+mvS('再使用','0.8秒')+mvS('装填数','2（8秒ごとに1発装填）')+mvS('追加効果','燃焼2.5秒／火種 約8秒・半径92'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+U — イグニスボム</b> <span style="color:#f59e0b;font-weight:900">設置連動</span><p>自分の<b>火種の位置</b>に火柱を出現させ、その場の相手にダメージを与える。火種が出ていないと発動しない。火種自体は消えない。後硬直は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.26秒（完全硬直）')+mvS('判定','62×210（火種の位置に）'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+U — イグニスボム</b> <span style="color:#f59e0b;font-weight:900">設置連動</span><p>自分の<b>すべての火種の位置</b>に火柱を出現させ、ダメージを与える。火柱の判定は<b>1.4秒間継続</b>し、その間に範囲へ入った相手にも当たる（各火柱につき<b>1人1回まで</b>）。火種が出ていないと発動しない。火種自体は消えない。後硬直は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.26秒（完全硬直）')+mvS('判定','62×210（すべての火種の位置に）')+mvS('判定継続','1.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — 火炎放射（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを0に消費し、<b>0.2秒の溜め</b>の後に<b>1.8秒間</b>前方へ炎を吹き続ける。判定内にいる敵に<b>0.3秒ごとに8ダメージ</b>を与え、ヒットした相手は<b>燃焼2.5秒</b>になる。空中で発動すると<b>空中で静止</b>する。放射後の後硬直は<b>完全硬直</b>。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','8／0.3秒毎')+mvS('KB','210')+mvS('発生','0.2秒')+mvS('全体','2.0秒')+mvS('後硬直','0.22秒（放射後）（完全硬直）')+mvS('判定','前方230×130')+mvS('効果時間','1.8秒')+mvS('追加効果','燃焼2.5秒')+mvS('被弾硬直','0.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','980')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','1/10')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
@@ -1246,7 +1255,7 @@ function press(a){if(mode==="online"&&running&&typeof ls!=="undefined"&&ls&&ls.a
  if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
-var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[],ignisPillars=[]; /* ignisPillars: SARA ↓+U イグニスボムの火柱 (visual only — the hit lands in startSaraAttack) */
+var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[],ignisPillars=[]; /* ignisPillars: SARA ↓+U イグニスボムの火柱 — the pillar IS the hitbox: it stands for 1.4s in simStepFrame's tail and hits each foe once per pillar (hitSet) */
 var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
 var noHitParticles=0; /* noHitParticles: while 1, applyHit / applyShadeDot deal their damage and bookkeeping exactly as usual but spawn NO hit PARTICLES (the translucent particle squares, spark streaks and FX-burst textures) — ring, damage floater, hitstop, shake, beep and hurt flash all still fire. It is set only around the burn DoT ticks in stepFighter (user request: 燃焼の継続ダメージで発生する被弾パーティクルも削除). Independently of this flag, a hit whose ATTACKER is SARA never spawns hit particles either (user request: SARAが攻撃を発動した時の半透明のパーティクルを削除) — that attacker-side rule lives in applyHit / applyShadeHit / applyShadeDot themselves */
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
@@ -1360,7 +1369,7 @@ function startMatch(m){
    }
    P2=fighters[1];
  }
- projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];mines=[];darkFields=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
+ projectiles=[];particles=[];floaters=[];icePatches=[];rings=[];fireOrbs=[];poisonMists=[];mines=[];darkFields=[];ignisPillars=[];fxBursts=[];timer=180;matchOver=false;paused=false;countdown=1.5;lastCountTxt="";lastFinalTxt="";running=true;
  lastTs=0; /* v210 rejoin fix: re-base the frame clock at every match start. loop() does not advance lastTs while no match is running, so without this the first tick of a match entered after time away (a guest rejoining mid-match after a disconnect, above all) reads the whole absence as one giant frame gap and fires the freeze-return path spuriously — its resync request is then swallowed by the host gate's cooldown (the revive resync just went out), the end gives up after ~3s and drags the match into the snapshot fallback, and the rejoined player's hand-back never takes effect on their own end. A real mid-match freeze still measures correctly: rAF stops during it, so the gap accrues between two ticks of the RUNNING match, after this re-base */
  buf={};$("endBtns").classList.remove("on");hideResults();hideBanner();$("finalCount").style.display="none";$("timerPill").classList.remove("urgent");
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
@@ -1704,7 +1713,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v272";
+var BUILD_ID="v274";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2714,6 +2723,7 @@ grb:f.grabT>0?1:0,hld:f.heldT>0?1:0,hby:f.heldBy?fighters.indexOf(f.heldBy):-1,h
 pr:projectiles.map(function(p){return{x:sbRI(p.x),y:sbRI(p.y),vx:sbRI(p.vx),vy:sbRI(p.vy),k:p.kind,o:p.owner?fighters.indexOf(p.owner):-1}}),
 ip:icePatches.map(function(p){return{x:sbRI(p.x),y:sbRI(p.y),w:sbRI(p.w),t:sbR1(p.t)}}),
 fo:fireOrbs.map(function(o){return{x:sbRI(o.x),y:sbRI(o.y),t:sbR1(o.t)}}),
+ig:ignisPillars.map(function(o){return{x:sbRI(o.x),y:sbRI(o.y),t:sbR1(o.t)}}),
 pm:poisonMists.map(function(o){return{x:sbRI(o.x),y:sbRI(o.y),t:sbR1(o.t)}}),
 df:darkFields.map(function(d){return{x:sbRI(d.x),y:sbRI(d.y),w:sbRI(d.w),t:sbR1(d.t)}})
 };
@@ -3350,8 +3360,8 @@ function svStepP1(j,bits,replay){
  var foe=nearestOpponent(f);
  var bystanders=[];
  for(var bi=0;bi<fighters.length;bi++){var bf=fighters[bi];if(bf&&bf!==f)bystanders.push([bf,svSaveFighter(bf)])}
- var svParticles=particles,svRings=rings,svFxBursts=fxBursts,svVecBursts=vecBursts,svFloaters=floaters,svIce=icePatches,svFire=fireOrbs,svMist=poisonMists,svDark=darkFields,svMines=mines;
- particles=[];rings=[];fxBursts=[];vecBursts=[];floaters=[];icePatches=[];fireOrbs=[];poisonMists=[];darkFields=[];mines=[];
+ var svParticles=particles,svRings=rings,svFxBursts=fxBursts,svVecBursts=vecBursts,svFloaters=floaters,svIce=icePatches,svFire=fireOrbs,svMist=poisonMists,svDark=darkFields,svMines=mines,svIgnis=ignisPillars;
+ particles=[];rings=[];fxBursts=[];vecBursts=[];floaters=[];icePatches=[];fireOrbs=[];poisonMists=[];darkFields=[];mines=[];ignisPillars=[]; /* ignis pillars swapped out too: a predicted ↓+U must not plant a real 1.4s hitbox pillar — the server's sim plants it and its snapshot carries it back */
  var svShake=shake,svWasMute=svMute;svMute=true;
  var scratch=projectiles;projectiles=sv.scratchPr;sv.scratchPr=[];
  var saveKeys=keys,saveDx=stick.dx,saveDy=stick.dy;
@@ -3366,7 +3376,7 @@ function svStepP1(j,bits,replay){
    }
  }
  projectiles=scratch;
- particles=svParticles;rings=svRings;fxBursts=svFxBursts;vecBursts=svVecBursts;floaters=svFloaters;icePatches=svIce;fireOrbs=svFire;poisonMists=svMist;darkFields=svDark;mines=svMines;
+ particles=svParticles;rings=svRings;fxBursts=svFxBursts;vecBursts=svVecBursts;floaters=svFloaters;icePatches=svIce;fireOrbs=svFire;poisonMists=svMist;darkFields=svDark;mines=svMines;ignisPillars=svIgnis;
  shake=svShake;svMute=svWasMute;
  for(var bj=0;bj<bystanders.length;bj++)svRestoreFighter(bystanders[bj][0],bystanders[bj][1]);
  f.x+=sv.corrX;f.y+=sv.corrY;f.px=f.x;f.py=f.y;
@@ -3845,6 +3855,7 @@ function svOnSnap(m){
     by index via svSyncPlaced — see its note) */
  icePatches=svSyncPlaced(icePatches,m.ip,function(p){return{x:p.x,y:p.y,w:p.w,t:p.t,owner:null}});
  fireOrbs=svSyncPlaced(fireOrbs,m.fo,function(o){return{x:o.x,y:o.y,t:o.t,owner:null}});
+ ignisPillars=svSyncPlaced(ignisPillars,m.ig,function(o){return{x:o.x,y:o.y,t:o.t,owner:null,hitSet:[]}}); /* snapshot pillars are visual-only on guests (owner:null — the host's sim lands their hits); svSyncPlaced refreshes t from the host each snapshot, so a guest pillar lives exactly as long as the host's */
  poisonMists=svSyncPlaced(poisonMists,m.pm,function(o){return{x:o.x,y:o.y,t:o.t,tick:0,owner:null}});
  darkFields=svSyncPlaced(darkFields,m.df,function(o){return{x:o.x,y:o.y,w:o.w,t:o.t,tick:0,owner:null}});
 }
@@ -4098,7 +4109,7 @@ function lsBuildSave(F){
    return o;
   }),
   pr:projectiles.map(lsCloneObj),ip:icePatches.map(lsCloneObj),fo:fireOrbs.map(lsCloneObj),
-  pm:poisonMists.map(lsCloneObj),mn:mines.map(lsCloneObj),df:darkFields.map(lsCloneObj)};
+  pm:poisonMists.map(lsCloneObj),mn:mines.map(lsCloneObj),df:darkFields.map(lsCloneObj),ig:ignisPillars.map(lsCloneObj)}; /* ig: the ignis pillars are real hitboxes now (判定継続 1.4秒, hitSet per pillar), so they ride the rollback save like every other placed object — lsCloneObj keeps the owner ref and slices hitSet */
  return s;
 }
 function lsSaveState(F){
@@ -4113,7 +4124,7 @@ function lsRestoreState(s){
   f.bleedBy=s.fs[i].blb||null;f.flameExpBy=s.fs[i].feb||null;f.flameExp=s.fs[i].fex||0;
  }
  projectiles=s.pr.map(lsCloneObj);icePatches=s.ip.map(lsCloneObj);fireOrbs=s.fo.map(lsCloneObj);
- poisonMists=s.pm.map(lsCloneObj);mines=s.mn.map(lsCloneObj);darkFields=s.df.map(lsCloneObj);
+ poisonMists=s.pm.map(lsCloneObj);mines=s.mn.map(lsCloneObj);darkFields=s.df.map(lsCloneObj);ignisPillars=(s.ig||[]).map(lsCloneObj);
 }
 /* quantized checksum OF A SAVED STATE (positions / velocities /
    HP rounded to coarse steps so float dust cannot false-positive,
@@ -6665,6 +6676,27 @@ function kojiroDiveBodyHit(f){
  for(var i=0;i<fighters.length;i++){var tg=fighters[i];if(tg===f||tg.dead)continue;if(f.diveHitMask&(1<<i))continue;
   if(Math.abs(tg.x-cx)<31+tg.w/2&&Math.abs((tg.y+tg.h/2)-cy)<37+tg.h/2){if(applyHit(f,tg,18,620,tg.x>=f.x?1:-1,0.85,false,cx,cy)){f.diveHitMask|=(1<<i)}}}
 }
+/* SARA フレイムクロー body hit (user spec): while her +95 rush lasts,
+   the front 82x68 claw box stays live EVERY frame — a foe who moves
+   into it mid-rush is hit just like one who was there on the press —
+   but each foe can be hit only ONCE per use: the fighters-index
+   bitmask f.diveHitMask records who has been hit (the same mechanism
+   as kojiroDiveBodyHit above, so it rides the rollback snapshot like
+   any other field). Damage 12 / KB 620 launched STRAIGHT UP (dir 0,
+   up -1.0) with 被弾硬直 0.62秒; the box sits in front (f.face) while
+   the launch stays vertical — the same split the old one-shot
+   meleeHit call passed via boxDir. Geometry mirrors meleeHit's box
+   test exactly (centre at face*(82*0.55), half-extents 82*0.72 / 68),
+   and MIMI's SHADE body is tested first, exactly as in meleeHit. */
+function saraFlameClawHit(f){
+ var cx=f.x+f.face*(82*0.55),cy=f.y+f.h*0.45;
+ dbgBox(cx,cy,82*1.44,68*2,"255,45,120",16); /* hitbox viewer (おかき only): the exact box this call tests */
+ for(var i=0;i<fighters.length;i++){var tg=fighters[i];if(tg===f||tg.dead)continue;if(f.diveHitMask&(1<<i))continue;
+  var marked=false;
+  if(tg.char==="mimi"&&shadeAlive(tg)&&Math.abs(tg.shX-cx)<82*0.72+58&&Math.abs((tg.shY-52)-cy)<68*0.5+54){if(applyShadeHit(f,tg,12,cx,cy,false))marked=true}
+  if(Math.abs(tg.x-cx)<82*0.72+tg.w/2&&Math.abs((tg.y+tg.h/2)-cy)<68){if(applyHit(f,tg,12,620,0,-1.0,false,cx,cy,false,0.62))marked=true}
+  if(marked)f.diveHitMask|=(1<<i)}
+}
 function startKojiroAttack(f,type,foe){
  /* KOJIRO — a pure melee swordsman. Every technique is its own motion:
     thrust (straight line, body low), rising slash (bottom-to-top arc),
@@ -7115,14 +7147,14 @@ meleeHit(f,foe,78,58,13,360,f.face,-0.3,0,false,2.0); /* フレイムテイル�
    beep(700,.06,"square",.05);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
-      /* 空中下J: メテオダイブ (NEW — user spec, replaces the deleted
-         落下フレイムフィスト): she hangs STILL in the air for the 0.22s
-         startup (the gravity step holds her while hitDone is false),
-         then plunges; on touchdown the dive shockwave erupts AROUND
-         her — 11 dmg / KB 680 in a 周囲96x58 box (the landing block in
-         stepFighter, via diveArmed). 全体 0.56秒 / 後硬直 0.49秒
-         (attackCd 0.42 + the universal 0.07 tail), 着地硬直 0.34秒
-         (LAND_LAG smeteor) */
+      /* 空中下J: メテオダイブ (reworked — user spec): she hangs STILL
+         in the air for the 0.20s startup (the gravity step holds her
+         while hitDone is false), then lands INSTANTLY （即着 — the
+         stepFighter hook snaps her feet to the first surface below);
+         on touchdown the dive shockwave erupts AROUND her — 11 dmg /
+         KB 680 in a 周囲96x58 box (the landing block in stepFighter,
+         via diveArmed). 全体 0.56秒 / 後硬直 0.49秒 (attackCd 0.42 +
+         the universal 0.07 tail), 着地硬直 0.34秒 (LAND_LAG smeteor) */
       f.state="smeteor";f.stateT=0.56;f.attackCd=0.42;f.comboWin=0;f.hitDone=false;
       f.vx=0;f.vy=0;f.fastfall=false;
       beep(300,.09,"sawtooth",.05);
@@ -7155,16 +7187,23 @@ meleeHit(f,foe,78,58,13,360,f.face,-0.3,0,false,2.0); /* フレイムテイル�
          press does nothing now */
       return;
    }else if(f.dashT>0||Math.abs(f.vx)>330){
-      /* ダッシュJ: フレイムクロー (NEW — user spec, replaces the
-         deleted ホーンチャージ): a flaming claw struck WHILE still
-         moving that launches the foe STRAIGHT UP — 12 dmg / KB 620
-         （真上）, box 前方82x68 (the box sits in front via boxDir
-         while the launch stays vertical), 被弾硬直 0.62秒. 全体
-         0.44秒 / 後硬直 0.34秒（完全硬直 — attackCd 0.27 + 0.07
-         tail; applyFullLock spans exactly that 0.34s) */
-      f.state="sflameclaw";f.stateT=0.44;f.attackCd=0.27;f.comboWin=0;f.dashT=0;applyFullLock(f);
-      f.vx=f.face*620;
-      meleeHit(f,foe,82,68,12,620,0,-1.0,0.62,false,0,null,false,f.face);
+      /* ダッシュJ: フレイムクロー (reworked — user spec): she rushes
+         +95 forward at high speed WHILE striking with the flaming
+         claw — the rush reuses the dash burst itself (dashT 0.09s at
+         her dashSpd 980, plus the small end-of-dash carry and the
+         friction slide ≈ +95 total in the discrete step sim), and
+         the front 82x68 box stays live for the WHOLE rush: it is
+         tested on the press here and again every step in
+         stepFighter (saraFlameClawHit), capped at ONE hit per foe
+         by the diveHitMask bitmask. The hit launches the foe
+         STRAIGHT UP — 12 dmg / KB 620（真上）, 被弾硬直 0.62秒.
+         全体 0.44秒 / 後硬直 0.34秒（完全硬直 — attackCd 0.27 +
+         0.07 tail; applyFullLock spans the whole move: the dash
+         branch of the movement chain outranks the lock during the
+         0.09s rush, then the lock roots her for the rest) */
+      f.state="sflameclaw";f.stateT=0.44;f.attackCd=0.27;f.comboWin=0;applyFullLock(f);
+      f.dashDir=f.face;f.dashT=0.09;f.diveHitMask=0;
+      saraFlameClawHit(f);
      beep(480,.07,"sawtooth",.05);
    }else{
      /* ラッシュ: the 4-stage J chain (user spec). Every stage carries
@@ -7251,18 +7290,21 @@ pushFloater({x:f.x,y:f.y-32,txt:"与ダメ+30%／被ダメ・受けKB×0.9（13�
       fire orb (fireOrbs) that stays ~8s and keeps foes within radius
       92 burning (burn 1.1s). Conversion happens in the projectile step. */
    if(downHeld){
-    /* ↓+U: イグニスボム (NEW — user spec): a fire pillar erupts at the
-       position of one of HER OWN placed fire orbs (fireOrbs) — 14 dmg /
-       KB 330 in a 62x210 pillar on the orb's spot. With no orb of hers
-       on the field the press does nothing. 全体 0.30秒 / 後硬直 0.26秒
-       （完全硬直 — attackCd 0.19 + 0.07 tail; applyFullLock spans the
-       whole 0.26s). The orb itself is NOT consumed. The pillar visual
-       is ignisPillars (opaque flame column, drawn with the orbs) */
-    var myOrb=null;for(var iob=0;iob<fireOrbs.length;iob++){if(fireOrbs[iob].owner===f)myOrb=fireOrbs[iob]}
-    if(!myOrb){beep(200,.07);return}
+    /* ↓+U: イグニスボム (user spec — buffed): a fire pillar erupts at
+       the position of EVERY one of HER OWN placed fire orbs (fireOrbs)
+       — 14 dmg / KB 330 in a 62x210 pillar on each orb's spot. With no
+       orb of hers on the field the press does nothing. 全体 0.30秒 /
+       後硬直 0.26秒（完全硬直 — attackCd 0.19 + 0.07 tail; applyFullLock
+       spans the whole 0.26s). The orbs themselves are NOT consumed.
+       The pillars (ignisPillars, opaque flame columns drawn with the
+       orbs) ARE the hitbox: each one stands for 判定継続 1.4秒 and hits
+       every foe who is in — or steps into — its box during that time,
+       once per foe per pillar (the hit ticks in simStepFrame's tail,
+       so the first tick lands on the press frame: 発生 即時) */
+    var myOrbs=[];for(var iob=0;iob<fireOrbs.length;iob++){if(fireOrbs[iob].owner===f)myOrbs.push(fireOrbs[iob])}
+    if(!myOrbs.length){beep(200,.07);return}
     f.state="sbomb";f.stateT=0.3;f.attackCd=0.19;f.comboWin=0;applyFullLock(f);
-    ignisPillars.push({x:myOrb.x,y:myOrb.y,t:0.34});
-    for(var ibf=0;ibf<fighters.length;ibf++){var bf=fighters[ibf];if(bf===f||bf.dead||bf.invuln>0)continue;if(Math.abs(bf.x-myOrb.x)<31+bf.w/2&&(bf.y+bf.h)>myOrb.y-210&&bf.y<myOrb.y)applyHit(f,bf,14,330,bf.x>=myOrb.x?1:-1,-0.35,false,myOrb.x,myOrb.y-105)}
+    for(var iob2=0;iob2<myOrbs.length;iob2++)ignisPillars.push({x:myOrbs[iob2].x,y:myOrbs[iob2].y,t:1.4,owner:f,hitSet:[]});
     beep(150,.16,"sawtooth",.06);return;
    }
    if(f.specCd>0){beep(200,.07);return}
@@ -9160,6 +9202,12 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     for the WHOLE fall (user spec) — retested every frame until he
     lands, one hit per foe per dive (diveHitMask in kojiroDiveBodyHit) */
  if(f.char==="kojiro"&&f.state==="diveclaw"&&!f.onGround)kojiroDiveBodyHit(f);
+  /* SARA フレイムクロー (dash J): the front claw box stays live for
+     the WHOLE +95 rush (user spec) — retested every step while the
+     rush (dashT) lasts, one hit per foe via diveHitMask in
+     saraFlameClawHit (the press itself already tested once in
+     startSaraAttack) */
+  if(f.char==="sara"&&f.state==="sflameclaw"&&f.dashT>0)saraFlameClawHit(f);
  /* KOJIRO 三突き (J 3rd stage) thrusts 2-3 and 下段斬り (down+J) second
     cut: the first hit landed on the press (startKojiroAttack); the
     follow-up hits tick out on spinTick while the state lasts */
@@ -9425,7 +9473,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
     sides, ~0.2s stun each (kb-sized like her chain openers) */
   if(f.char==="sara"&&f.state==="stail"&&!f.hitDone&&f.stateT<=0.42){f.hitDone=true;meleeHit(f,foe,118,78,18,700,f.face,-0.42);beep(240,.11,"sawtooth",.06)} /* SARA 尻尾フィニッシュ delayed hit (user spec): 発生 0.12秒 — stateT 0.54 -> threshold 0.42; 18 dmg / KB 700, box 118x78, front only */
   if(f.char==="sara"&&f.state==="sflaretail"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;meleeHit(f,foe,102,62,14,670,f.face,-0.3);beep(200,.1,"sawtooth",.05)} /* SARA フレアテール delayed hit (user spec): 発生 0.18秒 — stateT 0.42 -> threshold 0.24; 14 dmg / KB 670, box 前方102x62 */
-  if(f.char==="sara"&&f.state==="smeteor"&&!f.hitDone&&f.stateT<=0.34){f.hitDone=true;f.diveArmed=true;f.vx=f.face*120;f.vy=Math.max(f.vy,760);f.fastfall=false;beep(300,.09,"sawtooth",.05)} /* SARA メテオダイブ (user spec): 発生 0.22秒 — stateT 0.56 -> threshold 0.34; the hang ends here and the plunge arms the landing shockwave (周囲96x58, 11 dmg / KB 680, in the landing block) */
+  if(f.char==="sara"&&f.state==="smeteor"&&!f.hitDone&&f.stateT<=0.36){f.hitDone=true;f.diveArmed=true;var mtFeet=f.y+f.h,mtLandY=null;for(var mti=0;mti<platforms.length;mti++){var mtp=platforms[mti];if(f.x+f.w/2<=mtp.x||f.x-f.w/2>=mtp.x+mtp.w)continue;if(mtp===f.dropPlat&&f.dropT>0)continue;if(mtp.y>=mtFeet-2&&(mtLandY===null||mtp.y<mtLandY))mtLandY=mtp.y}if(mtLandY!==null){f.y=mtLandY-f.h;f.vy=1;f.vx=0}else{f.vx=f.face*120;f.vy=Math.max(f.vy,760)}f.fastfall=false;beep(300,.09,"sawtooth",.05)} /* SARA メテオダイブ (user spec — reworked): 発生 0.20秒 — stateT 0.56 -> threshold 0.36; the 0.20s hang ends and she lands INSTANTLY （即着）: her feet snap to the first surface below (a ledge she is dropping through does not count) and the landing block erupts the shockwave (周囲96x58, 11 dmg / KB 680) on that same step. With no surface below at all she keeps the old plunge instead of snapping into the void */
   if(false){ /* DELETED: スピンフレイム tick block (the move was replaced by イグニッシュ, an instant hit resolved in startSaraAttack) */
     if(f.vy>30)f.vy=30;
     f.spinTick+=dt;
@@ -9758,7 +9806,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
   f.hovering=(f.char==="sara"&&!f.onGround&&f.hitstun<=0&&f.dashT<=0&&!f.fastfall&&f.vy>=0&&f.state!=="sfly"&&f.state!=="smeteor"&&!(f.flameT>0||f.flameDelay>0)&&((f.isPlayer&&!!keys.jump)||(f.remote&&!!f.hUp)));
   var g=(f.vy>0?GRAV_FALL*(f.fallMul||1):GRAV);
  if(f.dashT>0){f.vy=0} /* no gravity during a dash — the burst stays perfectly horizontal */
-  else if(f.char==="sara"&&f.state==="smeteor"&&!f.hitDone&&f.hitstun<=0){f.vy=0;f.vx=0} /* SARA メテオダイブ: fully stationary in the air for the 0.22s startup （空中で静止, user spec) — once the plunge arms (hitDone) gravity takes her again */
+  else if(f.char==="sara"&&f.state==="smeteor"&&!f.hitDone&&f.hitstun<=0){f.vy=0;f.vx=0} /* SARA メテオダイブ: fully stationary in the air for the 0.20s startup （空中で静止, user spec) — once the instant landing arms (hitDone) gravity takes her again */
   else if(f.char==="sara"&&f.flameMode===1&&(f.flameT>0||f.flameDelay>0)){f.vy=0} /* SARA 火炎放射: 空中で発動した場合、発生の溜めも放射中も空中で静止 (user spec) */
   else if(f.char==="sara"&&f.hovering){f.vy=0} /* SARA ホバリング (user spec): W長押し中はその場に浮く — vy is held at 0 (f.hovering is computed just above the gravity step) */
   else if(f.char==="sara"&&f.flameDelay>0){f.vy=0} /* legacy flameDelay hold (kept for any channel still using it) */
@@ -11627,7 +11675,7 @@ function draw(){
  var cX0=cam.x-340,cX1=cam.x+viewW+340,cY0=cam.y-340,cY1=cam.y+viewH+340;
  icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2);ctx.fillStyle="rgba(186,230,253,.85)";for(var icx=-3;icx<=3;icx++){var ipx=p.x+icx*(p.w/7),iph=6+Math.abs(icx*37)%4;ctx.beginPath();ctx.moveTo(ipx-4,p.y-4);ctx.lineTo(ipx,p.y-4-iph);ctx.lineTo(ipx+4,p.y-4);ctx.closePath();ctx.fill()}});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- ignisPillars.forEach(function(ip){if(ip.x<cX0||ip.x>cX1||ip.y<cY0||ip.y>cY1)return;var ih=Math.min(210,210*(ip.t/0.34+0.25));ctx.fillStyle="#ea580c";ctx.fillRect(ip.x-31,ip.y-ih,62,ih);ctx.fillStyle="#f97316";ctx.fillRect(ip.x-22,ip.y-ih+8,44,ih-8);ctx.fillStyle="#fde68a";ctx.fillRect(ip.x-10,ip.y-ih+18,20,ih-18);ctx.beginPath();ctx.moveTo(ip.x-31,ip.y-ih);ctx.lineTo(ip.x,ip.y-ih-22);ctx.lineTo(ip.x+31,ip.y-ih);ctx.closePath();ctx.fillStyle="#f97316";ctx.fill()}); /* SARA イグニスボムの火柱: 不透明な炎の柱 (62x210) が火種の位置に立つ */
+ ignisPillars.forEach(function(ip){if(ip.x<cX0||ip.x>cX1||ip.y<cY0||ip.y>cY1)return;var ih=Math.min(210,210*((1.4-ip.t)/0.15+0.25),210*(ip.t/0.3+0.25)); /* grows to full 210 height in ~0.15s, stands full-height while the 1.4s hitbox lasts, shrinks away over the last 0.3s */ctx.fillStyle="#ea580c";ctx.fillRect(ip.x-31,ip.y-ih,62,ih);ctx.fillStyle="#f97316";ctx.fillRect(ip.x-22,ip.y-ih+8,44,ih-8);ctx.fillStyle="#fde68a";ctx.fillRect(ip.x-10,ip.y-ih+18,20,ih-18);ctx.beginPath();ctx.moveTo(ip.x-31,ip.y-ih);ctx.lineTo(ip.x,ip.y-ih-22);ctx.lineTo(ip.x+31,ip.y-ih);ctx.closePath();ctx.fillStyle="#f97316";ctx.fill()}); /* SARA イグニスボムの火柱: 不透明な炎の柱 (62x210) が火種の位置に立つ */
    fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()}); /* SARA 設置火の玉: 炎本体 (不透明) のみ — 足元の半透明の広がり (楕円グロー) とフェード用の globalAlpha は削除済み (user request)。燃焼範囲92・持続8秒などの性能は変更なし */
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
     planted a mine can see it (the viewer is P1), so a foe's mines are
@@ -11948,7 +11996,9 @@ function simStepFrame(getInp){
    if(particles.length>PART_CAP)particles.length=PART_CAP; /* PERF: hard cap so a burst-heavy fight can never snowball into hundreds of per-frame rects (a fixed ceiling of 460, independent of the quality tier) */
    fxBursts=fxBursts.filter(function(b){return(b.life-=STEP)>0});vecBursts=vecBursts.filter(function(b){return(b.life-=STEP)>0});
        icePatches=icePatches.filter(function(p){return(p.t-=STEP)>0});
-    ignisPillars=ignisPillars.filter(function(ip){return(ip.t-=STEP)>0}); /* SARA イグニスボムの火柱: 0.34秒で消える (visual only) */
+    ignisPillars=ignisPillars.filter(function(ip){ip.t-=STEP; /* SARA イグニスボムの火柱: 判定継続 1.4秒 — while the pillar stands, any foe of its owner inside the 62x210 box takes the hit (14 dmg / KB 330, away from the pillar's centre, up -0.35 — the same numbers the old instant hit used). Each pillar hits each foe ONCE (hitSet): a foe already hit, or knocked clear, is not re-hit by that pillar, but a foe who steps in later — or whose invuln ends mid-pillar — is caught the moment they are in the box. Pillars arriving from a snapshot carry owner:null and stay visual-only on this end (the host's sim lands their hits) */
+      if(ip.owner){for(var ipi=0;ipi<fighters.length;ipi++){var ipf=fighters[ipi];if(ipf===ip.owner||ipf.dead||ipf.invuln>0)continue;if(ip.hitSet&&ip.hitSet.indexOf(ipf)>=0)continue;if(Math.abs(ipf.x-ip.x)<31+ipf.w/2&&(ipf.y+ipf.h)>ip.y-210&&ipf.y<ip.y){(ip.hitSet=ip.hitSet||[]).push(ipf);applyHit(ip.owner,ipf,14,330,ipf.x>=ip.x?1:-1,-0.35,false,ip.x,ip.y-105)}}}
+      return ip.t>0});
    /* SARA placed fire orbs: burn for ~8s; foes within radius 92 keep burning (burn 1.1s) */
    fireOrbs=fireOrbs.filter(function(ob){ob.t-=STEP;/* SARA パッシブ「火は友達」 (user spec): the orb's OWNER, standing inside her own orb's damage radius (92), heals 3 HP/s — but NOT while hovering (W発動中は回復不可). The chaos/roar healing cut (-35%) applies to this heal like every other */var ow=ob.owner;if(ow&&ow.char==="sara"&&!ow.dead&&!ow.hovering&&ow.hp>0&&ow.hp<(ow.maxHp||MAXHP)&&Math.abs(ow.x-ob.x)<92&&Math.abs((ow.y+ow.h)-ob.y)<92)ow.hp=Math.min(ow.maxHp||MAXHP,ow.hp+3*STEP*(ow.chaos?0.65:1));for(var oi=0;oi<fighters.length;oi++){var of=fighters[oi];if(of===ob.owner||of.dead)continue;if((Math.abs(of.x-ob.x)<92&&Math.abs((of.y+of.h)-ob.y)<92)||(shadeAlive(of)&&Math.abs(of.shX-ob.x)<92&&Math.abs(of.shY-ob.y)<92)){of.burnT=Math.max(of.burnT||0,1.1);of.burnBy=ob.owner} /* 【闇ゲージ】 SHADE's body in a fire orb ignites the pair too — the burn ticks then drain the gauge via applyShadeDot */}return ob.t>0});
    /* WARDEN placed shock mines: no timer — a mine waits until a foe steps
