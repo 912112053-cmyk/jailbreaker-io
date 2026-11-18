@@ -434,6 +434,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/18",times:["11:02"],tag:"調整",title:"SARA：全ての技発動時の半透明エフェクトを削除",
+   items:["SARAが技を出すたびに本体へ重なって表示されていた半透明の炎テクスチャ（FXオーバーレイ）を、すべての技・ダッシュ・ウルトから削除しました",
+          "ウルトが溜まったときに出ていた半透明のオーラと、ダッシュ時の半透明の残像も出なくなりました",
+          "U「ファイアジャヴェリン」の弾の周りの半透明のハローと、着弾後に残る火の玉の足元の半透明の広がりも削除しました。弾と火の玉の本体（不透明な炎）はこれまで通り表示されます",
+          "ダメージ・KB・判定・硬直・燃焼など技の性能は一切変更ありません。他のキャラのエフェクトにも変更はありません",
+          "オンライン対戦のビルド版数をv271に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/18",times:["10:42"],tag:"調整",title:"SARA：技発動時の半透明パーティクルを削除",
    items:["SARAのU「ファイアジャヴェリン」が飛んでいる間に出ていた炎の軌跡パーティクルを削除しました。弾本体の見た目と、着弾後に残る火の玉はこれまで通り表示されます",
           "ダッシュ中の軌跡・走行時の土煙・ジャンプ／2段ジャンプ・着地のタイミングで出ていたSARAのパーティクル（キャラ色の半透明の粒子）も出なくなりました。音や移動の性能は変更ありません",
@@ -1681,7 +1687,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v270";
+var BUILD_ID="v271";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -10184,10 +10190,9 @@ function drawSara(f){
     技エフェクトはすべて削除済み (user request): 炎・ブレス・爪や尻尾の
     軌跡・カオスのオーラなど、技に付随するコード描画は一切出ない。
     本体のスプライトと姿勢 (傾きなど) は変更なし */
- /* ult ready: charged-electric aura in dragon-fire orange */
- if(f.meter>=100&&!f.dead)drawUltAura(f,249,115,22);
- drawSpriteTrail(f,"sara");
- /* 残像に重なる半透明の炎テクスチャは削除済み (user request): SARA の半透明パーティクルは出さない — the shared sprite afterimage (drawSpriteTrail above) stays, as it does for every fighter */
+ /* ウルト溜め完了時の半透明オーラ (drawUltAura) とダッシュ時の半透明の
+    残像 (drawSpriteTrail) も削除済み (user request): SARA には技発動時に
+    重なる半透明のエフェクトを一切出さない。本体のスプライトのみ描く */
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
@@ -11546,7 +11551,7 @@ function draw(){
  var cX0=cam.x-340,cX1=cam.x+viewW+340,cY0=cam.y-340,cY1=cam.y+viewH+340;
  icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2);ctx.fillStyle="rgba(186,230,253,.85)";for(var icx=-3;icx<=3;icx++){var ipx=p.x+icx*(p.w/7),iph=6+Math.abs(icx*37)%4;ctx.beginPath();ctx.moveTo(ipx-4,p.y-4);ctx.lineTo(ipx,p.y-4-iph);ctx.lineTo(ipx+4,p.y-4);ctx.closePath();ctx.fill()}});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.globalAlpha=Math.min(0.9,ob.t/1.2);ctx.fillStyle="rgba(239,68,68,.22)";ctx.beginPath();ctx.ellipse(ob.x,ob.y-2,92*pu,10,0,0,6.29);ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()});ctx.globalAlpha=1;
+ fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()}); /* SARA 設置火の玉: 炎本体 (不透明) のみ — 足元の半透明の広がり (楕円グロー) とフェード用の globalAlpha は削除済み (user request)。燃焼範囲92・持続8秒などの性能は変更なし */
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
     planted a mine can see it (the viewer is P1), so a foe's mines are
     skipped entirely here: no body, no blinking light, no range mark.
@@ -11562,7 +11567,7 @@ function draw(){
    if(pr.x<cX0||pr.x>cX1||pr.y<cY0||pr.y>cY1)return; /* fully off-screen: nothing of this shot can be visible */
    ctx.save();ctx.translate(pr.x,pr.y);
    if(pr.kind==="bolt"){ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,8,0,6.29);ctx.fill();ctx.fillStyle="#fdf4ff";ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill()}
-   else if(pr.kind==="javelin"){ctx.fillStyle="rgba(249,115,22,.45)";ctx.beginPath();ctx.arc(0,0,13,0,6.29);ctx.fill();ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.5,0,6.29);ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-(pr.vx>0?1:-1)*10,-3);ctx.lineTo(-(pr.vx>0?1:-1)*22,0);ctx.lineTo(-(pr.vx>0?1:-1)*10,3);ctx.closePath();ctx.fill()}
+   else if(pr.kind==="javelin"){ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.5,0,6.29);ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-(pr.vx>0?1:-1)*10,-3);ctx.lineTo(-(pr.vx>0?1:-1)*22,0);ctx.lineTo(-(pr.vx>0?1:-1)*10,3);ctx.closePath();ctx.fill()} /* SARA ファイアジャヴェリン: 弾本体 (不透明な炎の玉と尾) のみ — 周囲の半透明ハローは削除済み (user request) */
    else if(pr.kind==="wave"){ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.ellipse(0,6,21,10,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,6,12,6,0,Math.PI,0);ctx.fill()}
    else if(pr.kind==="lwave"){ctx.fillStyle="rgba(253,230,138,.35)";ctx.beginPath();ctx.ellipse(0,7,31,16,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,7,23,12,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fef9c3";ctx.beginPath();ctx.ellipse(0,7,14,7.5,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fffbeb";var lwSg=pr.vx>0?1:-1;ctx.fillRect(lwSg*15-2,-3,4,4);ctx.fillRect(lwSg*7-1.5,0,3,3)} /* MIMI ↓+K これならできるよ！: a dome of light racing along the ground — layered gold-white arcs with bright sparks at the leading edge */
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
@@ -11639,6 +11644,7 @@ function draw(){
     tier (owner directive: effects are never omitted) */
  (fighters.length?fighters:[P1,P2]).forEach(function(f){
    if(!f||f.dead)return;
+   if(f.char==="sara")return; /* SARA: 技発動時に重なる半透明のFXテクスチャ (炎テクスチャの screen 合成オーバーレイ) は全て削除 (user request) — ダッシュ中・全ての技のモーション中・ウルト中を通して一切重ねない。他キャラのオーバーレイは変更なし */
    if(f.ultChargeT>0){drawFxTex(FXIMG.fire,f.x,f.y+f.h*0.46,220,time*2.6,f.face,0.5)}
    else if(f.dashT>0){drawCharFxOverlay(f,f.x-f.face*24,f.y+f.h*0.46,142,-0.1*f.face,f.face,0.4)}
    else if(f.stateT>0&&f.state&&f.state!=="idle"&&f.state!=="guard"&&f.state!=="shard"){
