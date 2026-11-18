@@ -304,7 +304,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
 .updEmpty{color:var(--muted);font-weight:700;font-size:14px;padding:18px 0 8px;text-align:center}
 /* ===== CREATIVE MODE ===== */
 #lobbyCrNote{display:none;color:#bbf7d0;font-weight:900;font-size:13px;text-align:center;margin-top:2px}
-#specBar{position:absolute;top:54px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:rgba(3,14,26,.85);border:1.5px solid rgba(103,232,249,.35);border-radius:999px;padding:5px 12px;z-index:30;max-width:94vw;flex-wrap:wrap;justify-content:center}
+#specBar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:rgba(3,14,26,.85);border:1.5px solid rgba(103,232,249,.35);border-radius:999px;padding:5px 12px;z-index:30;max-width:94vw;flex-wrap:wrap;justify-content:center}
 #specBar .specLbl{color:#7dd3fc;font-weight:900;font-size:12px;white-space:nowrap}
 #specBtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .specBtn{background:#1e293b;border:1.5px solid #475569;color:#fff;border-radius:999px;padding:4px 12px;font-weight:900;font-size:12.5px;min-height:30px}
@@ -460,6 +460,20 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["00:44"],tag:"修正",title:"観戦の視点バーを画面下部へ移動／CPUが台下へ降りないバグを修正",
+   items:["観戦モードの視点切替バー（全体視点／各キャラ視点）を、画面上部からマップの下（画面下部）へ移動しました。切り替え方法（ボタン／Tab／数字キー）は従来どおりです",
+          "CPUが浮き台の上にいる時に台下へ全く降りないバグを修正しました：相手が下の階層にいる場合、CPUが台をすり抜けて降りる判断をするようになりました（プレイヤーと同じくSの素早い2回押しによるすり抜けで、下の台に着いた後も相手がさらに下にいれば続けて降ります）。オンライン対戦でも、CPUの入力生成側で同じ判断をするため全員の画面で同じ動きになります",
+          "BUILD_ID を v282 に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/19",times:["00:30"],tag:"エフェクト",title:"SARA：L以外の炎エフェクトを強化",
+   items:["L「火炎放射」以外の、SARAの炎エフェクトをすべて豪華にしました（L「火炎放射」の見た目は変更していません）",
+          "Jラッシュ（爪ひっかき／火の粉ブレス／アッパー／尻尾フィニッシュ）とフレイムクロー：爪痕・息吹・拳・尻尾のすべてが、深紅の外殻→オレンジ→金→白熱の芯という多層の炎で描かれるようになり、先端から炎の舌と火の粉が散るようになりました",
+          "空中J「イグニッシュ」：左右の火の玉が多層化し、揺らめく舌炎と衝撃の輪が加わりました。空中↓+J「メテオダイブ」：静止中の炎の纏いが12本の多層の舌炎になり、着地の爆発も二重の衝撃波と地面の炎を伴う大きなものになりました",
+          "J+K「イグニッシュフィスト」2段目：拳の周りに炎のオーラと拳からの舌炎・火の粉が加わりました。K「フレイムノヴァ」：ドラゴンの頭に炎のたてがみ・光る目・鼻からの炎が加わり、より迫力のある見た目になりました",
+          "↑+K「ライジングウイング」／ホバリングの羽：内側の膜と金の骨線・縁の火の粉が加わりました。↓+K「ドラゴニック・ロア」効果中の周回する火の玉：ハローと舌炎を持つ生きた火の玉になりました",
+          "U「ファイアジャヴェリン」：弾が多層の炎の玉になり、分節した炎の尾を引くようになりました。着弾後の火種：炎が多層の舌炎クラスターになり、判定範囲の表示にコーナーの目印が付きました。↓+U「イグニスボム」の火柱：深紅の外殻・金の芯・白熱の中心と、頂の炎の冠・内部を駆け上がる火の粉・足元の炎で描かれるようになりました",
+          "燃焼中の相手：体から多層の炎の舌が立ち上るようになり、燃えていることが一目で分かるようになりました（燃焼のダメージや発生間隔は変更ありません。被弾パーティクルは従来どおり出ません）",
+          "性能（ダメージ・判定・タイミング）は一切変更していません。見た目だけの強化です",
+          "BUILD_ID を v281 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["00:07"],tag:"新機能",title:"CREATIVE MODE：観戦で対戦するCPUのキャラを選べるように",
    items:["観戦開始前に、対戦するCPUの顔ぶれを選べる画面を追加しました：CPUの人数（2〜8人）と、各枠のキャラを枠ごとに選べます（「おまかせ」はランダム、全員一括指定も可能）。自分のキャラを選ぶ画面ではなく、全員CPU同士の顔ぶれを選ぶための画面です",
           "人数や枠の扱いはCPU対戦の設定と同じで、選んだキャラ同士で観戦試合が始まります。試合後の「キャラ変更」からも顔ぶれを選び直せます（「もう一度たたかう」は同じ顔ぶれのまま再戦します）",
@@ -1681,7 +1695,7 @@ function openCustomize(){
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,aiDrop:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1691,7 +1705,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix","mix"]; /* 8 slots: VS C
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
+function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.aiDrop=0;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
@@ -2159,7 +2173,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v280";
+var BUILD_ID="v282";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3643,7 +3657,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","diveHitMask","meteorArm","swingFx","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","diveHitMask","meteorArm","swingFx","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","aiDrop","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -6949,73 +6963,122 @@ function drawVecBursts(){
    /* pixel blood: a few small red squares flicked off the blade arc */
    ctx.fillStyle="#dc2626";for(var bs=0;bs<5;bs++){var ba=-0.7+bs*0.34+Math.sin(b.seed*7+bs)*0.1,bd=R2*(0.75+0.13*((bs*37)%3)),bsz=bs%2?3.4:2.4;ctx.fillRect(Math.cos(ba)*bd-bsz/2,Math.sin(ba)*bd-bsz/2,bsz,bsz)}
    ctx.fillStyle="#991b1b";ctx.fillRect(Math.cos(0.5)*R2*0.6-1.6,Math.sin(0.5)*R2*0.6-1.6,3.2,3.2);
-  }else if(b.kind==="sclaw"){ /* SARA 爪ひっかき / フレイムクロー (okaki8213 request 2026/11/18): three diagonal claw streaks raking down-forward, embers flicking off the tips */
+  }else if(b.kind==="sclaw"){ /* SARA 爪ひっかき / フレイムクロー (強化 2026/11/19): three BURNING claw streaks — a dark-red aura slash behind each cut, orange / gold / white-hot layers, flame tongues curling off the tips and a spray of embers */
    ctx.rotate(b.rot);
-   for(var sc=0;sc<3;sc++){var so=(sc-1)*b.size*0.17,sg=b.size*(0.30+0.10*pr);
-    ctx.strokeStyle="rgba(249,115,22,.85)";ctx.lineWidth=6.5;ctx.beginPath();ctx.moveTo(-sg*0.7,-sg+so);ctx.quadraticCurveTo(0,-sg*0.15+so,sg*0.75,sg*0.8+so);ctx.stroke();
-    ctx.strokeStyle="#fff7ed";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-sg*0.7,-sg+so);ctx.quadraticCurveTo(0,-sg*0.15+so,sg*0.75,sg*0.8+so);ctx.stroke()}
-   ctx.fillStyle="#fdba74";for(var se=0;se<5;se++){var sa2=0.5+se*0.22,sd2=b.size*(0.34+0.16*((se*37)%3))*pr;ctx.fillRect(Math.cos(sa2)*sd2-1.6,Math.sin(sa2)*sd2-1.6,3.2,3.2)}
-  }else if(b.kind==="sbreath"){ /* SARA 火の粉ブレス / イグニッシュフィスト1段目: TWO ember puffs blown forward one after the other, each a cluster of flame blobs */
-   for(var bp=0;bp<2;bp++){var bx2=bp*b.size*0.30-b.size*0.08,br2=b.size*(0.16+0.13*pr)*(bp?0.85:1),bob2=Math.sin(b.seed*7+bp*2.4)*b.size*0.05;
+   for(var cl1=0;cl1<3;cl1++){var clO=(cl1-1)*b.size*0.17,clG=b.size*(0.32+0.12*pr);
+    ctx.strokeStyle="rgba(127,29,29,.55)";ctx.lineWidth=13;ctx.beginPath();ctx.moveTo(-clG*0.78,-clG+clO);ctx.quadraticCurveTo(0,-clG*0.15+clO,clG*0.82,clG*0.86+clO);ctx.stroke();
+    ctx.strokeStyle="#ea580c";ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(-clG*0.72,-clG+clO);ctx.quadraticCurveTo(0,-clG*0.15+clO,clG*0.78,clG*0.82+clO);ctx.stroke();
+    ctx.strokeStyle="#fbbf24";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-clG*0.7,-clG+clO);ctx.quadraticCurveTo(0,-clG*0.15+clO,clG*0.75,clG*0.8+clO);ctx.stroke();
+    ctx.strokeStyle="#fff7ed";ctx.lineWidth=1.9;ctx.beginPath();ctx.moveTo(-clG*0.66,-clG+clO);ctx.quadraticCurveTo(0,-clG*0.13+clO,clG*0.7,clG*0.76+clO);ctx.stroke();
+    var clTX=clG*0.78,clTY=clG*0.82+clO,clTH=7+4*Math.sin(b.seed*9+cl1*2.2+pr*6);
+    ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(clTX-3.4,clTY-2);ctx.quadraticCurveTo(clTX+clTH,clTY+1,clTX+1,clTY+5.4);ctx.quadraticCurveTo(clTX+2,clTY+1,clTX-3.4,clTY-2);ctx.fill()}
+   ctx.fillStyle="#fdba74";for(var clE=0;clE<8;clE++){var clA=0.35+clE*0.17,clD=b.size*(0.36+0.2*((clE*37)%3))*pr,clS=clE%3?2.4:3.4;ctx.fillRect(Math.cos(clA)*clD-clS/2,Math.sin(clA)*clD-clS/2,clS,clS)}
+   ctx.fillStyle="#fff7ed";for(var clE2=0;clE2<3;clE2++){var clD2=b.size*(0.3+0.14*clE2)*pr;ctx.fillRect(Math.cos(0.6+clE2*0.3)*clD2-1.2,Math.sin(0.6+clE2*0.3)*clD2-1.2,2.4,2.4)}
+  }else if(b.kind==="sbreath"){ /* SARA 火の粉ブレス / イグニッシュフィスト1段目 (強化 2026/11/19): TWO roaring ember puffs — dark-red outer fire, orange body, gold heart, white-hot core, flame tongues licking off the front and a cone of streaming embers */
+   for(var bp=0;bp<2;bp++){var bx2=bp*b.size*0.30-b.size*0.08,br2=b.size*(0.17+0.14*pr)*(bp?0.85:1),bob2=Math.sin(b.seed*7+bp*2.4)*b.size*0.05;
+    ctx.fillStyle="#991b1b";ctx.beginPath();ctx.arc(bx2,bob2,br2*1.22,0,6.29);ctx.arc(bx2+br2*0.85,bob2+br2*0.3,br2*0.85,0,6.29);ctx.arc(bx2-br2*0.8,bob2+br2*0.25,br2*0.78,0,6.29);ctx.fill();
     ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(bx2,bob2,br2,0,6.29);ctx.arc(bx2+br2*0.8,bob2+br2*0.25,br2*0.72,0,6.29);ctx.arc(bx2-br2*0.75,bob2+br2*0.2,br2*0.66,0,6.29);ctx.fill();
-    ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(bx2,bob2,br2*0.62,0,6.29);ctx.arc(bx2+br2*0.8,bob2+br2*0.25,br2*0.42,0,6.29);ctx.fill();
-    ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(bx2,bob2,br2*0.30,0,6.29);ctx.fill()}
-   ctx.fillStyle="#fdba74";for(var be=0;be<6;be++){var bd3=b.size*(0.2+0.5*pr)*(0.6+0.13*((be*29)%4)),by3=Math.sin(b.seed*9+be*1.9)*b.size*0.16;ctx.fillRect(bd3-1.5,by3-1.5,3,3)}
-  }else if(b.kind==="suppercut"){ /* SARA アッパー: a flaming fist streak ripping UPWARD, speed lines alongside */
-   var uH=b.size*(0.42+0.30*pr),uW=b.size*0.13;
-   ctx.fillStyle="rgba(234,88,12,.9)";ctx.beginPath();ctx.moveTo(-uW,uH*0.55);ctx.quadraticCurveTo(-uW*0.7,-uH*0.2,0,-uH*0.62);ctx.quadraticCurveTo(uW*0.7,-uH*0.2,uW,uH*0.55);ctx.quadraticCurveTo(0,uH*0.34,-uW,uH*0.55);ctx.fill();
-   ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(-uW*0.45,uH*0.4);ctx.quadraticCurveTo(-uW*0.3,-uH*0.1,0,-uH*0.4);ctx.quadraticCurveTo(uW*0.3,-uH*0.1,uW*0.45,uH*0.4);ctx.quadraticCurveTo(0,uH*0.22,-uW*0.45,uH*0.4);ctx.fill();
-   ctx.strokeStyle="rgba(254,215,170,.8)";ctx.lineWidth=2.2;for(var ul=-1;ul<=1;ul+=2){ctx.beginPath();ctx.moveTo(ul*uW*1.7,uH*0.5);ctx.lineTo(ul*uW*1.45,-uH*0.3);ctx.stroke()}
-   ctx.fillStyle="#fdba74";for(var ue=0;ue<4;ue++){ctx.fillRect((Math.sin(b.seed*8+ue*2.2))*uW*1.1-1.5,uH*(0.3-ue*0.2)-1.5,3,3)}
-  }else if(b.kind==="stailwhip"){ /* SARA 尻尾フィニッシュ / フレアテール: her dragon tail sweeps the FULL box to its very tip, flame licking off the end */
+    ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(bx2,bob2,br2*0.74,0,6.29);ctx.arc(bx2+br2*0.8,bob2+br2*0.25,br2*0.5,0,6.29);ctx.fill();
+    ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(bx2,bob2,br2*0.5,0,6.29);ctx.fill();
+    ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(bx2,bob2,br2*0.26,0,6.29);ctx.fill();
+    ctx.fillStyle="#f97316";for(var btq=0;btq<3;btq++){var btx=bx2+br2*(0.95+btq*0.16),bty=bob2+(btq-1)*br2*0.42,bth=br2*(0.4+0.2*Math.abs(Math.sin(b.seed*8+bp*3+btq*1.9+pr*5)));ctx.beginPath();ctx.moveTo(btx,bty-3);ctx.quadraticCurveTo(btx+bth,bty,btx,bty+3);ctx.quadraticCurveTo(btx+bth*0.4,bty,btx,bty-3);ctx.fill()}}
+   ctx.fillStyle="#fdba74";for(var be=0;be<9;be++){var bd3=b.size*(0.2+0.55*pr)*(0.6+0.13*((be*29)%4)),by3=Math.sin(b.seed*9+be*1.9)*b.size*0.17,bsz3=be%3?2.4:3.2;ctx.fillRect(bd3-bsz3/2,by3-bsz3/2,bsz3,bsz3)}
+   ctx.fillStyle="#f97316";for(var be2=0;be2<4;be2++){var bd4=-b.size*0.06-be2*b.size*0.05*pr,by4=Math.sin(b.seed*5+be2*2.6)*b.size*0.1;ctx.fillRect(bd4-1.4,by4-1.4,2.8,2.8)}
+  }else if(b.kind==="suppercut"){ /* SARA アッパー (強化 2026/11/19): a towering flaming uppercut — dark-red outer flame, orange pillar, gold heart and a white-hot core streak, side licks curling off the column and embers streaming up */
+   var uH=b.size*(0.46+0.32*pr),uW=b.size*0.145;
+   ctx.fillStyle="#991b1b";ctx.beginPath();ctx.moveTo(-uW*1.35,uH*0.58);ctx.quadraticCurveTo(-uW*1.05,-uH*0.2,0,-uH*0.72);ctx.quadraticCurveTo(uW*1.05,-uH*0.2,uW*1.35,uH*0.58);ctx.quadraticCurveTo(0,uH*0.36,-uW*1.35,uH*0.58);ctx.fill();
+   ctx.fillStyle="#ea580c";ctx.beginPath();ctx.moveTo(-uW,uH*0.55);ctx.quadraticCurveTo(-uW*0.7,-uH*0.2,0,-uH*0.62);ctx.quadraticCurveTo(uW*0.7,-uH*0.2,uW,uH*0.55);ctx.quadraticCurveTo(0,uH*0.34,-uW,uH*0.55);ctx.fill();
+   ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.moveTo(-uW*0.62,uH*0.46);ctx.quadraticCurveTo(-uW*0.45,-uH*0.12,0,-uH*0.48);ctx.quadraticCurveTo(uW*0.45,-uH*0.12,uW*0.62,uH*0.46);ctx.quadraticCurveTo(0,uH*0.26,-uW*0.62,uH*0.46);ctx.fill();
+   ctx.fillStyle="#fef3c7";ctx.beginPath();ctx.moveTo(-uW*0.3,uH*0.38);ctx.quadraticCurveTo(-uW*0.2,-uH*0.08,0,-uH*0.32);ctx.quadraticCurveTo(uW*0.2,-uH*0.08,uW*0.3,uH*0.38);ctx.quadraticCurveTo(0,uH*0.2,-uW*0.3,uH*0.38);ctx.fill();
+   ctx.fillStyle="#f97316";for(var upL=-1;upL<=1;upL+=2){var upX=upL*uW*1.15,upH2=uH*(0.3+0.14*Math.abs(Math.sin(b.seed*7+upL+pr*5)));ctx.beginPath();ctx.moveTo(upX-3,uH*0.42);ctx.quadraticCurveTo(upX+upL*2,uH*0.42-upH2,upX+upL*5,uH*0.42-upH2*0.7);ctx.quadraticCurveTo(upX+upL*3,uH*0.3,upX+3,uH*0.42);ctx.closePath();ctx.fill()}
+   ctx.strokeStyle="rgba(254,215,170,.85)";ctx.lineWidth=2.2;for(var ul=-1;ul<=1;ul+=2){ctx.beginPath();ctx.moveTo(ul*uW*1.9,uH*0.52);ctx.lineTo(ul*uW*1.6,-uH*0.36);ctx.stroke()}
+   ctx.fillStyle="#fdba74";for(var ue=0;ue<6;ue++){var ueS=ue%2?3.2:2.3;ctx.fillRect((Math.sin(b.seed*8+ue*2.2))*uW*1.25-ueS/2,uH*(0.34-ue*0.17)-ueS/2,ueS,ueS)}
+   ctx.fillStyle="rgba(249,115,22,.5)";ctx.beginPath();ctx.ellipse(0,uH*0.56,b.size*0.2,b.size*0.045,0,0,6.29);ctx.fill()
+  }else if(b.kind==="stailwhip"){ /* SARA 尻尾フィニッシュ / フレアテール (強化 2026/11/19): the dragon tail sweeps the FULL box wrapped in fire — layered arcs from dark red to white-hot, flame embers racing along the swing and a big layered teardrop of fire bursting off the tip */
    var tR=b.size*0.46*(0.55+0.45*pr);
-   ctx.strokeStyle="rgba(185,28,28,.9)";ctx.lineWidth=b.size*0.15;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.35,1.05);ctx.stroke();
-   ctx.strokeStyle="#f97316";ctx.lineWidth=b.size*0.075;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.3,1.0);ctx.stroke();
-   ctx.strokeStyle="#fde68a";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.2,0.9);ctx.stroke();
+   ctx.strokeStyle="rgba(127,29,29,.6)";ctx.lineWidth=b.size*0.21;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.38,1.08);ctx.stroke();
+   ctx.strokeStyle="#b91c1c";ctx.lineWidth=b.size*0.15;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.35,1.05);ctx.stroke();
+   ctx.strokeStyle="#f97316";ctx.lineWidth=b.size*0.085;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.3,1.0);ctx.stroke();
+   ctx.strokeStyle="#fbbf24";ctx.lineWidth=b.size*0.04;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.26,0.96);ctx.stroke();
+   ctx.strokeStyle="#fff7ed";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(-b.size*0.18,0,tR,-0.2,0.9);ctx.stroke();
    var tipA=1.05,tipX=-b.size*0.18+Math.cos(tipA)*tR,tipY=Math.sin(tipA)*tR;
-   ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(tipX,tipY-7);ctx.quadraticCurveTo(tipX+13,tipY,tipX,tipY+7);ctx.quadraticCurveTo(tipX+4,tipY,tipX,tipY-7);ctx.fill();
-   ctx.fillStyle="#fff7ed";for(var te=0;te<5;te++){var ta3=0.4+te*0.3,td3=tR*(0.7+0.14*((te*31)%3));ctx.fillRect(-b.size*0.18+Math.cos(ta3)*td3-1.6,Math.sin(ta3)*td3-1.6,3.2,3.2)}
-  }else if(b.kind==="signish"){ /* SARA イグニッシュ: a fat fire orb blooms on EACH side, filling both boxes */
-   for(var is3=-1;is3<=1;is3+=2){var ix=is3*b.size*0.36,ir=b.size*(0.17+0.10*pr);
+   ctx.fillStyle="#ea580c";ctx.beginPath();ctx.moveTo(tipX,tipY-10);ctx.quadraticCurveTo(tipX+19,tipY,tipX,tipY+10);ctx.quadraticCurveTo(tipX+6,tipY,tipX,tipY-10);ctx.fill();
+   ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(tipX,tipY-6.4);ctx.quadraticCurveTo(tipX+12.5,tipY,tipX,tipY+6.4);ctx.quadraticCurveTo(tipX+3.6,tipY,tipX,tipY-6.4);ctx.fill();
+   ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.moveTo(tipX+1,tipY-3.2);ctx.quadraticCurveTo(tipX+7,tipY,tipX+1,tipY+3.2);ctx.quadraticCurveTo(tipX+3,tipY,tipX+1,tipY-3.2);ctx.fill();
+   ctx.fillStyle="#fdba74";for(var te=0;te<7;te++){var ta3=0.25+te*0.19,td3=tR*(0.68+0.15*((te*31)%3)),teS=te%2?2.4:3.4;ctx.fillRect(-b.size*0.18+Math.cos(ta3)*td3-teS/2,Math.sin(ta3)*td3-teS/2,teS,teS)}
+  }else if(b.kind==="signish"){ /* SARA イグニッシュ (強化 2026/11/19): a fat fire orb blooms on EACH side — dark-red halo body, layered fire, five tall flickering tongues over a gold under-row, a swirling white-hot core and twin expanding shock rings around her */
+   ctx.strokeStyle="rgba(249,115,22,.75)";ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,b.size*(0.3+0.3*pr),0,6.29);ctx.stroke();
+   ctx.strokeStyle="rgba(253,186,116,.8)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(0,0,b.size*(0.2+0.22*pr),0,6.29);ctx.stroke();
+   for(var is3=-1;is3<=1;is3+=2){var ix=is3*b.size*0.36,ir=b.size*(0.18+0.11*pr);
+    ctx.fillStyle="#991b1b";ctx.beginPath();ctx.arc(ix,0,ir*1.24,0,6.29);ctx.fill();
     ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(ix,0,ir,0,6.29);ctx.fill();
-    ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(ix,0,ir*0.66,0,6.29);ctx.fill();
-    ctx.fillStyle="#fef3c7";ctx.beginPath();ctx.arc(ix,0,ir*0.34,0,6.29);ctx.fill();
-    ctx.fillStyle="#f97316";for(var it=0;it<3;it++){var itx=ix+(it-1)*ir*0.5,ith=ir*(0.5+0.22*Math.abs(Math.sin(b.seed*6+it*1.8+pr*4)));ctx.beginPath();ctx.moveTo(itx-3.4,-ir*0.7);ctx.quadraticCurveTo(itx,-ir*0.7-ith,itx+3.4,-ir*0.7);ctx.quadraticCurveTo(itx,-ir*0.55,itx-3.4,-ir*0.7);ctx.fill()}}
-   ctx.fillStyle="#fdba74";for(var ie2=0;ie2<6;ie2++){var ia2=ie2*1.05+b.seed,idi=b.size*(0.3+0.2*pr);ctx.fillRect(Math.cos(ia2)*idi-1.5,Math.sin(ia2)*idi*0.7-1.5,3,3)}
-  }else if(b.kind==="sfist"){ /* SARA イグニッシュフィスト2段目: one huge flaming fist slammed forward, fire streaming off the knuckles */
+    ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(ix,0,ir*0.7,0,6.29);ctx.fill();
+    ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(ix,0,ir*0.48,0,6.29);ctx.fill();
+    ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(ix,0,ir*0.26,0,6.29);ctx.fill();
+    ctx.strokeStyle="rgba(254,243,199,.9)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(ix,0,ir*0.37,b.seed+pr*4,b.seed+pr*4+3.6);ctx.stroke();
+    ctx.fillStyle="#f97316";for(var it=0;it<5;it++){var itx=ix+(it-2)*ir*0.34,ith=ir*(0.55+0.3*Math.abs(Math.sin(b.seed*6+it*1.8+pr*5)));ctx.beginPath();ctx.moveTo(itx-3.6,-ir*0.72);ctx.quadraticCurveTo(itx,-ir*0.72-ith,itx+3.6,-ir*0.72);ctx.quadraticCurveTo(itx,-ir*0.52,itx-3.6,-ir*0.72);ctx.fill()}
+    ctx.fillStyle="#fbbf24";for(var it2=0;it2<3;it2++){var itx2=ix+(it2-1)*ir*0.4,ith2=ir*(0.34+0.16*Math.abs(Math.sin(b.seed*9+it2*2.3+pr*5)));ctx.beginPath();ctx.moveTo(itx2-2.2,-ir*0.7);ctx.quadraticCurveTo(itx2,-ir*0.7-ith2,itx2+2.2,-ir*0.7);ctx.quadraticCurveTo(itx2,-ir*0.56,itx2-2.2,-ir*0.7);ctx.fill()}}
+   ctx.fillStyle="#fdba74";for(var ie2=0;ie2<9;ie2++){var ia2=ie2*0.7+b.seed,idi=b.size*(0.32+0.22*pr),ieS=ie2%3?2.4:3.3;ctx.fillRect(Math.cos(ia2)*idi-ieS/2,Math.sin(ia2)*idi*0.72-ieS/2,ieS,ieS)}
+  }else if(b.kind==="sfist"){ /* SARA イグニッシュフィスト2段目 (強化 2026/11/19): one huge flaming fist slammed forward — a dark-red flame aura silhouettes the fist, tall tongues stream off the back of the hand, white-hot knuckle caps lead the blow and embers spray off the impact face */
    var fs=b.size;
+   ctx.fillStyle="#991b1b";ctx.beginPath();
+   ctx.moveTo(-fs*0.36,-fs*0.13);ctx.lineTo(fs*0.0,-fs*0.21);
+   ctx.quadraticCurveTo(fs*0.09,-fs*0.31,fs*0.17,-fs*0.21);ctx.quadraticCurveTo(fs*0.26,-fs*0.30,fs*0.32,-fs*0.18);ctx.quadraticCurveTo(fs*0.40,-fs*0.25,fs*0.44,-fs*0.11);
+   ctx.lineTo(fs*0.44,fs*0.16);ctx.quadraticCurveTo(fs*0.33,fs*0.26,fs*0.16,fs*0.22);ctx.lineTo(-fs*0.06,fs*0.26);ctx.quadraticCurveTo(-fs*0.36,fs*0.19,-fs*0.36,-fs*0.13);ctx.fill();
    ctx.fillStyle="#ea580c";ctx.beginPath();
    ctx.moveTo(-fs*0.30,-fs*0.10);ctx.lineTo(fs*0.02,-fs*0.17);
    ctx.quadraticCurveTo(fs*0.10,-fs*0.26,fs*0.17,-fs*0.17);ctx.quadraticCurveTo(fs*0.25,-fs*0.25,fs*0.30,-fs*0.14);ctx.quadraticCurveTo(fs*0.38,-fs*0.20,fs*0.40,-fs*0.08);
    ctx.lineTo(fs*0.40,fs*0.13);ctx.quadraticCurveTo(fs*0.30,fs*0.22,fs*0.16,fs*0.18);ctx.lineTo(-fs*0.05,fs*0.22);ctx.quadraticCurveTo(-fs*0.30,fs*0.16,-fs*0.30,-fs*0.10);ctx.fill();
    ctx.fillStyle="#f97316";ctx.fillRect(-fs*0.28,-fs*0.02,fs*0.60,fs*0.07);
+   ctx.fillStyle="#fbbf24";ctx.fillRect(fs*0.30,-fs*0.13,fs*0.09,fs*0.24);
+   ctx.fillStyle="#fff7ed";for(var fc2=0;fc2<3;fc2++){ctx.beginPath();ctx.arc(fs*(0.16+fc2*0.10),-fs*0.155,fs*0.028,0,6.29);ctx.fill()}
    ctx.strokeStyle="#7c2d12";ctx.lineWidth=2;for(var fk=0;fk<3;fk++){ctx.beginPath();ctx.moveTo(fs*(0.13+fk*0.10),-fs*0.16);ctx.lineTo(fs*(0.13+fk*0.10),fs*0.02);ctx.stroke()}
-   ctx.fillStyle="#fbbf24";for(var ft=0;ft<4;ft++){var ftx=-fs*(0.05+ft*0.09),fth=fs*(0.14+0.08*Math.abs(Math.sin(b.seed*7+ft*2.1+pr*5)));ctx.beginPath();ctx.moveTo(ftx-3.6,-fs*0.14);ctx.quadraticCurveTo(ftx,-fs*0.14-fth,ftx+3.6,-fs*0.14);ctx.quadraticCurveTo(ftx,-fs*0.05,ftx-3.6,-fs*0.14);ctx.fill()}
-   ctx.strokeStyle="rgba(254,215,170,.85)";ctx.lineWidth=2.4;for(var fl2=0;fl2<3;fl2++){ctx.beginPath();ctx.moveTo(-fs*0.34,-fs*0.06+fl2*fs*0.09);ctx.lineTo(-fs*0.46,-fs*0.06+fl2*fs*0.09);ctx.stroke()}
-  }else if(b.kind==="sdhead"){ /* SARA フレイムノヴァ: a DRAGON HEAD rears up filling the whole hitbox — horns swept back, jaw open, fire in its throat */
+   ctx.fillStyle="#f97316";for(var ft=0;ft<5;ft++){var ftx=-fs*(0.02+ft*0.085),fth=fs*(0.17+0.1*Math.abs(Math.sin(b.seed*7+ft*2.1+pr*5)));ctx.beginPath();ctx.moveTo(ftx-4,-fs*0.15);ctx.quadraticCurveTo(ftx,-fs*0.15-fth,ftx+4,-fs*0.15);ctx.quadraticCurveTo(ftx,-fs*0.05,ftx-4,-fs*0.15);ctx.fill()}
+   ctx.fillStyle="#fbbf24";for(var ft2=0;ft2<3;ft2++){var ftx2=-fs*(0.06+ft2*0.1),fth2=fs*(0.1+0.05*Math.abs(Math.sin(b.seed*11+ft2*2.7+pr*5)));ctx.beginPath();ctx.moveTo(ftx2-2.4,-fs*0.15);ctx.quadraticCurveTo(ftx2,-fs*0.15-fth2,ftx2+2.4,-fs*0.15);ctx.quadraticCurveTo(ftx2,-fs*0.07,ftx2-2.4,-fs*0.15);ctx.fill()}
+   ctx.strokeStyle="rgba(254,215,170,.9)";ctx.lineWidth=2.6;for(var fl2=0;fl2<3;fl2++){ctx.beginPath();ctx.moveTo(-fs*0.36,-fs*0.06+fl2*fs*0.09);ctx.lineTo(-fs*0.52,-fs*0.06+fl2*fs*0.09);ctx.stroke()}
+   ctx.fillStyle="#fdba74";for(var fe3=0;fe3<5;fe3++){var feA=-0.5+fe3*0.25,feD=fs*(0.34+0.16*pr);ctx.fillRect(fs*0.4+Math.cos(feA)*feD*0.4-1.5,Math.sin(feA)*feD*0.5-1.5,3,3)}
+  }else if(b.kind==="sdhead"){ /* SARA フレイムノヴァ (強化 2026/11/19): a DRAGON HEAD rears up filling the whole hitbox — a mane of flame tongues behind the skull, horns swept back, a glowing slit-pupil eye, jaw open over a burning throat and fire puffing from the nostril */
    var ds=b.size,dp=0.75+0.25*pr;
+   ctx.fillStyle="#ea580c";for(var dm=0;dm<5;dm++){var dmx=-ds*(0.34-dm*0.13),dmy=-ds*0.2+dm*ds*0.02,dmh=ds*(0.2+0.09*Math.abs(Math.sin(b.seed*6+dm*1.9+pr*4)));ctx.beginPath();ctx.moveTo(dmx-ds*0.045,dmy);ctx.quadraticCurveTo(dmx-ds*0.05,dmy-dmh,dmx+ds*0.01,dmy-dmh*1.06);ctx.quadraticCurveTo(dmx+ds*0.045,dmy-dmh*0.4,dmx+ds*0.045,dmy);ctx.closePath();ctx.fill()}
+   ctx.fillStyle="#fbbf24";for(var dm2=0;dm2<3;dm2++){var dmx2=-ds*(0.28-dm2*0.14),dmh2=ds*(0.12+0.05*Math.abs(Math.sin(b.seed*9+dm2*2.4+pr*4)));ctx.beginPath();ctx.moveTo(dmx2-ds*0.03,-ds*0.2);ctx.quadraticCurveTo(dmx2,-ds*0.2-dmh2,dmx2+ds*0.03,-ds*0.2);ctx.quadraticCurveTo(dmx2,-ds*0.13,dmx2-ds*0.03,-ds*0.2);ctx.fill()}
    ctx.fillStyle="#991b1b";ctx.beginPath();
    ctx.moveTo(-ds*0.36,-ds*0.02);ctx.quadraticCurveTo(-ds*0.30,-ds*0.24,-ds*0.05,-ds*0.27);ctx.quadraticCurveTo(ds*0.20,-ds*0.29,ds*0.34,-ds*0.13);ctx.quadraticCurveTo(ds*0.46,-ds*0.05,ds*0.42,ds*0.02);
    ctx.lineTo(ds*0.20,ds*0.05);ctx.lineTo(ds*0.30,ds*0.13);ctx.lineTo(ds*0.13,ds*0.09);ctx.lineTo(ds*0.17,ds*0.20);ctx.quadraticCurveTo(ds*0.02,ds*0.27,-ds*0.16,ds*0.22);ctx.quadraticCurveTo(-ds*0.34,ds*0.14,-ds*0.36,-ds*0.02);ctx.fill();
    ctx.fillStyle="#b91c1c";ctx.beginPath();ctx.moveTo(-ds*0.05,-ds*0.24);ctx.quadraticCurveTo(-ds*0.30,-ds*0.44,-ds*0.46,-ds*0.40);ctx.quadraticCurveTo(-ds*0.28,-ds*0.22,-ds*0.16,-ds*0.18);ctx.closePath();ctx.fill();
    ctx.beginPath();ctx.moveTo(ds*0.08,-ds*0.26);ctx.quadraticCurveTo(-ds*0.10,-ds*0.46,-ds*0.30,-ds*0.44);ctx.quadraticCurveTo(-ds*0.12,-ds*0.24,-ds*0.02,-ds*0.19);ctx.closePath();ctx.fill();
-   ctx.fillStyle="#fff7ed";for(var dt2=0;dt2<3;dt2++){var dtx=ds*(0.20+dt2*0.075);ctx.beginPath();ctx.moveTo(dtx,ds*0.05);ctx.lineTo(dtx+ds*0.03,ds*0.13);ctx.lineTo(dtx+ds*0.055,ds*0.05);ctx.closePath();ctx.fill()}
+   ctx.strokeStyle="rgba(254,215,170,.75)";ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(-ds*0.05,-ds*0.25);ctx.quadraticCurveTo(-ds*0.29,-ds*0.42,-ds*0.44,-ds*0.39);ctx.stroke();
+   ctx.fillStyle="#7f1d1d";ctx.beginPath();ctx.moveTo(ds*0.06,ds*0.055);ctx.quadraticCurveTo(ds*0.24,ds*0.0,ds*0.36,ds*0.06);ctx.quadraticCurveTo(ds*0.22,ds*0.15,ds*0.06,ds*0.13);ctx.closePath();ctx.fill();
    ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.moveTo(ds*0.02,ds*0.10);ctx.quadraticCurveTo(ds*0.22,ds*0.02,ds*0.34,ds*0.08);ctx.quadraticCurveTo(ds*0.20,ds*0.17,ds*0.04,ds*0.16);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ds*0.06,ds*0.10);ctx.quadraticCurveTo(ds*0.2,ds*0.05,ds*0.29,ds*0.08);ctx.quadraticCurveTo(ds*0.19,ds*0.14,ds*0.07,ds*0.13);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#fff7ed";for(var dt2=0;dt2<4;dt2++){var dtx=ds*(0.185+dt2*0.055);ctx.beginPath();ctx.moveTo(dtx,ds*0.05);ctx.lineTo(dtx+ds*0.024,ds*0.125);ctx.lineTo(dtx+ds*0.048,ds*0.05);ctx.closePath();ctx.fill()}
+   ctx.fillStyle="#fff7ed";for(var dt3=0;dt3<2;dt3++){var dtx3=ds*(0.15+dt3*0.07);ctx.beginPath();ctx.moveTo(dtx3,ds*0.155);ctx.lineTo(dtx3+ds*0.02,ds*0.095);ctx.lineTo(dtx3+ds*0.04,ds*0.155);ctx.closePath();ctx.fill()}
    ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(-ds*0.02,-ds*0.13);ctx.lineTo(ds*0.09,-ds*0.10);ctx.lineTo(-ds*0.01,-ds*0.065);ctx.closePath();ctx.fill();
-   ctx.fillStyle="#450a0a";ctx.beginPath();ctx.arc(ds*0.015,-ds*0.10,ds*0.016,0,6.29);ctx.fill();
+   ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(ds*0.015,-ds*0.10,ds*0.034,0,6.29);ctx.fill();
+   ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(ds*0.015,-ds*0.10,ds*0.02,0,6.29);ctx.fill();
+   ctx.fillStyle="#450a0a";ctx.fillRect(ds*0.015-ds*0.004,-ds*0.10-ds*0.017,ds*0.008,ds*0.034);
+   ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ds*0.40,-ds*0.05);ctx.quadraticCurveTo(ds*0.47+ds*0.05*pr,-ds*0.015,ds*0.40,ds*0.025);ctx.quadraticCurveTo(ds*0.435,-ds*0.01,ds*0.40,-ds*0.05);ctx.fill();
    ctx.fillStyle="#fdba74";ctx.beginPath();ctx.arc(ds*0.40,-ds*0.015,2.4+1.4*pr,0,6.29);ctx.fill();
-   ctx.strokeStyle="rgba(249,115,22,.8)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-ds*0.36,ds*0.06);ctx.quadraticCurveTo(-ds*0.44,ds*0.16,-ds*0.38,ds*0.26);ctx.stroke();
-  }else if(b.kind==="swing"){ /* SARA ライジングウイング: both dragon wings thrown wide — far wing smaller and darker behind the near one */
+   ctx.fillStyle="#fdba74";for(var de2=0;de2<5;de2++){var deA=-0.3+de2*0.16,deD=ds*(0.4+0.14*pr);ctx.fillRect(ds*0.3+Math.cos(deA)*deD*0.35-1.4,ds*0.06+Math.sin(deA)*deD*0.3-1.4,2.8,2.8)}
+   ctx.strokeStyle="rgba(249,115,22,.85)";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-ds*0.36,ds*0.06);ctx.quadraticCurveTo(-ds*0.44,ds*0.16,-ds*0.38,ds*0.26);ctx.stroke();
+  }else if(b.kind==="swing"){ /* SARA ライジングウイング (強化 2026/11/19): both dragon wings thrown wide — a bright inner membrane and gold bone lines on the near wing, small flame tongues licking off the trailing edge and embers streaming off the swing */
    ctx.fillStyle="#7f1d1d";ctx.beginPath();ctx.moveTo(2,-2);ctx.quadraticCurveTo(-b.size*0.20,-b.size*0.30,-b.size*0.36,-b.size*0.26);ctx.quadraticCurveTo(-b.size*0.24,-b.size*0.10,-b.size*0.20,-b.size*0.02);ctx.quadraticCurveTo(-b.size*0.10,-b.size*0.06,-b.size*0.06,b.size*0.06);ctx.quadraticCurveTo(b.size*0.02,b.size*0.02,2,-2);ctx.fill();
    ctx.fillStyle="#991b1b";ctx.beginPath();ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.26,-b.size*0.38,-b.size*0.50,-b.size*0.34);ctx.quadraticCurveTo(-b.size*0.36,-b.size*0.13,-b.size*0.30,-b.size*0.03);ctx.quadraticCurveTo(-b.size*0.17,-b.size*0.08,-b.size*0.13,b.size*0.09);ctx.quadraticCurveTo(-b.size*0.03,b.size*0.06,4,4);ctx.fill();
-   ctx.strokeStyle="#f97316";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.26,-b.size*0.38,-b.size*0.50,-b.size*0.34);ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.18,-b.size*0.10,-b.size*0.30,-b.size*0.03);ctx.stroke();
-   ctx.fillStyle="#fdba74";for(var we=0;we<5;we++){var wa3=-2.6+we*0.35,wd3=b.size*(0.3+0.25*pr);ctx.fillRect(Math.cos(wa3)*wd3-1.5,Math.sin(wa3)*wd3*0.6-1.5,3,3)}
-  }else if(b.kind==="sboom"){ /* SARA メテオダイブ着地: a radial explosion that rings out across the whole landing box */
+   ctx.fillStyle="#b91c1c";ctx.beginPath();ctx.moveTo(2,5);ctx.quadraticCurveTo(-b.size*0.22,-b.size*0.3,-b.size*0.42,-b.size*0.27);ctx.quadraticCurveTo(-b.size*0.31,-b.size*0.1,-b.size*0.25,-b.size*0.02);ctx.quadraticCurveTo(-b.size*0.14,-b.size*0.05,-b.size*0.1,b.size*0.07);ctx.quadraticCurveTo(-b.size*0.02,b.size*0.05,2,5);ctx.fill();
+   ctx.strokeStyle="#f97316";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.26,-b.size*0.38,-b.size*0.50,-b.size*0.34);ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.18,-b.size*0.10,-b.size*0.30,-b.size*0.03);ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.12,-b.size*0.03,-b.size*0.13,b.size*0.09);ctx.stroke();
+   ctx.strokeStyle="#fbbf24";ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(4,4);ctx.quadraticCurveTo(-b.size*0.26,-b.size*0.38,-b.size*0.50,-b.size*0.34);ctx.stroke();
+   ctx.fillStyle="#f97316";for(var wt=0;wt<4;wt++){var wtx=-b.size*(0.16+wt*0.075),wty=b.size*(0.02+wt*0.028),wth=b.size*(0.05+0.03*Math.abs(Math.sin(b.seed*8+wt*2.1+pr*5)));ctx.beginPath();ctx.moveTo(wtx-3.2,wty);ctx.quadraticCurveTo(wtx,wty-wth,wtx+3.2,wty);ctx.quadraticCurveTo(wtx,wty+2.4,wtx-3.2,wty);ctx.fill()}
+   ctx.fillStyle="#fdba74";for(var we=0;we<8;we++){var wa3=-2.6+we*0.24,wd3=b.size*(0.3+0.28*pr),weS=we%3?2.3:3.2;ctx.fillRect(Math.cos(wa3)*wd3-weS/2,Math.sin(wa3)*wd3*0.6-weS/2,weS,weS)}
+  }else if(b.kind==="sboom"){ /* SARA メテオダイブ着地 (強化 2026/11/19): a radial explosion that rings out across the whole landing box — a dark-red outer star behind the orange blast star, gold and white-hot cores, twin shock rings, a row of ground flame tongues and embers flying off the blast */
    var br3=b.size*(0.30+0.30*pr);
-   ctx.fillStyle="rgba(234,88,12,.92)";ctx.beginPath();for(var bs3=0;bs3<8;bs3++){var ba4=bs3*0.785+b.seed,bl4=br3*(bs3%2?0.62:1);var bpx=Math.cos(ba4)*bl4,bpy=Math.sin(ba4)*bl4*0.62;if(bs3===0)ctx.moveTo(bpx,bpy);else ctx.lineTo(bpx,bpy)}ctx.closePath();ctx.fill();
-   ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(0,0,br3*0.5,0,6.29);ctx.fill();
-   ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,br3*0.26,0,6.29);ctx.fill();
+   ctx.fillStyle="#991b1b";ctx.beginPath();for(var bs4=0;bs4<12;bs4++){var ba5=bs4*0.524+b.seed,bl5=br3*1.18*(bs4%2?0.7:1);var bpx2=Math.cos(ba5)*bl5,bpy2=Math.sin(ba5)*bl5*0.62;if(bs4===0)ctx.moveTo(bpx2,bpy2);else ctx.lineTo(bpx2,bpy2)}ctx.closePath();ctx.fill();
+   ctx.fillStyle="rgba(234,88,12,.95)";ctx.beginPath();for(var bs3=0;bs3<8;bs3++){var ba4=bs3*0.785+b.seed,bl4=br3*(bs3%2?0.62:1);var bpx=Math.cos(ba4)*bl4,bpy=Math.sin(ba4)*bl4*0.62;if(bs3===0)ctx.moveTo(bpx,bpy);else ctx.lineTo(bpx,bpy)}ctx.closePath();ctx.fill();
+   ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(0,0,br3*0.62,0,6.29);ctx.fill();
+   ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(0,0,br3*0.44,0,6.29);ctx.fill();
+   ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,br3*0.24,0,6.29);ctx.fill();
    ctx.strokeStyle="rgba(253,186,116,.9)";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,b.size*0.16,b.size*(0.3+0.25*pr),b.size*0.07,0,0,6.29);ctx.stroke();
+   ctx.strokeStyle="rgba(249,115,22,.7)";ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(0,b.size*0.17,b.size*(0.42+0.3*pr),b.size*0.1,0,0,6.29);ctx.stroke();
+   ctx.fillStyle="#f97316";for(var gt=0;gt<5;gt++){var gtx=(gt-2)*b.size*0.13,gth=b.size*(0.09+0.05*Math.abs(Math.sin(b.seed*7+gt*1.9+pr*4)));ctx.beginPath();ctx.moveTo(gtx-4,b.size*0.17);ctx.quadraticCurveTo(gtx,b.size*0.17-gth,gtx+4,b.size*0.17);ctx.quadraticCurveTo(gtx,b.size*0.17+gth*0.25,gtx-4,b.size*0.17);ctx.fill()}
+   ctx.fillStyle="#fdba74";for(var ge=0;ge<8;ge++){var ga6=ge*0.785+b.seed*1.3,gd6=br3*(0.75+0.35*pr),geS=ge%2?2.4:3.4;ctx.fillRect(Math.cos(ga6)*gd6-geS/2,Math.sin(ga6)*gd6*0.62-geS/2,geS,geS)}
   }
   ctx.restore();
  });
@@ -9556,6 +9619,34 @@ function aiControl(f,foe){
    else if(!f.onGround&&f.dashCd<=0)tryDash(f,f.x<1300?1:-1);
    return input;
  }
+ /* DROP-THROUGH (bug fix): aiControl never produced a down input at
+    all, so a CPU standing on a floating ledge could never use the
+    ledge drop-through and never chased a foe fighting below it — it
+    just paced the ledge or jumped in place. Now, when the foe is
+    clearly on a lower level (foe.y - f.y > 50; the stage's levels
+    sit ~110 apart) and this fighter stands on a ledge (never the
+    main floor, which cannot be dropped through), it performs the
+    same quick double-tap of S a player uses: tap, release for two
+    frames, tap again and hold — the second tap lands well inside
+    stepFighter's 0.32s double-tap window, sets dropPlat / dropT,
+    and the held S then fast-falls it clear of the ledge. Landing on
+    a lower ledge with the foe still below simply triggers the
+    sequence again, so a CPU descends level by level. The sequence
+    runs on a per-fighter frame counter (f.aiDrop, carried in
+    RB_FSTATE like aiT / aiMove) and holds NO left / right: S plus a
+    direction is the guard input, which would swallow the taps.
+    Because the decision lives in aiControl, every input source
+    that drives CPUs — the local loop, the snapshot host
+    (sbInputFor) and the rollback sim (lsInputFor) — makes the
+    identical call from the identical state, so online CPU fighters
+    drop in sync on every end. */
+ if(!f.aiDrop&&f.onGround&&f.groundPlat&&!f.groundPlat.main&&foe.y-f.y>50&&f.hitstun<=0&&f.dashT<=0&&(f.landLagT||0)<=0&&(f.recLockT||0)<=0&&!(f.char==="travis"&&f.state==="tsing"))f.aiDrop=8;
+ if(f.aiDrop>0){
+   input.down=(f.aiDrop>=8||f.aiDrop<=5);
+   f.aiDrop--;
+   f.face=dx>0?1:-1;
+   return input;
+ }
  f.aiT-=1/60;
  if(f.aiT<=0){f.aiT=0.2+rnd()*0.25;f.aiMove=rnd();
    /* CPU ult (user request): the gauge now fills for CPU fighters too,
@@ -10956,7 +11047,13 @@ function drawKairo(f){
    breath, tail, fist, dragon head…) live in drawVecBursts as the
    "s*" kinds. What stays removed (v267-v276, earlier request): the
    translucent FX-texture overlay on her body, the ult-ready aura
-   (drawUltAura) and the dash sprite trail — none of those return. */
+   (drawUltAura) and the dash sprite trail — none of those return.
+   (2026/11/19 強化: every NON-L flame effect — the "s*" bursts, the
+   wings / wreath / orbs below, the javelin, the placed fire orb, the
+   イグニスボム pillar and the burn status flames — was redrawn in
+   layered solid flame: dark-red shell -> orange -> gold -> white-hot
+   core, with flickering tongues and embers. L「火炎放射」
+   (flameMode 1) is deliberately UNCHANGED, per the request.) */
 function drawSaraWings(f){
  var fly=f.state==="sfly",flap=Math.sin(time*(fly?17:9)+f.x*0.04)*(fly?6:4.5);
  /* far wing: smaller, darker, offset up */
@@ -10965,20 +11062,36 @@ function drawSaraWings(f){
  /* near wing: the big one, membrane scalloped along the trailing edge */
  ctx.fillStyle="#991b1b";ctx.beginPath();
  ctx.moveTo(0,13);ctx.quadraticCurveTo(-30,-24,-55,-27+flap);ctx.quadraticCurveTo(-44,-8,-38,0);ctx.quadraticCurveTo(-28,-4,-22,7);ctx.quadraticCurveTo(-10,4,0,13);ctx.fill();
+ /* inner membrane (強化 2026/11/19): a brighter red panel inside the near wing, so the wing reads in layers */
+ ctx.fillStyle="#b91c1c";ctx.beginPath();
+ ctx.moveTo(-2,12);ctx.quadraticCurveTo(-26,-18,-46,-21+flap*0.85);ctx.quadraticCurveTo(-37,-6,-31,0);ctx.quadraticCurveTo(-22,-2,-17,6);ctx.quadraticCurveTo(-8,4,-2,12);ctx.fill();
+ /* wing claw at the top joint */
+ ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(-3,10);ctx.lineTo(-8,2);ctx.lineTo(-1,4);ctx.closePath();ctx.fill();
  ctx.strokeStyle="#f97316";ctx.lineWidth=1.5;ctx.beginPath();
  ctx.moveTo(0,13);ctx.quadraticCurveTo(-30,-24,-55,-27+flap);ctx.moveTo(0,13);ctx.quadraticCurveTo(-24,-6,-38,0);ctx.moveTo(0,13);ctx.quadraticCurveTo(-14,0,-22,7);ctx.stroke();
+ ctx.strokeStyle="#fbbf24";ctx.lineWidth=0.9;ctx.beginPath();
+ ctx.moveTo(0,13);ctx.quadraticCurveTo(-30,-24,-55,-27+flap);ctx.stroke();
+ /* ember sparks flicking off the scalloped trailing edge */
+ ctx.fillStyle="#fdba74";for(var we2=0;we2<3;we2++){var wex=-24-we2*9+Math.sin(time*23+we2*2.1)*1.6,wey=4-we2*2+Math.cos(time*19+we2*1.7)*1.6;ctx.fillRect(wex,wey,2.2,2.2)}
 }
 function drawSaraWreath(f){
- /* メテオダイブ 静止中: flame tongues licking all around her body */
- for(var wi=0;wi<8;wi++){var wa=wi*0.785+0.4,wx=Math.cos(wa)*23,wy=29+Math.sin(wa)*29,wh=6.5+3*Math.sin(time*29+wi*2.3);
+ /* メテオダイブ 静止中 (強化 2026/11/19): a full wreath of TWELVE layered flame tongues licking all around her body — red bases, orange bodies, gold hearts, white-hot tips on every other tongue, embers spiralling off the wreath */
+ for(var wi=0;wi<12;wi++){var wa=wi*0.524+0.26,wx=Math.cos(wa)*24,wy=29+Math.sin(wa)*30,wh=7.5+3.6*Math.sin(time*31+wi*2.3)+1.8*Math.sin(time*47+wi*4.1);
+  ctx.fillStyle="#b91c1c";ctx.beginPath();ctx.moveTo(wx-4.4,wy+2.4);ctx.quadraticCurveTo(wx,wy-wh*1.12,wx+4.4,wy+2.4);ctx.quadraticCurveTo(wx,wy+4.6,wx-4.4,wy+2.4);ctx.fill();
   ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(wx-3.4,wy+2);ctx.quadraticCurveTo(wx,wy-wh,wx+3.4,wy+2);ctx.quadraticCurveTo(wx,wy+4,wx-3.4,wy+2);ctx.fill();
-  ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(wx-1.7,wy+2);ctx.quadraticCurveTo(wx,wy-wh*0.55,wx+1.7,wy+2);ctx.quadraticCurveTo(wx,wy+3,wx-1.7,wy+2);ctx.fill()}
+  ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(wx-1.7,wy+2);ctx.quadraticCurveTo(wx,wy-wh*0.55,wx+1.7,wy+2);ctx.quadraticCurveTo(wx,wy+3,wx-1.7,wy+2);ctx.fill();
+  if(wi%2===0){ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(wx,wy-wh*0.52,1.15,0,6.29);ctx.fill()}}
+ ctx.fillStyle="#fdba74";for(var we3=0;we3<4;we3++){var wa3=time*3.4+we3*1.571,wex2=Math.cos(wa3)*30,wey2=29+Math.sin(wa3)*24-((time*26+we3*17)%14);ctx.fillRect(wex2-1.2,wey2-1.2,2.4,2.4)}
 }
 function drawSaraOrbs(f){
- /* ドラゴニック・ロア 効果中: five small fire orbs circling her */
+ /* ドラゴニック・ロア 効果中 (強化 2026/11/19): five LIVING fire orbs circling her — a dark-red halo ring, a layered flame body with a tongue licking off the top, a white-hot core and a tiny spark trailing each orb along its orbit */
  for(var oi2=0;oi2<5;oi2++){var oa=time*2.6+oi2*1.2566,ox=Math.cos(oa)*34,oy=30+Math.sin(oa)*20,of2=1+0.18*Math.sin(time*13+oi2*1.9);
-  ctx.fillStyle="#f97316";ctx.beginPath();ctx.arc(ox,oy,4.6*of2,0,6.29);ctx.fill();
-  ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(ox,oy,2.2*of2,0,6.29);ctx.fill()}
+  ctx.strokeStyle="rgba(185,28,28,.55)";ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ox,oy,7.4*of2,0,6.29);ctx.stroke();
+  ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(ox,oy,5.4*of2,0,6.29);ctx.fill();
+  ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ox-2.6*of2,oy-3.4*of2);ctx.quadraticCurveTo(ox,oy-9.6*of2,ox+2.6*of2,oy-3.4*of2);ctx.quadraticCurveTo(ox,oy-1.6*of2,ox-2.6*of2,oy-3.4*of2);ctx.fill();
+  ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.arc(ox,oy,3.4*of2,0,6.29);ctx.fill();
+  ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(ox,oy,1.6*of2,0,6.29);ctx.fill();
+  var ospA=oa-0.55,ospX=Math.cos(ospA)*34,ospY=30+Math.sin(ospA)*20;ctx.fillStyle="#fdba74";ctx.fillRect(ospX-1.1,ospY-1.1,2.2,2.2)}
 }
 function drawSara(f){
  /* 本体はドット絵スプライト (KAIRO と同じテイストで描き起こし)。
@@ -12346,8 +12459,8 @@ function draw(){
  var cX0=cam.x-340,cX1=cam.x+viewW+340,cY0=cam.y-340,cY1=cam.y+viewH+340;
  icePatches.forEach(function(p){if(p.x<cX0||p.x>cX1||p.y<cY0||p.y>cY1)return;ctx.globalAlpha=Math.min(0.8,p.t/3.5*0.6+0.25);ctx.fillStyle="#7dd3fc";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,5);ctx.fillStyle="#e0f7ff";ctx.fillRect(p.x-p.w/2,p.y-5,p.w,2);ctx.fillStyle="rgba(186,230,253,.85)";for(var icx=-3;icx<=3;icx++){var ipx=p.x+icx*(p.w/7),iph=6+Math.abs(icx*37)%4;ctx.beginPath();ctx.moveTo(ipx-4,p.y-4);ctx.lineTo(ipx,p.y-4-iph);ctx.lineTo(ipx+4,p.y-4);ctx.closePath();ctx.fill()}});ctx.globalAlpha=1;
  /* SARA placed fire orbs: a pulsing ground flame that stays where the javelin landed */
- ignisPillars.forEach(function(ip){if(ip.x<cX0||ip.x>cX1||ip.y<cY0||ip.y>cY1)return;var ih=Math.min(210,210*((1.4-ip.t)/0.15+0.25),210*(ip.t/0.3+0.25)); /* grows to full 210 height in ~0.15s, stands full-height while the 1.4s hitbox lasts, shrinks away over the last 0.3s */ctx.fillStyle="#ea580c";ctx.fillRect(ip.x-31,ip.y-ih,62,ih);ctx.fillStyle="#f97316";ctx.fillRect(ip.x-22,ip.y-ih+8,44,ih-8);ctx.fillStyle="#fde68a";ctx.fillRect(ip.x-10,ip.y-ih+18,20,ih-18);ctx.beginPath();ctx.moveTo(ip.x-31,ip.y-ih);ctx.lineTo(ip.x,ip.y-ih-22);ctx.lineTo(ip.x+31,ip.y-ih);ctx.closePath();ctx.fillStyle="#f97316";ctx.fill()}); /* SARA イグニスボムの火柱: 不透明な炎の柱 (62x210) が火種の位置に立つ */
-   fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;ctx.fillStyle="rgba(249,115,22,0.09)";ctx.fillRect(ob.x-92,ob.y-92,184,184);ctx.strokeStyle="rgba(251,146,60,"+(0.42+0.16*Math.sin(time*3+ob.x))+")";ctx.lineWidth=2;ctx.strokeRect(ob.x-92,ob.y-92,184,184); /* SARA FX (okaki8213 request 2026/11/18): the seed's damage area (the exact 184x184 the orb tests) is shown flat orange so its reach is obvious — this is an area indicator, not the ground-glow ellipse removed in v271 */ var pu=1+Math.sin(time*11+ob.x)*0.12;ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-26*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill()}); /* SARA 設置火の玉: 炎本体 (不透明) のみ — 足元の半透明の広がり (楕円グロー) とフェード用の globalAlpha は削除済み (user request)。燃焼範囲92・持続8秒などの性能は変更なし */
+ ignisPillars.forEach(function(ip){if(ip.x<cX0||ip.x>cX1||ip.y<cY0||ip.y>cY1)return;var ih=Math.min(210,210*((1.4-ip.t)/0.15+0.25),210*(ip.t/0.3+0.25)); /* grows to full 210 height in ~0.15s, stands full-height while the 1.4s hitbox lasts, shrinks away over the last 0.3s */var fl1=Math.sin(time*23+ip.x*1.7)*2.2,fl2=Math.sin(time*29+ip.x*2.3)*1.6;ctx.fillStyle="#7f1d1d";ctx.fillRect(ip.x-31,ip.y-ih,62,ih);ctx.fillStyle="#b91c1c";ctx.fillRect(ip.x-27,ip.y-ih+4,54,ih-4);ctx.fillStyle="#ea580c";ctx.fillRect(ip.x-22,ip.y-ih+8,44,ih-8);ctx.fillStyle="#f97316";ctx.fillRect(ip.x-15,ip.y-ih+13,30,ih-13);ctx.fillStyle="#fbbf24";ctx.fillRect(ip.x-8,ip.y-ih+20,16,ih-20);ctx.fillStyle="#fff7ed";ctx.fillRect(ip.x-3,ip.y-ih*0.55,6,ih*0.55);ctx.fillStyle="#f97316";for(var it3=0;it3<5;it3++){var itx3=ip.x-24+it3*12,ith3=15+9*Math.abs(Math.sin(time*17+ip.x+it3*1.9))+((it3===2)?8:0);ctx.beginPath();ctx.moveTo(itx3-5.5,ip.y-ih+2);ctx.quadraticCurveTo(itx3+fl1,ip.y-ih-ith3,itx3+5.5,ip.y-ih+2);ctx.quadraticCurveTo(itx3,ip.y-ih-3,itx3-5.5,ip.y-ih+2);ctx.fill()}ctx.fillStyle="#fde68a";for(var it4=0;it4<3;it4++){var itx4=ip.x-12+it4*12,ith4=9+5*Math.abs(Math.sin(time*21+ip.x*1.3+it4*2.4));ctx.beginPath();ctx.moveTo(itx4-3.4,ip.y-ih+2);ctx.quadraticCurveTo(itx4+fl2,ip.y-ih-ith4,itx4+3.4,ip.y-ih+2);ctx.quadraticCurveTo(itx4,ip.y-ih-2,itx4-3.4,ip.y-ih+2);ctx.fill()}ctx.fillStyle="#ea580c";for(var isd=0;isd<4;isd++){var isx=ip.x-26+((time*34+isd*23+ip.x)%52),isy=ip.y-6-((time*44+isd*31)%Math.max(24,ih-16));ctx.fillRect(isx,isy,3,3)}ctx.fillStyle="rgba(234,88,12,.4)";ctx.beginPath();ctx.ellipse(ip.x,ip.y,40,7,0,0,6.29);ctx.fill();ctx.fillStyle="#fbbf24";for(var ib2=0;ib2<4;ib2++){var ibx=ip.x-27+ib2*18+Math.sin(time*13+ib2*2.2+ip.x)*2;ctx.beginPath();ctx.moveTo(ibx-3,ip.y);ctx.quadraticCurveTo(ibx,ip.y-9-Math.abs(Math.sin(time*19+ib2*1.7))*5,ibx+3,ip.y);ctx.quadraticCurveTo(ibx,ip.y-2,ibx-3,ip.y);ctx.fill()}}); /* SARA イグニスボムの火柱 (強化 2026/11/19): 不透明な炎の柱 (62x210) — 深紅の外殻・オレンジの本体・金の芯・白熱の中心、頂には二段の揺らめく炎の冠、内部を火の粉が駆け上がり、足元にも小さな炎が灯る。判定・性能は変更なし */
+   fireOrbs.forEach(function(ob){if(ob.x<cX0||ob.x>cX1||ob.y<cY0||ob.y>cY1)return;ctx.fillStyle="rgba(249,115,22,0.09)";ctx.fillRect(ob.x-92,ob.y-92,184,184);ctx.strokeStyle="rgba(251,146,60,"+(0.42+0.16*Math.sin(time*3+ob.x))+")";ctx.lineWidth=2;ctx.strokeRect(ob.x-92,ob.y-92,184,184); /* SARA FX (okaki8213 request 2026/11/18): the seed's damage area (the exact 184x184 the orb tests) is shown flat orange so its reach is obvious — this is an area indicator, not the ground-glow ellipse removed in v271 */ ctx.strokeStyle="rgba(254,215,170,.85)";ctx.lineWidth=2.4;var cbL=16;ctx.beginPath();ctx.moveTo(ob.x-92,ob.y-92+cbL);ctx.lineTo(ob.x-92,ob.y-92);ctx.lineTo(ob.x-92+cbL,ob.y-92);ctx.moveTo(ob.x+92-cbL,ob.y-92);ctx.lineTo(ob.x+92,ob.y-92);ctx.lineTo(ob.x+92,ob.y-92+cbL);ctx.moveTo(ob.x+92,ob.y+92-cbL);ctx.lineTo(ob.x+92,ob.y+92);ctx.lineTo(ob.x+92-cbL,ob.y+92);ctx.moveTo(ob.x-92+cbL,ob.y+92);ctx.lineTo(ob.x-92,ob.y+92);ctx.lineTo(ob.x-92,ob.y+92-cbL);ctx.stroke();var pu=1+Math.sin(time*11+ob.x)*0.1;ctx.fillStyle="#991b1b";ctx.beginPath();ctx.moveTo(ob.x-16,ob.y);ctx.quadraticCurveTo(ob.x-15,ob.y-20*pu,ob.x-8,ob.y-24*pu);ctx.quadraticCurveTo(ob.x-6,ob.y-12*pu,ob.x-3,ob.y-16*pu);ctx.quadraticCurveTo(ob.x,ob.y-30*pu,ob.x+3,ob.y-16*pu);ctx.quadraticCurveTo(ob.x+6,ob.y-12*pu,ob.x+8,ob.y-24*pu);ctx.quadraticCurveTo(ob.x+15,ob.y-20*pu,ob.x+16,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#f97316";ctx.beginPath();ctx.moveTo(ob.x-13,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-27*pu,ob.x+13,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.moveTo(ob.x-9,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-20*pu,ob.x+9,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.moveTo(ob.x-6,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-14*pu,ob.x+6,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.moveTo(ob.x-3,ob.y);ctx.quadraticCurveTo(ob.x,ob.y-8*pu,ob.x+3,ob.y);ctx.closePath();ctx.fill();ctx.fillStyle="#fdba74";for(var oe=0;oe<3;oe++){var oa2=time*2.2+ob.x+oe*2.094,oex=ob.x+Math.cos(oa2)*17,oey=ob.y-8+Math.sin(oa2)*6-((time*20+oe*13)%10);ctx.fillRect(oex-1.3,oey-1.3,2.6,2.6)}}); /* SARA 設置火の玉 (強化 2026/11/19): 炎本体は多層の舌炎クラスター (深紅の三つ舌シルエット→オレンジ→金→白熱の芯、周囲を火の粉が巡る) に — 判定範囲の表示 (184x184 + コーナーの目印) はそのまま。足元の半透明の広がり (楕円グロー) は削除済みのまま (user request)。燃焼範囲92・持続8秒などの性能は変更なし */
  /* WARDEN placed shock mines — STEALTH (user spec): only the WARDEN who
     planted a mine can see it (the viewer is P1), so a foe's mines are
     skipped entirely here: no body, no blinking light, no range mark.
@@ -12363,7 +12476,7 @@ function draw(){
    if(pr.x<cX0||pr.x>cX1||pr.y<cY0||pr.y>cY1)return; /* fully off-screen: nothing of this shot can be visible */
    ctx.save();ctx.translate(pr.x,pr.y);
    if(pr.kind==="bolt"){ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,8,0,6.29);ctx.fill();ctx.fillStyle="#fdf4ff";ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill()}
-   else if(pr.kind==="javelin"){ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.5,0,6.29);ctx.fill();ctx.fillStyle="#fb923c";ctx.beginPath();ctx.moveTo(-(pr.vx>0?1:-1)*10,-3);ctx.lineTo(-(pr.vx>0?1:-1)*22,0);ctx.lineTo(-(pr.vx>0?1:-1)*10,3);ctx.closePath();ctx.fill()} /* SARA ファイアジャヴェリン: 弾本体 (不透明な炎の玉と尾) のみ — 周囲の半透明ハローは削除済み (user request) */
+   else if(pr.kind==="javelin"){var jsgn=(pr.vx>0?1:-1),jfl=Math.sin(time*34+pr.x*0.14)*1.8;ctx.fillStyle="#ea580c";for(var jt=0;jt<3;jt++){var jtx=-jsgn*(13+jt*8),jty=(jt-1)*4.4;ctx.beginPath();ctx.moveTo(jtx+jsgn*5,jty-3.4);ctx.quadraticCurveTo(jtx-jsgn*(6+jt*2),jty+jfl*(jt?0.7:1),jtx+jsgn*5,jty+3.4);ctx.quadraticCurveTo(jtx+jsgn*1,jty,jtx+jsgn*5,jty-3.4);ctx.fill()}ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(-jsgn*11,-2.4);ctx.quadraticCurveTo(-jsgn*19,jfl*0.6,-jsgn*11,2.4);ctx.quadraticCurveTo(-jsgn*13,0,-jsgn*11,-2.4);ctx.fill();ctx.fillStyle="#991b1b";ctx.beginPath();ctx.arc(0,0,11,0,6.29);ctx.fill();ctx.fillStyle="#ea580c";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.arc(0,0,6.4,0,6.29);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.arc(0,0,4.2,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(jsgn*1.6,-1,2,0,6.29);ctx.fill();ctx.fillStyle="#f97316";for(var jt2=0;jt2<3;jt2++){var jtx2=(jt2-1)*5.4,jth=6+3.4*Math.abs(Math.sin(time*27+jt2*2.1+pr.x*0.1));ctx.beginPath();ctx.moveTo(jtx2-2.8,-6.4);ctx.quadraticCurveTo(jtx2,-6.4-jth,jtx2+2.8,-6.4);ctx.quadraticCurveTo(jtx2,-4.6,jtx2-2.8,-6.4);ctx.fill()}} /* SARA ファイアジャヴェリン (強化 2026/11/19): 多層の炎の玉 (深紅の殻・オレンジ・金・白熱の芯) + 分節した炎の尾 + 上部に揺らめく舌炎 — 周囲の半透明ハローは削除済みのまま (user request) */
    else if(pr.kind==="wave"){ctx.fillStyle="#f59e0b";ctx.beginPath();ctx.ellipse(0,6,21,10,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,6,12,6,0,Math.PI,0);ctx.fill()}
    else if(pr.kind==="lwave"){ctx.fillStyle="rgba(253,230,138,.35)";ctx.beginPath();ctx.ellipse(0,7,31,16,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fde68a";ctx.beginPath();ctx.ellipse(0,7,23,12,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fef9c3";ctx.beginPath();ctx.ellipse(0,7,14,7.5,0,Math.PI,0);ctx.fill();ctx.fillStyle="#fffbeb";var lwSg=pr.vx>0?1:-1;ctx.fillRect(lwSg*15-2,-3,4,4);ctx.fillRect(lwSg*7-1.5,0,3,3)} /* MIMI ↓+K これならできるよ！: a dome of light racing along the ground — layered gold-white arcs with bright sparks at the leading edge */
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
@@ -12410,6 +12523,12 @@ function draw(){
    }
    if(df.bleedT>0){ /* bleeding (SMILEY 覚醒's rider): red pixel specks beading and dripping off the body — SMILEY's own red-dot expression */
      for(var bli=0;bli<4;bli++){var blx=df.x+Math.sin(time*7+bli*2.6+df.x)*13,bly=df.y+14+bli*13+((time*34+bli*19)%16),bls=2.2+((bli*5)%3);ctx.fillStyle=bli%2?"rgba(220,38,38,.9)":"rgba(153,27,27,.9)";ctx.fillRect(blx-bls/2,bly,bls,bls*1.5)}
+   }
+   if(df.burnT>0){ /* burning (強化 2026/11/19): while burnT lasts, layered flame tongues lick up off the victim's body and embers drift up, so a burning foe reads at a glance. Pure presentation — the DoT numbers / tick timing are untouched and NO hit particles are spawned (the v269 deletion stands); burnT is synced in every mode, so local / CPU / online all show it identically */
+     for(var bni=0;bni<5;bni++){var bnx=df.x+(bni-2)*9.5+Math.sin(time*13+bni*2.7)*1.4,bny=df.y+df.h-2-Math.abs(Math.sin(bni*1.9+df.x))*13,bnh=8+4.5*Math.sin(time*26+bni*2.7+df.x);
+       ctx.fillStyle="#ea580c";ctx.beginPath();ctx.moveTo(bnx-3.6,bny);ctx.quadraticCurveTo(bnx,bny-bnh,bnx+3.6,bny);ctx.quadraticCurveTo(bnx,bny-bnh*0.3,bnx-3.6,bny);ctx.fill();
+       ctx.fillStyle="#fbbf24";ctx.beginPath();ctx.moveTo(bnx-1.8,bny);ctx.quadraticCurveTo(bnx,bny-bnh*0.55,bnx+1.8,bny);ctx.quadraticCurveTo(bnx,bny-bnh*0.2,bnx-1.8,bny);ctx.fill()}
+     ctx.fillStyle="#fdba74";for(var bne=0;bne<3;bne++){var bnex=df.x+Math.sin(time*9+bne*2.5+df.x)*16,bney=df.y+df.h-14-((time*30+bne*21)%34);ctx.fillRect(bnex-1.2,bney-1.2,2.4,2.4)}
    }
    if(df.slowT>0){ /* slowed (ORCHID ポイズンショット): heavy purple drips dragging at the legs */
      ctx.fillStyle="rgba(168,85,247,.55)";for(var sli=0;sli<3;sli++){var slx=df.x-14+sli*14,sly=df.y+df.h-8+Math.sin(time*7+sli*2)*2;ctx.beginPath();ctx.ellipse(slx,sly,4.5,7,0,0,6.29);ctx.fill()}
