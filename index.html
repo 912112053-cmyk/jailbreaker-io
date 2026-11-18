@@ -460,6 +460,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["01:07"],tag:"新機能",title:"フレンド一覧：オフラインのフレンドに「◯分前にオンライン」を表示",
+   items:["フレンド一覧で、オフラインのフレンドの表示が「オフライン」から、最後にオンラインだった相対時刻の表示に変わりました：「◯分前にオンライン」（1時間以上は「◯時間前にオンライン」、1日以上は「◯日前にオンライン」、1分未満は「たった今オンライン」）。ロビーのフレンド招待パネルでも同じ表示になります",
+          "各プレイヤーの最終オンライン時刻は、ログイン中は自動で記録され続けます（PlayFabのプレイヤーデータに保存されるので、別の端末から見ても同じ時刻が表示されます）。このバージョンより前にしかログインしていないフレンドは、時刻が記録されていないため従来どおり「オフライン」と表示されます",
+          "オンライン中のフレンドの表示は従来どおり「オンライン中」です",
+          "BUILD_ID を v283 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["00:44"],tag:"修正",title:"観戦の視点バーを画面下部へ移動／CPUが台下へ降りないバグを修正",
    items:["観戦モードの視点切替バー（全体視点／各キャラ視点）を、画面上部からマップの下（画面下部）へ移動しました。切り替え方法（ボタン／Tab／数字キー）は従来どおりです",
           "CPUが浮き台の上にいる時に台下へ全く降りないバグを修正しました：相手が下の階層にいる場合、CPUが台をすり抜けて降りる判断をするようになりました（プレイヤーと同じくSの素早い2回押しによるすり抜けで、下の台に着いた後も相手がさらに下にいれば続けて降ります）。オンライン対戦でも、CPUの入力生成側で同じ判断をするため全員の画面で同じ動きになります",
@@ -2173,7 +2178,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v282";
+var BUILD_ID="v283";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3584,7 +3589,7 @@ function renderLobbyInvites(){
    var fn=social.est[fid];if(!fn)return;
    var on=!!social.online[fn];
    var pn=dispNameFor(fid,fn);
-   h+='<div class="lobRow"><span class="lobName"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn)+'</span><span class="lobStat" style="display:flex;gap:8px;align-items:center"><span style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":"オフライン")+'</span>'+(on?('<button class="gbtn" data-linv="'+escHtml(fn)+'" style="min-height:32px">招待する</button>'):'')+'</span></div>';
+   h+='<div class="lobRow"><span class="lobName"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn)+'</span><span class="lobStat" style="display:flex;gap:8px;align-items:center"><span style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":friendOfflineLabel(fid))+'</span>'+(on?('<button class="gbtn" data-linv="'+escHtml(fn)+'" style="min-height:32px">招待する</button>'):'')+'</span></div>';
  });
  p.innerHTML=h;
  var bs=p.querySelectorAll("[data-linv]");
@@ -5785,7 +5790,7 @@ function svAdvance(dtms){
    friend to a hosted room sends them the room code over that channel,
    so they can join with one tap. Lobby display names are the PlayFab
    username (the display name picked at registration). */
-var social={name:"",uid:"",pname:"",friendPnames:{},pnameAt:{},peer:null,friends:[],friendUids:[],friendNames:{},pendingIn:[],conns:Object.create(null),online:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null,reqSeen:{},est:{},outReq:{},inbox:{},pfListById:{},sendQueue:{},pfPoll:null};
+var social={name:"",uid:"",pname:"",friendPnames:{},pnameAt:{},lastSeen:{},peer:null,friends:[],friendUids:[],friendNames:{},pendingIn:[],conns:Object.create(null),online:Object.create(null),lastMsg:"",loggedIn:false,peerGen:0,retryN:0,retryTimer:null,reqSeen:{},est:{},outReq:{},inbox:{},pfListById:{},sendQueue:{},pfPoll:null,seenPoll:null};
 /* ---- player name (プレイヤーネーム) vs username (ユーザーネーム) ----
    social.name is the USERNAME: the login id, the PlayFab Title
    DisplayName, the PeerJS identity and the friend-search key — it
@@ -5924,11 +5929,49 @@ function pfWritePname(v){
     friends and opponents can read it */
  try{PlayFabClientApi.UpdateUserData({Data:{jb_pname:v},Permission:"Public"},function(){},function(){})}catch(e){}
 }
+/* ---- last-online timestamps (最終オンライン時刻) ----
+   While signed in, each player keeps the epoch-ms time they were
+   last online in their OWN PlayFab user data under "jb_lastseen",
+   written with Permission "Public" — the same pattern as jb_pname,
+   and Public is required for the same reason: friends read it back
+   through GetUserData(PlayFabId). It is written at sign-in, refreshed
+   every 60s while signed in (so the value stays within a minute of
+   the truth), and written one last time at logout. Presence itself
+   still comes from PeerJS as before; jb_lastseen only answers "when
+   were they last here?" for friends who are currently offline.
+   Clients that never wrote it (older builds) simply have no value,
+   and their rows keep the plain オフライン label. */
+function pfWriteLastSeen(){
+ if(!PF_OK||!social.loggedIn)return;
+ try{PlayFabClientApi.UpdateUserData({Data:{jb_lastseen:String(Date.now())},Permission:"Public"},function(){},function(){})}catch(e){}
+}
+/* "◯◯分前にオンライン" style label for a last-online timestamp:
+   under a minute is たった今, then minutes, hours, days. Anything
+   unusable (missing, non-numeric, implausibly in the future) falls
+   back to the plain オフライン label. */
+function relLastSeenLabel(ts){
+ if(typeof ts!=="number"||!isFinite(ts)||ts<=0)return "オフライン";
+ var diff=Date.now()-ts;
+ if(diff<-300000)return "オフライン";
+ if(diff<60000)return "たった今オンライン";
+ var min=Math.floor(diff/60000);
+ if(min<60)return min+"分前にオンライン";
+ var hr=Math.floor(min/60);
+ if(hr<24)return hr+"時間前にオンライン";
+ return Math.floor(hr/24)+"日前にオンライン";
+}
+/* the presence label for an OFFLINE friend row: their relative
+   last-online text when a timestamp is known, plain オフライン
+   otherwise */
+function friendOfflineLabel(fid){return relLastSeenLabel(fid?social.lastSeen[fid]:0)}
 /* resolve other players' player names from their (public) PlayFab
    user data, keyed by PlayFab id; results are cached in
    social.friendPnames and refreshed at most every 2 minutes per id.
-   A missing / invalid jb_pname resolves to "" = fall back to the
-   username, which is exactly the pre-player-name behaviour. */
+   The same fetch also reads jb_lastseen (see above) into
+   social.lastSeen, so the friends list can show when an offline
+   friend was last online. A missing / invalid jb_pname resolves to
+   "" = fall back to the username, which is exactly the
+   pre-player-name behaviour. */
 function resolveFriendPnames(){
  if(!PF_OK||!social.loggedIn)return;
  var ids={};
@@ -5940,7 +5983,7 @@ function resolveFriendPnames(){
    if(!id||id===social.uid)return;
    if(social.friendPnames[id]!==undefined&&(now-(social.pnameAt[id]||0))<120000)return;
    social.pnameAt[id]=now;
-   try{PlayFabClientApi.GetUserData({PlayFabId:id,Keys:["jb_pname","jb_deleted"]},function(res){
+   try{PlayFabClientApi.GetUserData({PlayFabId:id,Keys:["jb_pname","jb_deleted","jb_lastseen"]},function(res){
      if(!social.loggedIn)return;
      var d=(res&&res.data&&res.data.Data)||{};
      /* a friend who deleted their account leaves a public jb_deleted
@@ -5949,7 +5992,11 @@ function resolveFriendPnames(){
         account disappears from BOTH sides' friend lists */
      if(d.jb_deleted&&d.jb_deleted.Value==="1"){pfPurgeDeletedFriend(id);return}
      var v=(d.jb_pname&&typeof d.jb_pname.Value==="string"&&validDisplayName(d.jb_pname.Value))?d.jb_pname.Value:"";
-     if(social.friendPnames[id]!==v){social.friendPnames[id]=v;if(friendsSheetVisible())openFriends(social.lastMsg)}
+     var seenTs=0;
+     if(d.jb_lastseen&&typeof d.jb_lastseen.Value==="string"){var parsed=parseInt(d.jb_lastseen.Value,10);if(isFinite(parsed)&&parsed>0)seenTs=parsed}
+     var seenChanged=(social.lastSeen[id]||0)!==seenTs;
+     social.lastSeen[id]=seenTs;
+     if(social.friendPnames[id]!==v||seenChanged){social.friendPnames[id]=v;if(friendsSheetVisible())openFriends(social.lastMsg);refreshLobbyInvites()}
    },function(){})}catch(e){}
  });
 }
@@ -5969,6 +6016,15 @@ function pfPurgeDeletedFriend(id){
 /* the name shown for another player anywhere in the UI: their player
    name when they have set one, their username otherwise */
 function dispNameFor(id,uname){var p=id?social.friendPnames[id]:"";return p||uname||""}
+/* a friend just went offline: drop their resolve-cache entry so the
+   next resolveFriendPnames pass re-reads jb_lastseen at once (their
+   final heartbeat / logout write is the freshest "last online"), and
+   kick that pass off now instead of waiting for the 45s poll */
+function refreshFriendLastSeen(name){
+ if(!name)return;
+ Object.keys(social.est).forEach(function(id){if(social.est[id]===name)social.pnameAt[id]=0});
+ resolveFriendPnames();
+}
 var toastTimer=null;
 function hideSocialToast(){var t=$("socialToast");if(t)t.classList.remove("on");if(toastTimer){clearTimeout(toastTimer);toastTimer=null}}
 function showSocialToast(html,actions){
@@ -6006,8 +6062,8 @@ function wireSocialConn(c,name){
    friendsSay("");refreshLobbyInvites();
  });
  c.on("data",function(m){onSocialData(name,m)});
- c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];friendsSay("");refreshLobbyInvites()});
- c.on("error",function(){social.online[name]=false;friendsSay("");refreshLobbyInvites()});
+ c.on("close",function(){social.online[name]=false;if(social.conns[name]===c)delete social.conns[name];refreshFriendLastSeen(name);friendsSay("");refreshLobbyInvites()});
+ c.on("error",function(){social.online[name]=false;refreshFriendLastSeen(name);friendsSay("");refreshLobbyInvites()});
 }
 /* re-render the lobby invite panel if it is open (defined with the
    lobby UI; presence changes arrive through the handlers above) */
@@ -6167,6 +6223,7 @@ function refreshPfFriends(){
 }
 function stopPfPoll(){
  if(social.pfPoll){clearInterval(social.pfPoll);social.pfPoll=null}
+ if(social.seenPoll){clearInterval(social.seenPoll);social.seenPoll=null}
  social.reqSeen={};social.pendingIn=[];updateFriendsBadge();
 }
 function approveRequest(fromId){
@@ -6217,7 +6274,7 @@ function removeFriendById(fid){
 /* ---- session handling ---- */
 function startPfSession(uid,displayName,silent){
  teardownSocialPeer();stopPfPoll();
- social.uid=uid;social.name=displayName;social.pname="";social.friendPnames={};social.pnameAt={};social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};social.reqSeen={};
+ social.uid=uid;social.name=displayName;social.pname="";social.friendPnames={};social.pnameAt={};social.lastSeen={};social.loggedIn=true;social.friendUids=[];social.friends=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};social.reqSeen={};
  pfSaveSession();
  /* note: a match-server room takes its display names at join time
     (the server protocol has no rename), so a sign-in that completes
@@ -6256,6 +6313,11 @@ function startPfSession(uid,displayName,silent){
    Object.keys(social.outReq).forEach(function(id){queueSocialSend(social.outReq[id].name,{t:"freq",from:social.name,fromId:social.uid})});
    if(friendsSheetVisible())openFriends(social.lastMsg);
  });
+ /* last-online heartbeat: stamp jb_lastseen now and every 60s while
+    signed in, so friends see an accurate "◯分前にオンライン" the
+    moment this client goes offline (see pfWriteLastSeen) */
+ pfWriteLastSeen();
+ social.seenPoll=setInterval(function(){if(social.loggedIn)pfWriteLastSeen()},60000);
  social.pfPoll=setInterval(function(){
    if(!social.loggedIn)return;
    pfGetMyData(function(est,out,inbox,pname,deleted){
@@ -6327,8 +6389,11 @@ function loginAccount(){
  });
 }
 function logoutAccount(){
+ /* final last-online stamp BEFORE the session is torn down, so
+    friends immediately see when this player was last online */
+ pfWriteLastSeen();
  teardownSocialPeer();stopPfPoll();
- social.loggedIn=false;social.name="";social.pname="";social.friendPnames={};social.pnameAt={};social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};
+ social.loggedIn=false;social.name="";social.pname="";social.friendPnames={};social.pnameAt={};social.lastSeen={};social.uid="";social.friends=[];social.friendUids=[];social.friendNames={};social.pendingIn=[];social.est={};social.outReq={};social.inbox={};
  pfClearSession();
  try{if(typeof PlayFab!=="undefined"&&PlayFab._internalSettings)PlayFab._internalSettings.sessionTicket=null}catch(e){}
  openFriends("ログアウトしました。フレンド機能を使うには、もう一度ログインしてください。");
@@ -6565,7 +6630,7 @@ function friendsHTML(msg){
      var fn=social.est[fid];if(!fn)return;
      var on=!!social.online[fn];
      var pn3=dispNameFor(fid,fn);
-     rows+='<div class="bindRow"><div><span class="bname"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:baseline;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn3)+'</span>'+(pn3!==fn?('<br><span class="bnote">ユーザーネーム：'+escHtml(fn)+'</span>'):'')+'<br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":"オフライン")+'</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-remove="'+escHtml(fid)+'" style="min-width:72px">削除</button></span></div>';
+     rows+='<div class="bindRow"><div><span class="bname"><span aria-hidden="true" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:baseline;background:'+(on?"#4ade80":"#475569")+(on?";box-shadow:0 0 8px rgba(74,222,128,.9)":"")+'"></span>'+escHtml(pn3)+'</span>'+(pn3!==fn?('<br><span class="bnote">ユーザーネーム：'+escHtml(fn)+'</span>'):'')+'<br><span class="bnote" style="color:'+(on?"#4ade80":"var(--muted)")+'">'+(on?"オンライン中":friendOfflineLabel(fid))+'</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="bindKey" data-remove="'+escHtml(fid)+'" style="min-width:72px">削除</button></span></div>';
    });
    rows+='<p style="color:var(--muted)">フレンド一覧はクラウド（PlayFab）に保存されるので、どの端末でログインしても同じ一覧が表示されます。ルームへの招待は、この画面ではなくロビー画面の「フレンドを招待」から送れます（ホストがロビーで待機している時だけ・相手もオンラインの時だけ届きます）。招待された側はコードを入力しなくても、そのまま部屋に入って対戦できます。フレンドを削除すると、相手の側の一覧には残る場合があります。</p>';
    /* ---- account deletion (two-step: arm, then type-to-confirm) ---- */
