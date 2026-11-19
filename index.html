@@ -493,6 +493,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["21:53"],tag:"調整",title:"SARA：ウルトの溜まりを0.7倍→0.4倍に下方修正",
+   items:["SARAのウルトゲージの溜まりやすさを0.7倍→0.4倍に下方修正しました。与えたダメージに対してゲージが増える量が少なくなります。技一覧の表示も実装に合わせて更新しました",
+          "BUILD_ID を v308 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["21:49"],tag:"エフェクト",title:"SARA：↓+U「イグニスボム」の火柱をメラメラと燃え上がる炎に強化",
    items:["SARAの↓+U「イグニスボム」の火柱のエフェクトを強化しました：柱全体が炎の明滅に合わせてうねるようになり、柱の中を大きな炎の舌が次々に駆け上がって、両側からも炎が吹きこぼれるようになりました",
           "頂の炎の冠は三段になって大きく激しく揺らめき、上空へ炎の欠片がちぎれて舞い上がります。火の粉は数・大きさともに増え、足元では炎が地面を舐めるように広がります。噴き上がる瞬間には衝撃の輪と火の粉の噴出も加わりました",
@@ -1021,8 +1024,8 @@ var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を�
 +'<div class="moveRow"><div><b>L — 無敵突進「猪突猛進」（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>旧・大地割りは廃止。発動すると<b>1.5秒間だけ完全無敵</b>になり、操作不能のまま<b>前方へ突進</b>する。突進中は<b>近くの相手を斧のほうへ引き寄せる吸引</b>が発生する（吸引速度は1.2倍に強化され、攻撃判定の位置まで吸い寄せる）ので、端に逃げても吸い戻されやすい。突進に触れた相手は<b>硬直したまま斧に押され続けて</b>一緒に運ばれ、<b>0.25秒ごとに12ダメージ</b>を受け続ける。突進が終わる瞬間、まだ押されている相手には<b>最終段のフィニッシュ</b>が入る：<b>即時33ダメージ＋ふっとばし810</b>で大きく吹き飛ばす。突進中は方向も変えられず止まれないので、壁際や崖際では扱いに注意。ゲージMAX中は体にオレンジの電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','削り12／0.25秒 ＋ フィニッシュ33')+mvS('KB','フィニッシュ810')+mvS('発生','即時')+mvS('全体','1.50秒（突進）')+mvS('後硬直','1.1秒（突進終了後）')+mvS('無敵','1.5秒')+mvS('突進速度','240'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。巨体ゆえ他のキャラよりダッシュ自体も少し遅い。</p>'+mvSpec(mvS('速度','840')+mvS('持続','0.18秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
-var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。<b>パッシブ「火は友達」</b>：自分のUで出現させた火種の判定内に入ると<b>毎秒3回復</b>する。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.7</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ（KBなし）</b>を受け続ける。</p>'
-+mvSpec(mvS('HP','270')+mvS('地上速度','420')+mvS('空中速度','400')+mvS('受けKB','×0.89')+mvS('ダッシュ','980')+mvS('ウルト溜まり','0.7倍'))
+var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少女。中量級で<b>地上の移動速度は全キャラ最速クラス</b>。スキルで自分を強化し、4段ラッシュのコンボと炎の継続ダメージで火力を出すキャラ。<b>パッシブ「火は友達」</b>：自分のUで出現させた火種の判定内に入ると<b>毎秒3回復</b>する。HPは270。ウルトゲージは与ダメージでの溜まりが<b>×0.4</b>。吹っ飛ばされやすさは<b>0.89倍</b>に軽減されている。<b>燃焼</b>中の相手は0.5秒ごとに<b>3ダメージ（KBなし）</b>を受け続ける。</p>'
++mvSpec(mvS('HP','270')+mvS('地上速度','420')+mvS('空中速度','400')+mvS('受けKB','×0.89')+mvS('ダッシュ','980')+mvS('ウルト溜まり','0.4倍'))
 +mvLegend
 +'<div class="moveRow"><div><b>パッシブ — 火は友達</b> <span style="color:#4ade80;font-weight:900">回復</span><p>U「ファイアジャヴェリン」で<b>自分が出した火種</b>のダメージ判定（半径92）の中に入っている間、<b>毎秒3回復</b>する。</p>'+mvSpec(mvS('回復','3／秒')+mvS('条件','自分の火種の判定内'))+'</div></div>'
 +'<div class="moveRow"><div><b>W長押し — ホバリング</b> <span style="color:#38bdf8;font-weight:900">移動・パッシブ</span><p>空中で<b>Wキーを押している間、その場に浮き続ける</b>（落下が止まる）。上昇中は発動しない。<b>ホバリング中は回復できない</b>（火は友達・自然回復の両方）。</p>'+mvSpec(mvS('効果','落下停止')+mvS('制約','発動中は回復不可'))+'</div></div>'
@@ -2366,7 +2369,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v307";
+var BUILD_ID="v308";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -10258,7 +10261,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
    his 1.45 base rate underneath those divisors. KOJIRO tuning (user spec):
    his ult meter gain is multiplied by a further 0.869 on top of all that
    (total ~x0.7, nerfed from ~x0.9). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?1.05:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.36; /* AXE ult gain (user spec): x0.24 total (1/1.5 x 0.36) — ウルト溜め x0.4倍の下方修正 (was x0.6 total) */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.7 total (base 1.05 / 1.5, user spec — down from ~x1.07). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?0.6:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.36; /* AXE ult gain (user spec): x0.24 total (1/1.5 x 0.36) — ウルト溜め x0.4倍の下方修正 (was x0.6 total) */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.4 total (base 0.6 / 1.5, user spec — down from x0.7 total / base 1.05). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
