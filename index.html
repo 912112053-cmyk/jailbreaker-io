@@ -2357,7 +2357,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v301";
+var BUILD_ID="v302";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9142,11 +9142,25 @@ function destroyDecoy(dc,quiet){
 function clearDecoysOf(owner,quiet){
  for(var cdi=decoys.length-1;cdi>=0;cdi--){if(decoys[cdi].owner===owner)destroyDecoy(decoys[cdi],quiet)}
 }
-/* XENO digital-shot colours: every U shot takes the NEXT colour
-   in the cycle (red / blue / purple / cyan); the ult bullet
-   strobes through the same palette while it flies */
+/* XENO digital-shot colours (reworked — user spec): every U shot
+   rolls ONE of red / blue / purple AT RANDOM at the muzzle — the
+   old fixed colour cycle is gone — and each colour carries its
+   own performance (XBIT_SPECS, indexed like XBIT_COLS 0..2):
+   BLUE is the baseline (fastest at 980, the old shot exactly:
+   11 dmg / KB 300 / lag 0.7s), PURPLE flies a step slower (880)
+   for a step more damage (14), and RED is slower again (790)
+   with bigger knockback (390), a fixed slightly-longer hitstun
+   (0.32s) and a longer lag (0.95s). The rolled performance rides
+   ON the projectile (xdmg / xkb / xhs / xslow), so the dispatch
+   in the projectile step needs no colour table of its own, and
+   the decoy's shots — the same data bits — roll the same way
+   through the same helper. XBIT_COLS keeps its 4th entry (cyan)
+   only because the ULT core still strobes through the full
+   palette while it flies (see the xdart draw); no U shot is
+   ever cyan any more */
 var XBIT_COLS=["#ef4444","#3b82f6","#a855f7","#22d3ee"];
-var xbitHueN=0;
+var XBIT_SPECS=[{spd:790,dmg:11,kb:390,hs:0.32,slow:0.95},{spd:980,dmg:11,kb:300,hs:0,slow:0.7},{spd:880,dmg:14,kb:300,hs:0,slow:0.7}]; /* [0] red / [1] blue / [2] purple — hs 0 means the shot keeps applyHit's KB-derived stun; red's 0.32 is a fixed, slightly longer stun */
+function xbitSpawn(x,y,face,owner){var hue=Math.floor(Math.random()*3);var sp=XBIT_SPECS[hue];projectiles.push({x:x,y:y,vx:face*sp.spd,vy:0,owner:owner,life:1.05,kind:"xbit",hue:hue,xdmg:sp.dmg,xkb:sp.kb,xhs:sp.hs,xslow:sp.slow})}
 function startXenoAttack(f,type,foe){
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
@@ -9319,11 +9333,28 @@ function startXenoAttack(f,type,foe){
         render interpolation never swoops — the warp is a cut, not
         a flight. Out of range (nobody there, too close, too far,
         or too far above / below) the press falls through to the
-        plain グリッチラッシュ below instead */
+        plain グリッチラッシュ below instead. The destination is
+        HARD-CLAMPED inside the stage (see the clamp at the jump
+        itself): this warp can NEVER deposit her off stage, no
+        matter how close to — or past — the edge the foe stands */
      f.state="xwarp";f.stateT=0.26;f.attackCd=0.5;f.comboWin=0;
      xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58); /* departure: the body dissolves into blocks inside the ring and is gone */
-     var xwTx=foe.x-foe.face*150;if(xwTx<50)xwTx=50;if(xwTx>WORLD_W-50)xwTx=WORLD_W-50; /* 150, was 58 (user spec): she materialises BEHIND the foe with a clear gap between them, not glued to their back */
-     f.x=xwTx;f.y=foe.y;f.vx=0;f.vy=0;f.onGround=false;f.fastfall=false;f.face=foe.face;f.px=f.x;f.py=f.y;
+     var xwTx=foe.x-foe.face*150,xwTy=foe.y; /* 150, was 58 (user spec): she materialises BEHIND the foe with a clear gap between them, not glued to their back */
+     /* NEVER OFF STAGE (user spec): the old clamp only kept her inside
+        the WORLD (50..WORLD_W-50), which still left the strips over the
+        void beside the main floor (x 120..2480) and any depth below it
+        as legal destinations. The destination is now clamped inside
+        the main stage floor itself, with a body margin — horizontally
+        to 160..2440, so she always appears OVER the floor, and
+        vertically to at most 950 (the standing line on the main floor:
+        1020 top - her 70 height), so a foe who is already falling
+        below the stage can never drag the warp down into the pit with
+        them. A foe at — or even past — either edge simply pulls the
+        arrival point back to the nearest spot still on stage, behind
+        them as far as the stage allows */
+     if(xwTx<160)xwTx=160;if(xwTx>2440)xwTx=2440;
+     if(xwTy>950)xwTy=950;
+     f.x=xwTx;f.y=xwTy;f.vx=0;f.vy=0;f.onGround=false;f.fastfall=false;f.face=foe.face;f.px=f.x;f.py=f.y;
      xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring, behind the foe */
      beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
    }else{
@@ -9336,11 +9367,14 @@ function startXenoAttack(f,type,foe){
    }
  }else if(type==="l"){
    /* データビット (U): a thrown glitch cube — the shared ammo gun
-      shape (3 shots, one back every 1.3s via reloadInterval). On
-      hit it lags the foe (slowT 0.7s) in the projectile dispatch */
+      shape (3 shots, one back every 1.3s via reloadInterval). Each
+      shot's colour is rolled at random (red / blue / purple) and
+      the colour sets its speed / damage / knockback / stun — see
+      XBIT_SPECS / xbitSpawn; on hit it also lags the foe (slowT,
+      per-colour) in the projectile dispatch */
    if(f.ammo<=0){beep(200,.08);return}
    f.ammo--;f.state="xthrow";f.stateT=0.2;f.attackCd=0.26;
-   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*980,vy:0,owner:f,life:1.05,kind:"xbit",hue:(xbitHueN=(xbitHueN+1)%4)}); /* hue: the shot's colour, cycling red/blue/purple/cyan per shot */
+   xbitSpawn(f.x+f.face*36,f.y+f.h*0.42,f.face,f); /* hue + performance rolled per shot: red / blue / purple at random, never a fixed cycle */
    xenoGlitchFx(f,4);xenoRingFx(f.x+f.face*36,f.y+f.h*0.42,30); /* a snapping target frame at the muzzle, so the bigger shot (see the xbit draw) reads as fired, not spawned */
    beep(1720,.06,"sine",.045);
    if(f.reloadT<=0)f.reloadT=reloadInterval(f);
@@ -9350,7 +9384,7 @@ function startXenoAttack(f,type,foe){
       (see the xdart draw) that endures for a full 20 SECONDS
       unless it hits something first (user spec). In flight the
       core is STEERED by the firing player's direction input (arrow keys /
-      stick) at a constant slow 330 u/s with a capped turn rate —
+      stick) at a constant 396 u/s (330 x1.2, user spec) with a capped turn rate —
       see the "xdart" steering in the projectile step. On a hit it
       detonates into a geometric crystal explosion (vecBurst
       "xshard": neon shards around a circular core): 28 dmg /
@@ -9361,7 +9395,7 @@ function startXenoAttack(f,type,foe){
       MIMI's orb 46 with no bind, and the point-blank crash this
       replaces was 30 dmg with a 1.6s slow. */
    if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
-   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:20,kind:"xdart"}); /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe or the world bounds are its only ends (decoys are holograms: like every projectile, it passes straight through them) */
+   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*396,vy:0,owner:f,life:20,kind:"xdart"}); /* speed 396 = 330 x1.2 (user spec); the steering block in the projectile step holds the same 396 while it turns */ /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe or the world bounds are its only ends (decoys are holograms: like every projectile, it passes straight through them) */
    xenoGlitchFx(f,10);xenoPortalFx(f.x+f.face*40,f.y+f.h*0.42,36);
    beep(196,.16,"sawtooth",.06);setTimeout(function(){beep(1240,.2,"square",.05)},70);
  }
@@ -13688,11 +13722,11 @@ function draw(){
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
-   else if(pr.kind==="xbit"){var xs2=Math.floor(time*16+pr.x*0.11),xg=(xs2%3)-1,xsgn=pr.vx>0?1:-1,xc=XBIT_COLS[pr.hue||0],xc2=XBIT_COLS[((pr.hue||0)+1)%4];
+   else if(pr.kind==="xbit"){var xs2=Math.floor(time*16+pr.x*0.11),xg=(xs2%3)-1,xsgn=pr.vx>0?1:-1,xc=XBIT_COLS[pr.hue||0],xc2=XBIT_COLS[((pr.hue||0)+1)%3];
    /* stepped fragment bits behind the shot: chunky blocks pop in for one step in the shot's colour pair, then are gone */
    for(var xf3=0;xf3<4;xf3++){if((xs2+xf3)%2)continue;var xfh=Math.sin(xs2*47.3+xf3*89.7)*43758.5453;xfh-=Math.floor(xfh);ctx.fillStyle=xf3%2?xc2:xc;ctx.globalAlpha=0.8;ctx.fillRect(-xsgn*(13+xf3*6)-1.5,(xfh-0.5)*15-1.5,3,3)}
    ctx.globalAlpha=1;
-   /* the bullet itself (user spec: unmistakably a flying shot) — a BIG digital round, roughly twice the old size: a bright core block wrapped in a hard-offset ghost of the NEXT palette colour, ringed by a snapping square target frame in the shot's own colour so it reads as a projectile at a glance. Each shot's colour cycles red / blue / purple / cyan (pr.hue, set at the muzzle) */
+   /* the bullet itself (user spec: unmistakably a flying shot) — a BIG digital round, roughly twice the old size: a bright core block wrapped in a hard-offset ghost of the NEXT palette colour, ringed by a snapping square target frame in the shot's own colour so it reads as a projectile at a glance. Each shot's colour is rolled at random — red / blue / purple (pr.hue, set at the muzzle by xbitSpawn) — and the ghost offset shows the next of those three */
    ctx.strokeStyle=xc;ctx.lineWidth=2;ctx.globalAlpha=(xs2%2)?0.95:0.55;var xfr=9.5+(xs2%3)*1.2;ctx.strokeRect(-xfr,-xfr,xfr*2,xfr*2);ctx.globalAlpha=1; /* the snapping target frame around the round */
    ctx.fillStyle=xc2;ctx.globalAlpha=0.65;ctx.fillRect(-5.5+xg*2,-5.5,11,11);
    ctx.fillStyle=xc;ctx.fillRect(-5.5-xg*1.5,-5.5,11,11);ctx.globalAlpha=1;
@@ -13992,11 +14026,11 @@ function simStepFrame(getInp){
      var hmT=null,hmD=1e18;for(var hmi=0;hmi<fighters.length;hmi++){var hmq=fighters[hmi];if(hmq===pr.owner||hmq.dead)continue;var hmdx=hmq.x-pr.x,hmdy=(hmq.y+hmq.h/2)-pr.y,hmd=hmdx*hmdx+hmdy*hmdy;if(hmd<hmD){hmD=hmd;hmT=hmq}}
      if(hmT){var hca=Math.atan2(pr.vy,pr.vx),hta=Math.atan2((hmT.y+hmT.h/2)-pr.y,hmT.x-pr.x),hda=hta-hca;while(hda>Math.PI)hda-=2*Math.PI;while(hda<-Math.PI)hda+=2*Math.PI;var hmx=3.8*STEP;if(hda>hmx)hda=hmx;else if(hda<-hmx)hda=-hmx;var hna=hca+hda,hsp=(crXVal(pr.owner?pr.owner.char:null,"proj:"+pr.kind,"spd")||(pr.kind==="umissile"?500:470));pr.vx=Math.cos(hna)*hsp;pr.vy=Math.sin(hna)*hsp}
    }
-   if(pr.kind==="xdart"){ /* XENO ult デジタルダート: flies straight ahead at a slow constant 330 u/s, STEERED by the firing player's direction input while it flies — the heading turns toward the held direction at a capped 5.2 rad/s, and with no direction held it keeps its course. Only the local player's own bullet can ever exist (XENO is a hidden versus / training character), so the input is read straight from keys / stick. It also sheds still digital blocks as it goes */
+   if(pr.kind==="xdart"){ /* XENO ult デジタルの核: flies straight ahead at a constant 396 u/s (330 x1.2, user spec), STEERED by the firing player's direction input while it flies — the heading turns toward the held direction at a capped 5.2 rad/s, and with no direction held it keeps its course. Only the local player's own bullet can ever exist (XENO is a hidden versus / training character), so the input is read straight from keys / stick. It also sheds still digital blocks as it goes */
      var xo2=pr.owner;
      if(xo2&&xo2.isPlayer&&!xo2.dead){
        var sdx2=((keys.right?1:0)-(keys.left?1:0))+stick.dx,sdy2=((keys.down?1:0)-(keys.jump?1:0))+stick.dy;
-       if(Math.abs(sdx2)>0.25||Math.abs(sdy2)>0.25){var xca2=Math.atan2(pr.vy,pr.vx),xta2=Math.atan2(sdy2,sdx2),xda3=xta2-xca2;while(xda3>Math.PI)xda3-=2*Math.PI;while(xda3<-Math.PI)xda3+=2*Math.PI;var xmx2=5.2*STEP;if(xda3>xmx2)xda3=xmx2;else if(xda3<-xmx2)xda3=-xmx2;var xna2=xca2+xda3;pr.vx=Math.cos(xna2)*330;pr.vy=Math.sin(xna2)*330}
+       if(Math.abs(sdx2)>0.25||Math.abs(sdy2)>0.25){var xca2=Math.atan2(pr.vy,pr.vx),xta2=Math.atan2(sdy2,sdx2),xda3=xta2-xca2;while(xda3>Math.PI)xda3-=2*Math.PI;while(xda3<-Math.PI)xda3+=2*Math.PI;var xmx2=5.2*STEP;if(xda3>xmx2)xda3=xmx2;else if(xda3<-xmx2)xda3=-xmx2;var xna2=xca2+xda3;pr.vx=Math.cos(xna2)*396;pr.vy=Math.sin(xna2)*396}
      }
      if(Math.random()<0.5)pushParticle({x:pr.x+(Math.random()-0.5)*10,y:pr.y+(Math.random()-0.5)*10,vx:0,vy:0,life:0.15,col:XBIT_COLS[Math.floor(time*14+pr.x*0.07)%4],size:2.2+Math.random()*2.4,amb:1});
    }
@@ -14008,12 +14042,12 @@ function simStepFrame(getInp){
      var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
-   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%4]),size:2.8+Math.random()*2.8,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour — no drifting trail */
+   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%3]),size:2.8+Math.random()*2.8,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour (and the next of the three shot colours) — no drifting trail */
 if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies *//* XENO デコイ: projectiles NEVER collide with a hologram decoy — every shot passes straight through it and flies on (user spec); only melee boxes and direct hits shatter it (see meleeHit / shadeHit / applyHit), so there is deliberately no projectile hook here */
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
-       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?11:(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||11):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
@@ -14032,8 +14066,8 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
-       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,11,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y);foe.slowT=Math.max(foe.slowT||0,0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)}
-       else if(pr.kind==="xdart"){applyHit(pr.owner,foe,28,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);foe.glitchT=Math.max(foe.glitchT||0,1.8);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 28 dmg / KB 520 + グリッチ拘束 1.8s — the detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* XENO データビット: 11 dmg / KB 300 + the hit LAGS the foe (slow 0.7s); the burst is stepped block noise, not a particle spray */
+       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||11,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 11 dmg / KB 300 / lag 0.7s; purple = 14 dmg; red = KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline */
+       else if(pr.kind==="xdart"){applyHit(pr.owner,foe,28,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);foe.glitchT=Math.max(foe.glitchT||0,1.8);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 28 dmg / KB 520 + グリッチ拘束 1.8s — the detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* (the データビット branch above carries its own per-colour numbers; its burst is stepped block noise, not a particle spray) */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
@@ -14126,7 +14160,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
         fires, owned by the clone's owner */
      if(dBeat&&dc.shotCd<=0&&dadx>240&&dadx<760&&Math.abs(ddy)<90&&Math.random()<0.5){
       dc.shotCd=0.85;dc.state="xthrow";dc.stateT=0.2;
-      projectiles.push({x:dc.x+dc.face*36,y:dc.y+30,vx:dc.face*980,vy:0,owner:dc.owner,life:1.05,kind:"xbit",hue:(xbitHueN=(xbitHueN+1)%4)});
+      xbitSpawn(dc.x+dc.face*36,dc.y+30,dc.face,dc.owner); /* the clone's bits roll their colour (and its performance) at random too — the same shot the real U fires */
       spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
       beep(1720,.05,"sine",.03);
      }
