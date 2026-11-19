@@ -460,6 +460,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["14:44"],tag:"調整",title:"AXEの体格を1.2倍に拡大（見た目・被弾判定・押し合い判定）",
+   items:["AXEの体の大きさが通常の1.2倍になりました。見た目の大きさだけでなく、攻撃が当たる範囲（被弾判定）と体の押し合い判定も合わせて1.2倍です（体の幅 46→55.2、高さ 70→84）。技一覧のAXEのステータス欄にも体格を表示しました",
+          "拡大は足元を基準に行っているため、地面や台の上に立っているときに足が地面へめり込むことはありません。着地・接地の位置もこれまでと変わりません",
+          "各技の攻撃判定・ダメージ・KBなどの数値はこれまでどおりです",
+          "BUILD_ID を v289 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["14:28"],tag:"調整",title:"スコアは整数でカウントするように変更",
    items:["スコアだけを整数で数えるようになりました：敵を倒したとき、与えたダメージ分がスコアへ加算される際に小数点以下を切り捨てて整数で加算されます（キルした本人のボーナス+100点は、そのまま整数として加算されます）。ダメージとHPの計算はこれまでどおり小数点まで数えます",
           "試合中のスコア表示（画面上部のSCOREと順位表）と、試合後のリザルト画面のスコアも、整数で表示されます",
@@ -935,7 +940,7 @@ var kojiroMovesHTML='<h2>⚔ KOJIRO（コジロウ）— 技一覧</h2><p>流れ
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1180')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.0秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var axeMovesHTML='<h2>🪓 AXE（アックス）— 技一覧</h2><p>巨斧を担ぐ重戦士。送ってくれた写真のキャラ（上半身裸の巨漢、オレンジの髭、ドクロのベルト）がモチーフ。<b>足は全キャラで一番遅く、一つ一つの技に大きな隙と長い硬直がある</b>。その代わり<b>体力は360</b>（他は250）で吹っ飛ばされにくく、斧のリーチ（範囲）と一撃の火力は随一。<b>飛び道具はKの投岩だけ</b>——床を走る衝撃波もなし。それ以外は全部、体と斧が届く範囲で殴る近接技だけ。当てれば勝てる、外せば殴られる、重量級らしいキャラ。</p>'
-+mvSpec(mvS('HP','360')+mvS('地上速度','300')+mvS('空中速度','270')+mvS('受けKB','×0.72（とても吹っ飛びにくい）')+mvS('ダッシュ','840')+mvS('ウルト溜まり','約0.24倍（×0.4に下方修正）'))
++mvSpec(mvS('HP','360')+mvS('体格','通常の1.2倍（幅55.2×高さ84）')+mvS('地上速度','300')+mvS('空中速度','270')+mvS('受けKB','×0.72（とても吹っ飛びにくい）')+mvS('ダッシュ','840')+mvS('ウルト溜まり','約0.24倍（×0.4に下方修正）'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — 壊斧</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予1.0秒・全2段</span><p>正面に斧を振りかざして攻撃する。チェーンは3段から2段に短縮され、その代わり後硬直が大幅に短くなり（0.77秒→0.36秒）、当てた相手には<b>被弾硬直0.4秒</b>が保証される。</p>'+mvSpec(mvS('ダメージ','22')+mvS('KB','400')+mvS('発生','即時')+mvS('全体','0.48秒')+mvS('後硬直','0.36秒')+mvS('被弾硬直','0.4秒')+mvS('判定','106×68'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — ヘッドロック</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>斧ではなく<b>頭突き</b>で相手の頭を粉砕する<b>掴み技</b>。ヒットした相手を目の前に<b>0.4秒間固定（完全硬直）</b>し、その後、向いている方向へKB770で投げ飛ばす、チェーンの締め。ダメージは掴んだ瞬間に入る。</p>'+mvSpec(mvS('ダメージ','30')+mvS('KB','770（0.4秒後に発生）')+mvS('発生','即時')+mvS('全体','0.54秒')+mvS('後硬直','0.78秒')+mvS('判定','112×72')+mvS('掴み','0.4秒固定→投げ'))+'</div></div>'
@@ -1412,7 +1417,15 @@ function charStats(c){
  return o;
 }
 function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":(f.char==="orchid"?"#a3e635":(f.char==="travis"?"#fcd34d":(f.char==="smiley"?"#fef08a":(f.char==="mimi"?"#f9a8d4":(f.char==="no66"?"#fbbf24":"#a5f3fc"))))))))}
-function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1}
+function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1;var bs=charBodySize(f.char);if(f.w!==bs.w||f.h!==bs.h){var fb=(f.y||0)+(f.h||70);f.w=bs.w;f.h=bs.h;f.y=fb-bs.h}} /* body size follows the character (AXE 1.2x): when the size changes, y is re-based on the OLD sole line (fb), so the feet stay exactly planted — a character swap never sinks the feet into the floor or lifts them off it */
+/* per-character body size (the fighter box). f.w / f.h ARE the hurtbox
+   (被弾判定) and pushbox (押し合い判定) everywhere they matter — melee /
+   projectile hit tests, platform walls and landing, grab pinning, the
+   spectate framing and the hitbox overlay all read them — so this one
+   table scales both judgements together. AXE (user spec): the body is
+   1.2x — 幅 46 -> 55.2 / 高さ 70 -> 84. The drawing scales to match in
+   drawAxe / drawSpriteTrail, anchored on the feet (see there). */
+function charBodySize(c){return c==="axe"?{w:55.2,h:84}:{w:46,h:70}}
 /* per-shot reload interval for the U guns + ORCHID's poison bomb =
    each gun's ORIGINAL full-magazine reload time, unchanged (owner
    rule: one shot comes back per interval while the magazine is
@@ -1749,8 +1762,11 @@ function openCustomize(){
  $("crBackHub").onclick=function(){beep(600,.05);openOnline()};
 }
 function Fighter(char,isPlayer,x,y){
- var st=charStats(char);
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y,px:x,py:y,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:46,h:70,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,aiDrop:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,ultBoostT:0,ultAct:0,tbT:0,tbIdx:-1,tbAct:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
+ var st=charStats(char);var bs=charBodySize(char);
+ /* spawn (x, y) is the STANDARD-height top: y is re-based on the feet
+    (sole line y+70) so a taller body spawns standing ON the floor —
+    a 1.2x AXE never starts sunk into the ground */
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y+70-bs.h,px:x,py:y+70-bs.h,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:bs.w,h:bs.h,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,aiDrop:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,buffT:0,venom:false,flyDur:0,ultBoostT:0,ultAct:0,tbT:0,tbIdx:-1,tbAct:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1760,7 +1776,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix","mix"]; /* 8 slots: VS C
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y;f.px=x;f.py=y;f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.aiDrop=0;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.ultBoostT=0;f.tbT=0;f.tbIdx=-1;f.tbAct=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
+function resetFighter(f,x,y){f.x=x;f.y=y+70-f.h;f.px=x;f.py=f.y; /* respawn points are standard-height tops: re-base on the feet like Fighter() does, so a 1.2x body (AXE) never respawns sunk into the floor */f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.aiDrop=0;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.buffT=0;f.venom=false;f.flyDur=0;f.ultBoostT=0;f.tbT=0;f.tbIdx=-1;f.tbAct=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
@@ -2228,7 +2244,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v288";
+var BUILD_ID="v289";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -11045,7 +11061,8 @@ function drawSpriteTrail(f,key){
  var ent=CHAR_SPRITE_IMG[key],tkey=key;if(key==="smiley"&&(f.awakenT||0)>0&&CHAR_SPRITE_IMG.smileyAwk){ent=CHAR_SPRITE_IMG.smileyAwk;tkey="smileyAwk"}if(!ent||!(ent.img.complete&&ent.img.naturalWidth))return;
  var tdy=spriteDY(tkey,0,false,ent.img.naturalHeight);
  ctx.imageSmoothingEnabled=false; /* PERF (picture unchanged): the flag is the same for every trail entry, so it is set once around the loop instead of per entry, and restored afterwards */
- f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.drawImage(ent.img,-40.5,tdy,86.4,86.4);ctx.restore()});
+ var tbs=(f.h||70)/70,tFoot=(f.h||70)/CHAR_SCALE,tFootS=70/CHAR_SCALE; /* trail sprites scale WITH the body (AXE 1.2x), anchored on the feet exactly like the live sprite — for a standard 70-tall body tbs is 1 and this draws identically to before */
+ f.trail.forEach(function(t){ctx.save();ctx.globalAlpha=t.life/0.2*.32;ctx.translate(t.x,t.y);ctx.scale(t.face*CHAR_SCALE,CHAR_SCALE);ctx.drawImage(ent.img,-40.5*tbs,tFoot+(tdy-tFootS)*tbs,86.4*tbs,86.4*tbs);ctx.restore()});
  ctx.imageSmoothingEnabled=true;
 } /* 残像も本体と同じ足裏アンカー (spriteDY) で描く */
 var bgStars=[];
@@ -12474,8 +12491,9 @@ function drawAxe(f){
  /* ult ready: charged-electric aura in Axe's ember orange */
  if(f.meter>=100&&!f.dead)drawUltAura(f,249,115,22);
  drawSpriteTrail(f,"axe");
- f.trail.forEach(function(t){drawFxTex(FXIMG.fire,t.x,t.y+30,92,0,t.face,t.life/0.2*.5)});
+ f.trail.forEach(function(t){drawFxTex(FXIMG.fire,t.x,t.y+36,110,0,t.face,t.life/0.2*.5)}); /* flame trail scaled with the 1.2x body (offset 30 -> 36, size 92 -> 110) */
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
+ ctx.translate(0,70);ctx.scale(1.2,1.2);ctx.translate(0,-70/CHAR_SCALE); /* AXE 1.2x (user spec): EVERYTHING drawn below — the sprite and all the move effects — is scaled 1.2x about the FEET: the standard foot line (local 70/CHAR_SCALE) lands on local 70, i.e. world f.y+84 = f.y+f.h, so a grounded AXE's soles sit exactly on the floor line and never sink into it */
  if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
  var isGuardA=!!f.guarding||f.state==="guard";
