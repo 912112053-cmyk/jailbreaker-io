@@ -2357,7 +2357,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v300";
+var BUILD_ID="v301";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9119,10 +9119,12 @@ function xenoPhaseFx(x,y,face,size){spawnVecBurst("xphase",x,y,size||56,0.3,0,fa
    its owner through applyHit / her own projectiles, so score /
    combo / meter all behave like her own hits. The tick lives in
    simStepFrame's tail next to the other placed-object filters. It is FRAGILE by design:
-   ONE hit of any kind (a melee box, a direct applyHit attack, a
-   projectile) shatters it instantly in a glitch collapse
-   (destroyDecoy, hooked from meleeHit / shadeHit / applyHit and
-   the projectile dispatch). The 10s reuse timer (f.decoyCd) is
+   ONE melee hit (a melee box or a direct applyHit attack)
+   shatters it instantly in a glitch collapse (destroyDecoy,
+   hooked from meleeHit / shadeHit / applyHit) — but PROJECTILES
+   never touch it at all: every shot passes straight through the
+   hologram (user spec), so there is deliberately no projectile
+   hook. The 10s reuse timer (f.decoyCd) is
    paid ONLY by this move: her plain K / air K keep their own
    pacing and ↑+K keeps its shared flyCd. Drawing is drawDecoy:
    a translucent, flickering hologram copy of her sprite with
@@ -9180,8 +9182,8 @@ function startXenoAttack(f,type,foe){
         AROUND herself, on the same skeleton as KAIRO's hover spin —
         but with NO hover (user spec): nothing brakes her fall, so
         gravity pulls her down at the normal rate while the move
-        ticks out up to 6 hits of a surrounding box (周囲108x66,
-        5 dmg / KB 290, one shared hit list per tick so a foe is
+        ticks out up to 3 hits of a surrounding box (周囲108x66,
+        10 dmg / KB 290, one shared hit list per tick so a foe is
         struck once per tick), capped at 2 uses per airborne stint.
         The ticks live in stepFighter (state "xairj"); the dressing
         is hers alone — stepped block noise and a snapping square
@@ -9359,7 +9361,7 @@ function startXenoAttack(f,type,foe){
       MIMI's orb 46 with no bind, and the point-blank crash this
       replaces was 30 dmg with a 1.6s slow. */
    if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
-   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:20,kind:"xdart"}); /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe, a decoy, or the world bounds are its only other ends */
+   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:20,kind:"xdart"}); /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe or the world bounds are its only ends (decoys are holograms: like every projectile, it passes straight through them) */
    xenoGlitchFx(f,10);xenoPortalFx(f.x+f.face*40,f.y+f.h*0.42,36);
    beep(196,.16,"sawtooth",.06);setTimeout(function(){beep(1240,.2,"square",.05)},70);
  }
@@ -11038,8 +11040,8 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  /* GLITCH ORBIT (XENO air J): the same skeleton as KAIRO's HOVER
     SPIN above — but the hover is GONE (user spec): nothing here
     touches f.vy, so she falls at the normal rate while the move
-    ticks out up to 6 hits of a surrounding box
-    (周囲108x66, 5 dmg / KB 290, tick interval 0.06s inside the
+    ticks out up to 3 hits of a surrounding box
+    (周囲108x66, 10 dmg / KB 290, tick interval 0.06s inside the
     0.38s state; the two meleeHit calls share one hit list per tick,
     so each foe is struck ONCE per tick, launched outward on their
     side). The dressing is XENO's alone (user spec): every tick pops
@@ -11047,7 +11049,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     square orbit frame open — digital / glitch, never KAIRO's ice */
  if(f.state==="xairj"&&f.char==="xeno"){
    f.spinTick+=dt;
-   if(f.spinTick>=0.06&&f.spinHits<6){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,5,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,5,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
+   if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,10,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,10,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
  }
  /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
     them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
@@ -14007,7 +14009,7 @@ function simStepFrame(getInp){
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
    pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%4]),size:2.8+Math.random()*2.8,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour — no drifting trail */
-if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */for(var dqi=decoys.length-1;dqi>=0;dqi--){var dq0=decoys[dqi];if(!dq0.owner||dq0.owner===pr.owner||dq0.owner.dead)continue;if(Math.abs(dq0.x-pr.x)<50&&Math.abs((dq0.y+35)-pr.y)<44){destroyDecoy(dq0);spawnVecBurst("xglitch",pr.x,pr.y,26,0.28,0,pr.vx>0?1:-1,0.9);if(pr.kind!=="mimiball")return false}} /* XENO デコイ: a projectile that reaches a hologram decoy shatters it in ONE hit and is spent doing so (the piercing mimiball flies on, as it does through fighters) */
+if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies *//* XENO デコイ: projectiles NEVER collide with a hologram decoy — every shot passes straight through it and flies on (user spec); only melee boxes and direct hits shatter it (see meleeHit / shadeHit / applyHit), so there is deliberately no projectile hook here */
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
