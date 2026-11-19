@@ -493,6 +493,14 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["23:02"],tag:"調整",title:"No.66：ガトリング弾の被弾エフェクトを削除",
+   items:["No.66のJ 2段目「チェーンガトリング」、J+K同時押し「ガトリングフック」の連射部分、K／空中K「ガトリング」で発射される弾が当たったときのエフェクト（ヒット時のパーティクル・リング・火花・ダメージ数字・画面の揺れ・ヒットストップ・ヒット音・被弾フラッシュ）が出ないようになりました",
+          "弾のダメージ・吹き飛ばし・被弾硬直・灼熱状態での燃焼付与など、性能はそのままです。ガトリングフック最後の殴りは弾ではないため、これまでどおりエフェクトが出ます",
+          "BUILD_ID を v317 に更新しました。対戦前に全員がページを再読み込みしてください"]},
+ {date:"2026/11/19",times:["22:54"],tag:"調整",title:"SMILEY：↑+K「チェーンジェイル」のエフェクト変更／U「スローイングナイフ」のリロードを下方修正（1.1秒→2.4秒）",
+   items:["SMILEYの↑+K「チェーンジェイル」：エフェクトを変更しました。これまでは体の両脇にチェーンが垂れ下がる表現でしたが、頭の真上にチェーンをまっすぐ伸ばし、そのチェーンに引き上げられるように上方向へ上昇する表現になりました（技の性能・上昇速度・クールタイムなどは変更ありません）",
+          "SMILEYのU「スローイングナイフ」：リロードを下方修正しました。投げたナイフは1.1秒ごとに1本ずつ自動リロードされていましたが、2.4秒ごとに1本ずつになりました（装填数3本・ダメージ10・KB 240・弾速1060は変更ありません）",
+          "技一覧とCREATIVE MODEの表示も実装に合わせて更新しました。BUILD_ID を v316 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["22:45"],tag:"調整",title:"SMILEY：K「連続ナイフ」／空中K「連続エアナイフ」に空振り終了を追加（最初の5ヒット以内に無ヒットで即終了→後硬直）",
    items:["SMILEYのK「連続ナイフ」と空中K「連続エアナイフ」：最初の5ヒット以内に相手へ1回もヒットしなかった場合、5ヒット目が終わった時点で技が即座に終了し、そのまま後硬直（0.5秒・完全硬直）に移るようになりました",
           "最初の5ヒット以内に1回でも当たれば、従来どおり最大16ヒットまで振り回し続けます。ダメージ3×最大16ヒット・KB 660（最後の一撃のみ）・判定86×86・被弾硬直0.2秒（1ヒットずつ）・全体1.8秒など、その他の数値は変更ありません",
@@ -1134,9 +1142,9 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J+K 同時押し — 連続斬り</b> <span style="color:#f472b6;font-weight:900">2ヒット</span><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。上から下への切り裂きに続き、刺突で相手の心臓を貫く二連撃で吹っ飛ばす。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','9＋9')+mvS('KB','420／500')+mvS('発生','即時／2段目 約0.16秒')+mvS('全体','0.42秒')+mvS('後硬直','0.43秒')+mvS('判定','70×56／74×60')+mvS('被弾硬直','0.3秒')+mvS('着地硬直','空中で出した場合0.18秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 連続ナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>その場で包丁を振り回し続ける連続斬り。1ヒットごとに相手を0.2秒硬直させるので当て続ければ逃げられず、<b>最後の16ヒット目だけが KB 660 で吹っ飛ばす</b>。全体と後硬直はどちらも<b>完全硬直</b>（移動・ジャンプ・ワザ不可）で、隙は大きい。ただし<b>最初の5ヒット以内に1回も当たらなかった場合、その時点で技は即座に終了し、後硬直（0.5秒・完全硬直）に移る</b>。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — 連続エアナイフ</b> <span style="color:#f472b6;font-weight:900">最大16ヒット</span><p>空中に留まって振り回す連続ナイフ。性能は地上版と同じで、最後の一撃だけが吹っ飛ばす。<b>最初の5ヒット以内に1回も当たらなければ、その時点で即座に終了して後硬直（0.5秒・完全硬直）に移る</b>（地上版と同じ空振り終了）。空中↓+Kでも出る（旧ダイブスタブは削除）。</p>'+mvSpec(mvS('ダメージ','3×最大16ヒット')+mvS('KB','660（最後の一撃のみ）')+mvS('発生','即時')+mvS('全体','1.8秒（完全硬直）')+mvS('後硬直','0.5秒（完全硬直）')+mvS('判定','86×86')+mvS('被弾硬直','0.2秒（1ヒットずつ）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>その場で真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.31秒')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↑+K — チェーンジェイル</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.4秒</span><p>頭の真上にチェーンをまっすぐ伸ばし、そのチェーンに引き上げられるように真上へ一気に跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.33秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.31秒')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.33秒')+mvS('上昇','vy -1080')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ロースイープ</b><p>足元へ包丁を2回突き刺す<b>2段技</b>。1段目で崩して、2段目で大きく吹っ飛ばす。</p>'+mvSpec(mvS('ダメージ','5＋5')+mvS('KB','280／580')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','78×36')+mvS('被弾硬直','0.28秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は1.1秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','1.1秒'))+'</div></div>'
++'<div class="moveRow"><div><b>U — スローイングナイフ</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3本</span><p>包丁を投げる飛び道具。弾速1060と速い代わりに威力は低い。3本まで投げられて、投げた分は2.4秒ごとに1本ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.32秒')+mvS('弾速','1060')+mvS('射程','約1060（1.0秒）')+mvS('リロード','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — Berserker（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使って11秒間「Berserker」状態になる。発動した瞬間、背後に大鎌を持った巨大な死神（キャラの約2.6倍の高さ）が1秒間だけ姿を現す。お面が暗い赤色に変わり、不均一な目と大きく歪んだ口の不気味な顔に変形し、スーツにも血が付く。発動中は移動速度+15%（地上・空中とも）、包丁を使う技のダメージ+20%、ダッシュの再使用が0.8秒になり、近接ヒットで「出血」を付ける（0.5秒ごとに2ダメージ、1.5秒間。ノックバック・硬直なし）。さらに<b>与えたダメージの20%を回復</b>する。加えて発動中は<b>全ての技の後硬直が0.12秒短く</b>なり、<b>全ての技の着地硬直が0.06秒短く</b>なり、<b>全ての技が相手に与える被弾硬直が0.08秒長く</b>なり、<b>受けるノックバックが×1.00</b>（通常は×1.12）になる。<b>無敵はない</b>。倒されると解除される。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('持続','11秒')+mvS('移動速度','+15%')+mvS('包丁ダメージ','+20%')+mvS('ダッシュ再使用','0.8秒')+mvS('出血','2ダメ／0.5秒・1.5秒間')+mvS('回復','与えたダメージの20%')+mvS('後硬直','全ての技 -0.12秒')+mvS('着地硬直','全ての技 -0.06秒')+mvS('被弾硬直','全ての技 +0.08秒')+mvS('受けKB','×1.00（発動中）')+mvS('無敵','なし'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1300')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','1.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
@@ -1470,7 +1478,7 @@ function press(a){if(mode==="online"&&running&&typeof ls!=="undefined"&&ls&&ls.a
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
 var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[],ignisPillars=[],decoys=[]; /* decoys: XENO ↓+K ホログラムデコイ — autonomous hologram clones (3s, two hits bring them down; projectiles pass through); XENO is versus/training-only, so this list never needs snapshot/rollback sync */ /* ignisPillars: SARA ↓+U イグニスボムの火柱 — the pillar IS the hitbox: it stands for 1.4s in simStepFrame's tail and hits each foe once per pillar (hitSet) */
-var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
+var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit — and around No.66's gatling pellet hits (projectile kinds "pellet" / "pellet0", in the projectile filter) — user request: the bullets fired by J 2段目 チェーンガトリング / J+K ガトリングフック / K・空中K ガトリング show no effect when they hit (the hook's follow-up melee punch is NOT a bullet and keeps its hit feedback). ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
 var noHitParticles=0; /* noHitParticles: while 1, applyHit / applyShadeDot deal their damage and bookkeeping exactly as usual but spawn NO hit PARTICLES (the translucent particle squares, spark streaks and FX-burst textures) — ring, damage floater, hitstop, shake, beep and hurt flash all still fire. It is set only around the burn DoT ticks in stepFighter (user request: 燃焼の継続ダメージで発生する被弾パーティクルも削除). Independently of this flag, a hit whose ATTACKER is SARA never spawns hit particles either (user request: SARAが攻撃を発動した時の半透明のパーティクルを削除) — that attacker-side rule lives in applyHit / applyShadeHit / applyShadeDot themselves */
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
 var cam={x:0,y:0};
@@ -1527,7 +1535,7 @@ function charBodySize(c){return c==="axe"?{w:55.2,h:84}:{w:46,h:70}}
    each gun's ORIGINAL full-magazine reload time, unchanged (owner
    rule: one shot comes back per interval while the magazine is
    below full) */
-function reloadInterval(f){if(crActive){var _rk=crGunKey(f.char);if(_rk&&f.char!=="sara"){var _rv=crXVal(f.char,_rk,"rel");if(_rv!=null)return _rv}}return f.char==="warden"?1.25:(f.char==="smiley"?1.1:(f.char==="travis"?2.8:(f.char==="kairo"?1.75:(f.char==="orchid"?2.2:(f.char==="xeno"?1.3:1.25)))))} /* warden bolt 1.15 -> 1.25 (user spec) / smiley knife 1.1 / kairo shard 1.25 -> 1.75 (user spec) / travis blast 2.5 -> 2.8 (user spec nerf) / orchid bomb 2.2 (user nerf: 装填数3・リロード2.2秒) */
+function reloadInterval(f){if(crActive){var _rk=crGunKey(f.char);if(_rk&&f.char!=="sara"){var _rv=crXVal(f.char,_rk,"rel");if(_rv!=null)return _rv}}return f.char==="warden"?1.25:(f.char==="smiley"?2.4:(f.char==="travis"?2.8:(f.char==="kairo"?1.75:(f.char==="orchid"?2.2:(f.char==="xeno"?1.3:1.25)))))} /* warden bolt 1.15 -> 1.25 (user spec) / smiley knife 1.1 -> 2.4 (user spec nerf) / kairo shard 1.25 -> 1.75 (user spec) / travis blast 2.5 -> 2.8 (user spec nerf) / orchid bomb 2.2 (user nerf: 装填数3・リロード2.2秒) */
 /* HOLD-TO-CONTINUE gates (owner request): holding a button may only
    ever CONTINUE a multi-stage / multi-shot move, never start one and
    never auto-repeat a single move. The U gate covers exactly the
@@ -1632,7 +1640,7 @@ axe:{"claw":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01]
 sara:{"sclaw1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",62,10,600,1]],"sbreath":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",54,10,600,1],["durB","燃焼時間",2,0,30,0.1]],"supper":[["tot","全体",0.28,0.05,6,0.01],["rec","後硬直",0.28,0,6,0.01],["hs","被弾硬直",0.38,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",94,10,600,1]],"stail":[["su","発生",0.12,0,2,0.01],["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["bw","判定 幅",118,10,600,1],["bh","判定 高さ",78,10,600,1]],"sflameclaw":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.34,0,6,0.01],["hs","被弾硬直",0.62,0,2,0.01],["bw","判定 幅",82,10,600,1],["bh","判定 高さ",68,10,600,1]],"signish":[["tot","全体",0.36,0.05,6,0.01],["rec","後硬直",0.24,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",48,10,600,1]],"smeteor":[["su","発生",0.2,0,2,0.01],["tot","全体",0.56,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.34,0,3,0.01],["bw","判定 幅",96,10,600,1],["bh","判定 高さ",58,10,600,1]],"sflaretail":[["su","発生",0.18,0,2,0.01],["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.26,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",62,10,600,1]],"jkcombo":[["tot","全体",0.5,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",58,10,600,1],["durB","燃焼時間",2,0,30,0.1]],"snova":[["su","発生",0.52,0,2,0.01],["tot","全体",0.78,0.05,6,0.01],["rec","後硬直",0.34,0,6,0.01],["land","着地硬直",0.36,0,3,0.01],["bw","判定 幅",108,10,600,1],["bh","判定 高さ",88,10,600,1],["durB","燃焼時間",3,0,30,0.1]],"sbomb":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.26,0,6,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",310,10,600,1],["dur","火柱持続",1.4,0,60,0.1]],"proj:javelin":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.51,0,6,0.01],["cd","再使用時間",0.8,0,30,0.1],["ammo","装填数",2,1,99,1],["rel","装填間隔",8,0.1,30,0.05],["spd","弾速",520,10,4000,10],["durB","燃焼時間",2.5,0,30,0.1],["durO","火種持続",8,0,60,0.5]],"sflame":[["su","発生",0.2,0,2,0.01],["tot","全体",2,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.5,0,2,0.01],["dur","放射時間",1.8,0,60,0.1],["durB","燃焼時間",2.5,0,30,0.1]]},
 orchid:{"ovine1":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.28,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",56,10,600,1],["bh","判定 高さ",50,10,600,1]],"ovine2":[["tot","全体",0.28,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.44,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",92,10,600,1]],"obite":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.63,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",80,10,600,1],["durPo","毒時間",2.5,0,30,0.1]],"otackle":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.8,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",132,10,600,1],["bh","判定 高さ",72,10,600,1]],"oknee":[["tot","全体",0.33,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",44,10,600,1]],"ohook":[["tot","全体",0.55,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.32,0,3,0.01],["bw","判定 幅",146,10,600,1],["bh","判定 高さ",76,10,600,1]],"orope":[["su","発生",0.3,0,2,0.01],["tot","全体",0.66,0.05,6,0.01],["rec","後硬直",0.53,0,6,0.01],["bw","判定 幅",104,10,600,1],["bh","判定 高さ",240,10,600,1]],"jkcombo":[["tot","全体",0.84,0.05,6,0.01],["land","着地硬直",0.4,0,3,0.01],["bw","判定 幅",134,10,600,1],["bh","判定 高さ",64,10,600,1]],"omist":[["tot","全体",0.45,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["cd","再使用時間",6.2,0,30,0.1],["durM","ミスト持続",8,0,60,0.5]],"proj:pbomb":[["su","発生",0.2,0,2,0.01],["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.54,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",2.2,0.1,30,0.05],["spd","弾速",660,10,4000,10],["durPo","毒時間",1.2,0,30,0.1]]},
 travis:{"tmike1":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",58,10,600,1]],"tmike2":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.26,0,2,0.01],["bw","判定 幅",66,10,600,1],["bh","判定 高さ",60,10,600,1]],"tmike3":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.65,0,6,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",68,10,600,1]],"twhip":[["su","発生",0.18,0,2,0.01],["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["hs","被弾硬直",0.42,0,2,0.01],["bw","判定 幅",156,10,600,1],["bh","判定 高さ",66,10,600,1]],"trise":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.45,0,6,0.01],["bw","判定 幅",56,10,600,1],["bh","判定 高さ",74,10,600,1]],"tback":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",50,10,600,1]],"tslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.35,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",36,10,600,1]],"tairwhip":[["su","発生",0.22,0,2,0.01],["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.22,0,3,0.01],["hs","被弾硬直",0.46,0,2,0.01],["bw","判定 幅",156,10,600,1],["bh","判定 高さ",66,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.44,0,3,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",56,10,600,1]],"jkcombo":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.33,0,3,0.01],["bw","判定 幅",66,10,600,1],["bh","判定 高さ",58,10,600,1]],"tpunch":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",66,10,600,1]],"tsing":[["tot","全体",3.6,0.05,6,0.01],["rec","後硬直",2.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",210,10,600,1],["bh","判定 高さ",102,10,600,1]],"tkick":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.54,0,6,0.01],["land","着地硬直",0.54,0,3,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",86,10,600,1]],"proj:msong":[["tot","全体",0.8,0.05,6,0.01],["rec","後硬直",0.88,0,6,0.01],["spd","弾速",1020,10,4000,10]],"proj:blast":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.39,0,6,0.01],["ammo","装填数",6,1,99,1],["rel","リロード時間",2.8,0.1,30,0.05],["spd","弾速",800,10,4000,10],["durL","寿命",1.13,0.1,30,0.1]],"proj:sonic":[["tot","全体",0.9,0.05,6,0.01],["rec","後硬直",1.02,0,6,0.01],["spd","弾速",740,10,4000,10]]},
-smiley:{"sknife1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.15,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"sknife2":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"sknife3":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",54,10,600,1]],"sknife4":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",56,10,600,1]],"sblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["hs","被弾硬直",0.45,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"sriseup":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",84,10,600,1]],"sback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"sslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",34,10,600,1]],"sairj":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",64,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.38,0,3,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",60,10,600,1]],"jkcombo":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.3,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",56,10,600,1]],"sknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"sairknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"ssweep":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",36,10,600,1]],"proj:knife":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.32,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",1.1,0.1,30,0.05],["spd","弾速",1060,10,4000,10],["durL","寿命",1,0.1,30,0.1]]},
+smiley:{"sknife1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.15,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"sknife2":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"sknife3":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",54,10,600,1]],"sknife4":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",56,10,600,1]],"sblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["hs","被弾硬直",0.45,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"sriseup":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",84,10,600,1]],"sback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"sslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",34,10,600,1]],"sairj":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",64,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.38,0,3,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",60,10,600,1]],"jkcombo":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.3,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",56,10,600,1]],"sknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"sairknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"ssweep":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",36,10,600,1]],"proj:knife":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.32,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",2.4,0.1,30,0.05],["spd","弾速",1060,10,4000,10],["durL","寿命",1,0.1,30,0.1]]},
 mimi:{"mbun1":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:claw":[["bw","判定 幅",116,10,600,1],["bh","判定 高さ",74,10,600,1]],"mbun2":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:upper1":[["bw","判定 幅",120,10,600,1],["bh","判定 高さ",94,10,600,1]],"mpush3":[["tot","全体",0.6,0.05,6,0.01],["rec","後硬直",0.65,0,6,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",72,10,600,1]],"sh:fist":[["bw","判定 幅",136,10,600,1],["bh","判定 高さ",88,10,600,1]],"mfpush":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.58,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:sweep":[["bw","判定 幅",134,10,600,1],["bh","判定 高さ",98,10,600,1]],"mlowj":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",34,10,600,1]],"sh:low":[["bw","判定 幅",92,10,600,1],["bh","判定 高さ",40,10,600,1]],"mairspin":[["tot","全体",0.38,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.2,0,3,0.01],["hs","被弾硬直",0.22,0,2,0.01]],"mdrop":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",68,10,600,1]],"sh:smeteor":[["bw","判定 幅",112,10,600,1],["bh","判定 高さ",92,10,600,1]],"mlight":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.22,0,3,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",62,10,600,1]],"proj:lwave":[["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",1.1,0,6,0.01],["spd","弾速",560,10,4000,10]],"proj:mimiball":[["tot","全体",0.7,0.05,6,0.01],["rec","後硬直",0.92,0,6,0.01],["spd","弾速",620,10,4000,10],["durL","寿命",2.5,0.1,30,0.1]]},
 no66:{"n66j1":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.26,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",60,10,600,1]],"proj:pellet":[["tot","全体",0.62,0.05,6,0.01],["rec","後硬直",0.59,0,6,0.01],["hs","被弾硬直",0.16,0,2,0.01],["spd","弾速",980,10,4000,10]],"n66j3":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.69,0,6,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",66,10,600,1]],"n66hook":[["tot","全体",0.95,0.05,6,0.01],["rec","後硬直",0.85,0,6,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",66,10,600,1]],"n66bash":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.59,0,6,0.01],["land","着地硬直",0.24,0,3,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",62,10,600,1]],"n66ubomb":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["bw","判定 幅",100,10,600,1],["bh","判定 高さ",64,10,600,1]],"proj:gren":[["tot","全体",0.5,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.2,0,3,0.01]],"proj:pellet0":[["tot","全体",0.95,0.05,6,0.01],["rec","後硬直",0.97,0,6,0.01],["spd","弾速",980,10,4000,10]],"n66blast":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["cd","再使用時間",2.6,0,30,0.1]],"proj:glauncher":[["tot","全体",0.36,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["spd","弾速",640,10,4000,10]],"proj:missile":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["spd","弾速",470,10,4000,10],["durL","寿命",3.2,0.1,30,0.1]],"proj:umissile":[["tot","全体",0.85,0.05,6,0.01],["rec","後硬直",1.02,0,6,0.01],["spd","弾速",500,10,4000,10],["durL","寿命",3.2,0.1,30,0.1]]},
 };
@@ -2399,7 +2407,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v315";
+var BUILD_ID="v317";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7480,6 +7488,19 @@ function drawVecBursts(){
     ctx.fillRect(Math.cos(pfa)*pfd-pfs/2,Math.sin(pfa)*pfd-pfs/2,pfs,pfs);
    }
    ctx.globalAlpha=a;
+  }else if(b.kind==="xdistort"){ /* XENO ground-J chain (NEW, hers alone): the SPACE in front of her warps — the air itself is cut into six horizontal slices that shove sideways by different hard-stepped amounts, each slice edged with a pink / violet split double line, so the world in front of her knife looks torn and re-stitched. Nothing slides or flows: the offsets jump on a five-step clock and hold, like every other glitch she owns. The burst size grows with the chain stage (see startXenoAttack), so each of the five stages warps the air wider than the last and no two stages read alike */
+   var xdSt=Math.min(4,Math.floor(pr*5)),xdW=b.size*0.95,xdH=b.size*0.62,xdA=(xdSt===4?0.25:0.9)*b.alpha;
+   for(var xdb=0;xdb<6;xdb++){
+    var xdh=Math.sin(b.seed*83.1+xdb*47.7+xdSt*61.3)*43758.5453;xdh-=Math.floor(xdh);
+    var xdo=(Math.floor(xdh*5)-2)*b.size*0.055*(xdb%2?1:-1)*(1+xdSt*0.22); /* each slice tears a little further as the burst steps on */
+    var xdy=-xdH/2+xdb*(xdH/6);
+    ctx.globalAlpha=xdA;ctx.lineWidth=2;
+    ctx.strokeStyle="#f472b6";ctx.strokeRect(-xdW/2+xdo-1.6,xdy,xdW,xdH/6);
+    ctx.strokeStyle="#a78bfa";ctx.strokeRect(-xdW/2+xdo+1.6,xdy,xdW,xdH/6);
+    if(xdb%2===0){ctx.globalAlpha=xdA*0.55;ctx.strokeStyle="#f8fafc";ctx.lineWidth=1;ctx.strokeRect(-xdW/2+xdo,xdy+1,xdW,xdH/6-2)}
+   }
+   for(var xdt=0;xdt<3;xdt++){var xth=Math.sin(b.seed*59.7+xdt*71.9+xdSt*37.1)*43758.5453;xth-=Math.floor(xth);if(xth<0.3)continue;ctx.globalAlpha=xdA*0.8;ctx.fillStyle=xdt%2?"#f0abfc":"#c084fc";var xtx=(xth-0.5)*xdW*1.15,xts=2.4+xth*2.6;ctx.fillRect(xtx-xts/2,-xdH/2-3,xts,xts);ctx.fillRect(xtx-xts/2,xdH/2+3-xts,xts,xts)} /* torn-off data flecks blinking above and below the warped slab */
+   ctx.globalAlpha=a;
   }else if(b.kind==="axerocks"){ /* AXE 震撃 (↓+K): FOUR spiked rocks erupt across the full 230-wide hitbox — pop up fast, hold, then crumble away */
    var rkRise=Math.min(1,pr*3.2),rkSink=bt<0.22?(0.22-bt)*1.7:0;
    ctx.strokeStyle="#44403c";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-b.size*0.52,1);ctx.lineTo(-b.size*0.2,-1);ctx.lineTo(b.size*0.08,1);ctx.lineTo(b.size*0.34,-1);ctx.lineTo(b.size*0.52,1);ctx.stroke();
@@ -9136,7 +9157,8 @@ function startSmileyAttack(f,type,foe){
    }
  }else if(type==="l"){
    /* スローイングナイフ (U): a thrown knife — the shared ammo gun
-      shape (3 knives, auto reload 1.1s). Fast and light: 10 dmg /
+      shape (3 knives, auto reload 2.4s — 1.1s -> 2.4s nerf, user
+      spec). Fast and light: 10 dmg /
       KB 240 at speed 1060 (900 -> 1060, user spec; "knife"
       projectiles) */
    if(f.ammo<=0){beep(200,.08);return}
@@ -9187,6 +9209,7 @@ function xenoGlitchFx(f,n){
  for(var gi=0;gi<nb;gi++)pushParticle({x:cx+(Math.random()-0.5)*46,y:cy+(Math.random()-0.5)*42,vx:0,vy:0,life:0.15+Math.random()*0.15,col:Math.random()<0.45?"#a78bfa":(Math.random()<0.62?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.4,amb:1}); /* her loose data blocks are purple / pink / white — no light blue (user spec) */
 }
 function xenoRingFx(x,y,size){spawnVecBurst("xring",x,y,size||40,0.3,0,1,0.95)} /* a square targeting frame that snaps outward in hard steps (see drawVecBursts) */
+function xenoDistortFx(x,y,size){spawnVecBurst("xdistort",x,y,size||56,0.3,0,1,0.95)} /* the ground-J chain's space-warp: the air in front of her is sliced and shoved sideways in hard steps (see drawVecBursts) — bigger with each chain stage, so the five stages read differently at a glance */
 function xenoPortalFx(x,y,size){spawnVecBurst("xportal",x,y,size||56,0.34,0,1,0.95)} /* a CIRCULAR portal ring that snaps open in hard steps (see drawVecBursts) — the warp's door, spawned at both ends of the jump */
 function xenoCircuitFx(x,y,size){spawnVecBurst("xcircuit",x,y,size||44,0.34,0,1,0.95)} /* XENO-only circuit traces: right-angle data lines with node blocks, snapping outward in hard steps (see drawVecBursts) */
 function xenoPhaseFx(x,y,face,size){spawnVecBurst("xphase",x,y,size||56,0.3,0,face||1,0.95)} /* XENO-only phase-shift burst: sliced hologram ghosts trailing the jump + circuit spear-lines stabbing forward (see drawVecBursts) */
@@ -9347,7 +9370,7 @@ function startXenoAttack(f,type,foe){
         but with NO hover (user spec): nothing brakes her fall, so
         gravity pulls her down at the normal rate while the move
         ticks out up to 3 hits of a surrounding box (周囲108x66,
-        10 dmg / KB 290, one shared hit list per tick so a foe is
+        10 dmg / KB 290, 被弾硬直 0.28s, one shared hit list per tick so a foe is
         struck once per tick), capped at 2 uses per airborne stint.
         A weak vacuum pull runs while the state lasts (user spec):
         nearby foes are dragged slightly toward her so the box
@@ -9407,22 +9430,43 @@ function startXenoAttack(f,type,foe){
      xenoGlitchFx(f,9);xenoCircuitFx(f.x,f.y+f.h*0.45,42);xenoRingFx(f.x,f.y+f.h*0.45,30);
      beep(1560,.05,"square",.045);
    }else{
-     /* データナイフ (J): a fast 3-stage chain of data-knife cuts.
-        Recoveries are attackCd + the shared 0.07 tail */
-     f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;
+     /* データナイフ (J): a fast FIVE-stage chain of data-knife cuts
+        (user spec — was 3 stages). Every stage also tears the SPACE
+        in front of her (xenoDistortFx: the air is sliced into
+        horizontal bands that shove sideways in hard glitch steps),
+        and the warp grows wider with each stage — 44 / 50 / 58 / 68 /
+        84 — so all five stages read differently at a glance and none
+        of them looks like her other moves. Numbers stay at the light
+        end of the roster's J chains (she is the fast, fragile one):
+        per-hit damage is the lowest in the cast and the full five-hit
+        string totals 40 — in line with No.66's full J chain (41) and
+        under WARDEN's three-stage (~50) — but she must land all five
+        cuts inside the 0.8s chain windows to collect it. Recoveries
+        are attackCd + the shared 0.07 tail */
+     f.comboStep=(f.comboWin>0)?(f.comboStep+1)%5:0;
      if(f.comboStep===0){
        f.comboWin=0.8;f.state="xknife1";f.stateT=0.18;f.attackCd=0.09;
-       meleeHit(f,foe,72,50,7,250,f.face,-0.18,0.22);
+       meleeHit(f,foe,72,50,6,240,f.face,-0.18,0.22);
+       xenoDistortFx(f.x+f.face*38,f.y+f.h*0.42,44);
        beep(1420,.04,"square",.04);
      }else if(f.comboStep===1){
        f.comboWin=0.8;f.state="xknife2";f.stateT=0.18;f.attackCd=0.1;
-       meleeHit(f,foe,72,52,7,250,f.face,-0.2,0.22);
-       xenoGlitchFx(f,5);beep(1520,.04,"square",.04);
+       meleeHit(f,foe,72,52,6,240,f.face,-0.2,0.22);
+       xenoGlitchFx(f,5);xenoDistortFx(f.x+f.face*38,f.y+f.h*0.42,50);beep(1520,.04,"square",.04);
+     }else if(f.comboStep===2){
+       f.comboWin=0.8;f.state="xknife3";f.stateT=0.2;f.attackCd=0.11;
+       meleeHit(f,foe,76,54,7,280,f.face,-0.24,0.24);
+       xenoGlitchFx(f,6);xenoDistortFx(f.x+f.face*40,f.y+f.h*0.42,58);beep(1620,.04,"square",.04);
+     }else if(f.comboStep===3){
+       f.comboWin=0.8;f.state="xknife4";f.stateT=0.22;f.attackCd=0.13;
+       f.vx+=f.face*60;capVx(f,RUN_MAX*1.2);
+       meleeHit(f,foe,80,56,8,330,f.face,-0.27,0.26);
+       xenoGlitchFx(f,8);xenoDistortFx(f.x+f.face*42,f.y+f.h*0.42,68);beep(1720,.045,"square",.04);
      }else{
-       f.comboWin=0;f.comboStep=0;f.state="xknife3";f.stateT=0.24;f.attackCd=0.28;
-       f.vx+=f.face*90;capVx(f,RUN_MAX*1.2);
-       meleeHit(f,foe,86,56,12,470,f.face,-0.3);
-       xenoGlitchFx(f,10);xenoRingFx(f.x+f.face*44,f.y+f.h*0.42,38);
+       f.comboWin=0;f.comboStep=0;f.state="xknife5";f.stateT=0.26;f.attackCd=0.3;
+       f.vx+=f.face*100;capVx(f,RUN_MAX*1.2);
+       meleeHit(f,foe,88,58,13,520,f.face,-0.32);
+       xenoGlitchFx(f,10);xenoDistortFx(f.x+f.face*46,f.y+f.h*0.42,84);xenoRingFx(f.x+f.face*44,f.y+f.h*0.42,38);
        beep(820,.07,"sawtooth",.05);
      }
    }
@@ -9539,7 +9583,7 @@ function startXenoAttack(f,type,foe){
       (see the xdart draw) that endures for a full 20 SECONDS
       unless it hits something first (user spec). In flight the
       core is STEERED by the firing player's direction input (arrow keys /
-      stick) at a constant 396 u/s (330 x1.2, user spec) with a capped turn rate —
+      stick) at a constant 475 u/s (396 x1.2, user spec) with a capped turn rate —
       see the "xdart" steering in the projectile step. On a hit it
       detonates into a geometric crystal explosion (vecBurst
       "xshard": neon shards around a circular core): 28 dmg /
@@ -9550,7 +9594,7 @@ function startXenoAttack(f,type,foe){
       MIMI's orb 46 with no bind, and the point-blank crash this
       replaces was 30 dmg with a 1.6s slow. */
    if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
-   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*396,vy:0,owner:f,life:20,kind:"xdart"}); /* speed 396 = 330 x1.2 (user spec); the steering block in the projectile step holds the same 396 while it turns */ /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe or the world bounds are its only ends (decoys are holograms: like every projectile, it passes straight through them) */
+   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*475,vy:0,owner:f,life:20,kind:"xdart"}); /* speed 475 = 396 x1.2 (user spec — the core flies 1.2x faster than before); the steering block in the projectile step holds the same 475 while it turns */ /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe or the world bounds are its only ends (decoys are holograms: like every projectile, it passes straight through them) */
    xenoGlitchFx(f,10);xenoPortalFx(f.x+f.face*40,f.y+f.h*0.42,36);
    beep(196,.16,"sawtooth",.06);setTimeout(function(){beep(1240,.2,"square",.05)},70);
  }
@@ -9635,18 +9679,23 @@ function applyShadeHit(att,owner,dmg,cx,cy,isUlt){
  if(att.char==="sara"&&att.chaos)dmg=d100(dmg*1.3); /* the same attacker-side damage boosts applyHit pays (SARA chaos / SMILEY Berserker) — the gauge is HP-like */
  if(att.char==="smiley"&&(att.awakenT||0)>0)dmg=d100(dmg*1.20);
  if(owner.shHp==null)owner.shHp=SHADE_HP_MAX;
- owner.shHp=Math.max(0,owner.shHp-dmg);owner.shFlash=0.14;owner.shHurtT=0; /* 【下方修正】 the gauge just took damage: the proximity refill may not resume until SHADE_REGEN_HURT_DELAY (1.2s) has passed with no further damage */
+ owner.shHp=Math.max(0,owner.shHp-dmg);if(!hitFxMute)owner.shFlash=0.14;owner.shHurtT=0; /* 【下方修正】 the gauge just took damage: the proximity refill may not resume until SHADE_REGEN_HURT_DELAY (1.2s) has passed with no further damage */
  /* NO knockback, NO hitstun, NO state change on SHADE or MIMI — the
     darkness simply thins. Feedback stays small: a violet burst, a
-    ring, the damage number over SHADE and a brief hitstop */
- hitstop=Math.max(hitstop,isUlt?0.05:0.02);shake=Math.min(13,Math.max(shake,2));
+    ring, the damage number over SHADE and a brief hitstop.
+    hitFxMute (No.66 gatling pellets — user request: those bullets
+    show NO effect when they hit): the gauge damage, combo and meter
+    bookkeeping below still run exactly as usual, but the flash,
+    particles, ring, floater, hitstop, shake and beep are all muted,
+    mirroring applyHit / applyShadeDot */
+ if(!hitFxMute){hitstop=Math.max(hitstop,isUlt?0.05:0.02);shake=Math.min(13,Math.max(shake,2));
  if(att.char!=="sara"){spawnParticles(cx,cy,10,"#a855f7",190);spawnParticles(cx,cy,6,"#2e1065",150)} /* SARA's hits on SHADE spawn no particles either (user request) — ring / floater / hitstop below still fire */
  spawnRing(cx,cy,"#7e22ce",30);
- pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.7,col:"#d8b4fe"});
+ pushFloater({x:owner.shX,y:owner.shY-118,txt:"-"+dmg,life:.7,col:"#d8b4fe"})}
  if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}
  att.comboHits++;att.comboDmg=d100((att.comboDmg||0)+dmg);att.comboT=0.95;
  if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg)); /* CPU fighters gain meter too (user request) — same gate removal as applyHit below */
- beep(150+Math.random()*70,.06,"square",.05);
+ if(!hitFxMute)beep(150+Math.random()*70,.06,"square",.05);
  if(owner.shHp<=0)shadeVanish(owner);
  return true;
 }
@@ -11380,7 +11429,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     SPIN above — but the hover is GONE (user spec): nothing here
     touches f.vy, so she falls at the normal rate while the move
     ticks out up to 3 hits of a surrounding box
-    (周囲108x66, 10 dmg / KB 290, tick interval 0.06s inside the
+    (周囲108x66, 10 dmg / KB 290, 被弾硬直 0.28s fixed, tick interval 0.06s inside the
     0.38s state; the two meleeHit calls share one hit list per tick,
     so each foe is struck ONCE per tick, launched outward on their
     side). A weak VACUUM runs for the whole state (user spec):
@@ -11404,7 +11453,7 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
       already pinned by their own systems) */
    for(var xvi=0;xvi<fighters.length;xvi++){var xvt=fighters[xvi];if(xvt===f||xvt.dead||xvt.invuln>0||(xvt.glitchT||0)>0||(xvt.heldT||0)>0)continue;var xvdx=f.x-xvt.x,xvdy=(f.y+f.h*0.45)-(xvt.y+xvt.h/2);if(Math.abs(xvdx)<185&&Math.abs(xvdy)<125){xvt.x+=Math.max(-190*dt,Math.min(190*dt,xvdx));xvt.y+=Math.max(-110*dt,Math.min(110*dt,xvdy))}}
    f.spinTick+=dt;
-   if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,10,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,10,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
+   if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,10,290,f.face,-0.3,0.28,false,0,xorbHit);meleeHit(f,foe,108,66,10,290,-f.face,-0.15,0.28,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)} /* 被弾硬直追加 (user spec): each orbit tick now inflicts a fixed 0.28s hitstun (the hs argument) — a little more than the ~0.19s the KB-290 launch derived on its own, so a foe caught in the orbit stays pinned a touch longer between ticks; damage / KB / box unchanged */
  }
  /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
     them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
@@ -12826,7 +12875,12 @@ function drawSmiley(f){
   ctx.strokeStyle="rgba(253,224,71,.38)";ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(12,26,37,0,6.29);ctx.stroke();
   for(var spk=0;spk<4;spk++){var spa=time*44+spk*1.571,spx=12+Math.cos(spa)*37,spy=26+Math.sin(spa)*37,stx2=-Math.sin(spa),sty2=Math.cos(spa);ctx.strokeStyle=spk===0?paleC:"rgba(254,249,195,.7)";ctx.lineWidth=spk===0?3:2.1;ctx.beginPath();ctx.moveTo(spx-stx2*8,spy-sty2*8);ctx.lineTo(spx+stx2*8,spy+sty2*8);ctx.stroke();if(spk===0)bld(spx+stx2*8,spy+sty2*8)}
   ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(12,26,37,time*44-0.75,time*44+0.3);ctx.stroke()}
- else if(f.state==="sjail"){ctx.strokeStyle="#94a3b8";ctx.lineWidth=2.2;for(var chn=-1;chn<=1;chn+=2){for(var chl=0;chl<4;chl++){ctx.beginPath();ctx.arc(chn*17,10+chl*13,3.6,0,6.29);ctx.stroke()}}ctx.strokeStyle=yellC;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(0,58);ctx.lineTo(0,44);ctx.stroke()} /* チェーンジェイル: chain links hang on both sides of him as he rockets straight up */
+ else if(f.state==="sjail"){ /* チェーンジェイル (見た目変更 — user spec): the chain no longer hangs at his sides — it shoots STRAIGHT UP from his raised hand and hauls him skyward along it. Interlocking links (alternating flat / edge-on ellipses) run vertically from just above his head up past the top of the frame, scrolling upward with time so the chain visibly feeds up as he rises; short yellow streaks stream down both sides of his body to sell the upward rush, and a yellow grip link ties the chain to his hand */
+  ctx.strokeStyle="#94a3b8";ctx.lineWidth=2.2;
+  var chOff=-((time*190)%9);
+  for(var chl=0;chl<9;chl++){var chy=4-chl*9+chOff;ctx.beginPath();if(chl%2)ctx.ellipse(8,chy,2.5,4.3,0,0,6.29);else ctx.ellipse(8,chy,4.3,2.5,0,0,6.29);ctx.stroke()}
+  ctx.strokeStyle=yellC;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(8,16);ctx.lineTo(8,5);ctx.stroke();
+  ctx.strokeStyle="rgba(254,240,138,.5)";ctx.lineWidth=1.8;for(var chu=-1;chu<=1;chu+=2){ctx.beginPath();ctx.moveTo(chu*17,52);ctx.lineTo(chu*17,24);ctx.stroke()}}
  else if(f.state==="diveclaw"){cut(22,34,34,54);cut(14,30,24,48,1.8);bld(33,53)}
  else if(f.state==="jkcombo"){ /* J+K 連続斬り (見た目変更): the 1st hit tears top-to-bottom like the new J1; the moment the delayed 2nd hit fires (stateT<=0.26) the art swaps to the heart-piercing thrust (its vec burst + ring + shake land in stepFighter) */
   if(f.stateT>0.26){ctx.strokeStyle=yellC;ctx.lineWidth=3.2;ctx.beginPath();ctx.arc(8,26,40,-1.25,1.05);ctx.stroke();cut(40,-4,54,50,2.8);cut(31,0,43,44,1.7);bld(53,49)}
@@ -13630,7 +13684,7 @@ function drawXeno(f){
    ctx.globalAlpha=qa*0.20;ctx.fillStyle=ti%2?"#67e8f9":"#f0abfc";
    pxR(-13.5,-40,26,36); /* RGB-split twin, hard offset behind */
    ctx.globalAlpha=qa*0.36;ctx.fillStyle=ti%2?"#f0abfc":"#67e8f9";
-   pxR(-10.5,-46,5,9);pxR(5.5,-46,5,9); /* ears — short hood ears, matching the body sprite */
+   pxR(-10.5,-43.5,5,6.5);pxR(5.5,-43.5,5,6.5); /* ears — short hood ears, matching the body sprite (shortened with it) */
    pxR(-13,-38,26,12); /* hood */
    pxR(-14,-30,4.5,46);pxR(9.5,-30,4.5,46); /* long hair */
    pxR(-11,-26,22,42); /* body */
@@ -13641,7 +13695,7 @@ function drawXeno(f){
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
  PXU=1;
  var flash=f.flash>0;
- var hoodC=flash?"#ffe4e0":"#f8fafc",hoodD=flash?"#fecdd3":"#c3cede",darkC=flash?"#b4564e":"#1e293b",strapC=flash?"#8a3b34":"#0f172a",hairC=flash?"#ffd9d4":"#f2f5f9",hairD=flash?"#f3b8ae":"#d3dce8",skinC=flash?"#ffc9bd":"#ffe9e1";
+ var hoodC=flash?"#ffe4e0":"#f8fafc",hoodD=flash?"#fecdd3":"#c3cede",hoodM=flash?"#f0a49d":"#9dafc6",darkC=flash?"#b4564e":"#1e293b",strapC=flash?"#8a3b34":"#0f172a",hairC=flash?"#ffd9d4":"#f2f5f9",hairD=flash?"#f3b8ae":"#d3dce8",skinC=flash?"#ffc9bd":"#ffe9e1";
  var pinkC=flash?"#fda4af":"#f472b6",pinkL=flash?"#fecdd3":"#f0abfc",pinkP=flash?"#fecdd3":"#f9a8d4",cyanC=flash?"#fda4af":"#22d3ee",cyanP=flash?"#fecdd3":"#a5f3fc";
  var seedX=Math.abs(Math.floor(f.x))%97;
  var stp=Math.floor(time*12)+seedX; /* the 12Hz master step clock: every animated value below reads it, so her whole body moves in hard snaps */
@@ -13720,16 +13774,21 @@ function drawXeno(f){
      ellipse drawn right after covers their bases, rooting them in
      the cloth); inner ear still glows pink, tips still lit */
   F(hoodC);
-  pxR(-11.3,-6,5.8,8);pxR(-10.7,-11.5,4.9,6);pxR(-9.9,-15,3.4,4); /* left ear */
-  pxR(5.5,-6,5.8,8);pxR(5.8,-11.5,4.9,6);pxR(6.5,-15,3.4,4); /* right ear */
-  F(pinkL);pxR(-9.4,-14.6,2.2,2.2);pxR(7,-14.6,2.2,2.2); /* glowing tips */
-  F(pinkC);pxR(-9.6,-13.4,2,8.6);pxR(7.6,-13.4,2,8.6); /* inner-ear glow */
-  F(pinkL);pxR(-9.6,-13.4,0.9,8.6);pxR(7.6,-13.4,0.9,8.6); /* hot centre line */
-  F(darkC);pxLine(-10.3,-9.6,-8.1,-7.4,1.1);pxLine(-10.3,-7.4,-8.1,-9.6,1.1); /* tiny X stamped on the left ear */
-  F(cyanC);pxR(9.2,-8.5,1.4,1.4);pxR(9.2,-5.8,1.4,1.4); /* circuit dots on the right ear */
+  pxR(-11.3,-5,5.8,7);pxR(-10.7,-9,4.9,5);pxR(-9.9,-11.5,3.4,3.5); /* left ear — SHORTER (user spec): the stubby tip now tops out at -11.5 instead of -15, a small cloth nub sewn onto the hood rather than a tall ear */
+  pxR(5.5,-5,5.8,7);pxR(5.8,-9,4.9,5);pxR(6.5,-11.5,3.4,3.5); /* right ear */
+  F(pinkL);pxR(-9.4,-11.2,2.2,2);pxR(7,-11.2,2.2,2); /* glowing tips */
+  F(pinkC);pxR(-9.6,-10.4,2,6);pxR(7.6,-10.4,2,6); /* inner-ear glow */
+  F(pinkL);pxR(-9.6,-10.4,0.9,6);pxR(7.6,-10.4,0.9,6); /* hot centre line */
+  F(darkC);pxLine(-10.2,-8,-8.2,-6,1.1);pxLine(-10.2,-6,-8.2,-8,1.1); /* tiny X stamped on the left ear */
+  F(cyanC);pxR(9.2,-7.6,1.4,1.4);pxR(9.2,-5,1.4,1.4); /* circuit dots on the right ear */
+  F(hoodM);pxEll(0,8.5,16.3,13.3); /* hood silhouette edge (user spec — the hood must READ as a hood): a mid-tone outline rings the whole hood mass, so its shape separates from the white hair and the stage behind her */
   F(hoodC);pxEll(0,8.5,15,12); /* hood mass */
+  F(hoodM);pxR(-7.5,-3.4,15,1.7);pxR(-11.5,-1.9,3.2,1.7);pxR(8.3,-1.9,3.2,1.7); /* crown seam: the fold line where the hood cloth meets over the top of the head */
+  F(hoodM);pxR(-15.9,9.5,4.8,13.5);pxR(11.1,9.5,4.8,13.5); /* hood side edges: the cloth's rim running down both cheeks, draping past the jaw onto the jacket */
   F(hoodD);pxR(-15,11,3.2,11);pxR(11.8,11,3.2,11); /* hood side shade */
+  F(hoodM);pxEll(0,11,13.9,10.9); /* face-opening rim: a mid-tone band rings the opening, so the hood's edge around her face is drawn, not implied */
   F(hoodD);pxEll(0,11,13,10); /* hood rim shade behind the face */
+  F(hoodM);pxR(-13.5,19.6,27,1.7); /* hood hem: the cloth's lower edge where the hood meets the jacket */
   /* hood pins: a pixel-cat pin and a heart pin */
   F("#ffffff");pxR(11,0.5,4,3.4);pxR(11,-0.6,1.4,1.4);pxR(13.6,-0.6,1.4,1.4);F(darkC);pxR(11.9,2,0.9,0.9);pxR(13.8,2,0.9,0.9);
   F(pinkC);pxR(12.4,5.6,1.6,1.6);pxR(14.4,5.6,1.6,1.6);pxR(12.4,6.8,3.6,1.4);pxR(13.3,8.2,1.8,1.4);
@@ -14297,7 +14356,7 @@ function syncHUD(){
  $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / "+crMaxAmmo("sara")+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("BOMB "+P1.ammo+" / "+crMaxAmmo("orchid")+(P1.reloadT>0?"…":"")+" · MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / "+crMaxAmmo("travis")+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+crMaxAmmo(P1.char)+(P1.reloadT>0?"…":"")))))));
  if(P1.char==="mimi")$("ammoText").textContent=(P1.shGoneT||0)>0?("SHADE あと"+Math.ceil(P1.shGoneT)+"秒"):("SHADE "+Math.ceil(P1.shHp==null?190:P1.shHp)+" · WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")); /* MIMI&SHADE: the pill carries the 【闇ゲージ】 value (or SHADE's revival countdown while it is vanished) next to the U warp cooldown */
  if(P1.char==="xeno")$("ammoText").textContent="BITS "+P1.ammo+" / "+crMaxAmmo("xeno")+(P1.reloadT>0?"…":"")+" · WARP "+(P1.flyCd>0?P1.flyCd.toFixed(1):"READY"); /* XENO (hidden): the pill carries her warp reuse timer — the shared flyCd 2.4s paid by both ↑+K and ↓+K warps */
- if(P1.char==="no66")$("ammoText").textContent=(P1.heatStun>0)?"OVERHEAT!":("熱量 "+Math.floor(P1.heat||0)+((P1.heat||0)>65?" · 灼熱":"")); /* No.66: the pill carries the 【熱量】 heat gauge — and the OVERHEAT warning while the lock runs */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
+ if(P1.char==="no66")$("ammoText").textContent=(P1.heatStun>0)?"OVERHEAT!":("熱量 "+Math.floor(P1.heat||0)+((P1.heat||0)>65?" · 灼熱":"")); /* No.66: the pill carries the 【熱量】 heat gauge — and the OVERHEAT warning while the lock runs */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:(P1.char==="xeno"?5:3)))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
  else{db.textContent="DASH";db.classList.remove("cooling")}
@@ -14308,7 +14367,7 @@ function syncHUD(){
  $("ultBtn").textContent=P1.meter>=100?(P1.char==="kojiro"?"ULT ×"+Math.floor(P1.meter/100):"ULT"):"ULT "+Math.floor(P1.meter)+"%";
  /* keyboard HUD (bottom bar) mirrors the touch boxes */
  var chainTxt=P1.char==="warden"?"BATON":(P1.char==="kojiro"?"KEN":(P1.char==="axe"?"AXE":(P1.char==="sara"?"RUSH":(P1.char==="orchid"?"VINE":(P1.char==="travis"?"MIC":(P1.char==="smiley"?"KNIFE":(P1.char==="no66"?"MECH":"CLAW")))))));
- $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
+ $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:(P1.char==="xeno"?5:3)))+1:1)));
  $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"ROCK":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"NUTRI":(P1.char==="travis"?"BLOW":(P1.char==="smiley"?"STAB":(P1.char==="no66"?"GATLING":(P1.char==="xeno"?"WARP":"TAIL"))))))));
  $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / "+crMaxAmmo("sara")+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("BOMB "+P1.ammo+" / "+crMaxAmmo("orchid")+(P1.reloadT>0?"…":"")+" · MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / "+crMaxAmmo("travis")+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+crMaxAmmo(P1.char)+(P1.reloadT>0?"…":"")))))));
  if(P1.char==="mimi")$("kbAmmo").textContent="WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY");
@@ -14403,11 +14462,11 @@ function simStepFrame(getInp){
      var hmT=null,hmD=1e18;for(var hmi=0;hmi<fighters.length;hmi++){var hmq=fighters[hmi];if(hmq===pr.owner||hmq.dead)continue;var hmdx=hmq.x-pr.x,hmdy=(hmq.y+hmq.h/2)-pr.y,hmd=hmdx*hmdx+hmdy*hmdy;if(hmd<hmD){hmD=hmd;hmT=hmq}}
      if(hmT){var hca=Math.atan2(pr.vy,pr.vx),hta=Math.atan2((hmT.y+hmT.h/2)-pr.y,hmT.x-pr.x),hda=hta-hca;while(hda>Math.PI)hda-=2*Math.PI;while(hda<-Math.PI)hda+=2*Math.PI;var hmx=3.8*STEP;if(hda>hmx)hda=hmx;else if(hda<-hmx)hda=-hmx;var hna=hca+hda,hsp=(crXVal(pr.owner?pr.owner.char:null,"proj:"+pr.kind,"spd")||(pr.kind==="umissile"?500:470));pr.vx=Math.cos(hna)*hsp;pr.vy=Math.sin(hna)*hsp}
    }
-   if(pr.kind==="xdart"){ /* XENO ult デジタルの核: flies straight ahead at a constant 396 u/s (330 x1.2, user spec), STEERED by the firing player's direction input while it flies — the heading turns toward the held direction at a capped 5.2 rad/s, and with no direction held it keeps its course. Only the local player's own bullet can ever exist (XENO is a hidden versus / training character), so the input is read straight from keys / stick. It also sheds still digital blocks as it goes */
+   if(pr.kind==="xdart"){ /* XENO ult デジタルの核: flies straight ahead at a constant 475 u/s (396 x1.2, user spec), STEERED by the firing player's direction input while it flies — the heading turns toward the held direction at a capped 5.2 rad/s, and with no direction held it keeps its course. Only the local player's own bullet can ever exist (XENO is a hidden versus / training character), so the input is read straight from keys / stick. It also sheds still digital blocks as it goes */
      var xo2=pr.owner;
      if(xo2&&xo2.isPlayer&&!xo2.dead){
        var sdx2=((keys.right?1:0)-(keys.left?1:0))+stick.dx,sdy2=((keys.down?1:0)-(keys.jump?1:0))+stick.dy;
-       if(Math.abs(sdx2)>0.25||Math.abs(sdy2)>0.25){var xca2=Math.atan2(pr.vy,pr.vx),xta2=Math.atan2(sdy2,sdx2),xda3=xta2-xca2;while(xda3>Math.PI)xda3-=2*Math.PI;while(xda3<-Math.PI)xda3+=2*Math.PI;var xmx2=5.2*STEP;if(xda3>xmx2)xda3=xmx2;else if(xda3<-xmx2)xda3=-xmx2;var xna2=xca2+xda3;pr.vx=Math.cos(xna2)*396;pr.vy=Math.sin(xna2)*396}
+       if(Math.abs(sdx2)>0.25||Math.abs(sdy2)>0.25){var xca2=Math.atan2(pr.vy,pr.vx),xta2=Math.atan2(sdy2,sdx2),xda3=xta2-xca2;while(xda3>Math.PI)xda3-=2*Math.PI;while(xda3<-Math.PI)xda3+=2*Math.PI;var xmx2=5.2*STEP;if(xda3>xmx2)xda3=xmx2;else if(xda3<-xmx2)xda3=-xmx2;var xna2=xca2+xda3;pr.vx=Math.cos(xna2)*475;pr.vy=Math.sin(xna2)*475}
      }
      if(Math.random()<0.5)pushParticle({x:pr.x+(Math.random()-0.5)*10,y:pr.y+(Math.random()-0.5)*10,vx:0,vy:0,life:0.15,col:XBIT_COLS[Math.floor(time*14+pr.x*0.07)%4],size:2.2+Math.random()*2.4,amb:1});
    }
@@ -14431,7 +14490,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
-       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||8):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="xbit"&&(pr.hue||0)===0)xenoCyberExplosion(pr.x,pr.y,pr.vx>0?1:-1); /* XENO 赤い弾 vs SHADE: the cyber explosion fires on a shade hit too — same detonation as a body hit */if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||8):(pr.kind==="xdart"?28:13)))))))))))))))))))));if(pr.kind==="pellet"||pr.kind==="pellet0"){var _shFx=hitFxMute;hitFxMute=1;applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");hitFxMute=_shFx}else applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="xbit"&&(pr.hue||0)===0)xenoCyberExplosion(pr.x,pr.y,pr.vx>0?1:-1); /* XENO 赤い弾 vs SHADE: the cyber explosion fires on a shade hit too — same detonation as a body hit */if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
@@ -14444,8 +14503,8 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="sonic"){applyHit(pr.owner,foe,34,660,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y)} /* TRAVIS ult ワールドツアー (user spec): each giant wave = 34 dmg / KB 660 (was 17 / 520), box 150x110 via the hit test above */
        else if(pr.kind==="mimiball"){applyHit(pr.owner,foe,52,920,pr.vx>0?1:-1,-0.35,true,pr.x,pr.y);(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,16,"#f9a8d4",240);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#fde68a",44)} /* MIMI&SHADE ult 大好きだよSHADE: the giant light-and-dark orb = 52 dmg / KB 920, PIERCING — the foe is recorded in hitSet (one hit per foe) and the orb is NOT consumed below, so it flies on through everyone in its path; box 152x130 via the hit test above (was 46 / 880 / 130x110, requester balance spec) */
        else if(pr.kind==="lwave"){applyHit(pr.owner,foe,6,210,pr.vx>0?1:-1,-0.28,false,pr.x,pr.y);spawnParticles(pr.x,pr.y-4,10,"#fef9c3",200);spawnRing(pr.x,pr.y+6,"#fde68a",30)} /* MIMI ↓+K これならできるよ！: the ground-hugging light shockwave = 6 dmg / KB 210 (nerfed from 12 / 420, user spec) */
-       else if(pr.kind==="pellet"){applyHit(pr.owner,foe,1,50,pr.vx>0?1:-1,-0.05,false,pr.x,pr.y,false,0.16);spawnParticles(pr.x,pr.y,3,"#fde68a",130)} /* No.66 gatling pellet (J2 chain / J+K): 1 dmg, and EVERY pellet inflicts its own 0.16s hitstun (the hs argument — user spec: 1発ごとに被弾硬直あり） */
-       else if(pr.kind==="pellet0"){applyHit(pr.owner,foe,1,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true);if((pr.owner.heat||0)>65){foe.burnT=Math.max(foe.burnT||0,1.2);foe.burnBy=pr.owner}spawnParticles(pr.x,pr.y,3,"#fde68a",130)} /* No.66 K gatling pellet: 1 dmg and NO knockback at all (noKb — no launch, no stun); the 灼熱 burn rider is applied by hand here because applyHit's rider skips noKb hits */
+       else if(pr.kind==="pellet"){var _pFx=hitFxMute;hitFxMute=1;applyHit(pr.owner,foe,1,50,pr.vx>0?1:-1,-0.05,false,pr.x,pr.y,false,0.16);hitFxMute=_pFx} /* No.66 gatling pellet (J2 chain / J+K): 1 dmg, and EVERY pellet inflicts its own 0.16s hitstun (the hs argument — user spec: 1発ごとに被弾硬直あり）. 被弾エフェクト削除 (user request): the hit lands under hitFxMute, so a pellet shows NO hit effect at all — no particles (the old 3-particle puff at the impact point is gone too), ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash; damage, KB, hitstun, the 灼熱 burn rider, combo and kill bookkeeping all run exactly as before */
+       else if(pr.kind==="pellet0"){var _p0Fx=hitFxMute;hitFxMute=1;applyHit(pr.owner,foe,1,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true);hitFxMute=_p0Fx;if((pr.owner.heat||0)>65){foe.burnT=Math.max(foe.burnT||0,1.2);foe.burnBy=pr.owner}} /* No.66 K gatling pellet: 1 dmg and NO knockback at all (noKb — no launch, no stun); the 灼熱 burn rider is applied by hand here because applyHit's rider skips noKb hits. 被弾エフェクト削除 (user request): same muting as "pellet" above — the hit lands under hitFxMute and the old 3-particle impact puff is gone, so a K / 空中K gatling bullet shows NO hit effect at all; damage and the burn rider run exactly as before */
        else if(pr.kind==="gren"||pr.kind==="glauncher"){explodeGren(pr,pr.kind==="gren"?14:16,pr.kind==="gren"?620:680)} /* No.66 grenades burst the instant they touch a foe: ダウンアトミック drops = 14 dmg / KB 620, the launcher grenade = 16 / KB 680, both in the 95-radius burst (explodeGren) */
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
