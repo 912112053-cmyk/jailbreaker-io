@@ -89,8 +89,12 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 #lbPanel .lbTitle{font-size:17px;letter-spacing:.28em;color:#cffafe;text-align:center}
 #lbPanel .lbRow{display:flex;justify-content:space-between;gap:26px;font-size:15px;line-height:1.45}
 #lbPanel .lbRow b{font-weight:400}
-#scorePill{top:calc(10px + 118px);left:50%;transform:translateX(-50%);padding:4px 16px;font-size:15px;letter-spacing:.12em}
-#timerPill{top:calc(10px + 152px);left:50%;transform:translateX(-50%);padding:2px 12px;font-size:12.5px;color:#a9dfee;letter-spacing:.14em}
+/* score + timer: a column under the top-left minimap (canvas draws it
+   at 12,10 sized 218x118, and canvas px == CSS px here), so they can
+   never collide with the centred leaderboard however many rows it has */
+#mapHud{position:absolute;left:12px;top:134px;width:218px;display:flex;flex-direction:column;gap:5px;z-index:7}
+#scorePill{position:static;padding:4px 16px;font-size:15px;letter-spacing:.12em;text-align:center}
+#timerPill{position:static;padding:2px 12px;font-size:12.5px;color:#a9dfee;letter-spacing:.14em;text-align:center}
 #fpsPill{top:64px;right:10px;padding:5px 12px;font-size:12.5px;line-height:1.5;color:#a9cfe0;text-align:left}
 #netDiag{display:none;margin-top:3px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;line-height:1.5;color:#7ee2c0;white-space:pre}
 .cornerBtns{position:absolute;top:10px;right:10px;z-index:8;display:flex;gap:6px}
@@ -307,6 +311,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
 #specBar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:rgba(3,14,26,.85);border:1.5px solid rgba(103,232,249,.35);border-radius:999px;padding:5px 12px;z-index:30;max-width:94vw;flex-wrap:wrap;justify-content:center}
 #specBar .specLbl{color:#7dd3fc;font-weight:900;font-size:12px;white-space:nowrap}
 #specBtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#specSpdBtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .specBtn{background:#1e293b;border:1.5px solid #475569;color:#fff;border-radius:999px;padding:4px 12px;font-weight:900;font-size:12.5px;min-height:30px}
 .specBtn.sel{border-color:#4ade80;background:rgba(74,222,128,.22);color:#bbf7d0}
 #gameScreen.specOn .touchUI,#gameScreen.specOn #kbUI{display:none!important}
@@ -361,8 +366,10 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
     <div class="lbTitle">LEADERBOARD</div>
     <div id="lbRows"></div>
   </div>
-  <div class="hudPanel pix" id="scorePill">SCORE: <span id="scoreText">0</span></div>
-  <div class="hudPanel pix" id="timerPill"><span id="modeLabel">VS CPU</span>　<span id="timerText">3:00</span></div>
+  <div id="mapHud">
+    <div class="hudPanel pix" id="scorePill">SCORE: <span id="scoreText">0</span></div>
+    <div class="hudPanel pix" id="timerPill"><span id="modeLabel">VS CPU</span>　<span id="timerText">3:00</span></div>
+  </div>
   <div class="hudPanel pix" id="comboPill"><span id="comboText"></span></div>
   <div class="hudPanel pix" id="fpsPill">FPS: <span id="fpsText">60</span><br>MODE: <span id="pingText">LOCAL</span><span id="lsModeRow" style="display:none"><br>方式: <span id="lsModeText">入力同期</span></span><div id="netDiag"></div></div>
   <div class="cornerBtns"><button class="gbtn" id="pauseBtn">⏸ ポーズ</button><button class="gbtn" id="resetBtn">↺ リセット</button><button class="gbtn primary" id="backBtn">← メニュー</button></div>
@@ -438,7 +445,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
       <button class="chatSideBtn" id="chatMuteBtn" type="button">MUTE</button>
     </div>
   </div>
-  <div id="specBar"><span class="specLbl">観戦 視点</span><span id="specBtns"></span></div>
+  <div id="specBar"><span class="specLbl">観戦 視点</span><span id="specBtns"></span><span class="specLbl">速度</span><span id="specSpdBtns"></span></div>
 </section>
 
 <!-- modal -->
@@ -460,6 +467,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["15:59"],tag:"新機能",title:"スコア・タイム表示をミニマップの下へ移動／観戦に再生速度（×1・×2・×4）を追加",
+   items:["試合中のスコアとタイムの表示位置を変更しました：リーダーボードと重ならないよう、画面中央の上から、左上のミニマップの下へ移動しました",
+          "CREATIVE MODEの観戦に再生速度の切り替えを追加しました：画面下の観戦バーの「速度」ボタン（×1／×2／×4）で、CPU同士の試合を観戦中そのまま倍速で進められます。物理や技の性能は変わらず、試合の進む速さだけが変わります",
+          "BUILD_ID を v292 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["15:50"],tag:"調整",title:"AXE ↓+Kの吹っ飛ばし調整（縦80%・横5%）／AXE 空中↓+Jの判定拡大＋持続延長／TRAVIS 空中KのKB強化と表示の取り違え修正",
    items:["AXEの↓+K「震撃」の吹っ飛ばしを変更しました：縦への吹っ飛びは従来の80%（浮き上がる頂点は約137→約88）、横への吹っ飛びは従来の5%になり、当たった相手はほぼ真上に浮き上がります。ダメージ24・KB 710・判定230×102は変わりません",
           "AXEの空中↓+J「下斧」の判定を広げました（下方向 112×98 → 160×98）。あわせて判定の持続時間が長くなり、発生から0.12秒間持続します（同じ相手には1回だけ当たります）。ダメージ44・KB 770は変わりません",
@@ -818,10 +829,6 @@ var UPDATE_LOG=[
   items:["↓+J「アイスフット」：判定 80×34→前80×34に変更しました。判定は前方だけに出るようになり、背後の相手には当たらなくなります（判定の大きさ自体は変わりません）",
          "吹き飛ばしはこれまで通り KB 620（真上方向）で、当たった相手は横へは飛ばず真上へ吹き飛びます。ダメージ8・被弾硬直0.36秒・氷の床（幅150・3.5秒残る／乗った相手は凍結1.2秒）など、その他の数値は変更ありません",
          "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv225に更新しました。対戦前に全員がページを再読み込みしてください"]},
- {date:"2026/11/16",times:["00:30"],tag:"調整",title:"KAIRO：前+J「ブリンク斬り」の調整（KB低下＋連続使用ペナルティ追加）",
-  items:["前+J「ブリンク斬り」：KB 440→180に変更しました",
-         "追加仕様：1ヒット目を当ててから2秒以内にもう一度使うと、その回の後硬直が0.6秒（完全硬直）に変化します（その間は移動・ジャンプ・ダッシュ・次の技のすべてができません）。ヒットするたびに2秒の猶予は数え直されます",
-         "技一覧の表示も実装の数値に合わせて更新しました。オンライン対戦のビルド版数をv224に更新しました。対戦前に全員がページを再読み込みしてください"]},
 ];
 var UPD_TAGS=["すべて","新機能","大型更新","修正・調整","公開"];
 function updTagStyle(tag){
@@ -1232,7 +1239,7 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計を整数で数えた点数です。ダメージ自体は小数点まで計算されます）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>では開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません。全員CPU同士の対戦です）。試合中はいつでも全体視点と各キャラの視点を切り替えられます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンラインではルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計を整数で数えた点数です。ダメージ自体は小数点まで計算されます）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>では開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません。全員CPU同士の対戦です）。試合中はいつでも全体視点と各キャラの視点を切り替えられ、再生速度（×1／×2／×4）も変更できます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンラインではルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
 $("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
@@ -1506,7 +1513,7 @@ function acrossMainFloor(a,b){
       are ABSOLUTE values, so the funnel patches are idempotent
       (meleeHit -> applyHit applies the same value twice). */
 var crCfg={},crEff=null,crActive=false,crNetCfg=null,crSpec=false,crKeyCtx=null;
-var specView=0,zoomCur=1,camFocusF=null;
+var specView=0,specSpeed=1,zoomCur=1,camFocusF=null; /* specSpeed: CREATIVE spectate playback rate (1 / 2 / 4), set from the 速度 buttons in the spectate bar; the loop scales the sim-time feed by it (spectate only) */
 var CR_BASE=[["hp","最大HP",1,9999,1],["spd","移動速度 ×",0.1,5,0.01],["air","空中速度 ×",0.1,5,0.01],["dash","ダッシュ速度",100,3000,10],["kb","KB耐性 ×",0.1,5,0.01],["fall","落下速度 ×",0.2,5,0.01]];
 /* per-move defaults, read off the engine's own numbers (the same
    values the move list shows): [stateKey, label, dmg, kb] — kb
@@ -1659,6 +1666,17 @@ function crBuildSpecBar(){
  bar.style.display="flex";
  var els=btns.querySelectorAll(".specBtn");
  for(var j=0;j<els.length;j++){els[j].onclick=function(){specView=+this.getAttribute("data-specview");crBuildSpecBar();beep(600,.05)}}
+ /* playback speed buttons (×1 / ×2 / ×4): spectate only — the loop
+    multiplies the sim-time feed by specSpeed, so the CPU match runs
+    faster without touching any gameplay constant */
+ var spd=$("specSpdBtns");
+ if(spd){
+  var sh="";
+  [1,2,4].forEach(function(s){sh+='<button class="specBtn'+(specSpeed===s?" sel":"")+'" data-specspd="'+s+'">×'+s+'</button>'});
+  spd.innerHTML=sh;
+  var sps=spd.querySelectorAll(".specBtn");
+  for(var k=0;k<sps.length;k++){sps[k].onclick=function(){specSpeed=+this.getAttribute("data-specspd");crBuildSpecBar();beep(700,.05)}}
+ }
 }
 document.addEventListener("keydown",function(e){
  if(!running||mode!=="creative"||!crSpec||matchOver)return;
@@ -1801,7 +1819,7 @@ function startMatch(m){
  if(m==="creative"){crActive=true;crEff=crCfg}
  else if(m==="online"&&crNetCfg){crActive=true;crEff=crNetCfg}
  else{crActive=false;crEff=null}
- specView=0;zoomCur=1;var specFirst=(m==="creative"&&crSpec);
+ specView=0;specSpeed=1;zoomCur=1;var specFirst=(m==="creative"&&crSpec);
  $("menu").style.display="none";$("gameScreen").classList.add("on");
  resize();
  fighters=[];respawnSelectPending=false;csMode="start";
@@ -2257,7 +2275,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v291";
+var BUILD_ID="v292";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2299,7 +2317,7 @@ function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0
 function onlineHTML(msg){
  return '<h2>CREATIVE MODE</h2>'
  +'<p>カスタム設定で遊ぶモードです。観戦・カスタマイズ・CPU対戦・オンライン対戦ができます。カスタマイズの変更は <b style="color:#fff">CREATIVE MODE の試合でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。</p>'
- +'<div class="bindRow"><div><span class="bname">👁 観戦（CPU vs CPU）</span><br><span class="bnote">CPU同士を戦わせて観戦。開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません）。試合中はいつでも全体視点と各キャラの視点を切り替えられます</span></div><button class="bindKey" id="crSpecBtn">観戦する</button></div>'
+ +'<div class="bindRow"><div><span class="bname">👁 観戦（CPU vs CPU）</span><br><span class="bnote">CPU同士を戦わせて観戦。開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません）。試合中はいつでも全体視点と各キャラの視点を切り替えられ、再生速度（×1／×2／×4）も変更できます</span></div><button class="bindKey" id="crSpecBtn">観戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">⚔ CPU対戦</span><br><span class="bnote">カスタム設定を有効にして、いつものCPU対戦</span></div><button class="bindKey" id="crCpuBtn">対戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">🎨 カスタマイズ</span><br><span class="bnote">全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更</span></div><button class="bindKey" id="crCustomBtn">カスタマイズ</button></div>'
  +'<p style="margin-top:14px">友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。全員の端末が同じ計算を回し、Supabase の Realtime 経由で各自の操作だけを送り合う方式です。自分の操作は即座に反映され、相手の操作は届いた時点で巻き戻して計算し直す（ロールバック）ため、通信の揺れがそのまま画面のブレになりません（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
@@ -12884,7 +12902,7 @@ function draw(){
     drawing the fog before the overlay changes nothing visible. */
  {ctx.fillStyle="rgba(165,243,252,.05)";for(var fgi=0;fgi<3;fgi++){var fgx=((time*20*(fgi+1))%(cw+620))-310+fgi*70;ctx.beginPath();ctx.ellipse(fgx,ch*0.92-fgi*24,310,16,0,0,6.29);ctx.fill()}} /* the drifting screen fog is drawn at every quality tier (owner directive: effects are never cut) */
  drawMinimap();
- if(hitboxViewerOn()){ctx.fillStyle="rgba(3,12,22,.66)";ctx.fillRect(12,134,Math.min(404,cw-24),22);ctx.font="12px 'DotGothic16','Noto Sans JP',sans-serif";ctx.fillStyle="#fecdd3";ctx.fillText("判定表示ON： 赤=攻撃判定 / 緑=喰らい判定 / 橙=飛び道具・設置",18,149)}
+ if(hitboxViewerOn()){ctx.fillStyle="rgba(3,12,22,.66)";ctx.fillRect(12,196,Math.min(404,cw-24),22);ctx.font="12px 'DotGothic16','Noto Sans JP',sans-serif";ctx.fillStyle="#fecdd3";ctx.fillText("判定表示ON： 赤=攻撃判定 / 緑=喰らい判定 / 橙=飛び道具・設置",18,211)} /* y=196: below the score/timer pills that now sit under the minimap (they end ~y191) */
  if(ovlCv)ctx.drawImage(ovlCv,-16,-16,cw+32,ch+32);
  /* restore real (logic) positions changed for render interpolation */
  for(var ri2=0;ri2<swapped.length;ri2++){swapped[ri2].x=swapped[ri2]._rx;swapped[ri2].y=swapped[ri2]._ry;if(swapped[ri2]._rshx!==undefined){swapped[ri2].shX=swapped[ri2]._rshx;swapped[ri2].shY=swapped[ri2]._rshy;swapped[ri2]._rshx=undefined;swapped[ri2]._rshy=undefined}}
@@ -13127,9 +13145,10 @@ function loop(ts){
  if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;markDraw(ts);draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints. The paused repaint always draws (it is a one-shot, not a rate) so the pause menu never sits over a stale frame */
  pausedDrawn=false;
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;if(renderDue(ts)){markDraw(ts);draw()}syncHUD();return}
- acc+=Math.min(0.1,dtms/1000);
+ var specSpd=(mode==="creative"&&crSpec)?specSpeed:1; /* CREATIVE spectate 倍速： the 速度 buttons scale how much sim time each display frame feeds the accumulator — the sim still steps at a fixed 1/60, so physics and balance are untouched; only more steps run per frame (1 everywhere else) */
+ acc+=Math.min(0.1,dtms/1000)*specSpd;
  var STEP=1/60;
- if(acc>STEP*3)acc=STEP*3; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame. The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
+ if(acc>STEP*3*specSpd)acc=STEP*3*specSpd; /* PERF (1P lag fix): never run more than 3 catch-up steps per frame (× the spectate speed, so ×4 spectating is not clamped back to ×3). The local sim shares the main thread with rendering, so after any hitch the unbounded accumulator demanded MORE steps next frame, which hitched again — a spiral that made single-player lag worse and worse. Excess time is now dropped (a brief slow-motion beat under extreme load) and the game recovers immediately. */
  while(acc>=STEP){acc-=STEP;simStepFrame(null)}
  sbPump();
  drawAlpha=Math.min(1,acc/STEP);
