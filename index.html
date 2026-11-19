@@ -460,6 +460,9 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["11:56"],tag:"調整",title:"KAIROウルト：ブースト終了時に速度が即座に通常へ戻るように",
+   items:["KAIROのウルト「アブソリュート・ゼロ」：発動直後の0.1秒間の速度ブースト（通常の3倍）が終わる瞬間、速度が徐々に減速するのではなく、その場で即座に通常速度に戻るようになりました。ブースト中の3倍という倍率と、攻撃の発生が発動から0.1秒後である点は変わりません",
+          "BUILD_ID を v286 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["11:40"],tag:"調整",title:"KAIROウルト：発動直後の速度ブーストを3倍に",
    items:["KAIROのウルト「アブソリュート・ゼロ」：発動した瞬間から0.1秒間だけ移動速度が通常の3倍になりました（従来は1.5倍）。攻撃の発生が発動から0.1秒後である点は変わりません",
           "BUILD_ID を v285 に更新しました。対戦前に全員がページを再読み込みしてください"]},
@@ -880,7 +883,7 @@ var movesHTML='<h2>❄ Kairo（カイロ）— 技一覧</h2><p>氷の狐。足�
 +'<div class="moveRow"><div><b>↓+K — アイスエッジ</b><p>地面から左右へ三段階の氷を生やして攻撃する。近い段ほど高く・重く、すべて真上へ吹き上げる。技中はその場を動けず<b>ジャンプもできない</b>。さらに<b>後硬直（完全硬直）の間も動けず、ジャンプもワザもできない</b>、全体の拘束が長い大技。</p>'+mvSpec(mvS('ダメージ','一段目62／二段目56／三段目48')+mvS('KB','一段目800（真上へ）／二段目720（真上へ）／三段目920')+mvS('発生','0.2秒／二段目0.3秒／三段目0.4秒')+mvS('全体','1.38秒（動けない・ジャンプ不可）')+mvS('後硬直','0.62秒（完全硬直）')+mvS('判定','一段目52×140／二段目52×120／三段目52×90'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↑+K — フロストスピン</b><p><b>小さな氷柱を纏って</b>回転攻撃しながら、vy -550で<b>0.55秒間上昇し続ける</b>。0.11秒間隔で前後両側へ最大5ヒット。復帰にも追撃にも使える。</p>'+mvSpec(mvS('ダメージ','前6／後6 ×最大5')+mvS('KB','前180／後180')+mvS('発生','即時')+mvS('全体','0.55秒')+mvS('後硬直','0.69秒')+mvS('判定','68×62')+mvS('上昇','vy -550（0.55秒間）')+mvS('再使用','4.0秒')+mvS('着地硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — アイスシャード</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>氷の欠片を撃つ。3発まで撃てて、撃った分は1.75秒ごとに1発ずつ自動リロードされる。当たると相手が 1.2秒 凍って動きが鈍る（移動速度 0.45倍）。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','260')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','660')+mvS('射程','約860（1.3秒）')+mvS('リロード','1.75秒')+mvS('凍結','1.2秒（移動速度0.45倍）'))+'</div></div>'
-+'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。<b>攻撃の発生は発動から0.1秒後</b>で、<b>発動した瞬間から0.1秒間だけ移動速度が3倍</b>になる。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','48')+mvS('KB','900')+mvS('発生','0.1秒')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
++'<div class="moveRow"><div><b>L — アブソリュート・ゼロ（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>吹雪を起こす大技。回転斬りのモーションで周囲を大きく凍らせ、強烈に吹っ飛ばす。攻撃を当てるほどゲージが溜まる（溜まりにくい調整：満タンまで従来の約2.4倍のヒットが必要）。ゲージMAX中は体に青い電撃オーラがまとわりつく。<b>ウルトを当てるとゲージが即再チャージ</b>されて連続で撃てるが、連続ヒットは<b>最大5回まで</b>。5回使い切ると連続カウントはその場で<b>リセット</b>され、ゲージは0から溜め直しになる。外しても連続は途切れてリセットされ、倒された時もリセットされる。<b>攻撃の発生は発動から0.1秒後</b>で、<b>発動した瞬間から0.1秒間だけ移動速度が3倍</b>になる。<b>0.1秒が終わった瞬間、速度は徐々に減速せず即座に通常速度に戻る</b>。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','48')+mvS('KB','900')+mvS('発生','0.1秒')+mvS('全体','0.62秒')+mvS('後硬直','0.79秒')+mvS('判定','横135×縦125（周囲）'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。連発はできないので、攻め・復帰・回避のどこで使うか選ぶ技。</p>'+mvSpec(mvS('速度','1100')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var wardenMovesHTML='<h2>🛡 WARDEN（ウォーデン）— 技一覧</h2><p>刑務所の看守ロボ。重量級で足は遅いぶん、一撃が重く吹っ飛ばしが強いパワータイプ。バトンで制圧し、ボルトで撃ち抜き、必殺のスカイフック・クレーンで上空から確保して叩き落とす。</p>'
@@ -2217,7 +2220,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v285";
+var BUILD_ID="v286";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9824,7 +9827,7 @@ function stepFighter(f,dt,input,foe){
  f.flyCd=Math.max(0,(f.flyCd||0)-dt); /* SARA 飛翔 cooldown */
  if(f.char==="sara"&&f.ammo<crMaxAmmo("sara")){f.javT=(f.javT||0)-dt;if(f.javT<=0){f.ammo++;f.javT=f.ammo<crMaxAmmo("sara")?crJavInt():0}} /* SARA ファイアジャヴェリン装填: 8秒ごとに1発回復（最大2発） */
  f.slowT=Math.max(0,(f.slowT||0)-dt); /* ORCHID ポイズンショット slow: movement x0.88 while it lasts */
- f.ultBoostT=Math.max(0,(f.ultBoostT||0)-dt); /* KAIRO ult: movement-speed x3 boost timer (0.1s from activation, set in startAttackCore) */
+ var ultBoostWas=(f.ultBoostT||0)>0;f.ultBoostT=Math.max(0,(f.ultBoostT||0)-dt);var ultBoostEnded=ultBoostWas&&f.ultBoostT<=0; /* KAIRO ult: movement-speed x3 boost timer (0.1s from activation, set in startAttackCore). ultBoostEnded marks the exact frame the window closes — the movement block below snaps vx straight back to the normal cap on that frame instead of letting the 3x speed bleed off gradually (user spec) */
  f.tbT=Math.max(0,(f.tbT||0)-dt); /* TRAVIS ult guard-break mark: while this runs, this fighter cannot guard that activation's remaining waves (set in applyHit) */
  f.buffT=Math.max(0,(f.buffT||0)-dt); /* ORCHID 栄養補給 speed buff: movement x1.07 for 8s */
  /* SARA モードカオス duration: 13s max — when chaosT runs out the mode
@@ -10553,6 +10556,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
  if(f.char==="orchid"&&f.buffT>0){RMAX*=1.09;AMAX*=1.09} /* ORCHID 栄養補給 buff: +9% movement for 9s (user balance spec — was +7% / 8s) */
  if(f.char==="smiley"&&(f.awakenT||0)>0){RMAX*=1.15;AMAX*=1.15} /* SMILEY Berserker: +15% movement speed, ground and air (user spec; was +14%) */
  if((f.ultBoostT||0)>0){RMAX*=3;AMAX*=3;RACC*=3;AACC*=3} /* KAIRO ult (user spec): for 0.1s from the moment the ult is activated, movement speed is x3 — caps AND accelerations, ground and air, so he actually covers 3x ground inside the window instead of just raising a cap he cannot reach */
+ if(ultBoostEnded&&f.hitstun<=0&&!f.pushBy){var ubCap=f.onGround?RMAX:AMAX;if(f.vx>ubCap)f.vx=ubCap;else if(f.vx<-ubCap)f.vx=-ubCap} /* KAIRO ult (user spec): the instant the 0.1s boost ends, any speed above the normal cap snaps straight back to that cap in this same frame — no gradual deceleration from 3x down to 1x. RMAX/AMAX here are the un-boosted caps (all other modifiers like freeze/slow already applied). Knockback flight (hitstun / being carried by a charge) is not movement speed, so it is left alone */
  var dirIn=(input.right?1:0)-(input.left?1:0);
  if(inUltCharge){
    f.vx=f.ultDir*240;f.face=f.ultDir; /* unstoppable, unsteerable — charge speed 210 -> 240 (user spec) */
