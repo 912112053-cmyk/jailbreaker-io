@@ -1427,7 +1427,7 @@ function press(a){if(mode==="online"&&running&&typeof ls!=="undefined"&&ls&&ls.a
  if(typeof sv!=="undefined"&&sv&&sv.active&&mode==="online"&&running&&!(typeof sbHostLive!=="undefined"&&sbHostLive)){svPressQ.push(a);return}buf[a]=performance.now()}
 function consume(a){var t=buf[a];if(t&&performance.now()-t<=BUFFER_S*1000){delete buf[a];return true}return false}
 function consumeWithin(a,ms){var t=buf[a];if(t&&performance.now()-t<=ms){delete buf[a];return true}if(t)delete buf[a];return false}
-var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[],ignisPillars=[],decoys=[]; /* decoys: XENO ↓+K ホログラムデコイ — autonomous hologram clones (3s, one hit shatters them); XENO is versus/training-only, so this list never needs snapshot/rollback sync */ /* ignisPillars: SARA ↓+U イグニスボムの火柱 — the pillar IS the hitbox: it stands for 1.4s in simStepFrame's tail and hits each foe once per pillar (hitSet) */
+var projectiles=[],particles=[],floaters=[],icePatches=[],rings=[],fireOrbs=[],poisonMists=[],mines=[],darkFields=[],ignisPillars=[],decoys=[]; /* decoys: XENO ↓+K ホログラムデコイ — autonomous hologram clones (3s, two hits bring them down; projectiles pass through); XENO is versus/training-only, so this list never needs snapshot/rollback sync */ /* ignisPillars: SARA ↓+U イグニスボムの火柱 — the pillar IS the hitbox: it stands for 1.4s in simStepFrame's tail and hits each foe once per pillar (hitSet) */
 var shake=0,hitstop=0,time=0,wins=0,hitFxMute=0; /* hitFxMute: while 1, applyHit / applyShadeDot deal their damage, knockback and bookkeeping exactly as usual but spawn NO hit feedback at all (no particles, ring, sparks, FX bursts, damage floater, hitstop, shake, beep or hurt flash). It is set only around the damage ticks of SARA's 火炎放射 (flameMode 1) and ORCHID's サンフラワー (flameMode 3) — user request: those two L ults show no effect when they hit. ORCHID's beam visual is drawn separately and stays untouched; SARA's own flame visuals were removed later with all her other move effects (v267) */
 var noHitParticles=0; /* noHitParticles: while 1, applyHit / applyShadeDot deal their damage and bookkeeping exactly as usual but spawn NO hit PARTICLES (the translucent particle squares, spark streaks and FX-burst textures) — ring, damage floater, hitstop, shake, beep and hurt flash all still fire. It is set only around the burn DoT ticks in stepFighter (user request: 燃焼の継続ダメージで発生する被弾パーティクルも削除). Independently of this flag, a hit whose ATTACKER is SARA never spawns hit particles either (user request: SARAが攻撃を発動した時の半透明のパーティクルを削除) — that attacker-side rule lives in applyHit / applyShadeHit / applyShadeDot themselves */
 var mode="versus",running=false,paused=false,matchOver=false,countdown=0,timer=180,lastCountTxt="",lastFinalTxt="";
@@ -2357,7 +2357,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v302";
+var BUILD_ID="v303";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9119,9 +9119,9 @@ function xenoPhaseFx(x,y,face,size){spawnVecBurst("xphase",x,y,size||56,0.3,0,fa
    its owner through applyHit / her own projectiles, so score /
    combo / meter all behave like her own hits. The tick lives in
    simStepFrame's tail next to the other placed-object filters. It is FRAGILE by design:
-   ONE melee hit (a melee box or a direct applyHit attack)
-   shatters it instantly in a glitch collapse (destroyDecoy,
-   hooked from meleeHit / shadeHit / applyHit) — but PROJECTILES
+   TWO real hits bring it down — the first only destabilises the
+   projection, the second shatters it in a glitch collapse
+   (hitDecoy, hooked from meleeHit / shadeHit / applyHit) — but PROJECTILES
    never touch it at all: every shot passes straight through the
    hologram (user spec), so there is deliberately no projectile
    hook. The 10s reuse timer (f.decoyCd) is
@@ -9138,6 +9138,27 @@ function destroyDecoyFx(dc,quiet){
 function destroyDecoy(dc,quiet){
  var dix=decoys.indexOf(dc);if(dix<0)return;
  decoys.splice(dix,1);destroyDecoyFx(dc,quiet);
+}
+/* XENO デコイ durability (user spec): the hologram now takes TWO
+   real hits to bring down — hitDecoy is the single funnel every
+   damaging route (meleeHit / shadeHit / applyHit) calls instead
+   of destroyDecoy. The first hit only destabilises the projection
+   (a small glitch tear + a destabilised blink, no collapse); the
+   second shatters it via destroyDecoy. Lifetime expiry and the
+   owner's death still call destroyDecoy directly — they end the
+   clone regardless of remaining hits. Projectiles never reach
+   this function at all: they pass straight through (user spec) */
+function hitDecoy(dc){
+ if(decoys.indexOf(dc)<0)return;
+ if(dc.hp==null)dc.hp=2;
+ dc.hp--;
+ if(dc.hp>0){
+  spawnVecBurst("xglitch",dc.x,dc.y+35,34,0.26,0,dc.face||1,0.8);
+  for(var hdi=0;hdi<3;hdi++)pushParticle({x:dc.x+(Math.random()-0.5)*40,y:dc.y+Math.random()*60,vx:0,vy:0,life:0.12+Math.random()*0.08,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2+Math.random()*2.6,amb:1});
+  beep(320,.06,"square",.035);
+  return;
+ }
+ destroyDecoy(dc);
 }
 function clearDecoysOf(owner,quiet){
  for(var cdi=decoys.length-1;cdi>=0;cdi--){if(decoys[cdi].owner===owner)destroyDecoy(decoys[cdi],quiet)}
@@ -9279,7 +9300,7 @@ function startXenoAttack(f,type,foe){
         she projects a hologram clone of herself beside her. The
         clone lives exactly 3s and actively hunts and attacks the
         foe on its own (see the decoy tick in simStepFrame), but
-        shatters on the FIRST hit it takes. ONLY this move pays
+        shatters on the SECOND hit it takes (see hitDecoy). ONLY this move pays
         the 10s reuse timer (f.decoyCd) — plain K / air K are
         untouched by it, and ↑+K keeps its shared flyCd. One clone
         at a time: a press while one is live (or the timer runs)
@@ -9287,7 +9308,7 @@ function startXenoAttack(f,type,foe){
      if((f.decoyCd||0)>0||decoys.some(function(dd){return dd.owner===f})){beep(200,.07);return}
      f.decoyCd=10;f.state="xdecoy";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
      var dcx2=f.x+f.face*56;if(dcx2<50)dcx2=50;if(dcx2>WORLD_W-50)dcx2=WORLD_W-50;
-     decoys.push({owner:f,x:dcx2,y:f.y,vx:0,vy:0,face:f.face,t:3,atkCd:0.3,state:"idle",stateT:0,onGround:!!f.onGround,aiT:0,aiMove:0.5,shotCd:0.7,rushCd:0,dropT:0,groundPlat:null,airHop:false}); /* aiT / aiMove / shotCd / rushCd / dropT / groundPlat / airHop: the clone's CPU-style brain (see the decoy tick in simStepFrame) */
+     decoys.push({owner:f,x:dcx2,y:f.y,vx:0,vy:0,face:f.face,t:3,hp:2,atkCd:0.3,state:"idle",stateT:0,onGround:!!f.onGround,aiT:0,aiMove:0.5,shotCd:0.7,rushCd:0,dropT:0,groundPlat:null,airHop:false}); /* hp 2: the clone survives the first real hit and shatters on the second (see hitDecoy); aiT / aiMove / shotCd / rushCd / dropT / groundPlat / airHop: the clone's CPU-style brain (see the decoy tick in simStepFrame) */
      xenoPortalFx(dcx2,f.y+f.h*0.45,50);xenoCircuitFx(dcx2,f.y+f.h*0.45,40);xenoGlitchFx(f,8);
      pushFloater({x:dcx2,y:f.y-22,txt:"DECOY ONLINE",life:0.85,col:"#67e8f9"});
      beep(1240,.06,"square",.045);setTimeout(function(){beep(1760,.07,"square",.04)},60);
@@ -9423,7 +9444,7 @@ function shadeHit(att,cx,cy,w,h,dmg,kb,dir,up,hs,grab){
     kb / up toward SHADE's release-time facing (shFace, toward MIMI) */
  dbgBox(cx,cy,w,h,"255,45,120",16); /* hitbox viewer (おかき only): SHADE's exact test box */
  var hitAny=false;
- for(var dci2=decoys.length-1;dci2>=0;dci2--){var dc02=decoys[dci2];if(!dc02.owner||dc02.owner===att||dc02.owner.dead)continue;if(Math.abs(dc02.x-cx)<w/2+23&&Math.abs((dc02.y+35)-cy)<h/2+35){destroyDecoy(dc02);hitAny=true}} /* XENO デコイ: SHADE's box shatters a hologram decoy in one hit, like any melee box (see meleeHit) */
+ for(var dci2=decoys.length-1;dci2>=0;dci2--){var dc02=decoys[dci2];if(!dc02.owner||dc02.owner===att||dc02.owner.dead)continue;if(Math.abs(dc02.x-cx)<w/2+23&&Math.abs((dc02.y+35)-cy)<h/2+35){hitDecoy(dc02);hitAny=true}} /* XENO デコイ: SHADE's box counts as one hit on a hologram decoy, like any melee box — two hits bring it down (see hitDecoy / meleeHit) */
  for(var i=0;i<fighters.length;i++){var t=fighters[i];if(t===att||t.dead)continue;
   var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
   if(!grab&&t.char==="mimi"&&shadeAlive(t)&&Math.abs(t.shX-cx)<w/2+58&&Math.abs((t.shY-52)-cy)<h/2+54){if(applyShadeHit(att,t,dmg,cx,cy,false))hitAny=true} /* 【闇ゲージ】 a box that reaches SHADE's body drains its darkness gauge (no knockback) — independent of whether it also reaches MIMI herself */
@@ -10193,12 +10214,13 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
  var cx=att.x+(boxDir==null?dir:boxDir)*(range*0.55),cy=att.y+att.h*0.45;
  dbgBox(cx,cy,range*1.44,h*2,"255,45,120",16); /* hitbox viewer (おかき only): the exact box this call tests — half-extents range*0.72 across / h up-down from (cx,cy) */
  var hitAny=false;
- /* XENO デコイ: a melee box that reaches a hologram decoy shatters
-    it on the spot (ONE hit, any damage — see destroyDecoy). The
+ /* XENO デコイ: a melee box that reaches a hologram decoy lands
+    one hit on it (any damage — TWO hits bring it down, see
+    hitDecoy). The
     test mirrors the fighter test below (same box, decoy body
     46 wide / centre at +35), the attacker's OWN decoy is exempt,
     and the swing still counts as having hit something */
- for(var dci=decoys.length-1;dci>=0;dci--){var dc0=decoys[dci];if(!dc0.owner||dc0.owner===att||dc0.owner.dead)continue;if(Math.abs(dc0.x-cx)<range*0.72+23&&Math.abs((dc0.y+35)-cy)<h){destroyDecoy(dc0);hitAny=true}}
+ for(var dci=decoys.length-1;dci>=0;dci--){var dc0=decoys[dci];if(!dc0.owner||dc0.owner===att||dc0.owner.dead)continue;if(Math.abs(dc0.x-cx)<range*0.72+23&&Math.abs((dc0.y+35)-cy)<h){hitDecoy(dc0);hitAny=true}}
  var targets=fighters.length>1?fighters:(def?[def]:[]);
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
@@ -10334,13 +10356,14 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
  if(crActive&&att&&att.char&&!noKb){var _hk=crKeyCtx||att.state;if(_hk){var _hv=crXVal(att.char,_hk,"hs");if(_hv!=null)hs=_hv}}
  if(def.dead||def.invuln>0)return false;
  /* XENO デコイ: a real attack (never a noKb DoT tick) whose aim
-    point lands on the DEFENDER's hologram decoy shatters it in
-    one hit — this is the route delayed hits, ults and explosions
+    point lands on the DEFENDER's hologram decoy counts as one
+    hit on it (two hits bring it down — see hitDecoy) — this is
+    the route delayed hits, ults and explosions
     take into the decoy (melee boxes and projectiles have their
     own hooks). The 46px reach is tight enough that a hit on the
     owner herself, standing a spawn-offset (56px) away from her
     clone, does not pop it by splash alone */
- if(att&&att!==def&&!noKb){var acx=(cx==null?def.x:cx),acy=(cy==null?def.y+def.h*0.45:cy);for(var dci3=decoys.length-1;dci3>=0;dci3--){var dc03=decoys[dci3];if(dc03.owner!==def)continue;if(Math.abs(dc03.x-acx)<46&&Math.abs((dc03.y+35)-acy)<52)destroyDecoy(dc03)}}
+ if(att&&att!==def&&!noKb){var acx=(cx==null?def.x:cx),acy=(cy==null?def.y+def.h*0.45:cy);for(var dci3=decoys.length-1;dci3>=0;dci3--){var dc03=decoys[dci3];if(dc03.owner!==def)continue;if(Math.abs(dc03.x-acx)<46&&Math.abs((dc03.y+35)-acy)<52)hitDecoy(dc03)}}
  /* ↑+K 被弾リセット (user spec, ALL characters): every ↑+K in the
     game pays its reuse cooldown into the shared flyCd slot, and a
     fighter whose flyCd is still running when a hit from ANOTHER
@@ -13580,7 +13603,7 @@ function drawHitboxOverlay(){
  for(i=0;i<fl.length;i++){f=fl[i];if(!f||f.dead)continue;
   if(f.char==="axe"&&(f.ultChargeT||0)>0){var fx2=f.x+f.ultDir*64;ctx.fillStyle="rgba(255,45,120,.10)";ctx.fillRect(fx2-58,f.y+f.h/2-86,116,172);ctx.strokeStyle="rgba(255,45,120,.9)";ctx.lineWidth=2;ctx.strokeRect(fx2-58,f.y+f.h/2-86,116,172);ctx.strokeStyle="rgba(255,159,28,.55)";ctx.strokeRect(f.x-330,f.y+f.h/2-120,660,240)}
  }
- for(i=0;i<decoys.length;i++){var dc9=decoys[i];ctx.fillStyle="rgba(103,232,249,.08)";ctx.fillRect(dc9.x-23,dc9.y,46,70);ctx.strokeStyle="rgba(103,232,249,.9)";ctx.lineWidth=2;ctx.strokeRect(dc9.x-23,dc9.y,46,70)} /* XENO decoy body (one-hit hologram) */
+ for(i=0;i<decoys.length;i++){var dc9=decoys[i];ctx.fillStyle="rgba(103,232,249,.08)";ctx.fillRect(dc9.x-23,dc9.y,46,70);ctx.strokeStyle="rgba(103,232,249,.9)";ctx.lineWidth=2;ctx.strokeRect(dc9.x-23,dc9.y,46,70)} /* XENO decoy body (two-hit hologram) */
  /* hurt boxes: every fighter's body, plus SHADE's second body */
  for(i=0;i<fl.length;i++){f=fl[i];if(!f||f.dead)continue;
   ctx.fillStyle="rgba(34,255,136,.07)";ctx.fillRect(f.x-f.w/2,f.y,f.w,f.h);
