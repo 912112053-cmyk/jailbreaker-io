@@ -493,6 +493,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["22:42"],tag:"調整",title:"SMILEY：前+J「刺突」を瞬間移動から高速移動＋移動中判定に上方修正",
+   items:["SMILEYの前+J「刺突」：約105の瞬間移動ですり抜ける仕様から、約110先への高速移動に変更しました。移動中も判定が出るようになり、移動の経路の間にいた相手にも当たります（ヒットは1回まで）",
+          "ダメージ12・KB 360・判定80×58・被弾硬直0.45秒・全体0.30秒・後硬直0.73秒など、その他の数値は変更ありません",
+          "技一覧の表示も実装に合わせて更新しました。BUILD_ID を v314 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["22:35"],tag:"調整",title:"TRAVIS：↓+K「シング・タイム」にガード崩しを追加（一度でも食らうとその発動中はガード不可）",
    items:["TRAVISの↓+K「シング・タイム」：いずれか1ヒットでもガードされずに食らった相手は、その発動（歌唱）が終わるまで残りのヒットをガードできなくなりました。最初からガードできていれば、従来どおり防ぎ続けられます。ウルト「ワールドツアー」と同じ仕様です",
           "ダメージ5×最大12ヒット・KB 300・被弾硬直0.2秒（1ヒットごと）・判定左右210×102・全体3.6秒・後硬直2.5秒（完全硬直）など、他の数値は変わりません",
@@ -1117,7 +1121,7 @@ var smileyMovesHTML='<h2>😀 SMILEY（スマイリー）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>J 2段目 — ナイフスラッシュ（返し）</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>1段目とは逆に、<b>下から上へ切り裂く</b>返しの一撃。</p>'+mvSpec(mvS('ダメージ','7')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.16秒')+mvS('判定','72×52')+mvS('被弾硬直','0.22秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — ナイフスラッシュ（三連）</b> <span style="color:var(--cyan);font-weight:900">チェーン3段目／猶予0.8秒</span><p>3段目は<b>3連続の刺突</b>（3ダメージ×3）。包丁を3回まっすぐ突き刺す。少しだけ重くなる。</p>'+mvSpec(mvS('ダメージ','3×3')+mvS('KB','280')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.18秒')+mvS('判定','78×54')+mvS('被弾硬直','0.24秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 4段目 — ナイフスラッシュ（フィニッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p><b>大きな一突きで相手の心臓を貫く</b>チェーンの締め。ここまでつなぐと吹っ飛ばしも跳ね上がる。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','460')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.37秒')+mvS('判定','88×56'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+J — 刺突</b><p>約105の瞬間移動ですり抜けざまに、閃光のような速さで包丁を突き刺す。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.73秒')+mvS('判定','80×58')+mvS('被弾硬直','0.45秒'))+'</div></div>'
++'<div class="moveRow"><div><b>前+J — 刺突</b><p>約110先へ高速移動しながら包丁を突き刺す。移動の経路の間にいた相手にも当たる（ヒットは1回まで）。相手をすり抜けて背後に回れるが、硬直は長め。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360')+mvS('発生','即時（移動中）')+mvS('全体','0.30秒')+mvS('後硬直','0.73秒')+mvS('判定','80×58')+mvS('被弾硬直','0.45秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックステップスラッシュ</b><p>前に斬りながら後ろへ下がり、間合いを作る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','320')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','72×54'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングカット</b><p>上昇斬り。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','540（真上）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.43秒')+mvS('判定','62×84')+mvS('上昇','vy -520'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — アンダーダガー</b><p>しゃがみ込んで低く滑り、下段に包丁を切り入れて足元を刺す。出が速く、低い姿勢で滑り込む。後硬直が短くなり、吹っ飛ばしが強くなった。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','580')+mvS('発生','即時')+mvS('全体','0.16秒')+mvS('後硬直','0.2秒')+mvS('判定','74×34')+mvS('被弾硬直','0.28秒'))+'</div></div>'
@@ -2391,7 +2395,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v313";
+var BUILD_ID="v314";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -8951,7 +8955,7 @@ function startTravisAttack(f,type,foe){
 function startSmileyAttack(f,type,foe){
  /* SMILEY — the masked knife fighter (v102 spec). The fastest feet
     and the quickest swings on the roster, paid for with the lowest
-    HP: a 4-stage knife chain, a teleport stab, a fast light throwing
+    HP: a 4-stage knife chain, a high-speed dash stab, a fast light throwing
     knife (U) and an awakening-transformation ult. Delayed parts
     (jkcombo 2nd hit, dive stab hit, ult ticks) live in stepFighter. */
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
@@ -9016,16 +9020,18 @@ function startSmileyAttack(f,type,foe){
      meleeHit(f,foe,72,54,9,320,f.face,-0.22);
      beep(1150,.05,"square",.04);
    }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
-     /* 刺突 (fwd+J): teleports ~105 ahead and stabs on arrival —
-        passes through the foe, but pays a long cooldown. Damage
-        11 -> 12 and a fixed 被弾硬直 0.45s added (user spec) */
+     /* 刺突 (fwd+J, reworked — user spec): no longer a teleport —
+        he DASHES ~110u at high speed and the stab lands DURING the
+        movement, on any foe standing in the path (hit once only).
+        The travel + path hit live in stepFighter (state "sblink",
+        blinkLeft / blinkHit — the same shared fields KAIRO's blink
+        uses, so they ride RB_FSTATE and the snapshot blk / blh).
+        Damage 12 / KB 360 / box 80x58 / 被弾硬直 0.45s and the long
+        後硬直 (attackCd 0.66 + 0.07 = 0.73s) are unchanged */
      f.state="sblink";f.stateT=0.3;f.attackCd=0.66;f.comboWin=0;f.dashT=0;
-     spawnParticles(f.x,f.y+f.h*0.45,8,"#fef08a",160);
-     f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+     f.blinkLeft=110;f.blinkHit=false;
      f.vx=f.face*260;
-     meleeHit(f,foe,80,58,12,360,f.face,-0.28,0.45);
-     spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fde047",180);
-     spawnVecBurst("smiley",f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.9);spawnSparks(f.x+f.face*32,f.y+f.h*0.45,f.face,"#fef08a",6); /* 刺突 (見た目変更): a flash burst + forward sparks the instant the blink-stab lands (presentation only) */
+     spawnParticles(f.x,f.y+f.h*0.45,8,"#fef08a",160);
      beep(1500,.05,"square",.045);
    }else{
      /* ナイフスラッシュ: a 4-stage chain of quick cuts — fast out and
@@ -11283,6 +11289,21 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    if(!f.blinkHit&&meleeHit(f,foe,80,62,14,180,f.face,-0.3,0.44)){f.blinkHit=true;f.blinkWin=2.0; /* ブリンク斬り KB 440 -> 180 (user spec)。ヒットで2秒ウィンドウを開く (ヒットするたびに数え直し) */spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#bae6fd",180);spawnParticles(f.x+f.face*44,f.y+f.h*0.4,8,"#e0f2fe",210);spawnRing(f.x+f.face*40,f.y+f.h*0.42,"#a5f3fc",30)}
    spawnParticles(f.x-f.face*10,f.y+f.h*0.45,2,"#67e8f9",120);
  }
+ /* 刺突 (SMILEY forward+J, reworked — user spec): the same skeleton
+    as KAIRO's BLINK SLASH above — while the sblink state lasts he
+    DASHES the remaining blinkLeft (~110u) at 1500/s and the stab
+    tests the path AS HE CROSSES IT: a foe standing anywhere along
+    the route takes the hit (once only, blinkHit; dmg 12 / KB 360 /
+    box 80x58 / up -0.28 / 被弾硬直 0.45秒), instead of the old
+    teleport that passed through foes and only stabbed at the
+    arrival point. The flash burst + sparks that used to fire on
+    arrival now fire on the hit itself */
+ if(f.char==="smiley"&&f.state==="sblink"&&(f.blinkLeft||0)>0){
+   var sStep=Math.min(f.blinkLeft,1500*dt);f.blinkLeft-=sStep;f.x+=f.face*sStep;
+   if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+   if(!f.blinkHit&&meleeHit(f,foe,80,58,12,360,f.face,-0.28,0.45)){f.blinkHit=true;spawnParticles(f.x+f.face*24,f.y+f.h*0.45,8,"#fde047",180);spawnVecBurst("smiley",f.x+f.face*30,f.y+f.h*0.45,120,0.28,0,f.face,0.9);spawnSparks(f.x+f.face*32,f.y+f.h*0.45,f.face,"#fef08a",6)}
+   spawnParticles(f.x-f.face*10,f.y+f.h*0.45,2,"#fef08a",120);
+ }
  /* HOVER SPIN (Kairo air J): while the spin state lasts, the fall is nearly
     cancelled and the spin ticks out up to 6 real hits around the body
     (user tuning: dmg 5, KB 290, box 周囲108x66, max 6 ticks — the tick
@@ -12764,7 +12785,7 @@ function drawSmiley(f){
   cut(18,24,78,24,3);ctx.fillStyle="#fff7ed";ctx.fillRect(24,22.9,50,2.2);
   ctx.strokeStyle=yellC;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(80,24);ctx.lineTo(90,24);ctx.moveTo(78,17);ctx.lineTo(84,10);ctx.moveTo(78,31);ctx.lineTo(84,38);ctx.moveTo(74,15);ctx.lineTo(76,7);ctx.moveTo(74,33);ctx.lineTo(76,41);ctx.stroke();
   bld(79,24);bld(72,29)}
- else if(f.state==="sblink"){ /* 前+J 刺突 (見た目変更): a blink-fast stab dressed up — longer afterimage streaks behind him, a glowing thrust line with a white-hot core and a starburst tip in front (its vec burst + sparks land in startSmileyAttack) */
+ else if(f.state==="sblink"){ /* 前+J 刺突 (見た目変更): a blink-fast stab dressed up — longer afterimage streaks behind him, a glowing thrust line with a white-hot core and a starburst tip in front (its vec burst + sparks land on the hit in stepFighter) */
   ctx.strokeStyle="rgba(254,240,138,.55)";ctx.lineWidth=2;for(var bl=0;bl<4;bl++){ctx.beginPath();ctx.moveTo(-42+bl*6,11+bl*9);ctx.lineTo(-6+bl*6,11+bl*9);ctx.stroke()}
   ctx.strokeStyle="rgba(253,224,71,.5)";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(15,24);ctx.lineTo(60,24);ctx.stroke();
   cut(17,24,62,24,2.6);ctx.fillStyle="#fff7ed";ctx.fillRect(22,23,34,2);
