@@ -2331,7 +2331,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v298";
+var BUILD_ID="v299";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7375,16 +7375,17 @@ function drawVecBursts(){
     ctx.fillStyle=spl===1?"#f472b6":"#f8fafc";ctx.fillRect(spx2-1.8,spy2-1.8,3.6,3.6); /* node block on the spear tip */
    }
    ctx.globalAlpha=a;
-  }else if(b.kind==="xpop"){ /* XENO digital pop (NEW, hers alone): a SMALL digital explosion for the air fwd+J fingertip blast — a square core that strobes white/palette, eight SQUARE fragments popping between stepped radii (never gliding), and a four-way circuit cross with node blocks. Compact and simple on purpose: one pop, then it is gone */
+  }else if(b.kind==="xpop"){ /* XENO digital pop (hers alone): the air fwd+J fingertip blast — a square core that strobes white/palette, TWELVE square fragments popping between stepped radii (never gliding), a four-way circuit cross with node blocks, and a snapping square blast frame around the whole pop. Scaled up (user spec) until it unmistakably reads as an explosion: one big pop, then it is gone */
    var ppSt=Math.min(3,Math.floor(pr*4)),ppR=b.size*(0.30+0.23*ppSt);
+   if(ppSt<3){ctx.globalAlpha=(ppSt===2?0.4:0.75)*b.alpha;ctx.strokeStyle=ppSt===0?"#ffffff":"#67e8f9";ctx.lineWidth=2.4;ctx.strokeRect(-ppR*0.92,-ppR*0.92,ppR*1.84,ppR*1.84)} /* the blast frame: a hard square outline that snaps open with the pop */
    if(ppSt<2){ctx.globalAlpha=0.95*b.alpha;ctx.fillStyle=ppSt===0?"#ffffff":XBIT_COLS[Math.floor(b.seed*7)%4];var pcs3=b.size*(0.20-ppSt*0.05);ctx.fillRect(-pcs3/2,-pcs3/2,pcs3,pcs3);ctx.fillStyle="#0b1226";ctx.fillRect(-pcs3/4,-pcs3/4,pcs3/2,pcs3/2)} /* strobing square core */
    ctx.lineWidth=2;ctx.strokeStyle="rgba(103,232,249,.85)";ctx.globalAlpha=(ppSt===3?0.25:0.8)*b.alpha;
    ctx.beginPath();ctx.moveTo(-ppR*0.9,0);ctx.lineTo(ppR*0.9,0);ctx.moveTo(0,-ppR*0.9);ctx.lineTo(0,ppR*0.9);ctx.stroke(); /* circuit cross */
    ctx.fillStyle="#f0abfc";ctx.fillRect(ppR*0.9-1.8,-1.8,3.6,3.6);ctx.fillRect(-ppR*0.9-1.8,-1.8,3.6,3.6);ctx.fillRect(-1.8,-ppR*0.9-1.8,3.6,3.6);ctx.fillRect(-1.8,ppR*0.9-1.8,3.6,3.6); /* node blocks on the cross tips */
-   for(var pfr=0;pfr<8;pfr++){
+   for(var pfr=0;pfr<12;pfr++){
     var pfh=Math.sin(b.seed*91.3+pfr*57.7+ppSt*29.1)*43758.5453;pfh-=Math.floor(pfh);
     if(pfh<0.2)continue; /* this fragment is OFF on this step */
-    var pfa=pfr*0.785+pfh*0.3,pfd=ppR*(0.55+pfh*0.6),pfs=2.4+pfh*3.2;
+    var pfa=pfr*0.524+pfh*0.3,pfd=ppR*(0.55+pfh*0.6),pfs=2.8+pfh*4.2;
     ctx.globalAlpha=(ppSt===3?0.3:0.9)*b.alpha;ctx.fillStyle=pfr%4===0?"#f472b6":(pfr%4===1?"#67e8f9":(pfr%4===2?"#a78bfa":"#f8fafc"));
     ctx.fillRect(Math.cos(pfa)*pfd-pfs/2,Math.sin(pfa)*pfd-pfs/2,pfs,pfs);
    }
@@ -9060,12 +9061,17 @@ function xenoCircuitFx(x,y,size){spawnVecBurst("xcircuit",x,y,size||44,0.34,0,1,
 function xenoPhaseFx(x,y,face,size){spawnVecBurst("xphase",x,y,size||56,0.3,0,face||1,0.95)} /* XENO-only phase-shift burst: sliced hologram ghosts trailing the jump + circuit spear-lines stabbing forward (see drawVecBursts) */
 /* ---- XENO ↓+K ホログラムデコイ (user spec) ----
    A hologram clone of XENO herself, projected beside her for
-   exactly 3 seconds. While it lives it hunts the nearest foe on
-   its own (chases, hops up after them, and strikes with her data
-   knife — 8 dmg / KB 340 every 0.55s at knife range, credited to
-   its owner through applyHit, so score / combo / meter all behave
-   like her own hits) — the tick lives in simStepFrame's tail next
-   to the other placed-object filters. It is FRAGILE by design:
+   exactly 3 seconds. While it lives it fights like a CPU opponent
+   (user spec): a decision brain on aiControl's own pattern — a
+   fresh decision every 0.2–0.45s (aiT / aiMove), closing in while
+   far, shooting her data bits at mid range, striking with the
+   data knife (8 dmg / KB 340 every 0.55s) or lunging with the
+   glitch rush in close, jumping up after a foe on a higher level,
+   dropping through ledges after one below, and recovering toward
+   the stage when knocked toward the void — every hit credited to
+   its owner through applyHit / her own projectiles, so score /
+   combo / meter all behave like her own hits. The tick lives in
+   simStepFrame's tail next to the other placed-object filters. It is FRAGILE by design:
    ONE hit of any kind (a melee box, a direct applyHit attack, a
    projectile) shatters it instantly in a glitch collapse
    (destroyDecoy, hooked from meleeHit / shadeHit / applyHit and
@@ -9113,28 +9119,43 @@ function startXenoAttack(f,type,foe){
      meleeHit(f,foe,74,84,14,600,f.face,0.7);
      xenoGlitchFx(f,8);beep(520,.08,"sawtooth",.05);
    }else if(!f.onGround&&fwdHeld){
-     /* デジタルポップ (air fwd+J): SIMPLE on purpose — she thrusts
-        one hand forward and a small digital explosion pops at her
-        fingertips. One hit in front, a block-noise burst, no warp,
-        no chain, no follow-up */
+     /* デジタルポップ (air fwd+J): she thrusts one hand forward
+        and a digital explosion pops at her fingertips — one hit
+        in front, dressed BIG (see the xpop burst call below), no
+        warp, no chain, no follow-up */
      f.state="xpop";f.stateT=0.26;f.attackCd=0.34;f.comboWin=0;
      if(f.vy>60)f.vy=60;f.vx+=f.face*110;capVx(f,RUN_MAX*1.15);
      meleeHit(f,foe,66,54,12,400,f.face,-0.24,0.3);
-     spawnVecBurst("xpop",f.x+f.face*52,f.y+f.h*0.42,46,0.32,0,f.face,0.95);xenoCircuitFx(f.x+f.face*52,f.y+f.h*0.42,34); /* XENO-only dressing (user request): a small digital explosion — strobing square core, square fragments and a circuit cross at her fingertips; no borrowed burst, no plain ring */
+     spawnVecBurst("xpop",f.x+f.face*52,f.y+f.h*0.42,96,0.42,0,f.face,0.98);xenoCircuitFx(f.x+f.face*52,f.y+f.h*0.42,58);xenoRingFx(f.x+f.face*52,f.y+f.h*0.42,48);shake=Math.max(shake,2); /* XENO-only dressing (user request): the fingertip digital explosion, blown up until it unmistakably reads as an explosion — a strobing square core, a dozen square fragments, a circuit cross and a snapping target frame at her fingertips; no borrowed burst */
      beep(1180,.06,"square",.045);setTimeout(function(){beep(340,.08,"sawtooth",.04)},50);
    }else if(!f.onGround){
-     /* エアグリッチ (air J): a spinning cut that hits BOTH sides,
-        one shared hit list so a foe in the overlap is hit once */
-     f.state="xairj";f.stateT=0.26;f.attackCd=0.32;f.comboWin=0;
-     if(f.vy>60)f.vy=60;
-     var xh=[];meleeHit(f,foe,80,64,10,300,f.face,-0.26,0.26,false,0,xh);meleeHit(f,foe,80,64,10,300,-f.face,-0.26,0.26,false,0,xh);
-     xenoGlitchFx(f,9);beep(1480,.05,"square",.04);
+     /* グリッチオービット (air J, reworked — user spec): damage
+        AROUND herself, on the same skeleton as KAIRO's hover spin —
+        she hangs in the air (fall nearly cancelled) while the move
+        ticks out up to 6 hits of a surrounding box (周囲108x66,
+        5 dmg / KB 290, one shared hit list per tick so a foe is
+        struck once per tick), capped at 2 uses per airborne stint.
+        The ticks live in stepFighter (state "xairj"); the dressing
+        is hers alone — stepped block noise and a snapping square
+        orbit frame, never KAIRO's ice */
+     if(f.airJ>=2)return;
+     f.airJ++;
+     f.state="xairj";f.stateT=0.38;f.attackCd=0.42;f.comboWin=0;
+     f.spinHits=0;f.spinTick=0.1; /* first tick lands almost immediately */
+     if(f.vy>30)f.vy=30;
+     xenoGlitchFx(f,10);xenoRingFx(f.x,f.y+f.h*0.45,54);
+     beep(1480,.05,"square",.04);
    }else if(downHeld){
-     /* ローグリッチ (down+J): low sliding sweep */
-     f.state="xlow";f.stateT=0.16;f.attackCd=0.16;f.comboWin=0;
+     /* ローグリッチ (down+J, reworked — user spec): a low sliding
+        sweep whose hit LAUNCHES the foe straight up to above her
+        own head — the house straight-up convention (dir 0 /
+        up -1.0, like KAIRO's アイスフット) at KB 900, so the foe
+        leaves with essentially NO sideways drift and pops up over
+        her, ready to be met in the air */
+     f.state="xlow";f.stateT=0.2;f.attackCd=0.24;f.comboWin=0;
      f.vx=f.face*430;
-     meleeHit(f,foe,76,34,9,520,f.face,0.02,0.28);
-     xenoGlitchFx(f,6);beep(880,.06,"square",.04);
+     meleeHit(f,foe,78,40,10,900,0,-1.0,0.34,false,0,null,false,f.face);
+     xenoGlitchFx(f,6);spawnVecBurst("xcircuit",f.x+f.face*36,f.y+f.h*0.6,40,0.3,0,f.face,0.9);beep(880,.06,"square",.04);
    }else if(upHeld){
      /* ライジングコード (up+J): rising cut — landing it refunds
         the double jump, like SMILEY's rising cut */
@@ -9202,7 +9223,7 @@ function startXenoAttack(f,type,foe){
      if((f.decoyCd||0)>0||decoys.some(function(dd){return dd.owner===f})){beep(200,.07);return}
      f.decoyCd=10;f.state="xdecoy";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
      var dcx2=f.x+f.face*56;if(dcx2<50)dcx2=50;if(dcx2>WORLD_W-50)dcx2=WORLD_W-50;
-     decoys.push({owner:f,x:dcx2,y:f.y,vx:0,vy:0,face:f.face,t:3,atkCd:0.3,state:"idle",stateT:0,onGround:!!f.onGround});
+     decoys.push({owner:f,x:dcx2,y:f.y,vx:0,vy:0,face:f.face,t:3,atkCd:0.3,state:"idle",stateT:0,onGround:!!f.onGround,aiT:0,aiMove:0.5,shotCd:0.7,rushCd:0,dropT:0,groundPlat:null,airHop:false}); /* aiT / aiMove / shotCd / rushCd / dropT / groundPlat / airHop: the clone's CPU-style brain (see the decoy tick in simStepFrame) */
      xenoPortalFx(dcx2,f.y+f.h*0.45,50);xenoCircuitFx(dcx2,f.y+f.h*0.45,40);xenoGlitchFx(f,8);
      pushFloater({x:dcx2,y:f.y-22,txt:"DECOY ONLINE",life:0.85,col:"#67e8f9"});
      beep(1240,.06,"square",.045);setTimeout(function(){beep(1760,.07,"square",.04)},60);
@@ -9234,8 +9255,29 @@ function startXenoAttack(f,type,foe){
      var xb=[];meleeHit(f,foe,88,80,12,540,f.face,-0.3,0.3,false,0,xb);meleeHit(f,foe,88,80,12,540,-f.face,-0.3,0.3,false,0,xb);
      xenoGlitchFx(f,13);xenoRingFx(f.x,f.y+f.h*0.45,46);
      beep(1240,.06,"square",.045);
+   }else if(fwdHeld&&foe&&!foe.dead&&Math.abs(foe.x-f.x)>=70&&Math.abs(foe.x-f.x)<=640&&Math.abs(foe.y-f.y)<=280){
+     /* バックスタブワープ (fwd+K, REPLACES the rush when a foe is
+        in mid range — user spec): an instant warp to BEHIND the
+        foe. Like ↑+K's upload she breaks apart into digital blocks
+        inside a portal ring at the departure point and pops back
+        into solid form through a second ring at the arrival point
+        — placed on the far side of the foe from the way they face
+        (foe.x - foe.face*58, on the foe's own level), already
+        facing their back (f.face = foe.face). No damage of its
+        own: the payoff is position. px/py snap with her so the
+        render interpolation never swoops — the warp is a cut, not
+        a flight. Out of range (nobody there, too close, too far,
+        or too far above / below) the press falls through to the
+        plain グリッチラッシュ below instead */
+     f.state="xwarp";f.stateT=0.26;f.attackCd=0.5;f.comboWin=0;
+     xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58); /* departure: the body dissolves into blocks inside the ring and is gone */
+     var xwTx=foe.x-foe.face*58;if(xwTx<50)xwTx=50;if(xwTx>WORLD_W-50)xwTx=WORLD_W-50;
+     f.x=xwTx;f.y=foe.y;f.vx=0;f.vy=0;f.onGround=false;f.fastfall=false;f.face=foe.face;f.px=f.x;f.py=f.y;
+     xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring, behind the foe */
+     beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
    }else{
-     /* グリッチラッシュ (K): a rushing glitch strike */
+     /* グリッチラッシュ (K): a rushing glitch strike — also the
+        fwd+K fallback when no foe is in warp range */
      f.state="xrush";f.stateT=0.34;f.attackCd=0.44;f.comboWin=0;
      f.vx=f.face*300;
      meleeHit(f,foe,84,60,13,430,f.face,-0.24,0.3);
@@ -9248,7 +9290,7 @@ function startXenoAttack(f,type,foe){
    if(f.ammo<=0){beep(200,.08);return}
    f.ammo--;f.state="xthrow";f.stateT=0.2;f.attackCd=0.26;
    projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*980,vy:0,owner:f,life:1.05,kind:"xbit",hue:(xbitHueN=(xbitHueN+1)%4)}); /* hue: the shot's colour, cycling red/blue/purple/cyan per shot */
-   xenoGlitchFx(f,4);
+   xenoGlitchFx(f,4);xenoRingFx(f.x+f.face*36,f.y+f.h*0.42,30); /* a snapping target frame at the muzzle, so the bigger shot (see the xbit draw) reads as fired, not spawned */
    beep(1720,.06,"sine",.045);
    if(f.reloadT<=0)f.reloadT=reloadInterval(f);
  }else if(type==="ult"){
@@ -10941,6 +10983,20 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
  if(f.state==="airclaw"&&f.char==="warden"){
    f.spinTick+=dt;
    if(f.spinTick>=0.08&&f.spinHits<4){f.spinTick=0;f.spinHits++;var batHit=[];meleeHit(f,foe,112,74,4,330,f.face,-0.3,0,false,0,batHit);meleeHit(f,foe,112,74,4,330,-f.face,-0.2,0,false,0,batHit); /* 回転警棒 上方修正 (user spec): 判定 左右84x74 -> 周囲112x74 / ダメージ 前4・後4 -> 4 / KB 前330・後330 -> 330 (数値は据え置き、周囲化に合わせて1ティック1ヒットに統一) */spawnParticles(f.x,f.y+f.h*0.45,5,"#fde68a",170)}
+ }
+ /* GLITCH ORBIT (XENO air J): the same skeleton as KAIRO's HOVER
+    SPIN above — while the state lasts the fall is nearly cancelled
+    and the move ticks out up to 6 hits of a surrounding box
+    (周囲108x66, 5 dmg / KB 290, tick interval 0.06s inside the
+    0.38s state; the two meleeHit calls share one hit list per tick,
+    so each foe is struck ONCE per tick, launched outward on their
+    side). The dressing is XENO's alone (user spec): every tick pops
+    stepped block noise around her and every second tick snaps a
+    square orbit frame open — digital / glitch, never KAIRO's ice */
+ if(f.state==="xairj"&&f.char==="xeno"){
+   if(f.vy>30)f.vy=30;
+   f.spinTick+=dt;
+   if(f.spinTick>=0.06&&f.spinHits<6){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,5,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,5,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
  }
  /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
     them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
@@ -13580,17 +13636,19 @@ function draw(){
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
    else if(pr.kind==="xbit"){var xs2=Math.floor(time*16+pr.x*0.11),xg=(xs2%3)-1,xsgn=pr.vx>0?1:-1,xc=XBIT_COLS[pr.hue||0],xc2=XBIT_COLS[((pr.hue||0)+1)%4];
-   /* stepped fragment bits behind the shot: tiny blocks pop in for one step in the shot's colour pair, then are gone */
-   for(var xf3=0;xf3<3;xf3++){if((xs2+xf3)%2)continue;var xfh=Math.sin(xs2*47.3+xf3*89.7)*43758.5453;xfh-=Math.floor(xfh);ctx.fillStyle=xf3%2?xc2:xc;ctx.globalAlpha=0.75;ctx.fillRect(-xsgn*(8+xf3*4)-1,(xfh-0.5)*9-1,2,2)}
+   /* stepped fragment bits behind the shot: chunky blocks pop in for one step in the shot's colour pair, then are gone */
+   for(var xf3=0;xf3<4;xf3++){if((xs2+xf3)%2)continue;var xfh=Math.sin(xs2*47.3+xf3*89.7)*43758.5453;xfh-=Math.floor(xfh);ctx.fillStyle=xf3%2?xc2:xc;ctx.globalAlpha=0.8;ctx.fillRect(-xsgn*(13+xf3*6)-1.5,(xfh-0.5)*15-1.5,3,3)}
    ctx.globalAlpha=1;
-   /* the bullet itself: a SMALL digital shot — a bright core block wrapped in a hard-offset ghost of the NEXT palette colour, strobing on stepped frames. Each shot's colour cycles red / blue / purple / cyan (pr.hue, set at the muzzle) */
-   ctx.fillStyle=xc2;ctx.globalAlpha=0.65;ctx.fillRect(-3.5+xg*1.6,-3.5,7,7);
-   ctx.fillStyle=xc;ctx.fillRect(-3.5-xg*1.2,-3.5,7,7);ctx.globalAlpha=1;
-   ctx.fillStyle="#0b1226";ctx.fillRect(-2.5,-2.5,5,5);
-   ctx.fillStyle=xc;ctx.fillRect(-2.5,-2.5,5,2);
-   ctx.fillStyle="#ffffff";ctx.fillRect(-1,-1,2,2);
-   if(xs2%5===0){ctx.fillStyle="rgba(255,255,255,.9)";ctx.fillRect(-5,-5,10,1.6);ctx.fillRect(-5,3.4,10,1.6)} /* strobe flash step */
-   ctx.fillStyle=xc;ctx.fillRect(5,-0.8,2.2,1.6);ctx.fillRect(-7.2,0.4,2.2,1.6)} /* XENO デジタル弾 (U): a small multi-colour digital bullet on a stepped glitch clock — offsets jump, fragments blink, nothing flows */
+   /* the bullet itself (user spec: unmistakably a flying shot) — a BIG digital round, roughly twice the old size: a bright core block wrapped in a hard-offset ghost of the NEXT palette colour, ringed by a snapping square target frame in the shot's own colour so it reads as a projectile at a glance. Each shot's colour cycles red / blue / purple / cyan (pr.hue, set at the muzzle) */
+   ctx.strokeStyle=xc;ctx.lineWidth=2;ctx.globalAlpha=(xs2%2)?0.95:0.55;var xfr=9.5+(xs2%3)*1.2;ctx.strokeRect(-xfr,-xfr,xfr*2,xfr*2);ctx.globalAlpha=1; /* the snapping target frame around the round */
+   ctx.fillStyle=xc2;ctx.globalAlpha=0.65;ctx.fillRect(-5.5+xg*2,-5.5,11,11);
+   ctx.fillStyle=xc;ctx.fillRect(-5.5-xg*1.5,-5.5,11,11);ctx.globalAlpha=1;
+   ctx.fillStyle="#0b1226";ctx.fillRect(-3.6,-3.6,7.2,7.2);
+   ctx.fillStyle=xc;ctx.fillRect(-3.6,-3.6,7.2,3);
+   ctx.fillStyle="#ffffff";ctx.fillRect(-1.5,-1.5,3,3);
+   if(xs2%5===0){ctx.fillStyle="rgba(255,255,255,.9)";ctx.fillRect(-8,-8,16,2.2);ctx.fillRect(-8,5.8,16,2.2)} /* strobe flash step */
+   ctx.fillStyle=xc;ctx.fillRect(7.5,-1.2,3.4,2.4);ctx.fillRect(-11,0.6,3.4,2.4); /* nose / tail bits, so the direction of travel reads too */
+   ctx.fillStyle="#ffffff";ctx.fillRect(xsgn*12.5,-1,2.4,2)} /* XENO デジタル弾 (U): a multi-colour digital bullet on a stepped glitch clock — offsets jump, fragments blink, nothing flows */
    else if(pr.kind==="xdart"){var xd2=Math.floor(time*14+pr.x*0.07),xda=Math.atan2(pr.vy,pr.vx);
    /* loose digital fragments blink around the core in mixed palette colours */
    for(var xf4=0;xf4<4;xf4++){if((xd2+xf4)%2)continue;var xfh2=Math.sin(xd2*53.9+xf4*97.1)*43758.5453;xfh2-=Math.floor(xfh2);ctx.fillStyle=XBIT_COLS[(xd2+xf4)%4];ctx.globalAlpha=0.8;ctx.fillRect((xfh2-0.5)*26-1.5,Math.sin(xd2*29.3+xf4*61.7)*9-1.5,3,3)}
@@ -13892,7 +13950,7 @@ function simStepFrame(getInp){
      var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
-   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*10,y:pr.y+(Math.random()-0.5)*10,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%4]),size:2+Math.random()*2.2,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour — no drifting trail */
+   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%4]),size:2.8+Math.random()*2.8,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour — no drifting trail */
 if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */for(var dqi=decoys.length-1;dqi>=0;dqi--){var dq0=decoys[dqi];if(!dq0.owner||dq0.owner===pr.owner||dq0.owner.dead)continue;if(Math.abs(dq0.x-pr.x)<50&&Math.abs((dq0.y+35)-pr.y)<44){destroyDecoy(dq0);spawnVecBurst("xglitch",pr.x,pr.y,26,0.28,0,pr.vx>0?1:-1,0.9);if(pr.kind!=="mimiball")return false}} /* XENO デコイ: a projectile that reaches a hologram decoy shatters it in ONE hit and is spent doing so (the piercing mimiball flies on, as it does through fighters) */
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
@@ -13950,15 +14008,25 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
    /* MIMI&SHADE placed dark field: the system stays only so fields already in flight (or arriving in an online snapshot) still tick out — 4 damage every 0.5s, no knockback / no hitstun. NO current move places one: the field belonged to the deleted 落ちちゃう！／たすけるヨ！ dive, replaced by 落として！！ */
    darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;dff.flyCd=0;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}if(shadeAlive(dff)&&Math.abs(dff.shX-df.x)<95&&Math.abs(dff.shY-df.y)<70){var shInD=applyShadeDot(df.owner,dff,4);if(shInD&&!(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70)&&df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the field drains 4 per tick too (combo credited once per pair per tick) */}return df.t>0});
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*360,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=crHit(mb.owner,"omist",2,0)[0];mf.flyCd=0;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<205&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
-   /* XENO ↓+K ホログラムデコイ: each living clone hunts on its own —
-      it faces and chases the nearest foe, hops when the foe fights a
-      level above, falls and lands on platforms with the fighters'
-      own gravity numbers, and strikes with the data knife (8 dmg /
-      KB 340, one strike every 0.55s) whenever the foe is in knife
-      range — credited to its OWNER through applyHit, so score,
-      combo and meter treat the clone's hits as hers. At t=0 (3s)
-      it collapses in glitch blocks, the same collapse a shattering
-      hit plays (destroyDecoyFx) */
+   /* XENO ↓+K ホログラムデコイ: each living clone fights like a
+      CPU opponent (user spec) — its brain mirrors aiControl's own
+      decision pattern. A decision beat lands every 0.2–0.45s
+      (dc.aiT / dc.aiMove, the same fields and rhythm the CPU
+      fighters use): on a beat at mid range it may fire her data
+      bits (xbit projectiles owned by its owner), and its per-frame
+      judgement copies the CPU's — close in while the foe is far
+      (with the CPU's small random hop), jump up after a foe
+      fighting a level above, drop through a ledge after a foe
+      below, drift back for spacing on some beats instead of always
+      pressing in, and recover toward the stage when it finds
+      itself over the void. In close it strikes with the data knife
+      (8 dmg / KB 340, one strike every 0.55s) and sometimes lunges
+      with her glitch rush (13 dmg / KB 430) — every hit credited
+      to its OWNER through applyHit / the projectiles, so score,
+      combo and meter treat the clone's hits as hers. It falls and
+      lands on platforms with the fighters' own gravity numbers.
+      At t=0 (3s) it collapses in glitch blocks, the same collapse
+      a shattering hit plays (destroyDecoyFx) */
    decoys=decoys.filter(function(dc){
     if(!dc.owner||dc.owner.dead)return false;
     dc.t-=STEP;
@@ -13967,25 +14035,80 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
     for(var dti=0;dti<fighters.length;dti++){var dto=fighters[dti];if(dto===dc.owner||dto.dead)continue;var dtd=Math.abs(dto.x-dc.x)+Math.abs(dto.y-dc.y)*0.6;if(dtd<tbd){tbd=dtd;tgt=dto}}
     dc.stateT=Math.max(0,(dc.stateT||0)-STEP);if(dc.stateT<=0)dc.state="idle";
     dc.atkCd=Math.max(0,(dc.atkCd||0)-STEP);
+    dc.shotCd=Math.max(0,(dc.shotCd||0)-STEP);
+    dc.rushCd=Math.max(0,(dc.rushCd||0)-STEP);
+    dc.dropT=Math.max(0,(dc.dropT||0)-STEP);
+    dc.aiT=(dc.aiT||0)-STEP;
+    var dBeat=false;
+    if(dc.aiT<=0){dc.aiT=0.2+Math.random()*0.25;dc.aiMove=Math.random();dBeat=true} /* the CPU decision rhythm: a fresh aiMove every 0.2–0.45s, exactly like aiControl */
     if(tgt){
-     var ddx=tgt.x-dc.x,ddy=(tgt.y+tgt.h/2)-(dc.y+35);
+     var ddx=tgt.x-dc.x,ddy=(tgt.y+tgt.h/2)-(dc.y+35),dadx=Math.abs(ddx);
      if(Math.abs(ddx)>6)dc.face=ddx>0?1:-1;
-     if(dc.atkCd<=0&&Math.abs(ddx)<84&&Math.abs(ddy)<64){
-      dc.atkCd=0.55;dc.state="xknife1";dc.stateT=0.2;
-      applyHit(dc.owner,tgt,8,340,dc.face,-0.24,false,dc.x+dc.face*38,dc.y+30);
-      spawnVecBurst("xcircuit",dc.x+dc.face*40,dc.y+30,32,0.26,0,dc.face,0.95);spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
-      beep(1420,.04,"square",.035);
+     /* recovery (CPU pattern): over the void or falling past the
+        stage lip, head back to the middle and jump */
+     if((dc.x<200||dc.x>2400)&&dc.y>900||dc.y>1080){
+      dc.vx=(dc.x<1300?1:-1)*305;
+      if(dc.vy>-120&&(dc.onGround||!dc.airHop)){dc.vy=-800;dc.airHop=true} /* one mid-air hop per fall, the clone's stand-in for the CPU's double jump / air dash recovery */
+      dc.vy=Math.min(770,dc.vy+(dc.vy>0?2000:1900)*STEP);
+      var dFeetRec=dc.y+70;
+      dc.x+=dc.vx*STEP;dc.y+=dc.vy*STEP;
+      if(dc.x<40)dc.x=40;if(dc.x>WORLD_W-40)dc.x=WORLD_W-40;
+      dc.onGround=false;dc.groundPlat=null;
+      if(dc.vy>=0&&dc.dropT<=0){for(var dri=0;dri<platforms.length;dri++){var drl=platforms[dri];if(dc.x+18>drl.x&&dc.x-18<drl.x+drl.w&&dFeetRec<=drl.y+1&&dc.y+70>=drl.y){dc.y=drl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=drl;dc.airHop=false;break}}}
+      if(dc.y>WORLD_H+240)return false;
+      return true;
      }
-     var dwant=Math.abs(ddx)>66?(ddx>0?1:-1):0;
-     dc.vx=dwant*305; /* hologram pace: a touch under her own run, snapping on and off per step like everything she projects */
-     if(dc.onGround&&tgt.y<dc.y-64&&Math.abs(ddx)<150)dc.vy=-640; /* hop up after a foe fighting a level above */
+     /* drop-through (CPU pattern): standing on a floating ledge
+        (never the main floor) with the foe clearly on a lower
+        level, the clone drops through and fast-falls after them */
+     if(dc.onGround&&dc.groundPlat&&!dc.groundPlat.main&&tgt.y-dc.y>50)dc.dropT=0.25;
+     if(dc.dropT>0&&dc.vy<300)dc.vy=300;
+     /* ranged judgement (CPU pattern): on a decision beat at mid
+        range, shoot her data bits — the same shot the real U
+        fires, owned by the clone's owner */
+     if(dBeat&&dc.shotCd<=0&&dadx>240&&dadx<760&&Math.abs(ddy)<90&&Math.random()<0.5){
+      dc.shotCd=0.85;dc.state="xthrow";dc.stateT=0.2;
+      projectiles.push({x:dc.x+dc.face*36,y:dc.y+30,vx:dc.face*980,vy:0,owner:dc.owner,life:1.05,kind:"xbit",hue:(xbitHueN=(xbitHueN+1)%4)});
+      spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
+      beep(1720,.05,"sine",.03);
+     }
+     /* close judgement: the data knife on its 0.55s cadence, and
+        on some beats a glitch-rush lunge instead — the CPU's
+        close-range mix of J and K */
+     if(dc.atkCd<=0&&dadx<84&&Math.abs(ddy)<64){
+      if(dc.rushCd<=0&&dc.aiMove>0.62){
+       dc.atkCd=0.6;dc.rushCd=1.1;dc.state="xrush";dc.stateT=0.24;dc.vx=dc.face*430;
+       applyHit(dc.owner,tgt,13,430,dc.face,-0.24,false,dc.x+dc.face*42,dc.y+30);
+       spawnVecBurst("xcircuit",dc.x+dc.face*40,dc.y+30,36,0.26,0,dc.face,0.95);spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,22,0.24,0,dc.face,0.9);
+       beep(1330,.04,"square",.035);
+      }else{
+       dc.atkCd=0.55;dc.state="xknife1";dc.stateT=0.2;
+       applyHit(dc.owner,tgt,8,340,dc.face,-0.24,false,dc.x+dc.face*38,dc.y+30);
+       spawnVecBurst("xcircuit",dc.x+dc.face*40,dc.y+30,32,0.26,0,dc.face,0.95);spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
+       beep(1420,.04,"square",.035);
+      }
+     }
+     /* movement judgement (CPU pattern): close in while far; in
+        close, hold position on most beats but drift AWAY for
+        spacing on some (aiMove < 0.28), like a CPU repositioning
+        instead of a homing missile */
+     var dwant=0;
+     if(dadx>66)dwant=ddx>0?1:-1;
+     else if(dc.aiMove<0.28)dwant=ddx>0?-1:1;
+     if(!(dc.state==="xrush"&&dc.stateT>0))dc.vx=dwant*305; /* hologram pace: a touch under her own run, snapping on and off per step like everything she projects; a rush lunge keeps its burst speed while it lasts */
+     /* jump judgement (CPU pattern): chase a foe fighting a level
+        above, hop in close under a foe overhead, and throw in the
+        CPU's small random hop while closing in */
+     if(dc.onGround&&tgt.y<dc.y-120&&dadx<170&&Math.random()<0.5)dc.vy=-800;
+     else if(dc.onGround&&tgt.y<dc.y-60&&dadx<=86&&Math.random()<0.35)dc.vy=-800;
+     else if(dc.onGround&&dadx>86&&Math.random()<0.012)dc.vy=-800;
     }else dc.vx=0;
     dc.vy=Math.min(770,dc.vy+(dc.vy>0?2000:1900)*STEP);
     var dFeetPrev=dc.y+70;
     dc.x+=dc.vx*STEP;dc.y+=dc.vy*STEP;
     if(dc.x<40)dc.x=40;if(dc.x>WORLD_W-40)dc.x=WORLD_W-40;
-    dc.onGround=false;
-    if(dc.vy>=0){for(var dpi=0;dpi<platforms.length;dpi++){var dpl=platforms[dpi];if(dc.x+18>dpl.x&&dc.x-18<dpl.x+dpl.w&&dFeetPrev<=dpl.y+1&&dc.y+70>=dpl.y){dc.y=dpl.y-70;dc.vy=0;dc.onGround=true;break}}}
+    dc.onGround=false;dc.groundPlat=null;
+    if(dc.vy>=0&&dc.dropT<=0){for(var dpi=0;dpi<platforms.length;dpi++){var dpl=platforms[dpi];if(dc.x+18>dpl.x&&dc.x-18<dpl.x+dpl.w&&dFeetPrev<=dpl.y+1&&dc.y+70>=dpl.y){dc.y=dpl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=dpl;dc.airHop=false;break}}}
     if(dc.y>WORLD_H+240)return false; /* projected over the void: the signal is simply lost */
     if(Math.random()<0.10)pushParticle({x:dc.x+(Math.random()-0.5)*36,y:dc.y+Math.random()*62,vx:0,vy:0,life:0.14,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2+Math.random()*2.4,amb:1}); /* hologram shedding: still data blocks blink off the clone as it moves */
     return true;
