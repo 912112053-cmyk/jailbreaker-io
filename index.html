@@ -1110,7 +1110,7 @@ var no66MovesHTML='<h2>🤖 No.66（ナンバー66）— 技一覧</h2><p>両腕
 +'<div class="moveRow"><div><b>L — バーストエンドフォース（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>背中からホーミングミサイルを6発射出する。6発とも近くの敵を追尾する。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に金色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','16×6')+mvS('KB','600')+mvS('発生','即時〜（0.11秒間隔で6発）')+mvS('全体','0.85秒')+mvS('後硬直','1.02秒')+mvS('弾速','500（追尾）')+mvS('寿命','3.2秒')+mvS('熱量','+10'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。重機なのでダッシュは控えめ。</p>'+mvSpec(mvS('速度','880')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
-function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":(c==="orchid"?"ORCHID":(c==="travis"?"TRAVIS":(c==="smiley"?"SMILEY":(c==="mimi"?"MIMI&SHADE":(c==="no66"?"No.66":"KAIRO"))))))))}
+function cname(c){return c==="warden"?"WARDEN":(c==="kojiro"?"KOJIRO":(c==="axe"?"AXE":(c==="sara"?"SARA":(c==="orchid"?"ORCHID":(c==="travis"?"TRAVIS":(c==="smiley"?"SMILEY":(c==="mimi"?"MIMI&SHADE":(c==="no66"?"No.66":(c==="xeno"?"XENO":"KAIRO")))))))))}
 var playerChar="kairo";
 function currentMovesHTML(){return bindingSummaryHTML()+crCustomPanelHTML(playerChar)+relabelMoves(playerChar==="warden"?wardenMovesHTML:(playerChar==="kojiro"?kojiroMovesHTML:(playerChar==="axe"?axeMovesHTML:(playerChar==="sara"?saraMovesHTML:(playerChar==="orchid"?orchidMovesHTML:(playerChar==="travis"?travisMovesHTML:(playerChar==="smiley"?smileyMovesHTML:(playerChar==="mimi"?mimiMovesHTML:(playerChar==="no66"?no66MovesHTML:movesHTML)))))))))}
 /* ================= 全キャラクター技一覧システム =================
@@ -1239,6 +1239,7 @@ function dbgBox(cx,cy,w,h,col,life){
  if(dbgBoxes.length>240)dbgBoxes.splice(0,dbgBoxes.length-240);
 }
 function selectChar(c){
+ if(c==="xeno")return; /* XENO has no card and no picker path — the hidden gate is the only way in */
  if(c==="no66"&&!canUseNo66()){beep(160,.08);return}
  playerChar=c;
  $("charBtn").textContent=cname(c);
@@ -1423,6 +1424,7 @@ function charStatsBase(c){
  if(c==="smiley")return{hp:230,spd:1.14,air:1.10,kb:1.12,dash:1300}; /* SMILEY (user spec): masked speedster — HP 235 -> 230, ground 456 (400x1.14), air 427 (388x1.10), knockback taken x1.08 -> x1.12, dash 1200 -> 1300 (CD 1.8s in tryDash), ult gain x0.5 total (meterGainFor) */
  if(c==="mimi")return{hp:240,spd:1.0,air:1.0,kb:1.12,dash:1080}; /* MIMI&SHADE: the girl is standard-footed (ground 400 / air 388, dash 1080) and light (HP 240, knockback taken x1.05 -> x1.12, user balance spec); the second body (SHADE) is what her kit is built on. Ult gain x0.44 total (meterGainFor) */
  if(c==="no66")return{hp:300,spd:0.82,air:0.80,kb:0.85,dash:880}; /* No.66: caterpillar mech heavy — HP 300, ground 328 (400x0.82), air 310 (388x0.80), knockback taken x0.85, dash 880. Slow treads, heavy armour; its kit is built on the 【熱量】 heat gauge (see startNo66Attack) */
+ if(c==="xeno")return{hp:235,spd:1.06,air:1.04,kb:1.1,dash:1150}; /* XENO (hidden): genius hacker — light, quick feet, fragile */
  return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
 /* CREATIVE MODE: while a creative match runs (crActive), the
@@ -1443,7 +1445,7 @@ function charStats(c){
  if(typeof b.fall==="number")o.fall=b.fall;
  return o;
 }
-function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":(f.char==="orchid"?"#a3e635":(f.char==="travis"?"#fcd34d":(f.char==="smiley"?"#fef08a":(f.char==="mimi"?"#f9a8d4":(f.char==="no66"?"#fbbf24":"#a5f3fc"))))))))}
+function charFX(f){return f.char==="warden"?"#fde68a":(f.char==="kojiro"?"#fecaca":(f.char==="axe"?"#fdba74":(f.char==="sara"?"#ff8f5c":(f.char==="orchid"?"#a3e635":(f.char==="travis"?"#fcd34d":(f.char==="smiley"?"#fef08a":(f.char==="mimi"?"#f9a8d4":(f.char==="no66"?"#fbbf24":(f.char==="xeno"?"#f0abfc":"#a5f3fc")))))))))}
 function applyCharStats(f){var st=charStats(f.char);f.maxHp=st.hp;f.speedMul=st.spd;f.airMul=st.air||st.spd;f.kbMul=st.kb;f.dashSpd=st.dash;f.fallMul=st.fall||1;var bs=charBodySize(f.char);if(f.w!==bs.w||f.h!==bs.h){var fb=(f.y||0)+(f.h||70);f.w=bs.w;f.h=bs.h;f.y=fb-bs.h}} /* body size follows the character (AXE 1.2x): when the size changes, y is re-based on the OLD sole line (fb), so the feet stay exactly planted — a character swap never sinks the feet into the floor or lifts them off it */
 /* per-character body size (the fighter box). f.w / f.h ARE the hurtbox
    (被弾判定) and pushbox (押し合い判定) everywhere they matter — melee /
@@ -1457,7 +1459,7 @@ function charBodySize(c){return c==="axe"?{w:55.2,h:84}:{w:46,h:70}}
    each gun's ORIGINAL full-magazine reload time, unchanged (owner
    rule: one shot comes back per interval while the magazine is
    below full) */
-function reloadInterval(f){if(crActive){var _rk=crGunKey(f.char);if(_rk&&f.char!=="sara"){var _rv=crXVal(f.char,_rk,"rel");if(_rv!=null)return _rv}}return f.char==="warden"?1.25:(f.char==="smiley"?1.1:(f.char==="travis"?2.5:(f.char==="kairo"?1.75:(f.char==="orchid"?2.2:1.25))))} /* warden bolt 1.15 -> 1.25 (user spec) / smiley knife 1.1 / kairo shard 1.25 -> 1.75 (user spec) / travis blast 1.25 -> 2.5 (user spec) / orchid bomb 2.2 (user nerf: 装填数3・リロード2.2秒) */
+function reloadInterval(f){if(crActive){var _rk=crGunKey(f.char);if(_rk&&f.char!=="sara"){var _rv=crXVal(f.char,_rk,"rel");if(_rv!=null)return _rv}}return f.char==="warden"?1.25:(f.char==="smiley"?1.1:(f.char==="travis"?2.5:(f.char==="kairo"?1.75:(f.char==="orchid"?2.2:(f.char==="xeno"?1.3:1.25)))))} /* warden bolt 1.15 -> 1.25 (user spec) / smiley knife 1.1 / kairo shard 1.25 -> 1.75 (user spec) / travis blast 1.25 -> 2.5 (user spec) / orchid bomb 2.2 (user nerf: 装填数3・リロード2.2秒) */
 /* HOLD-TO-CONTINUE gates (owner request): holding a button may only
    ever CONTINUE a multi-stage / multi-shot move, never start one and
    never auto-repeat a single move. The U gate covers exactly the
@@ -1471,7 +1473,7 @@ function reloadInterval(f){if(crActive){var _rk=crGunKey(f.char);if(_rk&&f.char!
 function holdGunReady(f){
  if(f.ammo<=0)return false;
  if(f.char==="sara")return (f.specCd||0)<=0;
- return f.char==="warden"||f.char==="kairo"||f.char==="travis"||f.char==="smiley"||f.char==="orchid";
+ return f.char==="warden"||f.char==="kairo"||f.char==="travis"||f.char==="smiley"||f.char==="orchid"||f.char==="xeno";
 }
 function holdUltReady(f){
  if(f.meter<100)return false;
@@ -1858,6 +1860,7 @@ function resetFighter(f,x,y){f.x=x;f.y=y+70-f.h;f.px=x;f.py=f.y; /* respawn poin
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
+ if(playerChar==="xeno"&&m!=="versus"&&m!=="training"){playerChar="kairo";$("charBtn").textContent=cname("kairo")} /* XENO gate: she may only ever enter through her own hidden screen (versus / training) — online, creative and spectate all fall back to KAIRO */
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?(net.kind==="creative"?"CREATIVE ONLINE":"ONLINE VS"):(m==="creative"?("CREATIVE"+(crSpec?" 観戦":"")):"VS CPU")));
  /* CREATIVE MODE: the effective config is armed ONLY here.
     Local creative matches (観戦 / CPU対戦) use the editor config
@@ -2215,7 +2218,7 @@ $("csBack").onclick=function(){$("charSelect").classList.remove("on");toMenu()};
 $("csMoves").onclick=function(){openAllMoves(playerChar)};
 $("playBtn").onclick=function(){beep(660,.07);tryFullscreen();openCharSelect("versus")};
 $("trainingBtn").onclick=function(){beep(520,.07);tryFullscreen();openCharSelect("training")};
-function toMenu(){cleanupNet();running=false;$("specBar").style.display="none";$("gameScreen").classList.remove("on");$("gameScreen").classList.remove("specOn");$("menu").style.display="block";if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){})}
+function toMenu(){if(playerChar==="xeno"){playerChar="kairo";var _xcb=$("charBtn");if(_xcb)_xcb.textContent=cname("kairo")}cleanupNet(); /* leaving a hidden run restores the normal pick, so nothing on the menu ever shows her */running=false;$("specBar").style.display="none";$("gameScreen").classList.remove("on");$("gameScreen").classList.remove("specOn");$("menu").style.display="block";if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){})}
 $("backBtn").onclick=toMenu;
 $("endMenuBtn").onclick=toMenu;
 /* --- online rematch reliability -----------------------------------
@@ -2328,7 +2331,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v294";
+var BUILD_ID="v295";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7099,6 +7102,30 @@ function settingsHTML(msg){
  +'<button class="gbtn" id="bindReset" style="margin-top:4px">キー配置をデフォルトに戻す</button>'
  +'<p style="margin-top:16px">・Double-tap left/right to dash：有効<br>・Jump input buffer / coyote time：有効（押した瞬間に反応します）<br>・Camera：プレイヤー追従（先読み付き）<br>・BGM/SE：簡易シンセ音が鳴ります。最初にボタンを押した時に音が出るようになります。<br>・キー配置はこの端末のこのセッション内だけの変更です（ページを閉じるとデフォルトに戻ります）。<br>・描画FPSはこの端末に保存され、次回開いたときも維持されます。</p>';
 }
+/* ---- hidden gate (SETTINGS render-FPS "60" x5) ----
+   Five consecutive taps on the 60 button inside its time window
+   leave SETTINGS for a small private screen: the player is fixed
+   to XENO and picks PLAY (versus) or TRAINING, and the match
+   starts at once. Nothing about this exists in any menu, list or
+   log — the counter lives only in these two variables. */
+var _xfTaps=0,_xfTapT=0;
+function openXenoGate(){
+ openSheet('<h2 style="color:#f0abfc">XENO</h2><p>天才ハッカー — プレイヤーは <b style="color:#f0abfc">XENO</b> で固定です。モードを選ぶとそのまま始まります。</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="gbtn primary" id="xenoPlayBtn" style="flex:1;min-width:140px">▶ PLAY</button><button class="gbtn" id="xenoTrainBtn" style="flex:1;min-width:140px">TRAINING</button></div>');
+ var pb=$("xenoPlayBtn"),tb=$("xenoTrainBtn");
+ if(pb)pb.onclick=function(){xenoStart("versus")};
+ if(tb)tb.onclick=function(){xenoStart("training")};
+}
+function xenoStart(m){
+ document.getElementById("modal").classList.remove("on");
+ playerChar="xeno";$("charBtn").textContent="XENO";
+ tryFullscreen();
+ startMatch(m);
+}
+function xenoRespawn(){
+ if(!P1)return;
+ var keepScore=P1.score,keepMeter=P1.meter;
+ var sp=SPAWNS_ALL[0];resetFighter(P1,sp.x,sp.y);P1.score=keepScore;P1.meter=keepMeter;P1.face=1;paused=false;
+}
 function openSettings(msg){
  openSheet(settingsHTML(msg));
  var btns=document.querySelectorAll("[data-bind]");
@@ -7106,7 +7133,7 @@ function openSettings(msg){
  var r=$("bindReset");
  if(r)r.onclick=function(){bindings={j:DEFAULT_BINDINGS.j,k:DEFAULT_BINDINGS.k,l:DEFAULT_BINDINGS.l,ult:DEFAULT_BINDINGS.ult,dash:DEFAULT_BINDINGS.dash};capturingFor=null;rebuildKeyMap();refreshKeyDisplays();openSettings("キー配置をデフォルトに戻しました")};
  var fb=document.querySelectorAll("[data-renderfps]");
- for(var fi=0;fi<fb.length;fi++)fb[fi].onclick=function(){var v=parseInt(this.getAttribute("data-renderfps"),10);setRenderFps(v);openSettings("描画FPSを "+v+" に設定しました（ゲームの計算は60fpsのままです）")};
+ for(var fi=0;fi<fb.length;fi++)fb[fi].onclick=function(){var v=parseInt(this.getAttribute("data-renderfps"),10);if(v===60){var _now=performance.now();if(_now-_xfTapT>1600)_xfTaps=0;_xfTapT=_now;_xfTaps++;if(_xfTaps>=5){_xfTaps=0;openXenoGate();return}}else _xfTaps=0;setRenderFps(v);openSettings("描画FPSを "+v+" に設定しました（ゲームの計算は60fpsのままです）")};
 }
 /* Text fields own the keyboard while they are focused. The game handlers
    below used to run for EVERY keydown on the page: any key that is also a
@@ -8913,6 +8940,147 @@ function startSmileyAttack(f,type,foe){
    beep(110,.4,"sawtooth",.085);setTimeout(function(){beep(880,.3,"square",.05)},90);
  }
 }
+/* ================= XENO (hidden character) =================
+   Genius hacker. Reachable ONLY through the hidden gate in
+   SETTINGS (see openXenoGate): never in CHAR_LIST, never in the
+   character select, the CPU pools or the spectate roster, and
+   startMatch refuses her outside versus / training. Her kit is
+   built on digital / glitch presentation — data particles, rings
+   and RGB-split flashes spawned fresh per move (no other
+   character's effects are reused) — and every hit is an instant
+   meleeHit / projectile, so she needs no stepFighter tick code
+   and stays exactly as light as the rest of the roster. */
+function xenoGlitchFx(f,n){
+ var cx=f.x,cy=f.y+f.h*0.45;
+ spawnParticles(cx,cy,Math.min(10,n||6),Math.random()<0.5?"#67e8f9":"#f0abfc",175);
+ if(Math.random()<0.5)spawnParticles(cx,cy,3,"#f8fafc",120);
+}
+function startXenoAttack(f,type,foe){
+ var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
+ var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
+ var fwdHeld=f.isPlayer?((f.face===1&&(!!keys.right||stick.dx>0.28))||(f.face===-1&&(!!keys.left||stick.dx<-0.28))):(f.remote?f.hFwd:Math.abs(f.vx)>200);
+ var backHeld=f.isPlayer?((f.face===1&&(!!keys.left||stick.dx<-0.28))||(f.face===-1&&(!!keys.right||stick.dx>0.28))):(f.remote?f.hBack:false);
+ if(type==="jk"){
+   /* バグクラッシュ (J+K): a glitching double strike — one instant
+      hit dressed with a hard RGB-split burst */
+   f.state="xjk";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
+   f.vx+=f.face*150;capVx(f,RUN_MAX*1.2);
+   meleeHit(f,foe,76,62,15,420,f.face,-0.3,0.32);
+   xenoGlitchFx(f,10);spawnRing(f.x+f.face*30,f.y+f.h*0.45,"#f0abfc",34);
+   beep(1320,.05,"square",.045);setTimeout(function(){beep(220,.1,"sawtooth",.04)},90);
+ }else if(type==="j"){
+   if(!f.onGround&&downHeld){
+     /* ダイブハック (air down+J): diagonal plunge slash */
+     f.state="xdive";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
+     f.vx=f.face*270;f.vy=Math.max(f.vy,600);f.fastfall=false;
+     meleeHit(f,foe,74,84,14,600,f.face,0.7);
+     xenoGlitchFx(f,8);beep(520,.08,"sawtooth",.05);
+   }else if(!f.onGround){
+     /* エアグリッチ (air J): a spinning cut that hits BOTH sides,
+        one shared hit list so a foe in the overlap is hit once */
+     f.state="xairj";f.stateT=0.26;f.attackCd=0.32;f.comboWin=0;
+     if(f.vy>60)f.vy=60;
+     var xh=[];meleeHit(f,foe,80,64,10,300,f.face,-0.26,0.26,false,0,xh);meleeHit(f,foe,80,64,10,300,-f.face,-0.26,0.26,false,0,xh);
+     xenoGlitchFx(f,9);beep(1480,.05,"square",.04);
+   }else if(downHeld){
+     /* ローグリッチ (down+J): low sliding sweep */
+     f.state="xlow";f.stateT=0.16;f.attackCd=0.16;f.comboWin=0;
+     f.vx=f.face*430;
+     meleeHit(f,foe,76,34,9,520,f.face,0.02,0.28);
+     xenoGlitchFx(f,6);beep(880,.06,"square",.04);
+   }else if(upHeld){
+     /* ライジングコード (up+J): rising cut — landing it refunds
+        the double jump, like SMILEY's rising cut */
+     f.state="xrise";f.stateT=0.3;f.attackCd=0.38;f.comboWin=0;
+     f.vy=-520;f.onGround=false;f.fastfall=false;
+     if(meleeHit(f,foe,62,86,11,540,f.face,-1.05)){f.jumps=1}
+     xenoGlitchFx(f,8);beep(1040,.06,"square",.045);
+   }else if(backHeld){
+     /* バックドア (back+J): cuts in front while slipping back */
+     f.state="xback";f.stateT=0.24;f.attackCd=0.32;f.comboWin=0;
+     f.vx=-f.face*360;
+     meleeHit(f,foe,72,54,9,330,f.face,-0.22);
+     xenoGlitchFx(f,6);beep(1180,.05,"square",.04);
+   }else if(f.dashT>0||Math.abs(f.vx)>330||(fwdHeld&&f.comboWin<=0)){
+     /* フェイズシフト (fwd+J): phase-shifts ~105 ahead through the
+        data layer and stabs on arrival */
+     f.state="xblink";f.stateT=0.3;f.attackCd=0.6;f.comboWin=0;f.dashT=0;
+     xenoGlitchFx(f,10);
+     f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
+     f.vx=f.face*260;
+     meleeHit(f,foe,80,58,12,380,f.face,-0.26,0.4);
+     xenoGlitchFx(f,8);spawnSparks(f.x+f.face*30,f.y+f.h*0.45,f.face,"#67e8f9",6);
+     beep(1560,.05,"square",.045);
+   }else{
+     /* データナイフ (J): a fast 3-stage chain of data-knife cuts.
+        Recoveries are attackCd + the shared 0.07 tail */
+     f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;
+     if(f.comboStep===0){
+       f.comboWin=0.8;f.state="xknife1";f.stateT=0.18;f.attackCd=0.09;
+       meleeHit(f,foe,72,50,7,250,f.face,-0.18,0.22);
+       beep(1420,.04,"square",.04);
+     }else if(f.comboStep===1){
+       f.comboWin=0.8;f.state="xknife2";f.stateT=0.18;f.attackCd=0.1;
+       meleeHit(f,foe,72,52,7,250,f.face,-0.2,0.22);
+       xenoGlitchFx(f,5);beep(1520,.04,"square",.04);
+     }else{
+       f.comboWin=0;f.comboStep=0;f.state="xknife3";f.stateT=0.24;f.attackCd=0.28;
+       f.vx+=f.face*90;capVx(f,RUN_MAX*1.2);
+       meleeHit(f,foe,86,56,12,470,f.face,-0.3);
+       xenoGlitchFx(f,9);spawnRing(f.x+f.face*44,f.y+f.h*0.42,"#67e8f9",36);
+       beep(820,.07,"sawtooth",.05);
+     }
+   }
+ }else if(type==="k"){
+   if(downHeld&&f.onGround){
+     /* ロースイープ (down+K): a low glitch sweep */
+     f.state="xsweep";f.stateT=0.26;f.attackCd=0.36;f.comboWin=0;
+     meleeHit(f,foe,80,36,10,540,f.face,0.04,0.3);
+     xenoGlitchFx(f,7);beep(780,.06,"square",.04);
+   }else if(upHeld){
+     /* アップロード (up+K): no damage — a pure rising move on the
+        shared flyCd (2.4s), straight up at vy -1080 */
+     if(f.flyCd>0){beep(200,.07);return}
+     f.flyCd=2.4;f.state="xupload";f.stateT=0.31;f.attackCd=0.31;f.comboWin=0;
+     f.vy=-1080;f.onGround=false;f.fastfall=false;f.airLag=Math.max(f.airLag||0,0.3);
+     spawnParticles(f.x,f.y+f.h,10,"#67e8f9",170);spawnRing(f.x,f.y+f.h*0.6,"#f0abfc",30);
+     beep(990,.07,"square",.045);
+   }else if(!f.onGround){
+     /* エアバースト (air K): a hovering data burst on BOTH sides */
+     f.state="xburst";f.stateT=0.3;f.attackCd=0.42;f.comboWin=0;
+     if(f.vy>40)f.vy=40;
+     var xb=[];meleeHit(f,foe,88,80,12,540,f.face,-0.3,0.3,false,0,xb);meleeHit(f,foe,88,80,12,540,-f.face,-0.3,0.3,false,0,xb);
+     xenoGlitchFx(f,12);spawnRing(f.x,f.y+f.h*0.45,"#67e8f9",42);
+     beep(1240,.06,"square",.045);
+   }else{
+     /* グリッチラッシュ (K): a rushing glitch strike */
+     f.state="xrush";f.stateT=0.34;f.attackCd=0.44;f.comboWin=0;
+     f.vx=f.face*300;
+     meleeHit(f,foe,84,60,13,430,f.face,-0.24,0.3);
+     xenoGlitchFx(f,11);beep(1330,.05,"square",.045);
+   }
+ }else if(type==="l"){
+   /* データビット (U): a thrown glitch cube — the shared ammo gun
+      shape (3 shots, one back every 1.3s via reloadInterval). On
+      hit it lags the foe (slowT 0.7s) in the projectile dispatch */
+   if(f.ammo<=0){beep(200,.08);return}
+   f.ammo--;f.state="xthrow";f.stateT=0.2;f.attackCd=0.26;
+   projectiles.push({x:f.x+f.face*36,y:f.y+f.h*0.42,vx:f.face*980,vy:0,owner:f,life:1.05,kind:"xbit"});
+   xenoGlitchFx(f,4);
+   beep(1720,.06,"sine",.045);
+   if(f.reloadT<=0)f.reloadT=reloadInterval(f);
+ }else if(type==="ult"){
+   /* システムクラッシュ (L ult): spends the whole gauge on a
+      point-blank system crash — a heavy burst on BOTH sides, and
+      every foe caught in the crash radius is lagged (slowT 1.6s) */
+   if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.5;f.attackCd=0.55;f.comboWin=0;shake=Math.max(shake,7);
+   var xu=[];meleeHit(f,foe,150,104,30,760,f.face,-0.34,0.4,false,0,xu);meleeHit(f,foe,150,104,30,760,-f.face,-0.34,0.4,false,0,xu);
+   for(var xi=0;xi<fighters.length;xi++){var xf2=fighters[xi];if(xf2!==f&&!xf2.dead&&Math.abs(xf2.x-f.x)<190&&Math.abs((xf2.y+xf2.h/2)-(f.y+f.h/2))<120)xf2.slowT=Math.max(xf2.slowT||0,1.6)}
+   spawnParticles(f.x,f.y+f.h/2,26,"#67e8f9",280);spawnParticles(f.x,f.y+f.h/2,18,"#f0abfc",230);spawnParticles(f.x,f.y+f.h/2,10,"#f8fafc",180);
+   spawnRing(f.x,f.y+f.h*0.45,"#f0abfc",64);spawnRing(f.x,f.y+f.h*0.45,"#67e8f9",44);
+   beep(140,.35,"sawtooth",.08);setTimeout(function(){beep(1560,.25,"square",.05)},80);
+ }
+}
 /* ---- MIMI&SHADE helpers ----
    SHADE is a second body stored on the fighter itself: (shX, shY) is
    the ground line under the shadow mass (same convention as f.y+f.h),
@@ -9481,6 +9649,7 @@ function startAttackCore(f,type){
  if(f.char==="smiley"){startSmileyAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);if((f.awakenT||0)>0&&f.attackCd>0){f.attackCd=Math.max(0.02,f.attackCd-0.12);if((f.recLockT||0)>0)f.recLockT=Math.max(0.02,f.recLockT-0.12)}return} /* SMILEY Berserker rider (user spec): while Berserker lasts, EVERY move's recovery （後硬直 — attackCd including the universal 0.07 tail added just above) is 0.12s shorter. The cut runs AFTER addRecovery so the listed recovery drops by exactly 0.12 (floored at 0.02 so a recovery still registers); a 完全硬直 move's recLockT — set by applyFullLock to that same total — is cut by the same 0.12 so the two spans stay matched. The ult press itself also qualifies (awakenT is already running when this runs). awakenT is synced state (rollback fields + snapshots), so local / CPU / online all cut identically */
  if(f.char==="mimi"){startMimiAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(f.char==="no66"){startNo66Attack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
+ if(f.char==="xeno"){startXenoAttack(f,type,foe);addRecovery(f);applyLandLag(f,wasAir);return}
  if(type==="jk"){
    /* J+K simultaneous: Ice Fang Combo — claw strike into a spinning tail.
       Two hits, long recovery; breaks the J chain. */
@@ -12704,6 +12873,124 @@ function drawAxe(f){
  ctx.restore();
  hpBar(f);
 }
+function drawXeno(f){
+ /* XENO — drawn entirely in code in the roster's flat pixel-block
+    style (like No.66 / MIMI&SHADE; no sprite sheet): a white bunny-ear
+    hood, a white mask with glowing pink X eyes, long white hair whose
+    tips split pink (left) and cyan (right), and a white cyber hoodie.
+    The cyber dressing is deliberately cheap — a handful of rects
+    whose positions come from `time` hashes (no per-frame allocation,
+    no shadowBlur): orbiting data bits, a scan ring at her feet, hair
+    sway, and periodic GLITCH slices that shove horizontal bands of
+    the body sideways with RGB-split ghosts. Part of that same cycle,
+    the mask briefly DROPS several times a minute (and always during
+    her ult / phase shift), revealing her real face — odd eyes (cyan /
+    pink) and a mischievous grin — for about half a second. */
+ if(f.meter>=100&&!f.dead)drawUltAura(f,240,171,252); /* ult ready: pink charged aura */
+ f.trail.forEach(function(t){ /* dash afterimage: glitch silhouettes, cyan body + pink split */
+   ctx.save();ctx.translate(t.x,t.y+30);ctx.scale(t.face,1);ctx.globalAlpha=t.life/0.2*.35;
+   ctx.fillStyle="#67e8f9";ctx.fillRect(-11,-24,22,44);
+   ctx.fillStyle="#f0abfc";ctx.fillRect(-14,-20,4,30);ctx.fillRect(12,-14,3,22);
+   ctx.restore();
+ });
+ ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
+ if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
+ if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
+ PXU=1.5;
+ var flash=f.flash>0;
+ var hoodC=flash?"#ffe4e0":"#f8fafc",hoodD=flash?"#fecdd3":"#cbd5e1",darkC=flash?"#b4564e":"#1e293b",hairC=flash?"#ffd9d4":"#eef2f7",skinC=flash?"#ffc9bd":"#ffe9e1";
+ var pinkC=flash?"#fda4af":"#f472b6",pinkL=flash?"#fecdd3":"#f0abfc",cyanC=flash?"#fda4af":"#22d3ee";
+ var cyc=(time*1+(f.x%97)*0.013)%6.4;
+ var maskOff=!flash&&(cyc<0.5||f.state==="xult"||f.state==="xblink"); /* the mask-drop window inside the cyber cycle */
+ var glitch=(Math.floor(time*9+(f.x%53))%23===0)||f.state==="xult"||f.state==="xjk";
+ var gx=glitch?((Math.floor(time*37)%3)-1)*2.4:0;
+ var isGuardX=!!f.guarding||f.state==="guard";
+ var bob=isGuardX?2:Math.sin(time*2.3+(f.x%31))*0.5;
+ ctx.translate(0,bob);
+ if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.4,0);
+ var swinging=f.stateT>0&&f.state!=="idle"&&typeof f.state==="string"&&f.state.charAt(0)==="x";
+ /* orbiting data bits: four tiny squares circling the body */
+ for(var ob=0;ob<4;ob++){
+   var oa=time*2.4+ob*1.57,orx=19+Math.sin(time*3.1+ob*2.2)*2.5;
+   ctx.fillStyle=ob%2?"rgba(240,171,252,.8)":"rgba(103,232,249,.8)";
+   pxR(Math.cos(oa)*orx-1.2,26+Math.sin(oa)*17-1.2,2.4,2.4);
+ }
+ /* back hair: long white mass, tips split pink / cyan, swaying */
+ var sway=Math.sin(time*2.6+(f.x%41))*0.8;
+ ctx.fillStyle=hairC;pxR(-13.5,8,27,33);
+ ctx.fillStyle=pinkC;pxR(-13.5+sway,36,8,6);pxR(-12+sway,41,5,4);
+ ctx.fillStyle=cyanC;pxR(5.5+sway,36,8,6);pxR(7+sway,41,5,4);
+ ctx.fillStyle=hoodD;pxR(-13.5,8,27,2.4); /* hair shadow line under the hood */
+ /* legs + shoes */
+ ctx.fillStyle=darkC;pxR(-9,43,7,10.5);pxR(2,43,7,10.5);
+ ctx.fillStyle=hoodC;pxR(-10.5,52.5,9,4.5);pxR(1.5,52.5,9,4.5);
+ ctx.fillStyle=pinkC;pxR(-10.5,55.5,9,1.6);
+ ctx.fillStyle=cyanC;pxR(1.5,55.5,9,1.6);
+ /* torso: white cyber hoodie — shaded hem, dark zipper, strap,
+    glowing chest marks */
+ ctx.fillStyle=hoodC;pxR(-12,21,24,23);
+ ctx.fillStyle=hoodD;pxR(-12,40,24,4);
+ ctx.fillStyle=darkC;pxR(-1,23,2,19); /* zipper */
+ ctx.fillStyle=pinkL;pxR(-8,26,4.5,4.5); /* chest X patch */
+ ctx.fillStyle=darkC;pxR(-7.2,27.4,2.8,1.6);pxR(-6.6,26.8,1.6,2.8);
+ ctx.fillStyle=cyanC;pxR(4.5,33,5,2);pxR(4.5,36.5,3.4,2); /* data bars */
+ ctx.strokeStyle="rgba(30,41,59,.85)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-11,24);ctx.lineTo(9,42);ctx.stroke(); /* diagonal strap */
+ /* arms: idle hangs at the sides; any x-state swings the front arm
+    out with the data knife (a cyan blade with a pink core) */
+ ctx.fillStyle=hoodC;pxR(-15.5,23,4.5,13); /* back arm */
+ ctx.fillStyle=skinC;pxR(-15.5,35,4.5,4);
+ if(swinging){
+   ctx.fillStyle=hoodC;pxR(10,25,13,4.5);
+   ctx.fillStyle=skinC;pxR(21,25,4,4.5);
+   ctx.fillStyle=cyanC;pxLine(24,27,34,21,2.6);
+   ctx.fillStyle=pinkL;pxLine(24,27.8,32,22.6,1.2);
+   ctx.fillStyle="rgba(103,232,249,.55)";pxR(30+gx,16,3,3);pxR(36,24-gx,2.4,2.4); /* slash bits */
+ }else{
+   ctx.fillStyle=hoodC;pxR(11,23,4.5,13);
+   ctx.fillStyle=skinC;pxR(11,35,4.5,4);
+ }
+ /* hood with long bunny ears (inner ear glows pink) */
+ ctx.fillStyle=hoodC;
+ pxR(-11.5,-15,5.5,17);pxR(-10,-18.5,3.5,4.5); /* left ear */
+ pxR(6,-15,5.5,17);pxR(6.5,-18.5,3.5,4.5); /* right ear */
+ ctx.fillStyle=pinkL;pxR(-9.8,-12.5,2.2,12);pxR(7.7,-12.5,2.2,12);
+ ctx.fillStyle=hoodC;pxEll(0,9,14.5,11.5); /* hood mass */
+ ctx.fillStyle=hoodD;pxR(-14,12,3,10);pxR(11,12,3,10); /* hood side shade */
+ /* front fringe: white, jagged, with one pink and one cyan strand */
+ ctx.fillStyle=hairC;pxR(-10.5,1.5,21,6);pxR(-10.5,7,4,2.6);pxR(-3,7,4,2.6);pxR(4.5,7,4,2.6);
+ ctx.fillStyle=pinkC;pxR(-9,3,2,7);
+ ctx.fillStyle=cyanC;pxR(7,3,2,7);
+ /* face: the mask — or, in the drop window, her real face */
+ if(maskOff){
+   ctx.fillStyle=skinC;pxEll(0,13.5,9,8);
+   ctx.fillStyle=cyanC;pxR(-6.4,11.4,3.6,3.2); /* odd eye: cyan */
+   ctx.fillStyle=pinkC;pxR(2.8,11.4,3.6,3.2); /* odd eye: pink */
+   ctx.fillStyle="#fff";pxR(-5.6,12,1.2,1.2);pxR(3.6,12,1.2,1.2);
+   ctx.fillStyle="rgba(244,114,182,.5)";pxR(-8,16,3,1.8);pxR(5,16,3,1.8); /* blush */
+   ctx.fillStyle=darkC;pxR(-1.5,17.6,5.5,1.5);pxR(3.4,16.6,1.5,1.6); /* mischievous grin */
+ }else{
+   ctx.fillStyle=hoodC;pxEll(0,13.5,9.5,8.5); /* the white mask */
+   ctx.fillStyle=hoodD;pxR(-7,19.5,14,1.6); /* mask lower shade */
+   ctx.fillStyle=pinkC; /* glowing X eyes */
+   pxLine(-6.6,10.4,-3,14,2);pxLine(-6.6,14,-3,10.4,2);
+   pxLine(3,10.4,6.6,14,2);pxLine(3,14,6.6,10.4,2);
+   ctx.fillStyle=pinkL;pxR(-.9,5.4,1.8,1.8); /* forehead mark */
+   ctx.fillStyle=cyanC;pxR(-8.6,17.8,1.8,1.8); /* cheek data dot */
+ }
+ /* glitch slices: two RGB-split bands shoved sideways */
+ if(glitch){
+   ctx.fillStyle="rgba(103,232,249,.45)";pxR(-15+gx,15,30,2.2);
+   ctx.fillStyle="rgba(240,171,252,.45)";pxR(-15-gx,29,30,2.2);
+   ctx.fillStyle="rgba(248,250,252,.5)";pxR(-15+gx*1.6,37,30,1.4);
+ }
+ /* scan ring at her feet, pulsing on a slow cycle */
+ var srp=(time*0.7+(f.x%29)*0.01)%1;
+ ctx.strokeStyle="rgba(103,232,249,"+(0.4*(1-srp)).toFixed(3)+")";ctx.lineWidth=1.6;
+ ctx.beginPath();ctx.ellipse(0,57.5,8+srp*13,2.2+srp*3.4,0,0,6.29);ctx.stroke();
+ ctx.restore();
+ if(f.frozen>0){ctx.save();ctx.translate(f.x,f.y);PXU=1.5;ctx.fillStyle="rgba(165,243,252,.34)";pxR(-17,-2,34,64);ctx.restore()}
+ hpBar(f);
+}
 function drawMinimap(){
  var mx=12,my=10,mw=218,mh=118,sx=mw/WORLD_W,sy=mh/WORLD_H;
  ctx.fillStyle="rgba(3,12,22,.6)";ctx.fillRect(mx,my,mw,mh);
@@ -12895,6 +13182,7 @@ function draw(){
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
+   else if(pr.kind==="xbit"){var xg=Math.floor(time*18+pr.x*0.05)%3-1;ctx.fillStyle="#67e8f9";ctx.fillRect(-6+xg,-6,12,12);ctx.fillStyle="#f0abfc";ctx.fillRect(-6-xg,2,12,5);ctx.fillStyle="#0b1226";ctx.fillRect(-3,-3,6,6);ctx.fillStyle="#f8fafc";ctx.fillRect(-1.5,-1.5,3,3);ctx.fillStyle="rgba(103,232,249,.85)";ctx.fillRect(8,-1,3,2);ctx.fillRect(-11,1,3,2)} /* XENO データビット: an RGB-split data cube, jittering as it flies */
    else if(pr.kind==="blast"){ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.arc(0,0,13+Math.sin(time*30)*1.5,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,5,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,2.4,0,6.29);ctx.fill()} /* TRAVIS ソニックブラスト: a pulsing purple-gold lump of sound */
    else if(pr.kind==="pbomb"){ctx.fillStyle="rgba(168,85,247,.35)";ctx.beginPath();ctx.arc(0,0,15+Math.sin(time*24)*1.6,0,6.29);ctx.fill();ctx.fillStyle="#a855f7";ctx.beginPath();ctx.arc(0,0,11,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(-3,-3,6,0,6.29);ctx.fill();ctx.fillStyle="#d9f99d";ctx.beginPath();ctx.arc(3,4,2.6,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-4,5,1.9,0,6.29);ctx.fill()} /* ORCHID ポイズンボム: a glossy purple poison sphere with lime toxin bubbles swirling inside */
    else if(pr.kind==="pellet"||pr.kind==="pellet0"){var psgn=pr.vx>0?1:-1;ctx.fillStyle="rgba(253,230,138,.45)";ctx.fillRect(psgn>0?-13:-2,-1.6,11,3.2);ctx.fillStyle="#fde68a";ctx.fillRect(psgn>0?-3:-2.6,-1.8,5.6,3.6);ctx.fillStyle="#fff7ed";ctx.fillRect(psgn>0?0:-1.4,-1,2.8,2)} /* No.66 gatling pellet: a hot little tracer with a short tail */
@@ -12915,7 +13203,7 @@ function draw(){
  });
  drawReapers(); /* SMILEY Berserker: 死神 apparitions render BEHIND the fighters they haunt */
  var drawList=fighters.length?fighters:[P1,P2];
- for(var dli=0;dli<drawList.length;dli++){var df=drawList[dli];if(!df||df.dead)continue;{var shY=null;if(df.onGround&&df.groundPlat)shY=df.groundPlat.y;else{for(var spi=0;spi<platforms.length;spi++){var spp=platforms[spi];if(df.x>spp.x-8&&df.x<spp.x+spp.w+8&&spp.y>=df.y+df.h-4&&(shY===null||spp.y<shY))shY=spp.y}}if(shY!==null){var shH=Math.max(0,shY-(df.y+df.h));ctx.fillStyle="rgba(1,4,10,"+Math.max(0.05,0.34-shH*0.0011)+")";ctx.beginPath();ctx.ellipse(df.x,shY+5,30+Math.min(16,shH*0.05),6.5,0,0,6.29);ctx.fill()}}if(df.char==="warden")drawWarden(df);else if(df.char==="kojiro")drawKojiro(df);else if(df.char==="axe")drawAxe(df);else if(df.char==="sara")drawSara(df);else if(df.char==="orchid")drawOrchid(df);else if(df.char==="travis")drawTravis(df);else if(df.char==="smiley")drawSmiley(df);else if(df.char==="mimi")drawMimi(df);else if(df.char==="no66")drawNo66(df);else drawKairo(df);
+ for(var dli=0;dli<drawList.length;dli++){var df=drawList[dli];if(!df||df.dead)continue;{var shY=null;if(df.onGround&&df.groundPlat)shY=df.groundPlat.y;else{for(var spi=0;spi<platforms.length;spi++){var spp=platforms[spi];if(df.x>spp.x-8&&df.x<spp.x+spp.w+8&&spp.y>=df.y+df.h-4&&(shY===null||spp.y<shY))shY=spp.y}}if(shY!==null){var shH=Math.max(0,shY-(df.y+df.h));ctx.fillStyle="rgba(1,4,10,"+Math.max(0.05,0.34-shH*0.0011)+")";ctx.beginPath();ctx.ellipse(df.x,shY+5,30+Math.min(16,shH*0.05),6.5,0,0,6.29);ctx.fill()}}if(df.char==="warden")drawWarden(df);else if(df.char==="kojiro")drawKojiro(df);else if(df.char==="axe")drawAxe(df);else if(df.char==="sara")drawSara(df);else if(df.char==="orchid")drawOrchid(df);else if(df.char==="travis")drawTravis(df);else if(df.char==="smiley")drawSmiley(df);else if(df.char==="mimi")drawMimi(df);else if(df.char==="no66")drawNo66(df);else if(df.char==="xeno")drawXeno(df);else drawKairo(df);
    if(df.ultChargeT>0){ /* AXE ult: blazing invincibility ring while he charges */
      var ucx=df.x,ucy=df.y+df.h*0.46;
      ctx.strokeStyle="rgba(251,146,60,"+(0.75+0.25*Math.sin(time*18))+")";ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(ucx,ucy,54+Math.sin(time*14)*3,0,6.29);ctx.stroke();
@@ -13166,10 +13454,11 @@ function simStepFrame(getInp){
      var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
-   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
+   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*10,y:pr.y+(Math.random()-0.5)*10,vx:(Math.random()-0.5)*30,vy:(Math.random()-0.5)*30,life:.2,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2+Math.random()*2.4}); /* XENO データビット: glitch bits shed in flight */
+if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
-       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:13)))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?11:13))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
@@ -13188,6 +13477,7 @@ function simStepFrame(getInp){
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
+       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,11,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y);foe.slowT=Math.max(foe.slowT||0,0.7);spawnParticles(pr.x,pr.y,7,"#67e8f9",170);spawnParticles(pr.x,pr.y,5,"#f0abfc",140)} /* XENO データビット: 11 dmg / KB 300 + the hit LAGS the foe (slow 0.7s) */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
@@ -13261,7 +13551,7 @@ function loop(ts){
  if(mode==="online"&&!sbHostLive&&!(typeof ls!=="undefined"&&ls&&ls.active)){svAdvance(dtms); /* online matches draw on every display frame at every tier (the old half-rate draw skip was removed — owner directive: no frame of the picture is ever dropped). A Supabase HOST match is the one exception to this branch: the host's own device runs the match on the local engine (the VS CPU path below), so it must NOT take the snapshot-client path — guests still take it as always. */
   if(renderDue(ts)){markDraw(ts);var gox=shake?(Math.random()-.5)*shake:0,goy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(gox,goy);draw();ctx.restore()}syncHUD();return} /* render FPS setting (user-selected 30): svAdvance above still runs every frame — only the draw is time-gated, on this device only */
  if(mode==="online"&&typeof ls!=="undefined"&&ls&&ls.active){lsDrive(dtms);if(renderDue(ts)){markDraw(ts);var lox=shake?(Math.random()-.5)*shake:0,loy=shake?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(lox,loy);draw();ctx.restore()}syncHUD();return} /* rollback match (host and guests alike): the local engine IS the match — lsDrive steps it (rolling back / re-simulating as remote inputs land), then the frame draws exactly like local play (subject to the same render-only FPS gate) */
- if(respawnSelectPending&&!matchOver){respawnSelectPending=false;openRespawnSelect()}
+ if(respawnSelectPending&&!matchOver){respawnSelectPending=false;if(P1&&P1.char==="xeno")xenoRespawn();else openRespawnSelect()} /* a hidden XENO run never opens the character select: she respawns as herself */
  if(paused){if(!pausedDrawn){pausedDrawn=true;drawAlpha=1;markDraw(ts);draw()}return} /* PERF round 2: while paused the scene is static, so draw it ONCE instead of re-rasterising the full stage every display frame behind the pause menu; resize() clears the flag so a rotation still repaints. The paused repaint always draws (it is a one-shot, not a rate) so the pause menu never sits over a stale frame */
  pausedDrawn=false;
  if(hitstop>0){hitstop-=dtms/1000;drawAlpha=1;if(renderDue(ts)){markDraw(ts);draw()}syncHUD();return}
