@@ -2357,7 +2357,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v304";
+var BUILD_ID="v305";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9167,14 +9167,18 @@ function clearDecoysOf(owner,quiet){
    rolls ONE of red / blue / purple AT RANDOM at the muzzle — the
    old fixed colour cycle is gone — and each colour carries its
    own performance (XBIT_SPECS, indexed like XBIT_COLS 0..2):
-   BLUE is the fastest (1240: 11 dmg / KB 300 / lag 0.7s),
-   PURPLE is the middle (880) for a step more damage (14), and
-   RED is by far the slowest (560) with bigger knockback (390),
-   a fixed slightly-longer hitstun (0.32s) and a longer lag
-   (0.95s). The speed spread was WIDENED hard (user spec: the
-   old 980 / 880 / 790 gaps were too small to feel — blue now
-   flies well over twice as fast as red), while every colour's
-   damage / knockback / hitstun / lag numbers are unchanged.
+   BLUE is the fastest (1240: 8 dmg / KB 300 / lag 0.7s),
+   PURPLE is the middle (880) at DOUBLE the damage (16), and
+   RED is by far the slowest (560) at TRIPLE blue's damage
+   (24), with bigger knockback (390), a fixed slightly-longer
+   hitstun (0.32s) and a longer lag (0.95s). The speed spread
+   was WIDENED hard (user spec: the old 980 / 880 / 790 gaps
+   were too small to feel — blue now flies well over twice as
+   fast as red), and the DAMAGE spread is now just as stark
+   (user spec: 8 / 16 / 24, was 11 / 14 / 11 — the colour you
+   roll is felt in the damage as much as in the speed), while
+   every colour's knockback / hitstun / lag numbers are
+   unchanged.
    The rolled performance rides
    ON the projectile (xdmg / xkb / xhs / xslow), so the dispatch
    in the projectile step needs no colour table of its own, and
@@ -9184,7 +9188,7 @@ function clearDecoysOf(owner,quiet){
    palette while it flies (see the xdart draw); no U shot is
    ever cyan any more */
 var XBIT_COLS=["#ef4444","#3b82f6","#a855f7","#22d3ee"];
-var XBIT_SPECS=[{spd:560,dmg:11,kb:390,hs:0.32,slow:0.95},{spd:1240,dmg:11,kb:300,hs:0,slow:0.7},{spd:880,dmg:14,kb:300,hs:0,slow:0.7}]; /* [0] red / [1] blue / [2] purple — hs 0 means the shot keeps applyHit's KB-derived stun; red's 0.32 is a fixed, slightly longer stun */
+var XBIT_SPECS=[{spd:560,dmg:24,kb:390,hs:0.32,slow:0.95},{spd:1240,dmg:8,kb:300,hs:0,slow:0.7},{spd:880,dmg:16,kb:300,hs:0,slow:0.7}]; /* [0] red / [1] blue / [2] purple — damage 24 / 8 / 16 (user spec: a pronounced per-colour spread); hs 0 means the shot keeps applyHit's KB-derived stun; red's 0.32 is a fixed, slightly longer stun */
 function xbitSpawn(x,y,face,owner){var hue=Math.floor(Math.random()*3);var sp=XBIT_SPECS[hue];projectiles.push({x:x,y:y,vx:face*sp.spd,vy:0,owner:owner,life:1.05,kind:"xbit",hue:hue,xdmg:sp.dmg,xkb:sp.kb,xhs:sp.hs,xslow:sp.slow})}
 function startXenoAttack(f,type,foe){
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
@@ -9210,11 +9214,14 @@ function startXenoAttack(f,type,foe){
      /* デジタルポップ (air fwd+J): she thrusts one hand forward
         and a digital explosion pops at her fingertips — one hit
         in front, dressed BIG (see the xpop burst call below), no
-        warp, no chain, no follow-up */
+        warp, no chain, no follow-up. The blast box is WIDER and
+        the launch STRONGER than before (user spec): 84x64 /
+        KB 560, was 66x54 / KB 400, and the burst dressing grew
+        with the box so the visible explosion covers the hit */
      f.state="xpop";f.stateT=0.26;f.attackCd=0.34;f.comboWin=0;
      if(f.vy>60)f.vy=60;f.vx+=f.face*110;capVx(f,RUN_MAX*1.15);
-     meleeHit(f,foe,66,54,12,400,f.face,-0.24,0.3);
-     spawnVecBurst("xpop",f.x+f.face*52,f.y+f.h*0.42,96,0.42,0,f.face,0.98);xenoCircuitFx(f.x+f.face*52,f.y+f.h*0.42,58);xenoRingFx(f.x+f.face*52,f.y+f.h*0.42,48);shake=Math.max(shake,2); /* XENO-only dressing (user request): the fingertip digital explosion, blown up until it unmistakably reads as an explosion — a strobing square core, a dozen square fragments, a circuit cross and a snapping target frame at her fingertips; no borrowed burst */
+     meleeHit(f,foe,84,64,12,560,f.face,-0.24,0.3);
+     spawnVecBurst("xpop",f.x+f.face*54,f.y+f.h*0.42,118,0.42,0,f.face,0.98);xenoCircuitFx(f.x+f.face*54,f.y+f.h*0.42,70);xenoRingFx(f.x+f.face*54,f.y+f.h*0.42,58);shake=Math.max(shake,3); /* XENO-only dressing (user request): the fingertip digital explosion, blown up until it unmistakably reads as an explosion — a strobing square core, a dozen square fragments, a circuit cross and a snapping target frame at her fingertips; no borrowed burst */
      beep(1180,.06,"square",.045);setTimeout(function(){beep(340,.08,"sawtooth",.04)},50);
    }else if(!f.onGround){
      /* グリッチオービット (air J, reworked — user spec): damage
@@ -9224,6 +9231,9 @@ function startXenoAttack(f,type,foe){
         ticks out up to 3 hits of a surrounding box (周囲108x66,
         10 dmg / KB 290, one shared hit list per tick so a foe is
         struck once per tick), capped at 2 uses per airborne stint.
+        A weak vacuum pull runs while the state lasts (user spec):
+        nearby foes are dragged slightly toward her so the box
+        connects more easily (see the xairj block in stepFighter).
         The ticks live in stepFighter (state "xairj"); the dressing
         is hers alone — stepped block noise and a snapping square
         orbit frame, never KAIRO's ice */
@@ -10266,9 +10276,13 @@ function recordDmg(att,def,amount){
    (score = recorded damage, assists, the killer's +100 bonus
    and KO heal) treats the lump like any other damage. Kill
    credit goes to the bank's largest contributor. The payout
-   shows as a single big damage floater plus a glitch burst at
-   the release point. A bank left on a fighter who dies another
-   way is discarded (killFighter / resetFighter clear it). */
+   shows as ONE PROMINENT damage floater (user spec): since no
+   number is shown while the bind lasts, the lump sum is drawn
+   big (the floater's "big" flag — double-size type with a dark
+   outline, in her hot pink) with a longer life, plus a glitch
+   burst at the release point. A bank left on a fighter who
+   dies another way is discarded (killFighter / resetFighter
+   clear it). */
 function releaseGlitchBank(f){
  var bank=f.glitchBank||0,by=f.glitchBankBy||null;
  f.glitchBank=0;f.glitchBankBy=null;
@@ -10288,7 +10302,7 @@ function releaseGlitchBank(f){
    }
  }
  f.lastHurt=time;f.flash=0.16;
- pushFloater({x:f.x,y:f.y-22,txt:"-"+applied,life:.9,col:"#e9d5ff"});
+ pushFloater({x:f.x,y:f.y-30,txt:"-"+applied,life:1.3,col:"#f0abfc",big:1}); /* the lump sum is the ONLY number the bind ever shows — drawn big and bright so the release reads at a glance (see the big branch in the floater draw) */
  spawnVecBurst("xglitch",f.x,f.y+f.h*0.5,60,0.35,0,1,0.95);
  spawnVecBurst("xshard",f.x,f.y+f.h*0.5,70,0.4,0,1,0.9);
  xenoRingFx(f.x,f.y+f.h*0.45,54);
@@ -10463,9 +10477,11 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
     registers as a hit: hitstop, hurt flash, hit particles, the
     attacker's combo count and meter gain all fire as usual;
     knockback / hitstun are moot (the bind pins the victim in
-    complete stun anyway), and the damage floater is replaced by
-    the running BANKED total so the store is visible while it
-    grows. The ult hit that APPLIES the bind is never banked: it
+    complete stun anyway), and NO damage number is shown while
+    the bind lasts (user spec): the store stays invisible until
+    the bind breaks, when releaseGlitchBank pays it out as one
+    big, prominent lump-sum floater. The ult hit that APPLIES
+    the bind is never banked: it
     lands first and sets glitchT only afterwards (see the xdart
     branch in the projectile step), so the detonation itself
     behaves exactly as before. */
@@ -10477,7 +10493,6 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
    def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.14;
    if(!hitFxMute){hitstop=isUlt?0.09:0.035;shake=Math.min(shake+1.5,4);
    if(!noParts)spawnParticles(cx||def.x,cy||def.y+def.h*0.45,10,"#a78bfa",180);
-   pushFloater({x:def.x,y:def.y-16,txt:"蓄積 "+def.glitchBank,life:.7,col:"#c4b5fd"});
    spawnRing(cx||def.x,cy||def.y+def.h*0.45,"#a78bfa",44);
    if(att){if(att.comboT<=0){att.comboHits=0;att.comboDmg=0}att.comboHits++;att.comboDmg=d100((att.comboDmg||0)+dmg);att.comboT=0.95;if(!isUlt)att.meter=Math.min(att.char==="kojiro"?300:100,att.meter+meterGainFor(att,dmg))}
    beep(180+Math.random()*120,.07,"square",.06)}
@@ -11175,10 +11190,26 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     (周囲108x66, 10 dmg / KB 290, tick interval 0.06s inside the
     0.38s state; the two meleeHit calls share one hit list per tick,
     so each foe is struck ONCE per tick, launched outward on their
-    side). The dressing is XENO's alone (user spec): every tick pops
+    side). A weak VACUUM runs for the whole state (user spec):
+    foes just outside the box are dragged a little toward her
+    each frame, so the orbit connects more easily — see the
+    pull loop at the top of the block below. The dressing is
+    XENO's alone (user spec): every tick pops
     stepped block noise around her and every second tick snaps a
     square orbit frame open — digital / glitch, never KAIRO's ice */
  if(f.state==="xairj"&&f.char==="xeno"){
+   /* weak VACUUM (user spec): for the whole orbit, every foe
+      within reach of her centre (185 across / 125 up-down —
+      just outside the tick box's ~160 reach) is dragged a
+      little toward her: 190 u/s horizontally, 110 u/s
+      vertically, clamped so it never overshoots her centre.
+      A plain positional nudge inside the sim step — no
+      velocity is written, so the foe's own physics resumes
+      untouched the frame the pull lets go, and the sim stays
+      deterministic. Dead / invulnerable / glitch-bound /
+      grab-held foes are exempt (the bound and the held are
+      already pinned by their own systems) */
+   for(var xvi=0;xvi<fighters.length;xvi++){var xvt=fighters[xvi];if(xvt===f||xvt.dead||xvt.invuln>0||(xvt.glitchT||0)>0||(xvt.heldT||0)>0)continue;var xvdx=f.x-xvt.x,xvdy=(f.y+f.h*0.45)-(xvt.y+xvt.h/2);if(Math.abs(xvdx)<185&&Math.abs(xvdy)<125){xvt.x+=Math.max(-190*dt,Math.min(190*dt,xvdx));xvt.y+=Math.max(-110*dt,Math.min(110*dt,xvdy))}}
    f.spinTick+=dt;
    if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,10,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,10,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
  }
@@ -13978,7 +14009,7 @@ function draw(){
  rings.forEach(function(r){if(r.x<cX0||r.x>cX1||r.y<cY0||r.y>cY1)return;ctx.globalAlpha=Math.max(0,r.life)*0.75;ctx.strokeStyle=r.col;ctx.lineWidth=3*r.life+0.6;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,6.29);ctx.stroke()});ctx.globalAlpha=1;
  fxBursts.forEach(function(b){if(b.x<cX0||b.x>cX1||b.y<cY0||b.y>cY1)return;var bt=b.life/b.max;drawFxTex(b.img,b.x,b.y,b.size*(1.32-0.55*bt),b.rot,b.flip,b.alpha*Math.min(1,bt*1.7))}); /* texture bursts draw at every tier; only fully off-screen ones are culled (see the culling bounds above) */
  drawVecBursts(); /* TRAVIS / SMILEY dedicated vector bursts (no borrowed FX textures) */
- floaters.forEach(function(fl){if(fl.x<cX0||fl.x>cX1||fl.y<cY0||fl.y>cY1)return;ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.textAlign="center";ctx.fillText(fl.txt,fl.x,fl.y);ctx.textAlign="left"});ctx.globalAlpha=1;
+ floaters.forEach(function(fl){if(fl.x<cX0||fl.x>cX1||fl.y<cY0||fl.y>cY1)return;ctx.textAlign="center";if(fl.big){ctx.globalAlpha=Math.max(0,Math.min(1,fl.life/0.8));ctx.font="30px 'DotGothic16'";ctx.lineWidth=6;ctx.strokeStyle="rgba(24,2,36,.88)";ctx.strokeText(fl.txt,fl.x,fl.y);ctx.fillStyle=fl.col;ctx.fillText(fl.txt,fl.x,fl.y)}else{ctx.globalAlpha=Math.max(0,fl.life/0.7);ctx.fillStyle=fl.col;ctx.font="15px 'DotGothic16'";ctx.fillText(fl.txt,fl.x,fl.y)}ctx.textAlign="left"});ctx.globalAlpha=1; /* fl.big: the prominent lump-sum payout number (XENO glitch-bank release) — double-size type with a dark outline so it pops over any background */
  if(hitboxViewerOn())drawHitboxOverlay(); /* hitbox viewer (おかき only): attack / hurt boxes over the world, under the screen-space overlays */
  ctx.restore();
  /* screen-space: low drifting fog, then minimap, then the pre-rendered
@@ -14147,7 +14178,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
-       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||11):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||8):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
@@ -14166,7 +14197,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
-       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||11,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 11 dmg / KB 300 / lag 0.7s; purple = 14 dmg; red = KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline */
+       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||8,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 8 dmg / KB 300 / lag 0.7s; purple = 16 dmg; red = 24 dmg + KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline */
        else if(pr.kind==="xdart"){applyHit(pr.owner,foe,28,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);foe.glitchT=Math.max(foe.glitchT||0,1.8);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 28 dmg / KB 520 + グリッチ拘束 1.8s — the detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* (the データビット branch above carries its own per-colour numbers; its burst is stepped block noise, not a particle spray) */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
