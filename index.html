@@ -250,6 +250,32 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-r
 .modal{position:fixed;inset:0;background:rgba(2,6,23,.78);display:none;place-items:center;z-index:60;padding:16px}.modal.on{display:grid}
 .sheet{background:var(--panel);border:1.5px solid var(--line);border-radius:20px;max-width:640px;width:100%;max-height:86svh;overflow:auto;padding:20px}
 .sheet h2{margin:0 0 6px}.sheet p,.sheet li{color:#cbd5e1;font-weight:700;line-height:1.65;font-size:14px}
+/* ===== XENO gate (hidden screen): bug-world hologram sheet =====
+   Applied ONLY while the hidden gate is open — openSheet strips
+   these classes again for every other sheet. All motion is STEPPED
+   (hard jumps on a coarse clock, never a smooth glide), matching
+   XENO's own in-game dressing, and the palette is hers alone:
+   pink / purple / white on deep digital navy. Pure CSS, no loop. */
+.modal.xgModal{background:rgba(5,2,16,.9)}
+.sheet.xgSheet{background:linear-gradient(160deg,#0a0618,#150830 55%,#070a1e);border-color:#a855f7;box-shadow:0 0 0 1px rgba(240,171,252,.35),0 0 34px rgba(168,85,247,.35),0 18px 50px rgba(0,0,0,.7);position:relative;animation:xgIn .38s steps(5) both}
+.sheet.xgSheet::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(248,250,252,.05) 0 1px,transparent 1px 4px),repeating-linear-gradient(90deg,rgba(167,139,250,.06) 0 1px,transparent 1px 46px),repeating-linear-gradient(0deg,rgba(167,139,250,.06) 0 1px,transparent 1px 46px)}
+.sheet.xgSheet::after{content:"";position:absolute;inset:9px;pointer-events:none;border:1px solid rgba(240,171,252,.38)}
+@keyframes xgIn{0%{transform:translate(-7px,3px)}25%{transform:translate(5px,-2px)}50%{transform:translate(-3px,0)}75%{transform:translate(2px,1px)}100%{transform:translate(0,0)}}
+.xgTitle{font-family:'DotGothic16',sans-serif;font-size:46px;letter-spacing:.14em;color:#fdf4ff;position:relative;display:inline-block;text-shadow:0 0 14px rgba(240,171,252,.65);margin:4px 0 2px;line-height:1.1}
+.xgTitle::before,.xgTitle::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;overflow:hidden;opacity:0}
+.xgTitle::before{color:#f472b6;transform:translate(-3px,0);clip-path:inset(10% 0 56% 0);animation:xgSlice 1.15s steps(2) infinite}
+.xgTitle::after{color:#a78bfa;transform:translate(3px,0);clip-path:inset(58% 0 6% 0);animation:xgSlice 1.15s steps(2) infinite reverse}
+@keyframes xgSlice{0%,86%{opacity:0}88%,94%{opacity:.9}96%,100%{opacity:0}}
+.xgFlicker{animation:xgFlick 2.6s steps(1) infinite}
+@keyframes xgFlick{0%,91%,94.5%,100%{opacity:1}92.5%,93.5%{opacity:.25}}
+.xgBlink{display:inline-block;width:9px;height:9px;background:#f0abfc;animation:xgBlk 1s steps(1) infinite}
+@keyframes xgBlk{0%,55%{opacity:1}56%,100%{opacity:.12}}
+.sheet.xgSheet .xgBtn{background:#170b31;border-color:#a78bfa;color:#ede9fe;font-family:'DotGothic16',sans-serif;letter-spacing:.08em}
+.sheet.xgSheet .xgBtn.primary{background:#3b0764;border-color:#f0abfc;color:#fdf4ff;box-shadow:0 0 16px rgba(217,70,239,.35)}
+#xgFlash{position:fixed;inset:0;z-index:95;pointer-events:none;display:none;background:repeating-linear-gradient(0deg,rgba(240,171,252,.20) 0 14px,rgba(167,139,250,.12) 14px 30px,rgba(11,18,38,.25) 30px 44px)}
+#xgFlash.on{display:block;animation:xgFlashA .5s steps(6) both}
+@keyframes xgFlashA{0%{transform:translateX(-16px);opacity:1}30%{transform:translateX(11px)}55%{transform:translateX(-6px);opacity:.85}80%{transform:translateX(3px)}100%{transform:translateX(0);opacity:0}}
+@media (prefers-reduced-motion: reduce){.sheet.xgSheet,.xgTitle::before,.xgTitle::after,.xgFlicker,.xgBlink,#xgFlash.on{animation:none!important}}
 .moveRow{display:flex;gap:12px;border-top:1px solid var(--line);padding:11px 0}
 .moveRow b{color:#fff}.moveRow p{margin:2px 0 0}
 .mvTabs{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 2px}
@@ -456,7 +482,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
 "use strict";
 var $=function(id){return document.getElementById(id)};
 /* ---------- modal contents ---------- */
-function openSheet(html){$("sheet").innerHTML=html+'<button class="gbtn primary" style="margin-top:14px" onclick="document.getElementById(\'modal\').classList.remove(\'on\')">閉じる</button>';$("modal").classList.add("on")}
+function openSheet(html){$("sheet").classList.remove("xgSheet");$("modal").classList.remove("xgModal");$("sheet").innerHTML=html+'<button class="gbtn primary" style="margin-top:14px" onclick="document.getElementById(\'modal\').classList.remove(\'on\')">閉じる</button>';$("modal").classList.add("on")} /* the xgSheet / xgModal classes belong to the hidden XENO gate alone: every ordinary sheet strips them first, and the gate re-adds them after calling this */
 $("modal").addEventListener("click",function(e){if(e.target===this){this.classList.remove("on");capturingFor=null}});
 /* ================= アップデート履歴システム =================
    更新を記録するときは、UPDATE_LOG の先頭に1件追加するだけ。
@@ -2331,7 +2357,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v299";
+var BUILD_ID="v300";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -7110,10 +7136,31 @@ function settingsHTML(msg){
    log — the counter lives only in these two variables. */
 var _xfTaps=0,_xfTapT=0;
 function openXenoGate(){
- openSheet('<h2 style="color:#f0abfc">XENO</h2><p>天才ハッカー — プレイヤーは <b style="color:#f0abfc">XENO</b> で固定です。モードを選ぶとそのまま始まります。</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="gbtn primary" id="xenoPlayBtn" style="flex:1;min-width:140px">▶ PLAY</button><button class="gbtn" id="xenoTrainBtn" style="flex:1;min-width:140px">TRAINING</button></div>');
- var pb=$("xenoPlayBtn"),tb=$("xenoTrainBtn");
- if(pb)pb.onclick=function(){xenoStart("versus")};
- if(tb)tb.onclick=function(){xenoStart("training")};
+ /* the switch itself is dressed as a glitch cut (user request):
+    stepped slice bars tear across the screen for half a second
+    while the settings sheet is still up, then the gate sheet
+    snaps in mid-glitch (the .xgSheet / .xgModal styling above —
+    scanlines, a digital inner frame, an RGB-split flickering
+    title, blinking data blocks; all stepped CSS, no loop, and
+    openSheet strips the classes again for every other sheet) */
+ var fl=document.getElementById("xgFlash");
+ if(!fl){fl=document.createElement("div");fl.id="xgFlash";document.body.appendChild(fl)}
+ fl.classList.remove("on");void fl.offsetWidth;fl.classList.add("on");
+ beep(170,.1,"sawtooth",.05);setTimeout(function(){beep(1560,.07,"square",.045)},120);
+ setTimeout(function(){fl.classList.remove("on")},620);
+ setTimeout(function(){
+  openSheet('<div style="position:relative">'
+  +'<div class="xgFlicker" style="font-family:\'DotGothic16\',sans-serif;font-size:11.5px;letter-spacing:.22em;color:#a78bfa">// RESTRICTED SECTOR — SIGNAL LOCKED</div>'
+  +'<h2 class="xgTitle" data-t="XENO">XENO</h2>'
+  +'<p>天才ハッカー — プレイヤーは <b style="color:#f0abfc">XENO</b> で固定です。モードを選ぶとそのまま始まります。</p>'
+  +'<div aria-hidden="true" style="margin:12px 0 2px;display:flex;gap:6px;align-items:center"><span class="xgBlink"></span><span class="xgBlink" style="animation-delay:.18s;background:#a78bfa"></span><span class="xgBlink" style="animation-delay:.36s;background:#f472b6"></span><span style="font-family:\'DotGothic16\',sans-serif;font-size:11px;color:#c4b5fd;letter-spacing:.18em;margin-left:4px">DECRYPT OK — CHOOSE MODE</span></div>'
+  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="gbtn primary xgBtn" id="xenoPlayBtn" style="flex:1;min-width:140px">▶ PLAY</button><button class="gbtn xgBtn" id="xenoTrainBtn" style="flex:1;min-width:140px">TRAINING</button></div>'
+  +'</div>');
+  $("sheet").classList.add("xgSheet");$("modal").classList.add("xgModal");
+  var pb=$("xenoPlayBtn"),tb=$("xenoTrainBtn");
+  if(pb)pb.onclick=function(){xenoStart("versus")};
+  if(tb)tb.onclick=function(){xenoStart("training")};
+ },360);
 }
 function xenoStart(m){
  document.getElementById("modal").classList.remove("on");
@@ -7304,10 +7351,10 @@ function drawVecBursts(){
     if(xh1<0.22)continue; /* this block is OFF on this step */
     var xbs=2.5+xh2*b.size*0.17;
     ctx.globalAlpha=(xh1>0.85?1:0.72)*b.alpha;
-    ctx.fillStyle=xb%3===0?"#f0abfc":(xb%3===1?"#67e8f9":(xb%5===4?"#0b1226":"#f8fafc"));
+    ctx.fillStyle=xb%3===0?"#f0abfc":(xb%3===1?"#a78bfa":(xb%5===4?"#0b1226":"#f8fafc")); /* no light blue anywhere in her bursts (user spec): the block noise runs pink / purple / white / dark only */
     ctx.fillRect((xh2-0.5)*b.size*2.1-xbs/2,(xh1-0.5)*b.size*1.5-xbs/2,xbs,xbs);
    }
-   if(xst%2===0){ctx.globalAlpha=0.8*b.alpha;ctx.fillStyle="#67e8f9";ctx.fillRect(-b.size*0.9+(xst-2)*2.5,-b.size*0.2,b.size*1.5,2.6);ctx.fillStyle="#f472b6";ctx.fillRect(-b.size*0.6-(xst-2)*2.5,b.size*0.24,b.size*1.3,2.6)}
+   if(xst%2===0){ctx.globalAlpha=0.8*b.alpha;ctx.fillStyle="#a78bfa";ctx.fillRect(-b.size*0.9+(xst-2)*2.5,-b.size*0.2,b.size*1.5,2.6);ctx.fillStyle="#f472b6";ctx.fillRect(-b.size*0.6-(xst-2)*2.5,b.size*0.24,b.size*1.3,2.6)} /* the RGB slice bars are purple / pink now — the light-blue channel is gone from her explosions (user spec) */
    ctx.globalAlpha=a;
   }else if(b.kind==="xring"){ /* XENO: a SQUARE targeting frame that SNAPS outward in four hard steps and blinks — no smooth expansion */
    var xrSt=Math.min(3,Math.floor(pr*4)),xrR=b.size*(0.3+0.24*xrSt),xrC=b.size*0.24;
@@ -7339,7 +7386,7 @@ function drawVecBursts(){
     var csh1=Math.sin(b.seed*83.7+csh*67.3)*43758.5453;csh1-=Math.floor(csh1);
     if(csh1<0.18)continue; /* this shard is OFF on this step */
     var csa=csh*0.628+csh1*0.5,csd=csR*(0.45+csh1*0.75),csx=Math.cos(csa)*csd,csy=Math.sin(csa)*csd,css=b.size*(0.10+csh1*0.13);
-    ctx.fillStyle=csh%4===0?"#f472b6":(csh%4===1?"#67e8f9":(csh%4===2?"#a78bfa":"#f8fafc"));
+    ctx.fillStyle=csh%4===0?"#f472b6":(csh%4===1?"#c084fc":(csh%4===2?"#a78bfa":"#f8fafc")); /* crystal shards run pink / purple / white only — no light blue (user spec) */
     ctx.globalAlpha=(csSt===4?0.25:0.88)*b.alpha;
     ctx.beginPath();ctx.moveTo(csx,csy-css);ctx.lineTo(csx+css*0.8,csy+css*0.6);ctx.lineTo(csx-css*0.8,csy+css*0.6);ctx.closePath();ctx.fill();
     ctx.strokeStyle="rgba(248,250,252,.8)";ctx.lineWidth=1;ctx.stroke();
@@ -7351,13 +7398,13 @@ function drawVecBursts(){
    ctx.lineWidth=2;
    for(var cci=0;cci<4;cci++){
     var csx=(cci%2===0)?1:-1,csy=(cci<2)?-1:1,cbx=csx*ccL*0.62,cby=csy*ccL*0.4;
-    ctx.globalAlpha=ccA;ctx.strokeStyle=cci%3===0?"#67e8f9":(cci%3===1?"#f0abfc":"#a78bfa");
+    ctx.globalAlpha=ccA;ctx.strokeStyle=cci%3===0?"#c084fc":(cci%3===1?"#f0abfc":"#a78bfa"); /* traces run purple / pink / violet — no light blue (user spec) */
     ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(cbx,0);ctx.lineTo(cbx,cby);ctx.stroke();
-    ctx.fillStyle=cci%3===0?"#67e8f9":(cci%3===1?"#f472b6":"#f8fafc");
+    ctx.fillStyle=cci%3===0?"#c084fc":(cci%3===1?"#f472b6":"#f8fafc");
     ctx.fillRect(cbx-2,cby-2,4,4); /* node block at the trace end */
     if(ccSt<3)ctx.fillRect(cbx-1.3,-1.3,2.6,2.6); /* bend node, early steps only */
    }
-   for(var ccb=0;ccb<4;ccb++){var cch=Math.sin(b.seed*67.7+ccb*83.1+ccSt*41.3)*43758.5453;cch-=Math.floor(cch);if(cch<0.34)continue;ctx.globalAlpha=0.85*b.alpha;ctx.fillStyle=ccb%2?"#22d3ee":"#f0abfc";var ccs2=2.2+cch*2.6;ctx.fillRect((cch-0.5)*b.size*1.7-ccs2/2,((ccb*37)%5-2)*b.size*0.16-ccs2/2,ccs2,ccs2)} /* loose data squares blinking beside the traces */
+   for(var ccb=0;ccb<4;ccb++){var cch=Math.sin(b.seed*67.7+ccb*83.1+ccSt*41.3)*43758.5453;cch-=Math.floor(cch);if(cch<0.34)continue;ctx.globalAlpha=0.85*b.alpha;ctx.fillStyle=ccb%2?"#a855f7":"#f0abfc";var ccs2=2.2+cch*2.6; /* loose squares: purple / pink — the light-blue data square is gone (user spec) */ctx.fillRect((cch-0.5)*b.size*1.7-ccs2/2,((ccb*37)%5-2)*b.size*0.16-ccs2/2,ccs2,ccs2)} /* loose data squares blinking beside the traces */
    ctx.globalAlpha=a;
   }else if(b.kind==="xphase"){ /* XENO phase-shift (NEW, hers alone): three SLICED hologram ghosts trail behind the jump — each ghost is three horizontal body bands shoved sideways by different stepped amounts, in white / cyan / pink — while three circuit spear-lines stab forward with node blocks at their tips. The whole burst lives on the same hard step clock as her body */
    var phSt=Math.floor(pr*4);
@@ -7377,16 +7424,16 @@ function drawVecBursts(){
    ctx.globalAlpha=a;
   }else if(b.kind==="xpop"){ /* XENO digital pop (hers alone): the air fwd+J fingertip blast — a square core that strobes white/palette, TWELVE square fragments popping between stepped radii (never gliding), a four-way circuit cross with node blocks, and a snapping square blast frame around the whole pop. Scaled up (user spec) until it unmistakably reads as an explosion: one big pop, then it is gone */
    var ppSt=Math.min(3,Math.floor(pr*4)),ppR=b.size*(0.30+0.23*ppSt);
-   if(ppSt<3){ctx.globalAlpha=(ppSt===2?0.4:0.75)*b.alpha;ctx.strokeStyle=ppSt===0?"#ffffff":"#67e8f9";ctx.lineWidth=2.4;ctx.strokeRect(-ppR*0.92,-ppR*0.92,ppR*1.84,ppR*1.84)} /* the blast frame: a hard square outline that snaps open with the pop */
-   if(ppSt<2){ctx.globalAlpha=0.95*b.alpha;ctx.fillStyle=ppSt===0?"#ffffff":XBIT_COLS[Math.floor(b.seed*7)%4];var pcs3=b.size*(0.20-ppSt*0.05);ctx.fillRect(-pcs3/2,-pcs3/2,pcs3,pcs3);ctx.fillStyle="#0b1226";ctx.fillRect(-pcs3/4,-pcs3/4,pcs3/2,pcs3/2)} /* strobing square core */
-   ctx.lineWidth=2;ctx.strokeStyle="rgba(103,232,249,.85)";ctx.globalAlpha=(ppSt===3?0.25:0.8)*b.alpha;
+   if(ppSt<3){ctx.globalAlpha=(ppSt===2?0.4:0.75)*b.alpha;ctx.strokeStyle=ppSt===0?"#ffffff":"#a78bfa";ctx.lineWidth=2.4;ctx.strokeRect(-ppR*0.92,-ppR*0.92,ppR*1.84,ppR*1.84)} /* the blast frame: a hard square outline that snaps open with the pop — purple, not light blue (user spec) */
+   if(ppSt<2){ctx.globalAlpha=0.95*b.alpha;ctx.fillStyle=ppSt===0?"#ffffff":["#f472b6","#a78bfa","#f0abfc"][Math.floor(b.seed*7)%3];var pcs3=b.size*(0.20-ppSt*0.05);ctx.fillRect(-pcs3/2,-pcs3/2,pcs3,pcs3);ctx.fillStyle="#0b1226";ctx.fillRect(-pcs3/4,-pcs3/4,pcs3/2,pcs3/2)} /* strobing square core — strobes pink / purple only, never the shot palette's light blue (user spec) */
+   ctx.lineWidth=2;ctx.strokeStyle="rgba(167,139,250,.85)";ctx.globalAlpha=(ppSt===3?0.25:0.8)*b.alpha;
    ctx.beginPath();ctx.moveTo(-ppR*0.9,0);ctx.lineTo(ppR*0.9,0);ctx.moveTo(0,-ppR*0.9);ctx.lineTo(0,ppR*0.9);ctx.stroke(); /* circuit cross */
    ctx.fillStyle="#f0abfc";ctx.fillRect(ppR*0.9-1.8,-1.8,3.6,3.6);ctx.fillRect(-ppR*0.9-1.8,-1.8,3.6,3.6);ctx.fillRect(-1.8,-ppR*0.9-1.8,3.6,3.6);ctx.fillRect(-1.8,ppR*0.9-1.8,3.6,3.6); /* node blocks on the cross tips */
    for(var pfr=0;pfr<12;pfr++){
     var pfh=Math.sin(b.seed*91.3+pfr*57.7+ppSt*29.1)*43758.5453;pfh-=Math.floor(pfh);
     if(pfh<0.2)continue; /* this fragment is OFF on this step */
     var pfa=pfr*0.524+pfh*0.3,pfd=ppR*(0.55+pfh*0.6),pfs=2.8+pfh*4.2;
-    ctx.globalAlpha=(ppSt===3?0.3:0.9)*b.alpha;ctx.fillStyle=pfr%4===0?"#f472b6":(pfr%4===1?"#67e8f9":(pfr%4===2?"#a78bfa":"#f8fafc"));
+    ctx.globalAlpha=(ppSt===3?0.3:0.9)*b.alpha;ctx.fillStyle=pfr%4===0?"#f472b6":(pfr%4===1?"#c084fc":(pfr%4===2?"#a78bfa":"#f8fafc")); /* fragments: pink / purple / white only — no light blue (user spec) */
     ctx.fillRect(Math.cos(pfa)*pfd-pfs/2,Math.sin(pfa)*pfd-pfs/2,pfs,pfs);
    }
    ctx.globalAlpha=a;
@@ -9053,7 +9100,7 @@ function xenoGlitchFx(f,n){
  var cx=f.x,cy=f.y+f.h*0.45;
  spawnVecBurst("xglitch",cx,cy,26+(n||6)*2.2,0.34,0,f.face,0.95);
  var nb=Math.min(6,Math.max(3,(n||6)-2));
- for(var gi=0;gi<nb;gi++)pushParticle({x:cx+(Math.random()-0.5)*46,y:cy+(Math.random()-0.5)*42,vx:0,vy:0,life:0.15+Math.random()*0.15,col:Math.random()<0.45?"#67e8f9":(Math.random()<0.62?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.4,amb:1});
+ for(var gi=0;gi<nb;gi++)pushParticle({x:cx+(Math.random()-0.5)*46,y:cy+(Math.random()-0.5)*42,vx:0,vy:0,life:0.15+Math.random()*0.15,col:Math.random()<0.45?"#a78bfa":(Math.random()<0.62?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.4,amb:1}); /* her loose data blocks are purple / pink / white — no light blue (user spec) */
 }
 function xenoRingFx(x,y,size){spawnVecBurst("xring",x,y,size||40,0.3,0,1,0.95)} /* a square targeting frame that snaps outward in hard steps (see drawVecBursts) */
 function xenoPortalFx(x,y,size){spawnVecBurst("xportal",x,y,size||56,0.34,0,1,0.95)} /* a CIRCULAR portal ring that snaps open in hard steps (see drawVecBursts) — the warp's door, spawned at both ends of the jump */
@@ -9131,7 +9178,8 @@ function startXenoAttack(f,type,foe){
    }else if(!f.onGround){
      /* グリッチオービット (air J, reworked — user spec): damage
         AROUND herself, on the same skeleton as KAIRO's hover spin —
-        she hangs in the air (fall nearly cancelled) while the move
+        but with NO hover (user spec): nothing brakes her fall, so
+        gravity pulls her down at the normal rate while the move
         ticks out up to 6 hits of a surrounding box (周囲108x66,
         5 dmg / KB 290, one shared hit list per tick so a foe is
         struck once per tick), capped at 2 uses per airborne stint.
@@ -9142,7 +9190,7 @@ function startXenoAttack(f,type,foe){
      f.airJ++;
      f.state="xairj";f.stateT=0.38;f.attackCd=0.42;f.comboWin=0;
      f.spinHits=0;f.spinTick=0.1; /* first tick lands almost immediately */
-     if(f.vy>30)f.vy=30;
+     /* no vy cap here either (user spec): the press no longer brakes her fall — she drops straight through the move */
      xenoGlitchFx(f,10);xenoRingFx(f.x,f.y+f.h*0.45,54);
      beep(1480,.05,"square",.04);
    }else if(downHeld){
@@ -9262,7 +9310,8 @@ function startXenoAttack(f,type,foe){
         inside a portal ring at the departure point and pops back
         into solid form through a second ring at the arrival point
         — placed on the far side of the foe from the way they face
-        (foe.x - foe.face*58, on the foe's own level), already
+        with a clear gap of air behind them (foe.x - foe.face*150,
+        on the foe's own level), already
         facing their back (f.face = foe.face). No damage of its
         own: the payoff is position. px/py snap with her so the
         render interpolation never swoops — the warp is a cut, not
@@ -9271,7 +9320,7 @@ function startXenoAttack(f,type,foe){
         plain グリッチラッシュ below instead */
      f.state="xwarp";f.stateT=0.26;f.attackCd=0.5;f.comboWin=0;
      xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58); /* departure: the body dissolves into blocks inside the ring and is gone */
-     var xwTx=foe.x-foe.face*58;if(xwTx<50)xwTx=50;if(xwTx>WORLD_W-50)xwTx=WORLD_W-50;
+     var xwTx=foe.x-foe.face*150;if(xwTx<50)xwTx=50;if(xwTx>WORLD_W-50)xwTx=WORLD_W-50; /* 150, was 58 (user spec): she materialises BEHIND the foe with a clear gap between them, not glued to their back */
      f.x=xwTx;f.y=foe.y;f.vx=0;f.vy=0;f.onGround=false;f.fastfall=false;f.face=foe.face;f.px=f.x;f.py=f.y;
      xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring, behind the foe */
      beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
@@ -9294,9 +9343,11 @@ function startXenoAttack(f,type,foe){
    beep(1720,.06,"sine",.045);
    if(f.reloadT<=0)f.reloadT=reloadInterval(f);
  }else if(type==="ult"){
-   /* デジタルダート (L ult): spends the whole gauge on ONE slow
-      digital bullet fired straight ahead. In flight the bullet is
-      STEERED by the firing player's direction input (arrow keys /
+   /* デジタルの核 (L ult): spends the whole gauge on ONE slow
+      digital CORE fired straight ahead — a cored crystal sphere
+      (see the xdart draw) that endures for a full 20 SECONDS
+      unless it hits something first (user spec). In flight the
+      core is STEERED by the firing player's direction input (arrow keys /
       stick) at a constant slow 330 u/s with a capped turn rate —
       see the "xdart" steering in the projectile step. On a hit it
       detonates into a geometric crystal explosion (vecBurst
@@ -9308,7 +9359,7 @@ function startXenoAttack(f,type,foe){
       MIMI's orb 46 with no bind, and the point-blank crash this
       replaces was 30 dmg with a 1.6s slow. */
    if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
-   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:3.0,kind:"xdart"});
+   projectiles.push({x:f.x+f.face*40,y:f.y+f.h*0.42,vx:f.face*330,vy:0,owner:f,life:20,kind:"xdart"}); /* life 20s (user spec, was 3.0): the core endures until it hits something — a foe, a decoy, or the world bounds are its only other ends */
    xenoGlitchFx(f,10);xenoPortalFx(f.x+f.face*40,f.y+f.h*0.42,36);
    beep(196,.16,"sawtooth",.06);setTimeout(function(){beep(1240,.2,"square",.05)},70);
  }
@@ -10985,8 +11036,9 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    if(f.spinTick>=0.08&&f.spinHits<4){f.spinTick=0;f.spinHits++;var batHit=[];meleeHit(f,foe,112,74,4,330,f.face,-0.3,0,false,0,batHit);meleeHit(f,foe,112,74,4,330,-f.face,-0.2,0,false,0,batHit); /* 回転警棒 上方修正 (user spec): 判定 左右84x74 -> 周囲112x74 / ダメージ 前4・後4 -> 4 / KB 前330・後330 -> 330 (数値は据え置き、周囲化に合わせて1ティック1ヒットに統一) */spawnParticles(f.x,f.y+f.h*0.45,5,"#fde68a",170)}
  }
  /* GLITCH ORBIT (XENO air J): the same skeleton as KAIRO's HOVER
-    SPIN above — while the state lasts the fall is nearly cancelled
-    and the move ticks out up to 6 hits of a surrounding box
+    SPIN above — but the hover is GONE (user spec): nothing here
+    touches f.vy, so she falls at the normal rate while the move
+    ticks out up to 6 hits of a surrounding box
     (周囲108x66, 5 dmg / KB 290, tick interval 0.06s inside the
     0.38s state; the two meleeHit calls share one hit list per tick,
     so each foe is struck ONCE per tick, launched outward on their
@@ -10994,7 +11046,6 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     stepped block noise around her and every second tick snaps a
     square orbit frame open — digital / glitch, never KAIRO's ice */
  if(f.state==="xairj"&&f.char==="xeno"){
-   if(f.vy>30)f.vy=30;
    f.spinTick+=dt;
    if(f.spinTick>=0.06&&f.spinHits<6){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,5,290,f.face,-0.3,0,false,0,xorbHit);meleeHit(f,foe,108,66,5,290,-f.face,-0.15,0,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)}
  }
@@ -13649,16 +13700,21 @@ function draw(){
    if(xs2%5===0){ctx.fillStyle="rgba(255,255,255,.9)";ctx.fillRect(-8,-8,16,2.2);ctx.fillRect(-8,5.8,16,2.2)} /* strobe flash step */
    ctx.fillStyle=xc;ctx.fillRect(7.5,-1.2,3.4,2.4);ctx.fillRect(-11,0.6,3.4,2.4); /* nose / tail bits, so the direction of travel reads too */
    ctx.fillStyle="#ffffff";ctx.fillRect(xsgn*12.5,-1,2.4,2)} /* XENO デジタル弾 (U): a multi-colour digital bullet on a stepped glitch clock — offsets jump, fragments blink, nothing flows */
-   else if(pr.kind==="xdart"){var xd2=Math.floor(time*14+pr.x*0.07),xda=Math.atan2(pr.vy,pr.vx);
+   else if(pr.kind==="xdart"){var xd2=Math.floor(time*14+pr.x*0.07);
    /* loose digital fragments blink around the core in mixed palette colours */
-   for(var xf4=0;xf4<4;xf4++){if((xd2+xf4)%2)continue;var xfh2=Math.sin(xd2*53.9+xf4*97.1)*43758.5453;xfh2-=Math.floor(xfh2);ctx.fillStyle=XBIT_COLS[(xd2+xf4)%4];ctx.globalAlpha=0.8;ctx.fillRect((xfh2-0.5)*26-1.5,Math.sin(xd2*29.3+xf4*61.7)*9-1.5,3,3)}
-   ctx.globalAlpha=1;ctx.save();ctx.rotate(xda);
-   /* crystal shard body: a neon diamond shell around a bright CIRCULAR core — the same geometry that bursts apart on detonation; the shell colour strobes through the palette per step */
-   ctx.fillStyle="rgba(167,139,250,.85)";ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(0,-7);ctx.lineTo(-11,0);ctx.lineTo(0,7);ctx.closePath();ctx.fill();
-   ctx.fillStyle=XBIT_COLS[xd2%4];ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(0,-4.6);ctx.lineTo(-8,0);ctx.lineTo(0,4.6);ctx.closePath();ctx.fill();
-   ctx.strokeStyle="#f8fafc";ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(0,0,3.4,0,6.29);ctx.stroke();
-   ctx.fillStyle="#ffffff";ctx.fillRect(-1.2,-1.2,2.4,2.4);
-   ctx.restore()} /* XENO ult デジタルダート: a slow crystal bullet the player steers in flight */
+   for(var xf4=0;xf4<4;xf4++){if((xd2+xf4)%2)continue;var xfh2=Math.sin(xd2*53.9+xf4*97.1)*43758.5453;xfh2-=Math.floor(xfh2);ctx.fillStyle=XBIT_COLS[(xd2+xf4)%4];ctx.globalAlpha=0.8;ctx.fillRect((xfh2-0.5)*30-1.5,Math.sin(xd2*29.3+xf4*61.7)*11-1.5,3,3)}
+   ctx.globalAlpha=1;
+   /* デジタルの核 (user spec): a digital NUCLEUS, not a bullet — a white-hot CORE sits at the centre of a translucent data sphere, caged by six crystal shards whose orbit angles JUMP in hard steps, with data squares blinking on an outer orbit. Nothing is rotated toward the heading: the core reads as a floating nucleus from every direction, and everything animates on the same stepped clock (xd2), never gliding */
+   ctx.fillStyle="rgba(167,139,250,.20)";ctx.beginPath();ctx.arc(0,0,15.5,0,6.29);ctx.fill(); /* the sphere's hologram body */
+   ctx.strokeStyle="rgba(240,171,252,.75)";ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(0,0,15.5,0,6.29);ctx.stroke();
+   ctx.strokeStyle="rgba(248,250,252,.5)";ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(0,0,11,0,6.29);ctx.stroke(); /* inner data ring */
+   for(var xsh9=0;xsh9<6;xsh9++){var xsa9=(xsh9*60+(xd2%4)*15)*Math.PI/180,xsx9=Math.cos(xsa9)*15.5,xsy9=Math.sin(xsa9)*15.5;ctx.fillStyle=xsh9%3===0?"#f472b6":(xsh9%3===1?"#a78bfa":"#f0abfc");ctx.globalAlpha=0.9;ctx.beginPath();ctx.moveTo(xsx9+Math.cos(xsa9)*5.5,xsy9+Math.sin(xsa9)*5.5);ctx.lineTo(xsx9+Math.sin(xsa9)*3.4,xsy9-Math.cos(xsa9)*3.4);ctx.lineTo(xsx9-Math.sin(xsa9)*3.4,xsy9+Math.cos(xsa9)*3.4);ctx.closePath();ctx.fill()} /* crystal shards caging the sphere, tips pointing outward, jumping 15 degrees per step */
+   ctx.globalAlpha=1;
+   for(var xob9=0;xob9<3;xob9++){var xoa9=((xd2*30)+xob9*120)*Math.PI/180;ctx.fillStyle=xob9%2?"#f8fafc":"#f0abfc";ctx.fillRect(Math.cos(xoa9)*19.5-1.6,Math.sin(xoa9)*19.5-1.6,3.2,3.2)} /* orbiting data squares, stepped */
+   ctx.fillStyle=XBIT_COLS[xd2%4];ctx.beginPath();ctx.arc(0,0,7.6,0,6.29);ctx.fill(); /* the core's coloured mantle, strobing through the palette */
+   ctx.fillStyle="#f0abfc";ctx.beginPath();ctx.arc(0,0,5.2,0,6.29);ctx.fill();
+   ctx.fillStyle="#ffffff";ctx.beginPath();ctx.arc(0,0,3,0,6.29);ctx.fill(); /* the white-hot centre */
+   if(xd2%5===0){ctx.fillStyle="rgba(255,255,255,.9)";ctx.fillRect(-13,-1.1,26,2.2)}} /* XENO ult デジタルの核: a slow digital core the player steers in flight — it endures for 20s unless it hits something */
    else if(pr.kind==="blast"){ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.arc(0,0,13+Math.sin(time*30)*1.5,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,5,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,2.4,0,6.29);ctx.fill()} /* TRAVIS ソニックブラスト: a pulsing purple-gold lump of sound */
    else if(pr.kind==="pbomb"){ctx.fillStyle="rgba(168,85,247,.35)";ctx.beginPath();ctx.arc(0,0,15+Math.sin(time*24)*1.6,0,6.29);ctx.fill();ctx.fillStyle="#a855f7";ctx.beginPath();ctx.arc(0,0,11,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(-3,-3,6,0,6.29);ctx.fill();ctx.fillStyle="#d9f99d";ctx.beginPath();ctx.arc(3,4,2.6,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-4,5,1.9,0,6.29);ctx.fill()} /* ORCHID ポイズンボム: a glossy purple poison sphere with lime toxin bubbles swirling inside */
    else if(pr.kind==="pellet"||pr.kind==="pellet0"){var psgn=pr.vx>0?1:-1;ctx.fillStyle="rgba(253,230,138,.45)";ctx.fillRect(psgn>0?-13:-2,-1.6,11,3.2);ctx.fillStyle="#fde68a";ctx.fillRect(psgn>0?-3:-2.6,-1.8,5.6,3.6);ctx.fillStyle="#fff7ed";ctx.fillRect(psgn>0?0:-1.4,-1,2.8,2)} /* No.66 gatling pellet: a hot little tracer with a short tail */
