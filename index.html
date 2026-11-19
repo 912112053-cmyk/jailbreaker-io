@@ -7296,6 +7296,31 @@ function drawVecBursts(){
    ctx.lineWidth=2.6;ctx.beginPath();for(var wv=0;wv<=12;wv++){var wx=-R*0.8+wv*(R*1.6/12),wy=Math.sin(wv*1.15+b.seed*3)*R*0.16;if(wv===0)ctx.moveTo(wx,wy);else ctx.lineTo(wx,wy)}ctx.strokeStyle="#e9b8ff";ctx.stroke();
    /* a rising note */
    ctx.fillStyle="#fcd34d";ctx.font="700 "+Math.round(b.size*0.30)+"px 'DotGothic16'";ctx.textAlign="center";ctx.fillText("♪",R*0.34,-R*0.30-pr*b.size*0.22);ctx.textAlign="left";
+  }else if(b.kind==="xglitch"){ /* XENO: digital block noise — nothing flows: blocks POP in at hard-stepped positions, hold for a step or two, then vanish; a pair of RGB slice bars shoves sideways on alternating steps */
+   var xst=Math.floor(pr*6); /* six hard steps across the burst's life */
+   for(var xb=0;xb<12;xb++){
+    var xh1=Math.sin(b.seed*91.7+xb*57.3+xst*131.7)*43758.5453;xh1-=Math.floor(xh1);
+    var xh2=Math.sin(b.seed*57.9+xb*91.3+xst*57.7)*43758.5453;xh2-=Math.floor(xh2);
+    if(xh1<0.22)continue; /* this block is OFF on this step */
+    var xbs=2.5+xh2*b.size*0.17;
+    ctx.globalAlpha=(xh1>0.85?1:0.72)*b.alpha;
+    ctx.fillStyle=xb%3===0?"#f0abfc":(xb%3===1?"#67e8f9":(xb%5===4?"#0b1226":"#f8fafc"));
+    ctx.fillRect((xh2-0.5)*b.size*2.1-xbs/2,(xh1-0.5)*b.size*1.5-xbs/2,xbs,xbs);
+   }
+   if(xst%2===0){ctx.globalAlpha=0.8*b.alpha;ctx.fillStyle="#67e8f9";ctx.fillRect(-b.size*0.9+(xst-2)*2.5,-b.size*0.2,b.size*1.5,2.6);ctx.fillStyle="#f472b6";ctx.fillRect(-b.size*0.6-(xst-2)*2.5,b.size*0.24,b.size*1.3,2.6)}
+   ctx.globalAlpha=a;
+  }else if(b.kind==="xring"){ /* XENO: a SQUARE targeting frame that SNAPS outward in four hard steps and blinks — no smooth expansion */
+   var xrSt=Math.min(3,Math.floor(pr*4)),xrR=b.size*(0.3+0.24*xrSt),xrC=b.size*0.24;
+   ctx.globalAlpha=(xrSt===3?0.22:0.85)*b.alpha;
+   ctx.strokeStyle=(Math.floor(b.seed*7)%2)?"#f0abfc":"#67e8f9";ctx.lineWidth=3;
+   ctx.beginPath();
+   ctx.moveTo(-xrR,-xrR+xrC);ctx.lineTo(-xrR,-xrR);ctx.lineTo(-xrR+xrC,-xrR);
+   ctx.moveTo(xrR-xrC,-xrR);ctx.lineTo(xrR,-xrR);ctx.lineTo(xrR,-xrR+xrC);
+   ctx.moveTo(xrR,xrR-xrC);ctx.lineTo(xrR,xrR);ctx.lineTo(xrR-xrC,xrR);
+   ctx.moveTo(-xrR+xrC,xrR);ctx.lineTo(-xrR,xrR);ctx.lineTo(-xrR,xrR-xrC);
+   ctx.stroke();
+   if(xrSt<2){ctx.globalAlpha=0.55*b.alpha;ctx.fillStyle="#f8fafc";ctx.fillRect(-2,-2,4,4)}
+   ctx.globalAlpha=a;
   }else if(b.kind==="axerocks"){ /* AXE 震撃 (↓+K): FOUR spiked rocks erupt across the full 230-wide hitbox — pop up fast, hold, then crumble away */
    var rkRise=Math.min(1,pr*3.2),rkSink=bt<0.22?(0.22-bt)*1.7:0;
    ctx.strokeStyle="#44403c";ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(-b.size*0.52,1);ctx.lineTo(-b.size*0.2,-1);ctx.lineTo(b.size*0.08,1);ctx.lineTo(b.size*0.34,-1);ctx.lineTo(b.size*0.52,1);ctx.stroke();
@@ -8951,10 +8976,17 @@ function startSmileyAttack(f,type,foe){
    meleeHit / projectile, so she needs no stepFighter tick code
    and stays exactly as light as the rest of the roster. */
 function xenoGlitchFx(f,n){
+ /* BUG-WORLD dressing (redraw): no flowing particles — a stepped
+    block-noise burst (vecBurst "xglitch": blocks pop in at hard
+    steps and vanish) plus a few data blocks that hang dead still
+    for a fraction of a second and blink out (amb particles with
+    zero velocity, so nothing drifts or trails). */
  var cx=f.x,cy=f.y+f.h*0.45;
- spawnParticles(cx,cy,Math.min(10,n||6),Math.random()<0.5?"#67e8f9":"#f0abfc",175);
- if(Math.random()<0.5)spawnParticles(cx,cy,3,"#f8fafc",120);
+ spawnVecBurst("xglitch",cx,cy,26+(n||6)*2.2,0.34,0,f.face,0.95);
+ var nb=Math.min(6,Math.max(3,(n||6)-2));
+ for(var gi=0;gi<nb;gi++)pushParticle({x:cx+(Math.random()-0.5)*46,y:cy+(Math.random()-0.5)*42,vx:0,vy:0,life:0.15+Math.random()*0.15,col:Math.random()<0.45?"#67e8f9":(Math.random()<0.62?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.4,amb:1});
 }
+function xenoRingFx(x,y,size){spawnVecBurst("xring",x,y,size||40,0.3,0,1,0.95)} /* a square targeting frame that snaps outward in hard steps (see drawVecBursts) */
 function startXenoAttack(f,type,foe){
  var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
  var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
@@ -8966,7 +8998,7 @@ function startXenoAttack(f,type,foe){
    f.state="xjk";f.stateT=0.4;f.attackCd=0.5;f.comboWin=0;f.hitDone=false;
    f.vx+=f.face*150;capVx(f,RUN_MAX*1.2);
    meleeHit(f,foe,76,62,15,420,f.face,-0.3,0.32);
-   xenoGlitchFx(f,10);spawnRing(f.x+f.face*30,f.y+f.h*0.45,"#f0abfc",34);
+   xenoGlitchFx(f,12);xenoRingFx(f.x+f.face*30,f.y+f.h*0.45,36);
    beep(1320,.05,"square",.045);setTimeout(function(){beep(220,.1,"sawtooth",.04)},90);
  }else if(type==="j"){
    if(!f.onGround&&downHeld){
@@ -9009,7 +9041,7 @@ function startXenoAttack(f,type,foe){
      f.x+=f.face*105;if(f.x<50)f.x=50;if(f.x>WORLD_W-50)f.x=WORLD_W-50;
      f.vx=f.face*260;
      meleeHit(f,foe,80,58,12,380,f.face,-0.26,0.4);
-     xenoGlitchFx(f,8);spawnSparks(f.x+f.face*30,f.y+f.h*0.45,f.face,"#67e8f9",6);
+     xenoGlitchFx(f,9);xenoRingFx(f.x,f.y+f.h*0.45,30);
      beep(1560,.05,"square",.045);
    }else{
      /* データナイフ (J): a fast 3-stage chain of data-knife cuts.
@@ -9027,7 +9059,7 @@ function startXenoAttack(f,type,foe){
        f.comboWin=0;f.comboStep=0;f.state="xknife3";f.stateT=0.24;f.attackCd=0.28;
        f.vx+=f.face*90;capVx(f,RUN_MAX*1.2);
        meleeHit(f,foe,86,56,12,470,f.face,-0.3);
-       xenoGlitchFx(f,9);spawnRing(f.x+f.face*44,f.y+f.h*0.42,"#67e8f9",36);
+       xenoGlitchFx(f,10);xenoRingFx(f.x+f.face*44,f.y+f.h*0.42,38);
        beep(820,.07,"sawtooth",.05);
      }
    }
@@ -9043,14 +9075,14 @@ function startXenoAttack(f,type,foe){
      if(f.flyCd>0){beep(200,.07);return}
      f.flyCd=2.4;f.state="xupload";f.stateT=0.31;f.attackCd=0.31;f.comboWin=0;
      f.vy=-1080;f.onGround=false;f.fastfall=false;f.airLag=Math.max(f.airLag||0,0.3);
-     spawnParticles(f.x,f.y+f.h,10,"#67e8f9",170);spawnRing(f.x,f.y+f.h*0.6,"#f0abfc",30);
+     xenoGlitchFx(f,9);xenoRingFx(f.x,f.y+f.h*0.85,34);
      beep(990,.07,"square",.045);
    }else if(!f.onGround){
      /* エアバースト (air K): a hovering data burst on BOTH sides */
      f.state="xburst";f.stateT=0.3;f.attackCd=0.42;f.comboWin=0;
      if(f.vy>40)f.vy=40;
      var xb=[];meleeHit(f,foe,88,80,12,540,f.face,-0.3,0.3,false,0,xb);meleeHit(f,foe,88,80,12,540,-f.face,-0.3,0.3,false,0,xb);
-     xenoGlitchFx(f,12);spawnRing(f.x,f.y+f.h*0.45,"#67e8f9",42);
+     xenoGlitchFx(f,13);xenoRingFx(f.x,f.y+f.h*0.45,46);
      beep(1240,.06,"square",.045);
    }else{
      /* グリッチラッシュ (K): a rushing glitch strike */
@@ -9076,8 +9108,8 @@ function startXenoAttack(f,type,foe){
    if(f.meter<100)return;f.meter=0;f.state="xult";f.stateT=0.5;f.attackCd=0.55;f.comboWin=0;shake=Math.max(shake,7);
    var xu=[];meleeHit(f,foe,150,104,30,760,f.face,-0.34,0.4,false,0,xu);meleeHit(f,foe,150,104,30,760,-f.face,-0.34,0.4,false,0,xu);
    for(var xi=0;xi<fighters.length;xi++){var xf2=fighters[xi];if(xf2!==f&&!xf2.dead&&Math.abs(xf2.x-f.x)<190&&Math.abs((xf2.y+xf2.h/2)-(f.y+f.h/2))<120)xf2.slowT=Math.max(xf2.slowT||0,1.6)}
-   spawnParticles(f.x,f.y+f.h/2,26,"#67e8f9",280);spawnParticles(f.x,f.y+f.h/2,18,"#f0abfc",230);spawnParticles(f.x,f.y+f.h/2,10,"#f8fafc",180);
-   spawnRing(f.x,f.y+f.h*0.45,"#f0abfc",64);spawnRing(f.x,f.y+f.h*0.45,"#67e8f9",44);
+   xenoGlitchFx(f,18);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,86,0.5,0,f.face,1);spawnVecBurst("xglitch",f.x+f.face*70,f.y+f.h*0.4,44,0.4,0,f.face,0.9);spawnVecBurst("xglitch",f.x-f.face*70,f.y+f.h*0.4,44,0.4,0,-f.face,0.9);
+   xenoRingFx(f.x,f.y+f.h*0.45,72);xenoRingFx(f.x,f.y+f.h*0.45,48);
    beep(140,.35,"sawtooth",.08);setTimeout(function(){beep(1560,.25,"square",.05)},80);
  }
 }
@@ -12874,121 +12906,210 @@ function drawAxe(f){
  hpBar(f);
 }
 function drawXeno(f){
- /* XENO — drawn entirely in code in the roster's flat pixel-block
-    style (like No.66 / MIMI&SHADE; no sprite sheet): a white bunny-ear
-    hood, a white mask with glowing pink X eyes, long white hair whose
-    tips split pink (left) and cyan (right), and a white cyber hoodie.
-    The cyber dressing is deliberately cheap — a handful of rects
-    whose positions come from `time` hashes (no per-frame allocation,
-    no shadowBlur): orbiting data bits, a scan ring at her feet, hair
-    sway, and periodic GLITCH slices that shove horizontal bands of
-    the body sideways with RGB-split ghosts. Part of that same cycle,
-    the mask briefly DROPS several times a minute (and always during
-    her ult / phase shift), revealing her real face — odd eyes (cyan /
-    pink) and a mischievous grin — for about half a second. */
+ /* XENO — REDRAWN finer and re-animated as a BUG-WORLD hologram.
+    Sprite: PXU=1 grain (double the old resolution) — tall bunny ears
+    with glowing pink inners and lit tips, a long white mask with a
+    pointed chin and BIG glowing pink X eyes, long white hair whose
+    tips grade pink (left) into cyan (right) through pale mid-tones,
+    a white techwear jacket crossed by black straps with buckles, a
+    pink X patch, an XXX strap tag, and — visible when the mask is
+    off — a padlock choker with an X on the lock, hair clips (pink X
+    pin, pixel-cat pin) and hood pins, matching her reference art.
+    Motion: NOTHING flows. Every animated value reads a 12Hz step
+    clock (positions, sway, bob, orbit bits, scan ring), so poses
+    SNAP between hard steps. On glitch steps the body is drawn with
+    RGB-split ghost silhouettes and two horizontal SLICE bands are
+    re-drawn shoved sideways; hologram opacity flickers between
+    discrete levels with occasional one-step dropouts, and the whole
+    body occasionally tears sideways for a single step. The mask
+    still drops on the same cycle (and during ult / phase shift) —
+    but it now SNAPS off with a three-step tear, revealing her real
+    face: odd eyes (cyan / pink), a mischievous grin with a fang.
+    All of it is flat rects from time hashes — no shadowBlur, no
+    per-frame allocation beyond two closures. */
  if(f.meter>=100&&!f.dead)drawUltAura(f,240,171,252); /* ult ready: pink charged aura */
- f.trail.forEach(function(t){ /* dash afterimage: glitch silhouettes, cyan body + pink split */
-   ctx.save();ctx.translate(t.x,t.y+30);ctx.scale(t.face,1);ctx.globalAlpha=t.life/0.2*.35;
-   ctx.fillStyle="#67e8f9";ctx.fillRect(-11,-24,22,44);
-   ctx.fillStyle="#f0abfc";ctx.fillRect(-14,-20,4,30);ctx.fillRect(12,-14,3,22);
+ f.trail.forEach(function(t,ti){ /* dash afterimage: blocky glitch silhouettes whose alpha POPS in three hard steps — they snap on and off, never fade */
+   var qa=Math.ceil((t.life/0.2)*3)/3;
+   ctx.save();ctx.translate(t.x,t.y+30);ctx.scale(t.face,1);PXU=1.5;
+   ctx.globalAlpha=qa*0.20;ctx.fillStyle=ti%2?"#67e8f9":"#f0abfc";
+   pxR(-13.5,-40,26,36); /* RGB-split twin, hard offset behind */
+   ctx.globalAlpha=qa*0.36;ctx.fillStyle=ti%2?"#f0abfc":"#67e8f9";
+   pxR(-10.5,-52,5,15);pxR(5.5,-52,5,15); /* ears */
+   pxR(-13,-38,26,12); /* hood */
+   pxR(-14,-30,4.5,46);pxR(9.5,-30,4.5,46); /* long hair */
+   pxR(-11,-26,22,42); /* body */
    ctx.restore();
  });
  ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.face*CHAR_SCALE,CHAR_SCALE);
- if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqY=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqX=f.landT>0?1+0.16*(f.landT/0.18):0.95;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet */
+ if(f.landT>0||(!f.onGround&&f.vy<-520)){var sqYr=f.landT>0?1-0.20*(f.landT/0.18):1.07,sqXr=f.landT>0?1+0.16*(f.landT/0.18):0.95;var sqY=Math.round(sqYr*25)/25,sqX=Math.round(sqXr*25)/25;ctx.translate(0,58*(1-sqY));ctx.scale(sqX,sqY)} /* landing squash / rise stretch, pivots on the feet — quantised to hard steps like everything else she does */
  if(f.invuln>0&&Math.floor(time*14)%2===0)ctx.globalAlpha=.45;
- PXU=1.5;
+ PXU=1;
  var flash=f.flash>0;
- var hoodC=flash?"#ffe4e0":"#f8fafc",hoodD=flash?"#fecdd3":"#cbd5e1",darkC=flash?"#b4564e":"#1e293b",hairC=flash?"#ffd9d4":"#eef2f7",skinC=flash?"#ffc9bd":"#ffe9e1";
- var pinkC=flash?"#fda4af":"#f472b6",pinkL=flash?"#fecdd3":"#f0abfc",cyanC=flash?"#fda4af":"#22d3ee";
- var cyc=(time*1+(f.x%97)*0.013)%6.4;
+ var hoodC=flash?"#ffe4e0":"#f8fafc",hoodD=flash?"#fecdd3":"#c3cede",darkC=flash?"#b4564e":"#1e293b",strapC=flash?"#8a3b34":"#0f172a",hairC=flash?"#ffd9d4":"#f2f5f9",hairD=flash?"#f3b8ae":"#d3dce8",skinC=flash?"#ffc9bd":"#ffe9e1";
+ var pinkC=flash?"#fda4af":"#f472b6",pinkL=flash?"#fecdd3":"#f0abfc",pinkP=flash?"#fecdd3":"#f9a8d4",cyanC=flash?"#fda4af":"#22d3ee",cyanP=flash?"#fecdd3":"#a5f3fc";
+ var seedX=Math.abs(Math.floor(f.x))%97;
+ var stp=Math.floor(time*12)+seedX; /* the 12Hz master step clock: every animated value below reads it, so her whole body moves in hard snaps */
+ function xh(n){var v=Math.sin(stp*127.1+n*311.7+seedX*7.3)*43758.5453;return v-Math.floor(v)}
+ /* hologram flicker: opacity snaps between discrete levels, with an occasional one-step dropout */
+ var hd=xh(3);ctx.globalAlpha*=hd<0.05?0.3:(hd<0.15?0.6:(hd<0.32?0.85:1));
+ var cyc=(time+(f.x%97)*0.013)%6.4;
  var maskOff=!flash&&(cyc<0.5||f.state==="xult"||f.state==="xblink"); /* the mask-drop window inside the cyber cycle */
- var glitch=(Math.floor(time*9+(f.x%53))%23===0)||f.state==="xult"||f.state==="xjk";
- var gx=glitch?((Math.floor(time*37)%3)-1)*2.4:0;
+ if(f._xmP!==undefined&&f._xmP!==maskOff)f._xmT=3; /* the mask switch itself tears for three steps */
+ f._xmP=maskOff;if(f._xmT>0)f._xmT--;
+ var glitch=(Math.floor(time*7+seedX)%13)<2||f.state==="xult"||f.state==="xjk"||(f._xmT>0);
  var isGuardX=!!f.guarding||f.state==="guard";
- var bob=isGuardX?2:Math.sin(time*2.3+(f.x%31))*0.5;
+ var bob=isGuardX?2:((Math.floor(time*6)+seedX)%3-1)*0.9; /* stepped bob: jumps between three heights at 6Hz */
  ctx.translate(0,bob);
- if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.4,0);
+ if(xh(9)<0.06)ctx.translate(xh(10)<0.5?-2.5:2.5,0); /* signal tear: the whole body snaps sideways for a single step */
+ if(f.hitstun>0)ctx.translate(((stp%3)-1)*1.5,0);
  var swinging=f.stateT>0&&f.state!=="idle"&&typeof f.state==="string"&&f.state.charAt(0)==="x";
- /* orbiting data bits: four tiny squares circling the body */
- for(var ob=0;ob<4;ob++){
-   var oa=time*2.4+ob*1.57,orx=19+Math.sin(time*3.1+ob*2.2)*2.5;
-   ctx.fillStyle=ob%2?"rgba(240,171,252,.8)":"rgba(103,232,249,.8)";
-   pxR(Math.cos(oa)*orx-1.2,26+Math.sin(oa)*17-1.2,2.4,2.4);
+ var GC=null; /* ghost colour: while set, every fill becomes this one flat colour (the RGB-split silhouettes) */
+ function F(c){ctx.fillStyle=GC||c}
+ function body(){
+  /* back hair: long white mass in three segments, each jumping on
+     its own step offset; tips grade pale -> saturated, pink left /
+     cyan right */
+  var sw1=((Math.floor(time*5)+seedX)%3-1)*1.1,sw2=((Math.floor(time*5)+seedX+1)%3-1)*1.1,sw3=((Math.floor(time*5)+seedX+2)%3-1)*1.1;
+  F(hairC);pxR(-14.5,7,29,17);
+  F(hairC);pxR(-14.5+sw1,24,29,10);
+  F(hairC);pxR(-14+sw2,34,28,7);
+  F(hairD);pxR(-9+sw1,25,1.6,9);pxR(-2+sw1,25,1.6,9);pxR(5+sw1,25,1.6,9);pxR(-6+sw2,34,1.6,6);pxR(2+sw2,34,1.6,6); /* strand shading */
+  F(pinkP);pxR(-14+sw3,41,9.5,3.5);F(cyanP);pxR(4.5+sw3,41,9.5,3.5); /* gradient mid-tones */
+  F(pinkC);pxR(-13.5+sw3,44.5,8.5,4);F(cyanC);pxR(5+sw3,44.5,8.5,4); /* saturated tips */
+  F(pinkC);pxR(-11+sw3,48,4.5,2.5);F(cyanC);pxR(6.5+sw3,48,4.5,2.5); /* tapered ends */
+  F(hoodD);pxR(-14.5,7,29,2); /* hair shadow line under the hood */
+  /* legs + shoes */
+  F(darkC);pxR(-9.5,43,7.5,10.5);pxR(2,43,7.5,10.5);
+  F(strapC);pxR(-9.5,47,7.5,1.8);pxR(2,47,7.5,1.8); /* knee straps */
+  F(hoodC);pxR(-11,52.5,9.5,4.5);pxR(1.5,52.5,9.5,4.5);
+  F(hoodD);pxR(-11,52.5,9.5,1.4);pxR(1.5,52.5,9.5,1.4);
+  F(pinkC);pxR(-11,55.6,9.5,1.5);
+  F(cyanC);pxR(1.5,55.6,9.5,1.5);
+  /* torso: white techwear jacket — black inner shirt, zipper,
+     diagonal + horizontal black straps with buckles, pink X patch,
+     data bars, drawstrings, a hanging XXX strap tag */
+  F(hoodC);pxR(-12.5,20,25,24);
+  F(hoodD);pxR(-12.5,20,2.6,24);pxR(9.9,20,2.6,24); /* side shade */
+  F(hoodD);pxR(-12.5,41,25,3); /* hem band */
+  F(darkC);pxR(-3.4,20,6.8,5.5); /* black inner shirt at the collar */
+  F(darkC);pxR(-0.8,24,1.6,17); /* zipper */
+  F(hoodD);pxR(-1.6,33,3.2,2.4); /* zipper pull */
+  ctx.strokeStyle=GC||strapC;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-11.5,24.5);ctx.lineTo(9.5,41);ctx.stroke(); /* diagonal strap */
+  F("#94a3b8");pxR(0.5,31.5,3.6,3);F(strapC);pxR(1.4,32.4,1.8,1.2); /* its buckle */
+  F(strapC);pxR(-12.5,36.5,25,2.2);F("#94a3b8");pxR(-6,36.2,3.4,2.8);F(strapC);pxR(-5.2,36.9,1.8,1.4); /* horizontal strap + buckle */
+  F(pinkL);pxR(-9.5,26,6,6);F(darkC);pxLine(-8.6,27,-4.4,31,1.5);pxLine(-8.6,31,-4.4,27,1.5); /* chest X patch */
+  F(cyanC);pxR(4,26.5,5.5,1.8);F(cyanP);pxR(4,29.5,4,1.8);F(cyanC);pxR(4,32.5,2.6,1.8); /* data bars */
+  F(hoodD);pxR(-4.6,25,1.3,5);pxR(3.3,25,1.3,5);F(pinkC);pxR(-4.6,29.6,1.3,1.6);F(cyanC);pxR(3.3,29.6,1.3,1.6); /* drawstrings */
+  F(strapC);pxR(11.2,33,3,8.5);F(pinkC);pxR(11.9,34.2,1.6,1.6);pxR(11.9,36.6,1.6,1.6);pxR(11.9,39,1.6,1.6); /* XXX strap tag */
+  /* arms */
+  F(hoodC);pxR(-16,22.5,4.6,13); /* back arm */
+  F(strapC);pxR(-16,32.5,4.6,2.2); /* cuff */
+  F(skinC);pxR(-16,34.7,4.6,4);
+  if(swinging){
+    F(hoodC);pxR(10,24.5,13,4.6);
+    F(strapC);pxR(19.5,24.5,3,4.6);
+    F(skinC);pxR(22.5,24.5,3.6,4.6);
+    F(cyanC);pxLine(25,26.5,35.5,20,2.6); /* data knife */
+    F(pinkL);pxLine(25,27.3,33.5,22,1.2);
+    F(cyanC);pxR(29+((stp%5)-2),15+((stp%4)-2)*2,2.6,2.6); /* slash bits pop at stepped spots */
+    F(pinkL);pxR(36-((stp%4)-2)*1.5,25+((stp%3)-1)*2,2.2,2.2);
+  }else{
+    F(hoodC);pxR(11.4,22.5,4.6,13);
+    F(strapC);pxR(11.4,32.5,4.6,2.2);
+    F(pinkC);pxLine(12.2,27,15.2,30,1.3);pxLine(12.2,30,15.2,27,1.3); /* sleeve X */
+    F(skinC);pxR(11.4,34.7,4.6,4);
+  }
+  /* bunny ears: tall and tapered, inner ear glowing pink, tips lit */
+  F(hoodC);
+  pxR(-11.5,-16,5.6,18);pxR(-10.8,-21,4.4,5.5);pxR(-10,-24.5,3,3.8); /* left ear */
+  pxR(5.9,-16,5.6,18);pxR(6.4,-21,4.4,5.5);pxR(7,-24.5,3,3.8); /* right ear */
+  F(pinkL);pxR(-9.9,-22.5,2.4,3.4);pxR(7.5,-22.5,2.4,3.4); /* glowing tips */
+  F(pinkC);pxR(-9.7,-18,2,13);pxR(7.7,-18,2,13); /* inner-ear glow */
+  F(pinkL);pxR(-9.7,-18,0.9,13);pxR(7.7,-18,0.9,13); /* hot centre line */
+  F(darkC);pxLine(-10.6,-6,-7.6,-3,1.2);pxLine(-10.6,-3,-7.6,-6,1.2); /* tiny X stamped on the left ear */
+  F(cyanC);pxR(9.9,-9,1.5,1.5);pxR(9.9,-6,1.5,1.5); /* circuit dots on the right ear */
+  F(hoodC);pxEll(0,8.5,15,12); /* hood mass */
+  F(hoodD);pxR(-15,11,3.2,11);pxR(11.8,11,3.2,11); /* hood side shade */
+  F(hoodD);pxEll(0,11,13,10); /* hood rim shade behind the face */
+  /* hood pins: a pixel-cat pin and a heart pin */
+  F("#ffffff");pxR(11,0.5,4,3.4);pxR(11,-0.6,1.4,1.4);pxR(13.6,-0.6,1.4,1.4);F(darkC);pxR(11.9,2,0.9,0.9);pxR(13.8,2,0.9,0.9);
+  F(pinkC);pxR(12.4,5.6,1.6,1.6);pxR(14.4,5.6,1.6,1.6);pxR(12.4,6.8,3.6,1.4);pxR(13.3,8.2,1.8,1.4);
+  /* front fringe: white, jagged, strand lines, one pink and one cyan strand */
+  F(hairC);pxR(-11,1,22,6.5);pxR(-11,7.5,4.2,2.8);pxR(-3.2,7.5,4.2,2.8);pxR(4.6,7.5,4.2,2.8);
+  F(hairD);pxR(-5.5,2,1.4,5);pxR(1.5,2,1.4,5);
+  F(pinkC);pxR(-9.6,2.5,2.1,8);
+  F(cyanC);pxR(7.5,2.5,2.1,9.5);
+  /* face: the mask — or, in the drop window, her real face */
+  if(maskOff){
+    F(skinC);pxEll(0,13,9.6,8.6);pxR(-3.5,20.8,7,2); /* face + small chin */
+    F(darkC);pxR(-7.2,9.9,4.6,1.1);pxR(2.6,9.9,4.6,1.1); /* upper lash lines */
+    F(cyanC);pxR(-7,11,4.4,4.4);F(pinkC);pxR(2.6,11,4.4,4.4); /* odd eyes: cyan / pink */
+    F(cyanP);pxR(-7,14.2,4.4,1.2);F(pinkL);pxR(2.6,14.2,4.4,1.2); /* lower light */
+    F("#ffffff");pxR(-6.2,11.8,1.5,1.5);pxR(3.4,11.8,1.5,1.5); /* highlights */
+    F(darkC);pxR(-5.4,13.2,1.1,1.1);pxR(4.2,13.2,1.1,1.1); /* pupils */
+    F(hairD);pxR(-7.2,8.4,4.4,1);pxR(3,8,4.4,1); /* brows, angled for mischief */
+    F("rgba(244,114,182,.5)");pxR(-8.6,16.4,3.2,1.8);pxR(5.4,16.4,3.2,1.8); /* blush */
+    F(darkC);pxR(-2.2,17.9,6.4,1.5);pxR(3.6,16.9,1.4,1.6); /* mischievous grin */
+    F("#ffffff");pxR(-1.2,19.2,1.5,1.8); /* fang */
+    /* hair clips: a pink X pin and a pixel-cat pin in the fringe */
+    F(pinkC);pxLine(5.2,5.4,8,8.2,1.3);pxLine(5.2,8.2,8,5.4,1.3);
+    F("#ffffff");pxR(0.2,6.8,3,2.6);pxR(0.2,5.9,1.1,1.1);pxR(2.1,5.9,1.1,1.1);F(darkC);pxR(0.9,7.8,0.8,0.8);pxR(2.3,7.8,0.8,0.8);
+    /* padlock choker: black band, pink lock with an X */
+    F(darkC);pxR(-5.5,20.4,11,2);
+    F("#94a3b8");pxR(-1,21.2,2,1.8); /* shackle */
+    F(pinkC);pxR(-1.9,22.6,3.8,4.4);
+    F(darkC);pxLine(-1.2,23.8,1.2,26.2,1.1);pxLine(-1.2,26.2,1.2,23.8,1.1);
+  }else{
+    F(hoodC);pxEll(0,13,10.2,9); /* the white mask */
+    pxR(-6.5,20.5,13,2);pxR(-4.5,22.5,9,2);pxR(-2.2,24.3,4.4,1.8); /* pointed chin */
+    F(hoodD);pxR(-7.5,19.8,15,1.4); /* lower shade seam */
+    F("rgba(244,114,182,.30)");pxR(-9.6,8.2,8.6,8.6);pxR(1,8.2,8.6,8.6); /* X-eye glow halos */
+    F(pinkL);pxLine(-8.4,9.2,-2.4,15.8,3);pxLine(-8.4,15.8,-2.4,9.2,3);pxLine(2.4,9.2,8.4,15.8,3);pxLine(2.4,15.8,8.4,9.2,3); /* BIG glowing X eyes: light underlay */
+    F(pinkC);pxLine(-8.4,9.2,-2.4,15.8,1.7);pxLine(-8.4,15.8,-2.4,9.2,1.7);pxLine(2.4,9.2,8.4,15.8,1.7);pxLine(2.4,15.8,8.4,9.2,1.7); /* hot cores */
+    F(pinkC);pxR(-1.6,4.2,3.2,1.4);pxR(-0.8,5.6,1.6,1.3); /* forehead triangle mark */
+    F(cyanC);pxR(-9,18.6,1.7,1.7);pxR(7.4,18.6,1.7,1.7); /* cheek data dots */
+    F(darkC);pxR(-0.9,21.8,2.6,1.1); /* tiny mouth slit */
+  }
  }
- /* back hair: long white mass, tips split pink / cyan, swaying */
- var sway=Math.sin(time*2.6+(f.x%41))*0.8;
- ctx.fillStyle=hairC;pxR(-13.5,8,27,33);
- ctx.fillStyle=pinkC;pxR(-13.5+sway,36,8,6);pxR(-12+sway,41,5,4);
- ctx.fillStyle=cyanC;pxR(5.5+sway,36,8,6);pxR(7+sway,41,5,4);
- ctx.fillStyle=hoodD;pxR(-13.5,8,27,2.4); /* hair shadow line under the hood */
- /* legs + shoes */
- ctx.fillStyle=darkC;pxR(-9,43,7,10.5);pxR(2,43,7,10.5);
- ctx.fillStyle=hoodC;pxR(-10.5,52.5,9,4.5);pxR(1.5,52.5,9,4.5);
- ctx.fillStyle=pinkC;pxR(-10.5,55.5,9,1.6);
- ctx.fillStyle=cyanC;pxR(1.5,55.5,9,1.6);
- /* torso: white cyber hoodie — shaded hem, dark zipper, strap,
-    glowing chest marks */
- ctx.fillStyle=hoodC;pxR(-12,21,24,23);
- ctx.fillStyle=hoodD;pxR(-12,40,24,4);
- ctx.fillStyle=darkC;pxR(-1,23,2,19); /* zipper */
- ctx.fillStyle=pinkL;pxR(-8,26,4.5,4.5); /* chest X patch */
- ctx.fillStyle=darkC;pxR(-7.2,27.4,2.8,1.6);pxR(-6.6,26.8,1.6,2.8);
- ctx.fillStyle=cyanC;pxR(4.5,33,5,2);pxR(4.5,36.5,3.4,2); /* data bars */
- ctx.strokeStyle="rgba(30,41,59,.85)";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(-11,24);ctx.lineTo(9,42);ctx.stroke(); /* diagonal strap */
- /* arms: idle hangs at the sides; any x-state swings the front arm
-    out with the data knife (a cyan blade with a pink core) */
- ctx.fillStyle=hoodC;pxR(-15.5,23,4.5,13); /* back arm */
- ctx.fillStyle=skinC;pxR(-15.5,35,4.5,4);
- if(swinging){
-   ctx.fillStyle=hoodC;pxR(10,25,13,4.5);
-   ctx.fillStyle=skinC;pxR(21,25,4,4.5);
-   ctx.fillStyle=cyanC;pxLine(24,27,34,21,2.6);
-   ctx.fillStyle=pinkL;pxLine(24,27.8,32,22.6,1.2);
-   ctx.fillStyle="rgba(103,232,249,.55)";pxR(30+gx,16,3,3);pxR(36,24-gx,2.4,2.4); /* slash bits */
- }else{
-   ctx.fillStyle=hoodC;pxR(11,23,4.5,13);
-   ctx.fillStyle=skinC;pxR(11,35,4.5,4);
- }
- /* hood with long bunny ears (inner ear glows pink) */
- ctx.fillStyle=hoodC;
- pxR(-11.5,-15,5.5,17);pxR(-10,-18.5,3.5,4.5); /* left ear */
- pxR(6,-15,5.5,17);pxR(6.5,-18.5,3.5,4.5); /* right ear */
- ctx.fillStyle=pinkL;pxR(-9.8,-12.5,2.2,12);pxR(7.7,-12.5,2.2,12);
- ctx.fillStyle=hoodC;pxEll(0,9,14.5,11.5); /* hood mass */
- ctx.fillStyle=hoodD;pxR(-14,12,3,10);pxR(11,12,3,10); /* hood side shade */
- /* front fringe: white, jagged, with one pink and one cyan strand */
- ctx.fillStyle=hairC;pxR(-10.5,1.5,21,6);pxR(-10.5,7,4,2.6);pxR(-3,7,4,2.6);pxR(4.5,7,4,2.6);
- ctx.fillStyle=pinkC;pxR(-9,3,2,7);
- ctx.fillStyle=cyanC;pxR(7,3,2,7);
- /* face: the mask — or, in the drop window, her real face */
- if(maskOff){
-   ctx.fillStyle=skinC;pxEll(0,13.5,9,8);
-   ctx.fillStyle=cyanC;pxR(-6.4,11.4,3.6,3.2); /* odd eye: cyan */
-   ctx.fillStyle=pinkC;pxR(2.8,11.4,3.6,3.2); /* odd eye: pink */
-   ctx.fillStyle="#fff";pxR(-5.6,12,1.2,1.2);pxR(3.6,12,1.2,1.2);
-   ctx.fillStyle="rgba(244,114,182,.5)";pxR(-8,16,3,1.8);pxR(5,16,3,1.8); /* blush */
-   ctx.fillStyle=darkC;pxR(-1.5,17.6,5.5,1.5);pxR(3.4,16.6,1.5,1.6); /* mischievous grin */
- }else{
-   ctx.fillStyle=hoodC;pxEll(0,13.5,9.5,8.5); /* the white mask */
-   ctx.fillStyle=hoodD;pxR(-7,19.5,14,1.6); /* mask lower shade */
-   ctx.fillStyle=pinkC; /* glowing X eyes */
-   pxLine(-6.6,10.4,-3,14,2);pxLine(-6.6,14,-3,10.4,2);
-   pxLine(3,10.4,6.6,14,2);pxLine(3,14,6.6,10.4,2);
-   ctx.fillStyle=pinkL;pxR(-.9,5.4,1.8,1.8); /* forehead mark */
-   ctx.fillStyle=cyanC;pxR(-8.6,17.8,1.8,1.8); /* cheek data dot */
- }
- /* glitch slices: two RGB-split bands shoved sideways */
+ /* RGB-split ghosts on glitch steps: the whole body, twice, in flat
+    cyan and pink, hard-offset sideways */
  if(glitch){
-   ctx.fillStyle="rgba(103,232,249,.45)";pxR(-15+gx,15,30,2.2);
-   ctx.fillStyle="rgba(240,171,252,.45)";pxR(-15-gx,29,30,2.2);
-   ctx.fillStyle="rgba(248,250,252,.5)";pxR(-15+gx*1.6,37,30,1.4);
+   ctx.save();ctx.globalAlpha*=0.5;
+   GC="#22d3ee";ctx.save();ctx.translate(-3.6,0);body();ctx.restore();
+   GC="#f472b6";ctx.save();ctx.translate(3.6,0);body();ctx.restore();
+   ctx.restore();GC=null;
  }
- /* scan ring at her feet, pulsing on a slow cycle */
- var srp=(time*0.7+(f.x%29)*0.01)%1;
- ctx.strokeStyle="rgba(103,232,249,"+(0.4*(1-srp)).toFixed(3)+")";ctx.lineWidth=1.6;
- ctx.beginPath();ctx.ellipse(0,57.5,8+srp*13,2.2+srp*3.4,0,0,6.29);ctx.stroke();
+ body();
+ /* glitch slices: two horizontal bands of the body re-drawn shoved
+    sideways, with RGB edge lines on the cuts */
+ if(glitch){
+   var bY1=4+(stp%3)*13,bH1=3.5+(stp%2)*1.5,gx1=((Math.floor(xh(21)*3))-1)*4.5;
+   var bY2=22+(Math.floor(stp/3)%3)*11,gx2=((Math.floor(xh(22)*3))-1)*3.5;
+   ctx.save();ctx.beginPath();ctx.rect(-22,bY1,44,bH1);ctx.clip();ctx.translate(gx1,0);body();ctx.restore();
+   ctx.save();ctx.beginPath();ctx.rect(-22,bY2,44,3.2);ctx.clip();ctx.translate(gx2,0);body();ctx.restore();
+   ctx.fillStyle="rgba(103,232,249,.85)";ctx.fillRect(-17,bY1-0.8,34,1.2);
+   ctx.fillStyle="rgba(244,114,182,.85)";ctx.fillRect(-17,bY2+3.4,34,1.2);
+ }
+ /* orbiting data bits: they TELEPORT between hard positions on the
+    step clock and blink off entirely on some steps */
+ for(var ob=0;ob<4;ob++){
+   var os=Math.floor(time*8)+ob*5+seedX;
+   var oh1=Math.sin(os*39.7+ob*17.3)*43758.5453;oh1-=Math.floor(oh1);
+   if(oh1<0.16)continue; /* this bit is OFF on this step */
+   var oa=(os%8)*0.785+ob*0.39,obx=Math.cos(oa)*20,oby=27+Math.sin(oa)*15;
+   ctx.fillStyle=ob%2?"rgba(240,171,252,.9)":"rgba(103,232,249,.9)";
+   if((os+ob)%4===0){pxR(obx-0.8,oby-2.6,1.6,5.2);pxR(obx-2.6,oby-0.8,5.2,1.6)} /* plus-shaped bit */
+   else pxR(obx-1.4,oby-1.4,2.8,2.8);
+ }
+ /* scan ring at her feet: radius and alpha SNAP through four hard
+    steps; bracket blocks flash on the reset step */
+ var srSt=(Math.floor(time*3)+seedX)%4,srR=9+srSt*4.6;
+ ctx.strokeStyle="rgba(103,232,249,"+[0.5,0.36,0.24,0.12][srSt]+")";ctx.lineWidth=1.6;
+ ctx.beginPath();ctx.ellipse(0,57.5,srR,2.4+srSt*1.1,0,0,6.29);ctx.stroke();
+ if(srSt===0){ctx.fillStyle="rgba(240,171,252,.8)";pxR(-srR-1.5,55.5,3,3);pxR(srR-1.5,55.5,3,3)}
  ctx.restore();
  if(f.frozen>0){ctx.save();ctx.translate(f.x,f.y);PXU=1.5;ctx.fillStyle="rgba(165,243,252,.34)";pxR(-17,-2,34,64);ctx.restore()}
+ PXU=1.5;
  hpBar(f);
 }
 function drawMinimap(){
@@ -13182,7 +13303,18 @@ function draw(){
    else if(pr.kind==="slash"){var sgn=pr.vx>0?1:-1;var wob=Math.sin(time*34)*1.6;var cres=function(off,sc){ctx.beginPath();ctx.moveTo(off+sgn*3*sc,-54*sc);ctx.quadraticCurveTo(off+sgn*36*sc,wob*sc,off+sgn*3*sc,54*sc);ctx.quadraticCurveTo(off-sgn*16*sc,wob*sc,off+sgn*3*sc,-54*sc);ctx.closePath()};ctx.save();ctx.rotate(sgn*0.13);ctx.globalAlpha=0.13;cres(-sgn*40,0.82);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=0.24;cres(-sgn*21,0.92);ctx.fillStyle="#f87171";ctx.fill();ctx.globalAlpha=1;ctx.shadowColor="rgba(239,68,68,.85)";ctx.shadowBlur=16;cres(0,1);ctx.fillStyle="#ef4444";ctx.fill();ctx.shadowBlur=0;cres(sgn*5,0.68);ctx.fillStyle="#fca5a5";ctx.fill();cres(sgn*9,0.42);ctx.fillStyle="#fff1f2";ctx.fill();ctx.strokeStyle="rgba(255,241,242,.95)";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(sgn*3,-54);ctx.quadraticCurveTo(sgn*36,wob,sgn*3,54);ctx.stroke();ctx.strokeStyle="rgba(254,202,202,.55)";ctx.lineWidth=2;for(var st=0;st<3;st++){var sy=-26+st*26;ctx.beginPath();ctx.moveTo(-sgn*24,sy);ctx.lineTo(-sgn*(58+st*9),sy+4);ctx.stroke()}ctx.restore()}
    else if(pr.kind==="rock"){ctx.save();ctx.rotate(time*7*(pr.vx>0?1:-1));ctx.scale(1.45,1.45); /* 投岩 (okaki rework): the boulder is drawn BIGGER and keeps tumbling as it rolls through the air (hitbox unchanged) */ctx.fillStyle="#78716c";ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(-4,-13);ctx.lineTo(9,-10);ctx.lineTo(14,2);ctx.lineTo(6,12);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.fillStyle="#a8a29e";ctx.beginPath();ctx.moveTo(-9,-6);ctx.lineTo(-3,-10);ctx.lineTo(5,-8);ctx.lineTo(2,-2);ctx.lineTo(-6,-1);ctx.closePath();ctx.fill();ctx.fillStyle="#57534e";ctx.fillRect(3,4,4,3);ctx.fillRect(-8,3,3,3);ctx.restore()} /* 投岩: a tumbling grey boulder */
    else if(pr.kind==="throwaxe"){var tspin=time*16*(pr.vx>0?1:-1);ctx.save();ctx.rotate(tspin);ctx.strokeStyle="#7c4a21";ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(0,-13);ctx.lineTo(0,13);ctx.stroke();ctx.fillStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(0,-15);ctx.quadraticCurveTo(15,-13,16,-2);ctx.quadraticCurveTo(9,-5,0,-4);ctx.closePath();ctx.fill();ctx.fillStyle="#f1f5f9";ctx.beginPath();ctx.moveTo(0,15);ctx.quadraticCurveTo(-13,13,-14,3);ctx.quadraticCurveTo(-8,6,0,5);ctx.closePath();ctx.fill();ctx.restore()}
-   else if(pr.kind==="xbit"){var xg=Math.floor(time*18+pr.x*0.05)%3-1;ctx.fillStyle="#67e8f9";ctx.fillRect(-6+xg,-6,12,12);ctx.fillStyle="#f0abfc";ctx.fillRect(-6-xg,2,12,5);ctx.fillStyle="#0b1226";ctx.fillRect(-3,-3,6,6);ctx.fillStyle="#f8fafc";ctx.fillRect(-1.5,-1.5,3,3);ctx.fillStyle="rgba(103,232,249,.85)";ctx.fillRect(8,-1,3,2);ctx.fillRect(-11,1,3,2)} /* XENO データビット: an RGB-split data cube, jittering as it flies */
+   else if(pr.kind==="xbit"){var xs2=Math.floor(time*16+pr.x*0.11),xg=(xs2%3)-1,xsgn=pr.vx>0?1:-1;
+   /* stepped fragment blocks behind the cube: each pops in for one step at a hard offset, then is gone */
+   for(var xf3=0;xf3<3;xf3++){if((xs2+xf3)%2)continue;var xfh=Math.sin(xs2*47.3+xf3*89.7)*43758.5453;xfh-=Math.floor(xfh);ctx.fillStyle=xf3%2?"#f0abfc":"#67e8f9";ctx.globalAlpha=0.75;ctx.fillRect(-xsgn*(11+xf3*6)-1.5,(xfh-0.5)*13-1.5,3,3)}
+   ctx.globalAlpha=1;
+   /* RGB split: the cyan and pink copies sit hard-offset from the core and jump between three offsets per step */
+   ctx.fillStyle="rgba(103,232,249,.8)";ctx.fillRect(-6+xg*2,-6,12,12);
+   ctx.fillStyle="rgba(240,171,252,.8)";ctx.fillRect(-6-xg*2,-4,12,12);
+   ctx.fillStyle="#0b1226";ctx.fillRect(-6,-6,12,12);
+   ctx.fillStyle="#67e8f9";ctx.fillRect(-6,-6,12,3);ctx.fillStyle="#f0abfc";ctx.fillRect(-6,3,12,3);
+   ctx.fillStyle="#f8fafc";ctx.fillRect(-2,-2,4,4);
+   if(xs2%5===0){ctx.fillStyle="rgba(248,250,252,.9)";ctx.fillRect(-8,-8,16,2);ctx.fillRect(-8,6,16,2)} /* strobe flash step */
+   ctx.fillStyle="rgba(103,232,249,.85)";ctx.fillRect(8,-1,3,2);ctx.fillRect(-11,1,3,2)} /* XENO データビット: an RGB-split data cube on a stepped glitch clock — offsets jump, fragments blink, nothing flows */
    else if(pr.kind==="blast"){ctx.fillStyle="rgba(192,132,252,.4)";ctx.beginPath();ctx.arc(0,0,13+Math.sin(time*30)*1.5,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(0,0,9,0,6.29);ctx.fill();ctx.fillStyle="#fcd34d";ctx.beginPath();ctx.arc(0,0,5,0,6.29);ctx.fill();ctx.fillStyle="#fff7ed";ctx.beginPath();ctx.arc(0,0,2.4,0,6.29);ctx.fill()} /* TRAVIS ソニックブラスト: a pulsing purple-gold lump of sound */
    else if(pr.kind==="pbomb"){ctx.fillStyle="rgba(168,85,247,.35)";ctx.beginPath();ctx.arc(0,0,15+Math.sin(time*24)*1.6,0,6.29);ctx.fill();ctx.fillStyle="#a855f7";ctx.beginPath();ctx.arc(0,0,11,0,6.29);ctx.fill();ctx.fillStyle="#c084fc";ctx.beginPath();ctx.arc(-3,-3,6,0,6.29);ctx.fill();ctx.fillStyle="#d9f99d";ctx.beginPath();ctx.arc(3,4,2.6,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-4,5,1.9,0,6.29);ctx.fill()} /* ORCHID ポイズンボム: a glossy purple poison sphere with lime toxin bubbles swirling inside */
    else if(pr.kind==="pellet"||pr.kind==="pellet0"){var psgn=pr.vx>0?1:-1;ctx.fillStyle="rgba(253,230,138,.45)";ctx.fillRect(psgn>0?-13:-2,-1.6,11,3.2);ctx.fillStyle="#fde68a";ctx.fillRect(psgn>0?-3:-2.6,-1.8,5.6,3.6);ctx.fillStyle="#fff7ed";ctx.fillRect(psgn>0?0:-1.4,-1,2.8,2)} /* No.66 gatling pellet: a hot little tracer with a short tail */
@@ -13454,7 +13586,7 @@ function simStepFrame(getInp){
      var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
-   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*10,y:pr.y+(Math.random()-0.5)*10,vx:(Math.random()-0.5)*30,vy:(Math.random()-0.5)*30,life:.2,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2+Math.random()*2.4}); /* XENO データビット: glitch bits shed in flight */
+   pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile")pr.vy+=128*STEP /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2.4+Math.random()*2.6,amb:1}); /* XENO データビット: shed bits hang dead still for a blink and vanish — no drifting trail */
 if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies */var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
@@ -13477,7 +13609,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
-       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,11,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y);foe.slowT=Math.max(foe.slowT||0,0.7);spawnParticles(pr.x,pr.y,7,"#67e8f9",170);spawnParticles(pr.x,pr.y,5,"#f0abfc",140)} /* XENO データビット: 11 dmg / KB 300 + the hit LAGS the foe (slow 0.7s) */
+       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,11,300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y);foe.slowT=Math.max(foe.slowT||0,0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: 11 dmg / KB 300 + the hit LAGS the foe (slow 0.7s); the burst is stepped block noise, not a particle spray */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
