@@ -493,6 +493,18 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["22:17"],tag:"調整",title:"ORCHID：J技群の調整とエフェクト刷新（↑+J「ライジングバイン」削除）",
+   items:["J 1段目「ツタ2連撃」：KB 240→210／230、2発目が即時→0.28秒遅れて出るようになり、全体 0.24秒→0.52秒・後硬直 0.37秒→0.28秒・被弾硬直 0.3秒→0.4秒に変更しました。ツタのエフェクトも判定の先まで届くようになりました",
+          "J 2段目「ツタアッパー」：後硬直 0.41秒→0.3秒、判定 72×92→前方72×92、被弾硬直 0.33秒→0.44秒に変更しました",
+          "J 3段目「噛みつき」：エフェクトがウツボカズラの口で噛みつく見た目になりました（性能は変更ありません）",
+          "ダッシュ中J「ツタックル」：発動時に前方95先へ高速移動するようになりました。エフェクトはツタを自身にグルグル巻いて突進する見た目になりました",
+          "↑+J「ライジングバイン」を削除しました（地上で↑+Jを押しても何も起きません）",
+          "↓+J「ニーダウン」：ツタのエフェクトが判定の先まで伸びるようになりました（性能は変更ありません）",
+          "空中J「ツタフック」：ツタのエフェクトが判定いっぱいまで伸び、1段目・2段目のエフェクトがそれぞれの判定の発生に合わせて出るようになりました（性能は変更ありません）",
+          "空中↓+J「ロープフィッシング」：判定 下方向98×230→104×240に拡大し、攻撃判定の一番下に掴み判定を追加しました（先端で捕まえた相手は掴んで投げます）",
+          "K「栄養補給」：葉っぱが舞い、自身の周りを5つの葉が回るエフェクトになりました（性能は変更ありません）",
+          "L「サンフラワー」：光のブレスのエフェクトが判定いっぱい（前方6〜670）まで伸びるようになりました（性能は変更ありません）",
+          "技一覧とCREATIVE MODEの表示も実装に合わせて更新しました。BUILD_ID を v310 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["21:53"],tag:"調整",title:"SARA：ウルトの溜まりを0.7倍→0.4倍に下方修正",
    items:["SARAのウルトゲージの溜まりやすさを0.7倍→0.4倍に下方修正しました。与えたダメージに対してゲージが増える量が少なくなります。技一覧の表示も実装に合わせて更新しました",
           "BUILD_ID を v308 に更新しました。対戦前に全員がページを再読み込みしてください"]},
@@ -1050,14 +1062,13 @@ var saraMovesHTML='<h2>🐉 SARA（サラ）— 技一覧</h2><p>ドラゴン少
 var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>ウツボカズラの見た目をした木の精霊。<b>毒やHP吸収を使ってデバフをばらまいて戦うデバッファー</b>。HPは260。地上390・空中430と<b>空中寄りの機動力</b>で、ダッシュは1100。その代わり<b>ふっとばされやすさ1.08倍</b>、<b>ウルトゲージの溜まり×0.49</b>、<b>落下速度+11%</b>という癖のあるステータス。<b>毒</b>にかかった相手は<b>0.2秒ごとに2ダメージ</b>を受け続ける（ノックバック・ヒットストゥンなし）。</p>'
 +mvSpec(mvS('HP','260')+mvS('地上速度','390')+mvS('空中速度','430')+mvS('受けKB','×1.08（吹っ飛びやすい）')+mvS('ダッシュ','1100')+mvS('ウルト溜まり','遅め（約0.49倍）')+mvS('落下速度','+11%'))
 +mvLegend
-+'<div class="moveRow"><div><b>J 1段目 — ツタ2連撃（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.7秒・全3段</span><p>ツタを素早く2回振る小ダメージ×2（2発目は少し遠くまで届く）。</p>'+mvSpec(mvS('ダメージ','6＋6')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.37秒')+mvS('判定','56×50 → 78×60')+mvS('被弾硬直','0.3秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>J 2段目 — ツタアッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.7秒</span><p>ツタで下から突き上げ、相手を真上へ浮かせる。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','310（真上）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.41秒')+mvS('判定','72×92')+mvS('被弾硬直','0.33秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 1段目 — ツタ2連撃（ラッシュ）</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.7秒・全3段</span><p>ツタを2回振る小ダメージ×2（2発目は0.28秒遅れて、少し遠くまで届く）。ツタのエフェクトは判定の先まで届く。</p>'+mvSpec(mvS('ダメージ','6＋6')+mvS('KB','210／230')+mvS('発生','即時／2発目 0.28秒')+mvS('全体','0.52秒')+mvS('後硬直','0.28秒')+mvS('判定','56×50 → 78×60')+mvS('被弾硬直','0.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>J 2段目 — ツタアッパー</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.7秒</span><p>ツタで下から突き上げ、相手を真上へ浮かせる。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','310（真上）')+mvS('発生','即時')+mvS('全体','0.28秒')+mvS('後硬直','0.3秒')+mvS('判定','前方72×92')+mvS('被弾硬直','0.44秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 3段目 — 噛みつき</b> <span style="color:var(--cyan);font-weight:900">チェーン最終段</span><p>ウツボカズラの口で噛みつき、<b>毒2.5秒を付与</b>。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','560')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.63秒')+mvS('判定','102×80')+mvS('追加効果','毒2.5秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>ダッシュ中J — ツタックル</b><p>ツタを纏って体ごと突進する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.8秒')+mvS('判定','前132×72')+mvS('突進','vx 420'))+'</div></div>'
-+'<div class="moveRow"><div><b>↑+J — ライジングバイン</b><p>ツタで斬り上げて浮かせ、当てると<b>2段ジャンプ回復</b>。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','360（上吹き強）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('判定','60×82')+mvS('上昇','vy -460'))+'</div></div>'
++'<div class="moveRow"><div><b>ダッシュ中J — ツタックル</b><p>ツタを自身にグルグル巻きつけて体ごと突進する。発動時に前方95先へ高速移動する。</p>'+mvSpec(mvS('ダメージ','19')+mvS('KB','720')+mvS('発生','即時')+mvS('全体','0.44秒')+mvS('後硬直','0.8秒')+mvS('判定','前132×72')+mvS('突進','前方95へ高速移動'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+J — ニーダウン</b><p>相手の足元にツタを鞭のように忍び込ませて攻撃する単発技。発生は即時で、前方だけに判定が出る。</p>'+mvSpec(mvS('ダメージ','8')+mvS('KB','640')+mvS('発生','即時')+mvS('全体','0.33秒')+mvS('後硬直','0.22秒')+mvS('判定','前98×44')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.32秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','550')+mvS('発生','即時／2発目 約0.32秒')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('判定','146×76 → 158×62')+mvS('着地硬直','0.32秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向98×230'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。判定の一番下（ツタの先端）には<b>掴み判定</b>があり、そこで捕まえた相手は掴んで投げる。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向104×240')+mvS('掴み','判定の最下部'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。地上で出すと後硬直<b>0.38秒</b>の間は<b>完全硬直</b>。空中で出すと後硬直は<b>0.55秒</b>になるが<b>完全硬直はなく</b>、硬直中も移動・ジャンプ・ダッシュができる（次の技は後硬直が終わるまで出せない）。着地時に<b>着地硬直0.4秒</b>が追加される。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','地上0.38秒（完全硬直）／空中0.55秒（完全硬直なし）')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('完全硬直','地上のみ（空中はなし）')+mvS('着地硬直','空中で出した場合0.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ポイズンミスト</b> <span style="color:#4ade80;font-weight:900">設置型・クールタイム6.2秒</span><p>左右へ広範囲の毒霧を召喚する。霧は<b>その場に8秒間残り</b>、範囲内の相手に<b>0.1秒ごとに2ダメージ</b>を与え続ける（ノックバックなし）。後硬直の間は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','2／0.1秒')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.45秒')+mvS('後硬直','0.67秒（完全硬直）')+mvS('範囲','左右に広がる楕円（横幅410）')+mvS('持続','8秒')+mvS('再使用','6.2秒'))+'</div></div>'
@@ -1582,7 +1593,7 @@ warden:[["wswing","J 1段目 — 横薙ぎ",14,250],["wswing2","J 2段目 — �
 kojiro:[["chop","J 1段目 — 袈裟斬り",10,220],["rise","J 2段目 — 斬り上げ",12,250],["thrust3","J 3段目 — 三突き（1発）",5,170],["yokonagi","J 4段目 — 横薙ぎ",20,560],["dashthrust","前+J — 疾風突き",13,620],["lowcut","↓+J — 下段斬り",7,200],["airslash","空中J — 空斬り",14,360],["diveclaw","空中↓+J — 落下斬り",18,620],["jkcombo","J+K — 燕返し",13,300],["heavy","K — 重斬り",24,770],["airheavy","空中K — 重斬り",22,740],["krise","空中↑+K — 昇り斬り",13,820],["sweep","↓+K — 風波",0,820],["iaido","U — 居合斬り",19,500],["proj:slash","L — 斬空",56,740]],
 axe:[["claw","J 1段目 — 斧薙ぎ",22,400],["clawrev","J 2段目 — ヘッドロック（掴み）",30,770],["dashclaw","前+J — 突進斬り",26,740],["buttagiri","空中J — ぶった斬り",22,660],["diveclaw","空中↓+J — 下斧",44,770],["digaxe","↓+J — 掘削斧",24,540],["jkcombo","J+K — 斧コンボ",18,430],["axerise","↑+K — ライジングアックス",26,620],["lowclaw","↓+K — 地割れ",24,710],["taildrop","空中↓+K — メテオドロップ",32,700],["proj:rock","K／空中K — 投岩・砲岩",26,660],["shoulder","U — 豪腕ラリアット",38,860],["ultfin","L — 猪突猛進（フィニッシュ）",33,810]],
 sara:[["sclaw1","J 1段目 — 爪ひっかき",8,220],["sbreath","J 2段目 — 火の粉ブレス",5,180],["supper","J 3段目 — アッパー",10,260],["stail","J 4段目 — 尻尾フィニッシュ",18,700],["sflameclaw","前+J — フレイムクロー",12,620],["signish","空中J — イグニッシュ",12,450],["smeteor","空中↓+J — メテオダイブ（着地）",11,680],["sflaretail","↓+J — フレアテール",14,670],["jkcombo","J+K — イグニッシュフィスト",13,360],["snova","↓+K — フレイムノヴァ",50,1020],["sbomb","↓+U — イグニスボム（火柱）",14,330],["proj:javelin","U — ファイアジャヴェリン",24,720],["sflame","L — 火炎放射（1ヒット）",8,210]],
-orchid:[["ovine1","J 1段目 — ツタ鞭",6,240],["ovine2","J 2段目 — ツタアッパー",9,310],["obite","J 3段目 — 噛みつき",15,560],["otackle","前+J — タックル",19,720],["oknee","↓+J — ツタニー",8,640],["ohook","空中J — フック",10,550],["orope","空中↓+J — ツタ落とし",18,660],["jkcombo","J+K — ツタ絡みコンボ",14,380],["orise","ツタライジング",12,360],["omist","↓+K — ポイズンミスト（1ヒット）",2,null],["proj:pbomb","U — ポイズンボム",18,210]],
+orchid:[["ovine1","J 1段目 — ツタ鞭",6,210],["ovine2","J 2段目 — ツタアッパー",9,310],["obite","J 3段目 — 噛みつき",15,560],["otackle","前+J — タックル",19,720],["oknee","↓+J — ツタニー",8,640],["ohook","空中J — フック",10,550],["orope","空中↓+J — ツタ落とし",18,660],["jkcombo","J+K — ツタ絡みコンボ",14,380],["omist","↓+K — ポイズンミスト（1ヒット）",2,null],["proj:pbomb","U — ポイズンボム",18,210]],
 travis:[["tmike1","J 1段目 — マイクスイング",10,300],["tmike2","J 2段目 — 返しスイング",12,320],["tmike3","J 3段目 — フィニッシュ",18,660],["twhip","前+J — マイクホイップ",14,660],["trise","ライジングマイク",12,560],["tback","バックスラッシュ",10,340],["tslide","↓+J — サウンドスライド",10,580],["tairwhip","空中J — エアホイップ",14,540],["diveclaw","空中↓+J — ダイブ",28,980],["jkcombo","J+K — マイクコンボ",16,770],["tpunch","K — パンチ",15,680],["tsing","↓+K — シング・タイム（1ヒット）",5,300],["tkick","空中K — エアドロップキック",28,1250],["proj:msong","空中↓+K — メテオソング（直撃）",40,800],["msongexp","空中↓+K — メテオソング（爆発）",22,1100],["proj:blast","U — ソニックブラスト",9,220],["proj:sonic","L — ワールドツアー",34,660]],
 smiley:[["sknife1","J 1段目 — ナイフ",7,240],["sknife2","J 2段目 — ナイフ",7,240],["sknife3","J 3段目 — 連撃（1ヒット）",3,280],["sknife4","J 4段目 — フィニッシュ",12,460],["sblink","前+J — ブリンク斬り",12,360],["sriseup","ライジング",11,540],["sback","バックスラッシュ",9,320],["sslide","↓+J — スライド",9,580],["sairj","空中J — 回転ダガー",10,280],["diveclaw","空中↓+J — ダイブ",13,560],["jkcombo","J+K — ナイフコンボ",9,420],["sknife","K — ナイフ乱舞（1ヒット）",3,0],["sairknife","空中K — 空中ナイフ（1ヒット）",3,0],["ssweep","↓+K — スイープ",5,280],["proj:knife","U — スローイングナイフ",10,240]],
 mimi:[["mbun1","J 1段目 — バニータッチ",5,180],["sh:claw","SHADE J1 — クロー",12,300],["mbun2","J 2段目 — バニーキック",6,220],["sh:upper1","SHADE J2 — アッパー",14,320],["mpush3","J 3段目 — プッシュ",10,320],["sh:fist","SHADE J3 — フィスト",20,1000],["mfpush","前+J — プッシュダッシュ",10,800],["sh:sweep","SHADE 前+J — スイープ",13,770],["mlowj","↓+J — ロースライド",6,680],["sh:low","SHADE ↓+J — スライド",12,660],["mairspin","空中J — 回転（1ヒット）",4,300],["mdrop","空中↓+J — 掴み投げ",5,560],["sh:smeteor","SHADE — メテオフィスト",24,700],["mlight","J+K — ライトコンボ",9,720],["sh:supper","SHADE J+K — アッパー",28,1130],["sh:sslam","SHADE ↑+K — 連打スラム 1発目",16,760],["sh:sslam2","SHADE ↑+K — 連打スラム 2発目",16,760],["sh:sslam3","SHADE ↑+K — 連打スラム 3発目",20,920],["proj:lwave","↓+K — これならできるよ！",6,210],["proj:mimiball","L — 大好きだよSHADE",52,920]],
@@ -1600,7 +1611,7 @@ warden:{"wswing":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0
 kojiro:{"chop":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",52,10,600,1]],"rise":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",84,10,600,1]],"thrust3":[["tot","全体",0.36,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",66,10,600,1]],"yokonagi":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.4,0,6,0.01],["bw","判定 幅",96,10,600,1],["bh","判定 高さ",56,10,600,1]],"dashthrust":[["su","発生",0.12,0,2,0.01],["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.35,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",94,10,600,1],["bh","判定 高さ",60,10,600,1]],"lowcut":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",82,10,600,1],["bh","判定 高さ",36,10,600,1]],"airslash":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",104,10,600,1],["bh","判定 高さ",92,10,600,1]],"diveclaw":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.45,0,6,0.01],["land","着地硬直",0.5,0,3,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",74,10,600,1]],"jkcombo":[["tot","全体",0.5,0.05,6,0.01],["rec","後硬直",0.44,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",60,10,600,1]],"heavy":[["su","発生",0.12,0,2,0.01],["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.44,0,6,0.01],["bw","判定 幅",82,10,600,1],["bh","判定 高さ",80,10,600,1]],"airheavy":[["su","発生",0.1,0,2,0.01],["tot","全体",0.36,0.05,6,0.01],["rec","後硬直",0.34,0,6,0.01],["land","着地硬直",0.3,0,3,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",76,10,600,1]],"krise":[["tot","全体",0.46,0.05,6,0.01],["rec","後硬直",0.39,0,6,0.01],["land","着地硬直",0.28,0,3,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",86,10,600,1],["cd","再使用時間",2.2,0,30,0.1]],"sweep":[["tot","全体",0.6,0.05,6,0.01],["rec","後硬直",1.45,0,6,0.01],["bw","判定 幅",200,10,600,1],["bh","判定 高さ",200,10,600,1]],"iaido":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",58,10,600,1],["cd","再使用時間",1.6,0,30,0.1]],"proj:slash":[["tot","全体",0.5,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["spd","弾速",1520,10,4000,10]]},
 axe:{"claw":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",106,10,600,1],["bh","判定 高さ",68,10,600,1]],"clawrev":[["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",0.78,0,6,0.01],["bw","判定 幅",112,10,600,1],["bh","判定 高さ",72,10,600,1]],"dashclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.88,0,6,0.01],["land","着地硬直",0.34,0,3,0.01],["bw","判定 幅",110,10,600,1],["bh","判定 高さ",66,10,600,1]],"buttagiri":[["su","発生",0.24,0,2,0.01],["tot","全体",0.56,0.05,6,0.01],["rec","後硬直",0.8,0,6,0.01],["land","着地硬直",0.28,0,3,0.01],["bw","判定 幅",114,10,600,1],["bh","判定 高さ",108,10,600,1]],"diveclaw":[["su","発生",0.22,0,2,0.01],["tot","全体",0.64,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["land","着地硬直",0.4,0,3,0.01],["bw","判定 幅",160,10,600,1],["bh","判定 高さ",98,10,600,1]],"digaxe":[["su","発生",0.3,0,2,0.01],["tot","全体",0.6,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["hs","被弾硬直",0.72,0,2,0.01],["bw","判定 幅",160,10,600,1],["bh","判定 高さ",120,10,600,1]],"jkcombo":[["tot","全体",0.68,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["land","着地硬直",0.34,0,3,0.01],["bw","判定 幅",106,10,600,1],["bh","判定 高さ",70,10,600,1]],"axerise":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.8,0,6,0.01],["land","着地硬直",0.4,0,3,0.01],["bw","判定 幅",112,10,600,1],["bh","判定 高さ",130,10,600,1],["cd","再使用時間",3.5,0,30,0.1]],"lowclaw":[["su","発生",0.42,0,2,0.01],["tot","全体",1.35,0.05,6,0.01],["rec","後硬直",0.53,0,6,0.01],["bw","判定 幅",230,10,600,1],["bh","判定 高さ",102,10,600,1]],"taildrop":[["su","発生",0.34,0,2,0.01],["tot","全体",0.58,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",72,10,600,1]],"proj:rock":[["su","発生",0.24,0,2,0.01],["tot","全体",0.62,0.05,6,0.01],["rec","後硬直",0.58,0,6,0.01],["spd","弾速",330,10,4000,10]],"shoulder":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.76,0,6,0.01],["bw","判定 幅",122,10,600,1],["bh","判定 高さ",78,10,600,1],["cd","再使用時間",1.7,0,30,0.1]],"ultfin":[["tot","全体",1.5,0.05,6,0.01],["rec","後硬直",1.1,0,6,0.01]]},
 sara:{"sclaw1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",62,10,600,1]],"sbreath":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",54,10,600,1],["durB","燃焼時間",2,0,30,0.1]],"supper":[["tot","全体",0.28,0.05,6,0.01],["rec","後硬直",0.28,0,6,0.01],["hs","被弾硬直",0.38,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",94,10,600,1]],"stail":[["su","発生",0.12,0,2,0.01],["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["bw","判定 幅",118,10,600,1],["bh","判定 高さ",78,10,600,1]],"sflameclaw":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.34,0,6,0.01],["hs","被弾硬直",0.62,0,2,0.01],["bw","判定 幅",82,10,600,1],["bh","判定 高さ",68,10,600,1]],"signish":[["tot","全体",0.36,0.05,6,0.01],["rec","後硬直",0.24,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",48,10,600,1]],"smeteor":[["su","発生",0.2,0,2,0.01],["tot","全体",0.56,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.34,0,3,0.01],["bw","判定 幅",96,10,600,1],["bh","判定 高さ",58,10,600,1]],"sflaretail":[["su","発生",0.18,0,2,0.01],["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.26,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",62,10,600,1]],"jkcombo":[["tot","全体",0.5,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",58,10,600,1],["durB","燃焼時間",2,0,30,0.1]],"snova":[["su","発生",0.52,0,2,0.01],["tot","全体",0.78,0.05,6,0.01],["rec","後硬直",0.34,0,6,0.01],["land","着地硬直",0.36,0,3,0.01],["bw","判定 幅",108,10,600,1],["bh","判定 高さ",88,10,600,1],["durB","燃焼時間",3,0,30,0.1]],"sbomb":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.26,0,6,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",310,10,600,1],["dur","火柱持続",1.4,0,60,0.1]],"proj:javelin":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.51,0,6,0.01],["cd","再使用時間",0.8,0,30,0.1],["ammo","装填数",2,1,99,1],["rel","装填間隔",8,0.1,30,0.05],["spd","弾速",520,10,4000,10],["durB","燃焼時間",2.5,0,30,0.1],["durO","火種持続",8,0,60,0.5]],"sflame":[["su","発生",0.2,0,2,0.01],["tot","全体",2,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.5,0,2,0.01],["dur","放射時間",1.8,0,60,0.1],["durB","燃焼時間",2.5,0,30,0.1]]},
-orchid:{"ovine1":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["hs","被弾硬直",0.3,0,2,0.01],["bw","判定 幅",56,10,600,1],["bh","判定 高さ",50,10,600,1]],"ovine2":[["tot","全体",0.28,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.33,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",92,10,600,1]],"obite":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.63,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",80,10,600,1],["durPo","毒時間",2.5,0,30,0.1]],"otackle":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.8,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",132,10,600,1],["bh","判定 高さ",72,10,600,1]],"oknee":[["tot","全体",0.33,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",44,10,600,1]],"ohook":[["tot","全体",0.55,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.32,0,3,0.01],["bw","判定 幅",146,10,600,1],["bh","判定 高さ",76,10,600,1]],"orope":[["su","発生",0.3,0,2,0.01],["tot","全体",0.66,0.05,6,0.01],["rec","後硬直",0.53,0,6,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",230,10,600,1]],"jkcombo":[["tot","全体",0.84,0.05,6,0.01],["land","着地硬直",0.4,0,3,0.01],["bw","判定 幅",134,10,600,1],["bh","判定 高さ",64,10,600,1]],"orise":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.47,0,6,0.01],["bw","判定 幅",60,10,600,1],["bh","判定 高さ",82,10,600,1]],"omist":[["tot","全体",0.45,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["cd","再使用時間",6.2,0,30,0.1],["durM","ミスト持続",8,0,60,0.5]],"proj:pbomb":[["su","発生",0.2,0,2,0.01],["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.54,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",2.2,0.1,30,0.05],["spd","弾速",660,10,4000,10],["durPo","毒時間",1.2,0,30,0.1]]},
+orchid:{"ovine1":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.28,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",56,10,600,1],["bh","判定 高さ",50,10,600,1]],"ovine2":[["tot","全体",0.28,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.44,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",92,10,600,1]],"obite":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.63,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",80,10,600,1],["durPo","毒時間",2.5,0,30,0.1]],"otackle":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.8,0,6,0.01],["land","着地硬直",0.25,0,3,0.01],["bw","判定 幅",132,10,600,1],["bh","判定 高さ",72,10,600,1]],"oknee":[["tot","全体",0.33,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",44,10,600,1]],"ohook":[["tot","全体",0.55,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.32,0,3,0.01],["bw","判定 幅",146,10,600,1],["bh","判定 高さ",76,10,600,1]],"orope":[["su","発生",0.3,0,2,0.01],["tot","全体",0.66,0.05,6,0.01],["rec","後硬直",0.53,0,6,0.01],["bw","判定 幅",104,10,600,1],["bh","判定 高さ",240,10,600,1]],"jkcombo":[["tot","全体",0.84,0.05,6,0.01],["land","着地硬直",0.4,0,3,0.01],["bw","判定 幅",134,10,600,1],["bh","判定 高さ",64,10,600,1]],"omist":[["tot","全体",0.45,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["cd","再使用時間",6.2,0,30,0.1],["durM","ミスト持続",8,0,60,0.5]],"proj:pbomb":[["su","発生",0.2,0,2,0.01],["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.54,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",2.2,0.1,30,0.05],["spd","弾速",660,10,4000,10],["durPo","毒時間",1.2,0,30,0.1]]},
 travis:{"tmike1":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",58,10,600,1]],"tmike2":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.26,0,2,0.01],["bw","判定 幅",66,10,600,1],["bh","判定 高さ",60,10,600,1]],"tmike3":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.65,0,6,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",68,10,600,1]],"twhip":[["su","発生",0.18,0,2,0.01],["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["bw","判定 幅",156,10,600,1],["bh","判定 高さ",66,10,600,1]],"trise":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.45,0,6,0.01],["bw","判定 幅",56,10,600,1],["bh","判定 高さ",74,10,600,1]],"tback":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["bw","判定 幅",64,10,600,1],["bh","判定 高さ",50,10,600,1]],"tslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.35,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",36,10,600,1]],"tairwhip":[["su","発生",0.22,0,2,0.01],["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.22,0,3,0.01],["bw","判定 幅",156,10,600,1],["bh","判定 高さ",66,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.55,0,6,0.01],["land","着地硬直",0.44,0,3,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",56,10,600,1]],"jkcombo":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.33,0,3,0.01],["bw","判定 幅",66,10,600,1],["bh","判定 高さ",58,10,600,1]],"tpunch":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",66,10,600,1]],"tsing":[["tot","全体",3.6,0.05,6,0.01],["rec","後硬直",2.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",210,10,600,1],["bh","判定 高さ",102,10,600,1]],"tkick":[["tot","全体",0.44,0.05,6,0.01],["rec","後硬直",0.54,0,6,0.01],["land","着地硬直",0.54,0,3,0.01],["bw","判定 幅",102,10,600,1],["bh","判定 高さ",86,10,600,1]],"proj:msong":[["tot","全体",0.8,0.05,6,0.01],["rec","後硬直",0.88,0,6,0.01],["spd","弾速",1020,10,4000,10]],"proj:blast":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.39,0,6,0.01],["ammo","装填数",6,1,99,1],["rel","リロード時間",2.5,0.1,30,0.05],["spd","弾速",800,10,4000,10],["durL","寿命",1.13,0.1,30,0.1]],"proj:sonic":[["tot","全体",0.9,0.05,6,0.01],["rec","後硬直",1.02,0,6,0.01],["spd","弾速",740,10,4000,10]]},
 smiley:{"sknife1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.15,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"sknife2":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"sknife3":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",54,10,600,1]],"sknife4":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",56,10,600,1]],"sblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["hs","被弾硬直",0.45,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"sriseup":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",84,10,600,1]],"sback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"sslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",34,10,600,1]],"sairj":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",64,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.38,0,3,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",60,10,600,1]],"jkcombo":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.3,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",56,10,600,1]],"sknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"sairknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"ssweep":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",36,10,600,1]],"proj:knife":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.32,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",1.1,0.1,30,0.05],["spd","弾速",1060,10,4000,10],["durL","寿命",1,0.1,30,0.1]]},
 mimi:{"mbun1":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:claw":[["bw","判定 幅",116,10,600,1],["bh","判定 高さ",74,10,600,1]],"mbun2":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:upper1":[["bw","判定 幅",120,10,600,1],["bh","判定 高さ",94,10,600,1]],"mpush3":[["tot","全体",0.6,0.05,6,0.01],["rec","後硬直",0.65,0,6,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",72,10,600,1]],"sh:fist":[["bw","判定 幅",136,10,600,1],["bh","判定 高さ",88,10,600,1]],"mfpush":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.58,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:sweep":[["bw","判定 幅",134,10,600,1],["bh","判定 高さ",98,10,600,1]],"mlowj":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",34,10,600,1]],"sh:low":[["bw","判定 幅",92,10,600,1],["bh","判定 高さ",40,10,600,1]],"mairspin":[["tot","全体",0.38,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.2,0,3,0.01],["hs","被弾硬直",0.22,0,2,0.01]],"mdrop":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",68,10,600,1]],"sh:smeteor":[["bw","判定 幅",112,10,600,1],["bh","判定 高さ",92,10,600,1]],"mlight":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.22,0,3,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",62,10,600,1]],"proj:lwave":[["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",1.1,0,6,0.01],["spd","弾速",560,10,4000,10]],"proj:mimiball":[["tot","全体",0.7,0.05,6,0.01],["rec","後硬直",0.92,0,6,0.01],["spd","弾速",620,10,4000,10],["durL","寿命",2.5,0.1,30,0.1]]},
@@ -2369,7 +2380,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v309";
+var BUILD_ID="v310";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -8542,8 +8553,11 @@ function startOrchidAttack(f,type,foe){
         deleted ドロップポーション): she hangs STILL in the air for
         the 0.3s startup (the gravity step holds her while the hit is
         pending), then spears a long vine arm straight down — 18 dmg /
-        KB 660 in a 下方向 98x230 box (the delayed hit lives in
-        stepFighter, state "orope"). 全体 0.66秒 / 後硬直 0.53秒
+        KB 660 in a 下方向 104x240 box (98x230 から拡大 — the delayed
+        hit lives in stepFighter, state "orope"), and a foe caught
+        in the bottom-most slice of the column is GRABBED instead
+        (掴み判定を攻撃判定の一番下に追加 — applyGrabHit, same
+        18 dmg / throw KB 660). 全体 0.66秒 / 後硬直 0.53秒
         (完全硬直 — applyFullLock: recLockT spans the whole recovery
         from the press, attackCd 0.46 + the 0.07 tail) */
      f.state="orope";f.stateT=0.66;f.attackCd=0.46;f.comboWin=0;f.hitDone=false;applyFullLock(f);
@@ -8552,6 +8566,10 @@ function startOrchidAttack(f,type,foe){
      /* 空中J: ツタフック (spec) — two long-reaching vine strikes
         forward; the second one is DELAYED (fires in stepFighter at
         stateT 0.23, longer reach). She hangs in the air briefly.
+        The drawn vines now reach the very END of each hitbox
+        (drawOrchid's ohook branch: lash 1 to the 146 box's front
+        edge, lash 2 — drawn only once hitDone flips, i.e. exactly
+        when its hit fires — to the 158 box's front edge)
         Nerfed (user balance spec): KB 660 -> 550 (both hits), boxes
         160x76 -> 146x76 / 172x66 -> 158x62, 2発目 約0.22秒 -> 約0.32秒,
         全体 0.42秒 -> 0.55秒, 後硬直 0.35秒 -> 0.55秒 (attackCd 0.8 +
@@ -8573,19 +8591,26 @@ function startOrchidAttack(f,type,foe){
      spawnParticles(f.x+f.face*40,f.y+f.h-3,10,"#a3e635",180);spawnRing(f.x+f.face*50,f.y+f.h-2,"#a3e635",30);
      beep(520,.07,"sawtooth",.05);
    }else if(upHeld){
-     /* 地上↑+J: ライジングバイン (this slot was left open in the spec;
-        values matched to the other risers) — vine upper launches the
-        foe and refunds the double jump on hit */
-     f.state="orise";f.stateT=0.3;f.attackCd=0.4;f.comboWin=0;
-     f.vy=-460;f.onGround=false;f.fastfall=false;
-     if(meleeHit(f,foe,60,82,12,360,f.face,-1.15)){f.jumps=1;spawnParticles(f.x,f.y+f.h,8,"#a3e635",140)}
-     spawnParticles(f.x+f.face*14,f.y+f.h*0.3,9,"#a3e635",160);beep(660,.08,"square",.045);
+     /* 地上↑+J: ライジングバインは削除 (user spec) — a grounded
+        up+J press does nothing now (the SARA ライジングフレア
+        deletion set the same precedent for this slot) */
+     return;
    }else if(f.dashT>0||Math.abs(f.vx)>330){
      /* ダッシュJ: ツタックル (user balance spec — was タックル):
         19 dmg, KB 720, range front 132x72, rushes in at vx 420,
-        全体 0.44秒 / 後硬直 0.8秒 (attackCd 0.73 + the 0.07 tail) */
-     f.state="otackle";f.stateT=0.44;f.attackCd=0.73;f.comboWin=0;f.dashT=0;
-     f.vx=f.face*420;
+        全体 0.44秒 / 後硬直 0.8秒 (attackCd 0.73 + the 0.07 tail).
+        NEW (user spec): 前方95先への高速移動を追加 — the press
+        re-fires her dash burst for 0.08s (dashDir = facing, at her
+        dashSpd 1100: ≈88 units of burst plus the end-of-dash carry
+        and friction slide ≈ +95 total in the discrete step sim,
+        the same construction as SARA's フレイムクロー rush), and
+        only then does the vx 420 carry take over (the dash branch
+        of the movement chain hands back RMAX*1.2 ≈ 504, which the
+        old 420 press velocity approximated). She charges with the
+        vines wound tight around her own body (drawOrchid's
+        otackle branch draws the spiral wrap) */
+     f.state="otackle";f.stateT=0.44;f.attackCd=0.73;f.comboWin=0;
+     f.dashDir=f.face;f.dashT=0.08;
      meleeHit(f,foe,132,72,19,720,f.face,-0.3);
      spawnParticles(f.x+f.face*28,f.y+f.h*0.45,11,"#a3e635",200);beep(420,.08,"sawtooth",.05);
    }else{
@@ -8594,15 +8619,28 @@ function startOrchidAttack(f,type,foe){
         ③ bite (applies poison, 2.5s) */
      f.comboStep=(f.comboWin>0)?(f.comboStep+1)%3:0;
      if(f.comboStep===0){
+       /* ツタ2連撃 (user spec — reworked): the two lashes no longer
+          land together. Lash 1 is INSTANT on the press (56x50,
+          KB 240 -> 210); lash 2 is DELAYED to 0.28s after the press
+          (78x60, KB 240 -> 230 — resolved in stepFighter, state
+          "ovine1", stateT threshold 0.24). 全体 0.24 -> 0.52秒,
+          後硬直 0.37 -> 0.28秒 (attackCd 0.49 + the universal
+          0.07 tail − the 0.28s second-lash delay, the ohook
+          convention), 被弾硬直 0.3 -> 0.4秒 on BOTH lashes. The
+          drawn vines reach the very end of each box (drawOrchid) */
        f.comboWin=0.7;
-       f.state="ovine1";f.stateT=0.24;f.attackCd=0.3;
-       meleeHit(f,foe,56,50,6,240,f.face,-0.2,0.3);
-       meleeHit(f,foe,78,60,6,240,f.face,-0.2,0.3); /* second lash reaches further — box 68x50 -> 78x60, and both lashes now inflict 被弾硬直 0.3秒 (user balance spec) */
+       f.state="ovine1";f.stateT=0.52;f.attackCd=0.49;f.hitDone=false;
+       meleeHit(f,foe,56,50,6,210,f.face,-0.2,0.4);
        spawnParticles(f.x+f.face*26,f.y+f.h*0.42,8,"#a3e635",160);beep(1150,.05,"square",.04);
      }else if(f.comboStep===1){
+       /* ツタアッパー (user spec): 後硬直 0.41 -> 0.3秒 (attackCd
+          0.34 -> 0.23), 判定 72x92 -> 前方72x92 (the box now sits
+          in FRONT of her via boxDir = facing — the launch stays
+          真上, dir 0 / up -1.0, the KAIRO アイスフット split),
+          被弾硬直 0.33 -> 0.44秒. KB 310 / dmg 9 unchanged */
        f.comboWin=0.7;
-       f.state="ovine2";f.stateT=0.28;f.attackCd=0.34;
-       meleeHit(f,foe,72,92,9,310,0,-1.0,0.33); /* ツタアッパー (user balance spec): KB 330 (上吹き強) -> 310 (真上 — dir 0 / up -1.0, the house straight-up convention), box 62x82 -> 72x92, 被弾硬直 0.33秒 */
+       f.state="ovine2";f.stateT=0.28;f.attackCd=0.23;
+       meleeHit(f,foe,72,92,9,310,0,-1.0,0.44,false,0,null,false,f.face);
        spawnParticles(f.x+f.face*14,f.y+f.h*0.3,8,"#a3e635",160);beep(760,.06,"square",.045);
      }else{
        f.comboWin=0;f.comboStep=0;
@@ -10900,17 +10938,30 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    f.spinTick+=dt;
    if(f.spinTick>=0.1125&&f.spinHits<16){f.spinTick=0;f.spinHits++;var flLast=f.spinHits>=16;meleeHit(f,foe,86,86,3,flLast?660:0,f.face,-0.2,0.2);spawnParticles(f.x+f.face*24,f.y+f.h*0.45,5,"#fef08a",170);if(flLast)spawnParticles(f.x+f.face*26,f.y+f.h*0.45,9,"#fde047",210);beep(flLast?760:1450+(f.spinHits%3)*130,.04,"square",.035)}
  }
+ /* ORCHID ツタ2連撃 2段目 (user spec): the second lash lands 0.28s
+    after the press (stateT 0.52 -> threshold 0.24), reaching further
+    than the instant first lash — 78x60, KB 230, 被弾硬直 0.4秒.
+    hitDone flipping here is also what makes drawOrchid draw the
+    second, longer vine, so the effect appears exactly with the hit */
+ if(f.char==="orchid"&&f.state==="ovine1"&&!f.hitDone&&f.stateT<=0.24){f.hitDone=true;meleeHit(f,foe,78,60,6,230,f.face,-0.2,0.4);spawnParticles(f.x+f.face*46,f.y+f.h*0.42,8,"#a3e635",170);beep(1250,.05,"square",.04)}
  /* ORCHID delayed second hook: ツタフック's second vine reaches
     further and lands partway through the swing, not on the press */
  if(f.char==="orchid"&&f.state==="ohook"&&!f.hitDone&&f.stateT<=0.23){f.hitDone=true;meleeHit(f,foe,158,62,10,550,f.face,-0.25);spawnParticles(f.x+f.face*52,f.y+f.h*0.4,8,"#a3e635",190);beep(1080,.06,"square",.04)} /* ツタフック 2発目 (user balance spec — nerfed): 発生 約0.22秒 -> 約0.32秒 (stateT 0.55 -> threshold 0.23), KB 660 -> 550, box 172x66 -> 158x62, dmg stays 10 */
  /* ORCHID ロープフィッシング (air down+J): the vine arm spears down
     0.3s after the press (stateT 0.66 -> threshold 0.36) — until then
     she hangs still (the gravity step holds her while hitDone is
-    false). The box hangs BELOW her: 98 wide, from just under her
-    feet down 230 — a custom loop, since meleeHit's box is centred
-    on her body. A hit spikes the foe straight down (dir 0 / up 0.9,
-    the meteor convention) at 18 dmg / KB 660 */
- if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.stateT<=0.36){f.hitDone=true;dbgBox(f.x,f.y+f.h+108,98,244,"255,45,120",16); /* hitbox viewer (おかき only): the vine column — 98 wide, from just under her feet down 230 */var rpHit=false;for(var rpi=0;rpi<fighters.length;rpi++){var rpf=fighters[rpi];if(rpf===f||rpf.dead||rpf.invuln>0)continue;if(Math.abs(rpf.x-f.x)<49+rpf.w/2&&(rpf.y+rpf.h)>(f.y+f.h-14)&&rpf.y<(f.y+f.h+230)){if(applyHit(f,rpf,18,660,0,0.9,false,f.x,f.y+f.h+115))rpHit=true}}spawnParticles(f.x,f.y+f.h+120,12,"#a3e635",210);spawnParticles(f.x,f.y+f.h+226,8,"#c084fc",170);if(rpHit)shake=Math.max(shake,3);beep(300,.1,"sawtooth",.05)}
+    false). The box hangs BELOW her: 104 wide (98 -> 104), from just
+    under her feet down 240 (230 -> 240) — a custom loop, since
+    meleeHit's box is centred on her body. A hit spikes the foe
+    straight down (dir 0 / up 0.9, the meteor convention) at 18 dmg /
+    KB 660 — EXCEPT a foe whose centre sits in the bottom-most 52
+    units of the column (the vine's tip): that foe is GRABBED
+    instead (掴み判定を攻撃判定の一番下に追加, user spec) via
+    applyGrabHit — same 18 dmg up front, pinned in front of her for
+    0.4s, then thrown at KB 660 with the same downward spike
+    (heldUp 0.9). If the grab itself cannot take hold (foe already
+    held / hoisted), the ordinary spike hit lands as a fallback */
+ if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.stateT<=0.36){f.hitDone=true;dbgBox(f.x,f.y+f.h+113,104,254,"255,45,120",16); /* hitbox viewer (おかき only): the vine column — 104 wide, from just under her feet down 240 */var rpHit=false;for(var rpi=0;rpi<fighters.length;rpi++){var rpf=fighters[rpi];if(rpf===f||rpf.dead||rpf.invuln>0)continue;if(Math.abs(rpf.x-f.x)<52+rpf.w/2&&(rpf.y+rpf.h)>(f.y+f.h-14)&&rpf.y<(f.y+f.h+240)){var rpLanded=false;if((rpf.y+rpf.h/2)>(f.y+f.h+188))rpLanded=applyGrabHit(f,rpf,18,660,0.9,false,f.x,f.y+f.h+216);if(!rpLanded)rpLanded=applyHit(f,rpf,18,660,0,0.9,false,f.x,f.y+f.h+120);if(rpLanded)rpHit=true}}spawnParticles(f.x,f.y+f.h+120,12,"#a3e635",210);spawnParticles(f.x,f.y+f.h+236,8,"#c084fc",170);if(rpHit)shake=Math.max(shake,3);beep(300,.1,"sawtooth",.05)}
  /* ORCHID ポイズンボム (U): the sphere leaves her hand 0.2s after
     the press (stateT 0.4 -> threshold 0.2, 発生 0.2秒). The ball
     (kind "pbomb", pr.grav arc) is resolved in the projectile
@@ -11311,7 +11362,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
      f.flameT-=dt;f.flameTick-=dt;
      if(f.flameMode===1)f.vx=0;else if(f.flameMode===3)f.vx-=f.vx*Math.min(1,dt*9); /* 火炎放射 (mode 1): 発動中は完全静止 — vx は減速ではなく即0 (user spec)。サンフラワー (mode 3): rooted while breathing the beam (従来通りの減速) */
      if(f.flameMode===2&&f.vy>20)f.vy=20;
-     if(f.flameMode===3&&Math.random()<0.8)spawnParticles(f.x+f.face*(50+Math.random()*480),f.y+f.h*0.35+(Math.random()-0.5)*54,2,Math.random()<0.6?"#fde047":"#a3e635",130); /* ORCHID サンフラワー (3) は変更なし。SARA flameMode 1 (火炎放射) の炎は下の行で描く (okaki8213 request 2026/11/18 — かつての全削除指定はこの依頼で上書き) */
+     if(f.flameMode===3&&Math.random()<0.8)spawnParticles(f.x+f.face*(50+Math.random()*610),f.y+f.h*0.35+(Math.random()-0.5)*54,2,Math.random()<0.6?"#fde047":"#a3e635",130); /* ORCHID サンフラワー (3): the sparkles now run the beam's FULL length (前方6〜670 — the beam visual itself was extended to the end of the hitbox in drawOrchid). SARA flameMode 1 (火炎放射) の炎は下の行で描く (okaki8213 request 2026/11/18 — かつての全削除指定はこの依頼で上書き) */
      if(f.flameMode===1){var fmY=f.y+f.h*0.45;spawnFxBurst(FXIMG.fire,f.x+f.face*(50+Math.random()*60),fmY+(Math.random()-0.5)*36,120,0.22,0,f.face,0.9);if(Math.random()<0.85)spawnFxBurst(FXIMG.fire,f.x+f.face*(190+Math.random()*90),fmY+(Math.random()-0.5)*90,185,0.26,0,f.face,0.85);if(Math.random()<0.7)spawnFxBurst(FXIMG.fire,f.x+f.face*(360+Math.random()*100),fmY+(Math.random()-0.5)*150,235,0.3,0,f.face,0.8);spawnParticles(f.x+f.face*(40+Math.random()*430),fmY+(Math.random()-0.5)*170,2,Math.random()<0.75?"#fb923c":"#fde68a",130)} /* SARA FX: 口から烈火が判定 (前方480x230) いっぱいに広がる炎の流れ */
      if(f.flameTick<=0){f.flameTick=(f.flameMode===1?0.3:0.16); /* 火炎放射 (flameMode 1, user spec): tick間隔 0.16 -> 0.3秒. ORCHID サンフラワー (3) は 0.16 のまま */
        if(f.flameMode===1)dbgBox(f.x+f.face*243,f.y+f.h*0.45,480,230,"255,123,45",10); /* 火炎放射 (user spec): 判定 前方480x230 */else if(f.flameMode===3)dbgBox(f.x+f.face*338,f.y+f.h*0.45,664,190,"255,123,45",10);else dbgBox(f.x,f.y-110,210,211,"255,123,45",10); /* hitbox viewer (おかき only): this flame tick's test area — jet forward 6..480 / ±115, sunflower 6..670 / ±95, breath cone ±105 across and 4..215 above */
@@ -12246,26 +12297,59 @@ function drawOrchid(f){
  if(f.state==="ovine1"||f.state==="jkcombo")ctx.translate(9,0);
  if(f.state==="ohook")ctx.translate(10,0);
  if(f.state==="oknee")ctx.translate(4,3); /* ニーダウン: she dips low as the vine slips out along the ground */
- if(f.state==="orise")ctx.translate(2,-3);
  if(f.hitstun>0)ctx.translate(Math.sin(time*72)*1.6,0);
  drawCharSprite(f,"orchid","#65a30d");
  /* ==== 技エフェクト (従来のコード描画のまま) ==== */
  function thornVine(x1,y1,x2,y2){ctx.strokeStyle=leafC;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo((x1+x2)/2,(y1+y2)/2-5,x2,y2);ctx.stroke();ctx.fillStyle="#e9d5ff";for(var tv=1;tv<=3;tv++){var tx2=x1+(x2-x1)*tv/4,ty2=y1+(y2-y1)*tv/4-4;ctx.beginPath();ctx.moveTo(tx2,ty2);ctx.lineTo(tx2+3,ty2-5);ctx.lineTo(tx2+6,ty2);ctx.closePath();ctx.fill()}ctx.strokeStyle=leafC;ctx.lineWidth=8}
- if(f.state==="ovine1"){thornVine(28,20,58,15)}
+ if(f.state==="ovine1"){thornVine(28,20,60,15);if(f.hitDone)thornVine(28,31,84,26)} /* ツタ2連撃: each lash's vine now reaches the very END of its hitbox (lash 1: tip at local 60 = the 56 box's front edge; lash 2 — drawn only once hitDone flips, exactly when the delayed hit fires at 0.28s — tip at local 84 = the 78 box's front edge) */
  else if(f.state==="ovine2"){ctx.strokeStyle="rgba(163,230,53,.7)";ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(8,22,30,-1.3,-0.4);ctx.stroke()}
- else if(f.state==="ohook"){thornVine(30,23,92,19)}
- else if(f.state==="oknee"){thornVine(8,56,62,53);ctx.strokeStyle=leafL;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(66,50,7,-0.9,0.7);ctx.stroke()} /* ニーダウン: a vine sneaks low along the ground and whips up at the foe's feet */
- else if(f.state==="orope"){var rpLen=f.hitDone?220:Math.max(24,220*((0.66-f.stateT)/0.3));ctx.strokeStyle=leafC;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(10,30);ctx.quadraticCurveTo(16,30+rpLen*0.55,8,30+rpLen);ctx.stroke();ctx.fillStyle=leafL;ctx.beginPath();ctx.arc(8,30+rpLen,7.5,0,6.29);ctx.fill();ctx.fillStyle=purpC;ctx.beginPath();ctx.arc(8,30+rpLen,3.6,0,6.29);ctx.fill()} /* ロープフィッシング: the long vine arm spears straight down — its tip reaches 230 world units below her feet (220 local from the hand), growing to full length across the 0.3s startup and held while the state lasts */
+ else if(f.state==="obite"){
+   /* 噛みつき (user spec): the bite is now a pitcher plant's MOUTH —
+      a vine neck reaches out, the purple pitcher cup forms the lower
+      jaw and its lid the upper jaw, both rims lined with pale fangs.
+      The gape (bO) starts wide open and SNAPS shut as the bite lands
+      (progress bpr runs 0 -> 1 over the 0.34s state) */
+   var bpr=1-f.stateT/0.34;bpr=bpr<0?0:(bpr>1?1:bpr);
+   var bO=bpr<0.3?0.95:(bpr<0.55?0.95*(1-(bpr-0.3)/0.25):0.05);
+   ctx.strokeStyle=leafC;ctx.lineWidth=4.5;ctx.beginPath();ctx.moveTo(22,30);ctx.quadraticCurveTo(32,26,42,25);ctx.stroke();
+   ctx.fillStyle=purpC;ctx.beginPath();ctx.moveTo(40,27);ctx.quadraticCurveTo(52,47,72,46);ctx.quadraticCurveTo(90,45,97,32);ctx.quadraticCurveTo(70,37,52,34);ctx.quadraticCurveTo(42,32,40,27);ctx.closePath();ctx.fill(); /* lower jaw: the pitcher cup */
+   ctx.fillStyle=leafL;ctx.beginPath();ctx.moveTo(40,27);ctx.quadraticCurveTo(66,34,97,32);ctx.quadraticCurveTo(66,29,42,24);ctx.closePath();ctx.fill(); /* the cup's rim */
+   ctx.fillStyle="#fef9c3";for(var bt2=0;bt2<5;bt2++){var btx2=48+bt2*10;ctx.beginPath();ctx.moveTo(btx2,33.5);ctx.lineTo(btx2+3.4,33.5);ctx.lineTo(btx2+1.7,28.5);ctx.closePath();ctx.fill()} /* lower fangs point up */
+   ctx.save();ctx.translate(41,24);ctx.rotate(-bO*0.85);
+   ctx.fillStyle=purpC;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(27,-10,56,-3);ctx.quadraticCurveTo(30,3,2,3);ctx.closePath();ctx.fill(); /* upper jaw: the pitcher's lid */
+   ctx.fillStyle="#fda4af";ctx.beginPath();ctx.moveTo(4,2);ctx.quadraticCurveTo(28,-3,52,-1);ctx.quadraticCurveTo(28,3,6,4);ctx.closePath();ctx.fill(); /* the mouth's pink inner side */
+   ctx.fillStyle="#fef9c3";for(var bt=0;bt<5;bt++){var btx=10+bt*10;ctx.beginPath();ctx.moveTo(btx,3);ctx.lineTo(btx+3.4,3);ctx.lineTo(btx+1.7,8.5);ctx.closePath();ctx.fill()} /* upper fangs hang down */
+   ctx.restore();
+ }
+ else if(f.state==="otackle"){
+   /* ツタックル (user spec): vines wound TIGHT around her own body
+      in a spiral (グルグル巻き) while she charges — four vine bands
+      circle her torso, each carrying a leaf that rides the ring as
+      it spins, so the wrap visibly rotates around her */
+   for(var tw=0;tw<4;tw++){var twy=9+tw*12.5,twp=time*26+tw*1.7;ctx.strokeStyle=tw%2?leafL:leafC;ctx.lineWidth=3.4;ctx.beginPath();ctx.ellipse(0,twy,17.5,5.5,Math.sin(twp)*0.45,0,6.29);ctx.stroke();ctx.fillStyle=tw%2?leafC:leafL;ctx.beginPath();ctx.ellipse(Math.cos(twp)*17.5,twy+Math.sin(twp)*5.5,4.6,2.2,twp,0,6.29);ctx.fill()}
+   ctx.strokeStyle="rgba(101,163,13,.55)";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-16,14);ctx.quadraticCurveTo(-30,22,-40,18);ctx.stroke();ctx.beginPath();ctx.moveTo(-16,38);ctx.quadraticCurveTo(-31,44,-42,42);ctx.stroke(); /* loose vine streamers trail behind the charge */
+ }
+ else if(f.state==="ohook"){thornVine(30,23,155,19);if(f.hitDone)thornVine(30,32,168,28)} /* ツタフック: the vines now reach the very END of each hitbox (lash 1 tip at local 155 = the 146 box's front edge; lash 2 — drawn only once hitDone flips, exactly when the delayed second hit fires — tip at local 168 = the 158 box's front edge) */
+ else if(f.state==="oknee"){thornVine(8,56,104,53);ctx.strokeStyle=leafL;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(110,50,7,-0.9,0.7);ctx.stroke()} /* ニーダウン: a vine sneaks low along the ground and whips up at the foe's feet — the vine now runs to the very END of the 前98 box (tip at local 104, whip arc at 110) */
+ else if(f.state==="orope"){var rpLen=f.hitDone?228:Math.max(24,228*((0.66-f.stateT)/0.3));ctx.strokeStyle=leafC;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(10,30);ctx.quadraticCurveTo(16,30+rpLen*0.55,8,30+rpLen);ctx.stroke();ctx.fillStyle=leafL;ctx.beginPath();ctx.arc(8,30+rpLen,7.5,0,6.29);ctx.fill();ctx.fillStyle=purpC;ctx.beginPath();ctx.arc(8,30+rpLen,3.6,0,6.29);ctx.fill();ctx.strokeStyle=leafL;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(2,30+rpLen+3,5,2.6,5.6);ctx.stroke();ctx.beginPath();ctx.arc(14,30+rpLen+3,5,3.8,0.6);ctx.stroke()} /* ロープフィッシング: the long vine arm spears straight down — its tip now reaches 240 world units below her feet (228 local from the hand, matching the enlarged 104x240 box), growing to full length across the 0.3s startup and held while the state lasts. The two hooks at the tip are the grab claw: the bottom-most slice of the column grabs (see the orope hit in stepFighter) */
  else if(f.state==="jkcombo"){thornVine(28,21,60,17)}
  else if(f.state==="obomb"){ctx.fillStyle="rgba(168,85,247,.85)";ctx.beginPath();ctx.arc(38,26,6+Math.sin(time*26)*1.1,0,6.29);ctx.fill();ctx.fillStyle="rgba(217,249,157,.8)";ctx.beginPath();ctx.arc(36,23,2.4,0,6.29);ctx.fill()} /* ポイズンボム: a purple poison sphere swells in her hand during the 0.2s wind-up */
  else if(f.state==="omist"){ctx.fillStyle="rgba(163,230,53,.35)";ctx.beginPath();ctx.ellipse(0,54,46,9,0,0,6.29);ctx.fill();ctx.fillStyle="rgba(192,132,252,.3)";ctx.beginPath();ctx.ellipse(0,50,30,7,0,0,6.29);ctx.fill()}
  else if(f.state==="ofly"||(f.flyDur||0)>0){var spO=time*22;ctx.save();ctx.translate(0,27);ctx.rotate(spO);ctx.strokeStyle=leafL;ctx.lineWidth=4.5;for(var bO=0;bO<3;bO++){ctx.save();ctx.rotate(bO*2.09);ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(38,0);ctx.stroke();ctx.restore()}ctx.restore()}
- else if(f.state==="onutri"){ctx.strokeStyle="rgba(74,222,128,.65)";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(0,50,20+Math.sin(time*9)*2,0.4,2.7);ctx.stroke();ctx.beginPath();ctx.arc(0,50,27+Math.cos(time*8)*2,0.4,2.7);ctx.stroke()}
+ else if(f.state==="onutri"){ctx.strokeStyle="rgba(74,222,128,.65)";ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(0,50,20+Math.sin(time*9)*2,0.4,2.7);ctx.stroke();ctx.beginPath();ctx.arc(0,50,27+Math.cos(time*8)*2,0.4,2.7);ctx.stroke();
+   /* 栄養補給 (user spec): leaves dance around her — FIVE leaves
+      orbit her body, each fluttering as it circles (葉っぱが舞って
+      自身の周りに5つの葉が回る) */
+   for(var lf=0;lf<5;lf++){var la=time*5.2+lf*1.2566;ctx.save();ctx.translate(Math.cos(la)*30,27+Math.sin(la)*24);ctx.rotate(la+1.2+Math.sin(time*11+lf*2.1)*0.5);ctx.fillStyle=lf%2?"#4ade80":"#a3e635";ctx.beginPath();ctx.ellipse(0,0,6.5,3,0,0,6.29);ctx.fill();ctx.strokeStyle="rgba(21,101,52,.7)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(6,0);ctx.stroke();ctx.restore()}}
  else if(f.state==="osun"){
    /* the great sunflower blooms overhead, petals slowly turning */
    ctx.fillStyle="#facc15";for(var pt=0;pt<8;pt++){var pa2=pt*0.785+Math.sin(time*3)*0.12;ctx.beginPath();ctx.ellipse(Math.cos(pa2)*13,-28+Math.sin(pa2)*13,6.5,3.4,pa2,0,6.29);ctx.fill()}
    ctx.fillStyle="#a16207";ctx.beginPath();ctx.arc(0,-28,9,0,6.29);ctx.fill();ctx.fillStyle="#fde047";ctx.beginPath();ctx.arc(0,-28,5,0,6.29);ctx.fill();
-   var bw2=Math.sin(time*34)*3;ctx.fillStyle="rgba(253,224,71,.28)";ctx.beginPath();ctx.moveTo(14,14);ctx.lineTo(340,2+bw2);ctx.lineTo(340,46+bw2);ctx.lineTo(14,36);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(254,249,195,.5)";ctx.beginPath();ctx.moveTo(14,19);ctx.lineTo(340,13+bw2);ctx.lineTo(340,36+bw2);ctx.lineTo(14,31);ctx.closePath();ctx.fill()}
+   /* サンフラワー (user spec): the light breath now runs the FULL
+      hitbox — 前方6〜670 long and ±95 tall at the far end (local
+      558 long, flaring to ±79 around the beam axis at local y 26) —
+      drawn as a widening cone of light from the flower's mouth */
+   var bw2=Math.sin(time*34)*3;ctx.fillStyle="rgba(253,224,71,.28)";ctx.beginPath();ctx.moveTo(14,15);ctx.lineTo(558,-53+bw2);ctx.lineTo(558,105+bw2);ctx.lineTo(14,37);ctx.closePath();ctx.fill();ctx.fillStyle="rgba(254,249,195,.5)";ctx.beginPath();ctx.moveTo(14,20);ctx.lineTo(558,-18+bw2);ctx.lineTo(558,70+bw2);ctx.lineTo(14,32);ctx.closePath();ctx.fill()}
  /* 栄養補給 afterglow: venom shimmer on the hands, speed ring while buffed */
  if(f.venom){ctx.fillStyle="rgba(192,132,252,.5)";ctx.beginPath();ctx.arc(13,35,4+Math.sin(time*8)*1,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-13,35,3.4+Math.cos(time*7)*0.9,0,6.29);ctx.fill()}
  if(f.buffT>0){ctx.strokeStyle="rgba(74,222,128,.45)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(0,27,30+Math.sin(time*10)*2,0,6.29);ctx.stroke()}
