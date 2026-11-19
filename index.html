@@ -307,7 +307,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
 .updItem li{color:#cbd5e1;font-weight:700;line-height:1.65;font-size:13.5px;margin:2px 0}
 .updEmpty{color:var(--muted);font-weight:700;font-size:14px;padding:18px 0 8px;text-align:center}
 /* ===== CREATIVE MODE ===== */
-#lobbyCrNote{display:none;color:#bbf7d0;font-weight:900;font-size:13px;text-align:center;margin-top:2px}
+#lobbyCrNote{display:none;color:#7dd3fc;font-weight:900;font-size:13px;text-align:center;margin-top:2px}
 #specBar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:rgba(3,14,26,.85);border:1.5px solid rgba(103,232,249,.35);border-radius:999px;padding:5px 12px;z-index:30;max-width:94vw;flex-wrap:wrap;justify-content:center}
 #specBar .specLbl{color:#7dd3fc;font-weight:900;font-size:12px;white-space:nowrap}
 #specBtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
@@ -354,7 +354,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
   </nav>
   <div class="groundmist"></div>
   <div class="bottomInfo">
-    <span>与えたダメージがスコア（整数）＋キルした人にボーナス+100のスコア制バトル<br><span style="color:var(--muted)">CREATIVE MODE：観戦・カスタマイズ・CPU対戦・オンライン対戦（オーナーの設定が全員に適用）／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
+    <span>与えたダメージがスコア（整数）＋キルした人にボーナス+100のスコア制バトル<br><span style="color:var(--muted)">CREATIVE MODE：観戦・カスタマイズ・CPU対戦（カスタム設定は観戦・CPU対戦のみ有効）／ オンライン対戦は通常ステータス ／ VS CPU・TRAINING はオフライン</span><span class="updHist" style="display:block"><span class="updTitle">UPDATE HISTORY — 最新の更新</span><span id="updPreview" style="display:block"></span><button class="updMore" id="updMoreBtn">すべての履歴を見る（日付と内容）→</button></span></span>
     <span style="text-align:right"><span class="patchbox">No more runaway J · solid floor · no-slide ground<br>0.8x speed · every ledge = 1 jump · key config in SETTINGS (WASD fixed)<br><span style="color:var(--muted);font-size:11px">kill heal = 20% of the damage you dealt to that foe (cap: 30% of your max HP)</span></span><br><span class="pill regionPill">REGION: ASIA</span></span>
   </div>
 </section>
@@ -410,7 +410,7 @@ kbd{background:#1e293b;border:1px solid #475569;border-bottom-width:3px;border-r
     <div class="csTitle brush">ルームロビー</div>
     <div class="lobbyCode">ルームコード<b id="lobbyCodeVal">------</b><span id="lobbyCount">1 / 8 人</span></div>
     <div id="lobbyList"></div>
-    <div id="lobbyCrNote">CREATIVE MODE ルーム — ホスト（オーナー）のカスタム設定が全プレイヤーに適用されます</div>
+    <div id="lobbyCrNote">オンライン対戦 — 通常ステータスでの対戦です（CREATIVE MODE のカスタム設定は適用されません）</div>
     <div id="lobbyStatus"></div>
     <div class="csBtns"><button class="gbtn primary" id="lobbyStartBtn">▶ 試合開始</button><button class="gbtn" id="lobbyInviteBtn">フレンドを招待</button><button class="gbtn" id="lobbyLeaveBtn">ルームを退出</button></div>
     <div id="lobbyInvitePanel" style="display:none;background:rgba(3,14,26,.88);border:1.5px solid rgba(103,232,249,.3);border-radius:14px;padding:8px 18px;min-width:min(440px,92vw);max-width:92vw"></div>
@@ -467,6 +467,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["17:05"],tag:"仕様変更",title:"オンライン対戦を通常ステータスに戻しました（カスタム設定は適用されません）",
+   items:["オンライン対戦（PLAYの下の CREATE / JOIN LOBBY から入る対戦と、ロビーから始まる対戦）では、CREATIVE MODE のカスタム設定が適用されなくなりました。通常ステータスだけの、これまで通りのオンライン対戦です",
+          "ホストのカスタム設定を試合開始時に全員へ配布して適用する仕組みは、オンライン対戦では使わなくなりました。カスタム設定が有効なのは CREATIVE MODE 内の観戦・CPU対戦だけです",
+          "BUILD_ID を v293 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["15:59"],tag:"新機能",title:"スコア・タイム表示をミニマップの下へ移動／観戦に再生速度（×1・×2・×4）を追加",
    items:["試合中のスコアとタイムの表示位置を変更しました：リーダーボードと重ならないよう、画面中央の上から、左上のミニマップの下へ移動しました",
           "CREATIVE MODEの観戦に再生速度の切り替えを追加しました：画面下の観戦バーの「速度」ボタン（×1／×2／×4）で、CPU同士の試合を観戦中そのまま倍速で進められます。物理や技の性能は変わらず、試合の進む速さだけが変わります",
@@ -1239,10 +1243,10 @@ function selectChar(c){
 }
 $("movesBtnTop").onclick=function(){openAllMoves(playerChar)};
 $("charBtn").onclick=function(){openAllMoves(playerChar)};
-$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計を整数で数えた点数です。ダメージ自体は小数点まで計算されます）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>では開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません。全員CPU同士の対戦です）。試合中はいつでも全体視点と各キャラの視点を切り替えられ、再生速度（×1／×2／×4）も変更できます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンラインではルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
+$("howBtn").onclick=function(){openSheet(bindingSummaryHTML()+relabelMoves('<h2>遊び方 — スコア制アリーナバトル</h2><p>敵に与えたダメージは、その敵を倒した時に<b style="color:#fde047">全員へスコアとして加算</b>されます（与えたダメージの合計を整数で数えた点数です。ダメージ自体は小数点まで計算されます）。最後の一撃で倒した本人にはボーナス+100点が上乗せされます。落下死でも、直前に攻撃していればキル扱い。倒した本人は、<b>その敵に自分が与えたダメージの20%</b>だけHPが回復します（上限は自分の最大HPの30%。REGEN表示）。しばらく攻撃を受けないとHPは自動で回復しはじめる。3分間でスコアが高い方の勝ち。試合後はリザルト画面で SCORE／ASSISTS／KILLS／DEATHS の順位表が出ます。</p><p><b>TRAINING MODE</b>：相手は反撃しない練習用ダミー。時間無制限で、コンボ数と合計ダメージが画面に出る。Jの出方（地上／空中／移動中／ダッシュ中／↓+J）の違いを試す場所。</p><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> でも、<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> でも操作できます。</p><p><kbd>A</kbd><kbd>D</kbd>：移動（キーを離すとほぼその場で止まる。地面は滑らない）</p><p><kbd>W</kbd>：ジャンプ（2段ジャンプ可。1段目は<b>短くタップすると小ジャンプ</b>（頂点 約96）、<b>0.12秒以上押し続けると通常ジャンプ</b>（頂点 約172）になり、どちらの高さも毎回一定です。小ジャンプは台の段差には届かないので、台に登る時は押し続けてください）／ <kbd>S</kbd>：空中で急降下、浮いた台の上では素早く2回連続で押すとその台だけすり抜けて降りる（1回だけでは降りない）（下の地面は絶対にすり抜けません）。ステージの台は全部、どの段差も1段ジャンプだけで届く高さにしてある（2段ジャンプ前提の台はない）</p><p><b>ガード（全キャラ共通）</b>：地面に立った状態で <kbd>S</kbd>＋<kbd>A</kbd> または <kbd>S</kbd>＋<kbd>D</kbd> を同時に押し続けるとガードできます。<kbd>S</kbd>＋<kbd>A</kbd>で<b>右向き</b>にガード、<kbd>S</kbd>＋<kbd>D</kbd>で<b>左向き</b>にガードします（押している方向の逆を向いて正面を守る構えです）。ガード中は正面からの攻撃のダメージが<b>1/10</b>になり、ノックバックもほんの少し後ろに下がるだけで、被弾時の硬直もありません。ガードは時間制限なくずっと続けられます。背後からの攻撃はガードできません。ガード中は全キャラ共通で<b>しゃがんで両腕を前に組んで守る姿勢</b>になり、体全体を薄い<b>赤い球体バリア</b>が包むので、遠くからでもガード中だと分かります。</p><p><b>掴み（全キャラ共通システム）</b>：掴み技がヒットすると、相手はその場で吹っ飛ばず、<b>技を出したキャラのすぐ目の前に固定</b>されます。固定されている<b>0.4秒間は完全硬直</b>で、移動・ジャンプ・ダッシュ・ガード・技のすべてができません。0.4秒たつと、<b>その時点で技を出したキャラが向いている方向</b>へ、技のKBで投げ飛ばされます（固定中に向きを変えると投げる方向も変わります）。ダメージは掴んだ瞬間に入ります。現在の掴み技は AXE の<b>ヘッドロック</b>（J 2段目）と、MIMI&SHADE の SHADE による<b>掴み投げ</b>（空中J）です。</p><p><b>↑+Kの再使用リセット（全キャラ共通）</b>：↑+Kを使った後の再使用（クールダウン）中に相手の攻撃を受けると、攻撃を受けたキャラの↑+Kの再使用がその場で<b>0秒</b>に戻り、すぐにもう一度使えます。ガードで防いだ攻撃や、燃焼・毒などの継続ダメージでも戻ります。</p><p><b>台から降りる</b>：浮いた台の上では <kbd>S</kbd> を<b>素早く2回連続</b>で押した時だけその台をすり抜けて降ります。<kbd>S</kbd>を1回押しただけでは台の上に残ります。</p><p><b>キャラ変更</b>：倒されるたびにキャラ選択画面が出て、試合中でもキャラを変えて復活できます（スコアは引き継ぎ）。</p><p><kbd>Space</kbd> / <kbd>Shift</kbd>：ダッシュ（<kbd>A</kbd><kbd>A</kbd>・<kbd>D</kbd><kbd>D</kbd> のダブルタップでも出る。空中でも1回OK。<b>クールタイム2.4秒</b>）</p><p><b>コマンド一覧（「+」＝同時入力）</b></p><p><kbd>J</kbd>→<kbd>J</kbd>→<kbd>J</kbd>：爪チェーン最大3段（1・2段目は突進なし／3段目だけ短い突進フィニッシュ＋長めのクールタイム）／ 前+<kbd>J</kbd>：ブリンク斬り（約105先への高速移動。移動中の経路にいた相手にも当たる（ヒットは1回まで）。後硬直0.30秒） ／ ↓+<kbd>J</kbd>：アイスフット（KB 440・真上方向） ／ 空中<kbd>J</kbd>：ホバースピン（滞空・最大6ヒット） ／ 空中↓+<kbd>J</kbd>：メテオネイル（空中に滞留し、真下へメテオ判定の氷の釘。滞留中は横移動のみ可能） ／ <kbd>J</kbd>+<kbd>K</kbd>同時押し：アイスファング・コンボ（2ヒット）／ <kbd>K</kbd>：フロストテイル ／ 空中<kbd>K</kbd>：フロストテイル（地上と同じ振り） ／ 空中↓+<kbd>K</kbd>：メテオドロップ ／ ↓+<kbd>K</kbd>：アイスエッジ（地面から左右へ三段階の氷）／ <kbd>U</kbd> 氷弾（3発・自動リロード）／ <kbd>L</kbd> 必殺技（ゲージMAX時）</p><p>キーボードで遊ぶと、画面下に <kbd>SPACE</kbd> ダッシュ／<kbd>J</kbd>／<kbd>K</kbd>／<kbd>U</kbd>／<kbd>L</kbd> ウルト のバーが出て、残弾・クールタイム・ウルト％がその場で見えます。ダッシュは横方向だけ（上下には出ません）。攻撃・ダッシュ・ウルトのキーはメニューの SETTINGS から入れ替えできます（WASDは変更不可）。</p><p>使用キャラはPLAY／TRAINING を押したあとの選択画面で選べます（選んだ方が自分、もう一方がCPU）。ウルトの細かい仕様はキャラごとに違うので、技一覧で確認してください。</p><p>スマホは左半分がスティック（上に倒すとジャンプ、下で落下／台すり抜け）、右下のボタンで攻撃。横画面がおすすめ。</p><p><b>CREATIVE MODE</b>：メニューの CREATIVE MODE から入る、カスタム設定で遊ぶモードです。<b>観戦</b>では開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません。全員CPU同士の対戦です）。試合中はいつでも全体視点と各キャラの視点を切り替えられ、再生速度（×1／×2／×4）も変更できます。<b>カスタマイズ</b>では全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更でき、その変更は CREATIVE MODE の試合でのみ有効です（そのままCPU対戦もできます）。<b>オンライン</b>はルームを作る（6文字コードが発行される）か、コードを入力して参加。ホストが試合を開始すると全員同時にスタートします。オンライン対戦は通常ステータスの対戦で、カスタム設定は適用されません（カスタム設定が有効なのは観戦・CPU対戦だけです）。アカウント登録は不要。試合中に誰かが抜けると、そのキャラはCPUが引き継いで対戦が続きます（ロビーでホストが抜けた場合だけルーム解散）。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p><p><b>フレンド機能</b>：メニューの FRIENDS で、ユーザーネームとパスワードでアカウントを作成してログインすると、友達がその名前で検索してフレンド申請を送れます。フレンド同士なら、ルーム作成後にホストが FRIENDS から「ルームに招待」を押すだけで、ゲストはコード入力なしで部屋に入れます。ユーザーネームは日本語などほとんどの文字が使えます。アカウント・ログイン状態・フレンド一覧はこの端末に保存されるので、ページを閉じても消えません（アカウントはこの端末専用で、パスワードを忘れると復旧できません）。</p>'))};
 $("settingsBtn").onclick=function(){openSettings()};
 $("lbBtn").onclick=function(){openSheet('<h2>Leaderboards</h2><p>オンラインランキングはありません。この端末で相手に勝った回数だけ表示します。</p><p style="font-size:22px;color:#fff">🏆 勝利数：<span id="winCountLb">0</span> 回</p>');var el=$("winCountLb");if(el)el.textContent=wins;};
-$("createBtn").onclick=$("joinBtn").onclick=function(){openOnline()};
+$("createBtn").onclick=$("joinBtn").onclick=function(){openNormalOnline()}; /* PLAY's CREATE / JOIN LOBBY: plain online only — the normal online sheet (not the CREATIVE MODE hub); online matches never apply custom settings */
 
 /* ================= GAME ENGINE =================
    Physics & layout measured against real bandit.rip gameplay footage:
@@ -1418,8 +1422,7 @@ function charStatsBase(c){
  return{hp:MAXHP,spd:1,kb:1,dash:1100}; /* KAIRO (default): dash buffed 1024 -> 1100 (user spec); his dash cooldown is 2.2s in tryDash */
 }
 /* CREATIVE MODE: while a creative match runs (crActive), the
-   effective config (crEff — the local editor config, or the room
-   owner's config received with an online creative start) overrides
+   effective config (crEff — the local editor config) overrides
    base stats here, so Fighter creation / respawn char changes on
    every end compute the same numbers. Outside creative matches
    this returns the base table untouched. */
@@ -1494,10 +1497,11 @@ function acrossMainFloor(a,b){
       per-move damage / KB overrides, edited in openCustomize().
       The overrides live ONLY in crCfg (this session) and become
       the effective config (crEff) solely for creative matches:
-      local creative (vs CPU / spectate) uses crCfg directly, and
-      an online creative room carries the OWNER's serialized
-      config in its start message (crc), which every end applies
-      as crEff — the owner's settings are the only ones in force.
+      local creative (vs CPU / spectate) uses crCfg directly.
+      Online matches never carry or apply a custom config: the
+      room start message has no config payload and startMatch
+      arms overrides for local creative matches only, so online
+      always runs on the normal stats.
       Normal VS CPU / TRAINING never set crActive, so nothing
       leaks into them.
    3) Damage routing: every damage route in the engine funnels
@@ -1512,7 +1516,7 @@ function acrossMainFloor(a,b){
       under a crKeyCtx, so they are never rewritten. Overrides
       are ABSOLUTE values, so the funnel patches are idempotent
       (meleeHit -> applyHit applies the same value twice). */
-var crCfg={},crEff=null,crActive=false,crNetCfg=null,crSpec=false,crKeyCtx=null;
+var crCfg={},crEff=null,crActive=false,crSpec=false,crKeyCtx=null;
 var specView=0,specSpeed=1,zoomCur=1,camFocusF=null; /* specSpeed: CREATIVE spectate playback rate (1 / 2 / 4), set from the 速度 buttons in the spectate bar; the loop scales the sim-time feed by it (spectate only) */
 var CR_BASE=[["hp","最大HP",1,9999,1],["spd","移動速度 ×",0.1,5,0.01],["air","空中速度 ×",0.1,5,0.01],["dash","ダッシュ速度",100,3000,10],["kb","KB耐性 ×",0.1,5,0.01],["fall","落下速度 ×",0.2,5,0.01]];
 /* per-move defaults, read off the engine's own numbers (the same
@@ -1599,29 +1603,7 @@ function crCustomPanelHTML(ch){
  return '<div style="border:1.5px solid #4ade80;border-radius:10px;padding:8px 12px;margin:0 0 10px;background:rgba(74,222,128,.08)"><b style="color:#bbf7d0">🎨 CREATIVE MODE カスタム適用中（'+cname(ch)+')</b><br><span style="font-size:12.5px;line-height:1.7">'+rows.join("<br>")+'</span></div>';
 }
 
-function crSerializeCfg(){
- var out={},any=false;
- for(var ci=0;ci<CHAR_LIST.length;ci++){
-  var id=CHAR_LIST[ci].id,cc=crCfg[id];if(!cc)continue;var o={},oa=false;
-  if(cc.base){var b={},ba=false;for(var bk in cc.base){if(typeof cc.base[bk]==="number"){b[bk]=cc.base[bk];ba=true}}if(ba){o.base=b;oa=true}}
-  if(cc.moves){var mv={},ma=false;for(var mk in cc.moves){var mm=cc.moves[mk];if(!mm)continue;var mo={};if(typeof mm.d==="number")mo.d=mm.d;if(typeof mm.k==="number")mo.k=mm.k;for(var xi=0;xi<CR_XFIELDS.length;xi++){var xf=CR_XFIELDS[xi];if(typeof mm[xf]==="number")mo[xf]=mm[xf]}if(Object.keys(mo).length){mv[mk]=mo;ma=true}}if(ma){o.moves=mv;oa=true}}
-  if(oa){out[id]=o;any=true}
- }
- return any?JSON.stringify(out):null;
-}
-function crParseCfg(s){
- if(typeof s!=="string"||!s)return null;
- var o=null;try{o=JSON.parse(s)}catch(e){return null}
- if(!o||typeof o!=="object")return null;
- var out={},any=false;
- for(var id in o){
-  var cc=o[id];if(!cc||typeof cc!=="object")continue;var c2={};
-  if(cc.base&&typeof cc.base==="object"){var b={};for(var bk in cc.base){if(typeof cc.base[bk]==="number"&&isFinite(cc.base[bk]))b[bk]=cc.base[bk]}c2.base=b}
-  if(cc.moves&&typeof cc.moves==="object"){var mv={};for(var mk in cc.moves){var mm=cc.moves[mk];if(!mm||typeof mm!=="object")continue;var mo={};if(typeof mm.d==="number"&&isFinite(mm.d))mo.d=mm.d;if(typeof mm.k==="number"&&isFinite(mm.k))mo.k=mm.k;for(var xi=0;xi<CR_XFIELDS.length;xi++){var xf=CR_XFIELDS[xi];if(typeof mm[xf]==="number"&&isFinite(mm[xf]))mo[xf]=Math.max(0,Math.min(10000,mm[xf]))}if(Object.keys(mo).length)mv[mk]=mo}c2.moves=mv}
-  if(c2.base||c2.moves){out[id]=c2;any=true}
- }
- return any?out:null;
-}
+/* (the serializer/parser that packaged a room owner's custom config for online starts was removed: online matches no longer carry a custom config at all) */
 function crFitZoom(){
  var asp=(cw||1280)/Math.max(1,(ch||720));
  return Math.max((WORLD_W+260)/asp,WORLD_H+170)/VIEW_H;
@@ -1785,12 +1767,12 @@ function crRenderList(){
 }
 function openCustomize(){
  openSheet('<h2>🎨 カスタマイズ — CREATIVE MODE専用</h2>'
-  +'<p>全キャラの基本ステータスと、各技のダメージ／KB（ノックバック）に加えて、発生・全体・後硬直・着地硬直・被弾硬直・判定サイズ・再使用時間・装填数・リロード・弾速・効果時間など、その技に実在する詳細ステータスも個別に変更できます。キャラ名のボタンを押すとそのキャラの設定が開きます。変更は <b style="color:#fff">CREATIVE MODE の試合でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。オンラインでは、ルームを作った人（オーナー）の設定が全プレイヤーに適用されます。値を初期値に戻すと、その項目の変更は消えます。</p>'
+  +'<p>全キャラの基本ステータスと、各技のダメージ／KB（ノックバック）に加えて、発生・全体・後硬直・着地硬直・被弾硬直・判定サイズ・再使用時間・装填数・リロード・弾速・効果時間など、その技に実在する詳細ステータスも個別に変更できます。キャラ名のボタンを押すとそのキャラの設定が開きます。変更は <b style="color:#fff">CREATIVE MODE の試合でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。オンライン対戦ではカスタム設定は適用されず、通常ステータスで対戦します。値を初期値に戻すと、その項目の変更は消えます。</p>'
   +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px"><button class="gbtn primary" id="crBackHub">← CREATIVE MODE に戻る</button><button class="gbtn" id="crResetAll">全キャラを初期値にリセット</button></div>'
   +'<p class="mvCount" id="crCount"></p><div id="crList"></div>');
  crRenderList();
  $("crResetAll").onclick=function(){crCfg={};crRenderList();beep(500,.06)};
- $("crBackHub").onclick=function(){beep(600,.05);openOnline()};
+ $("crBackHub").onclick=function(){beep(600,.05);openCreativeHub()};
 }
 function Fighter(char,isPlayer,x,y){
  var st=charStats(char);var bs=charBodySize(char);
@@ -1812,12 +1794,12 @@ function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&d
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
  mode=m;$("modeLabel").textContent=(m==="training"?"TRAINING":(m==="online"?"ONLINE VS":(m==="creative"?("CREATIVE"+(crSpec?" 観戦":"")):"VS CPU")));
- /* CREATIVE MODE: the effective config is armed ONLY here — local
-    creative uses the editor config; online uses the room owner's
-    config delivered with the start message (crNetCfg); every
-    other mode runs with overrides fully off */
+ /* CREATIVE MODE: the effective config is armed ONLY here, and
+    ONLY for local creative matches (観戦 / CPU対戦), which use the
+    editor config. Online matches always run on the normal stats:
+    no custom config is carried by the room or applied here. Every
+    other mode also runs with overrides fully off */
  if(m==="creative"){crActive=true;crEff=crCfg}
- else if(m==="online"&&crNetCfg){crActive=true;crEff=crNetCfg}
  else{crActive=false;crEff=null}
  specView=0;specSpeed=1;zoomCur=1;var specFirst=(m==="creative"&&crSpec);
  $("menu").style.display="none";$("gameScreen").classList.add("on");
@@ -2275,7 +2257,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v292";
+var BUILD_ID="v293";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2316,15 +2298,15 @@ function rnd(){return (mode==="online"&&typeof sv!=="undefined"&&sv&&sv.active)?
 function genRoomCode(){var cs="ABCDEFGHJKMNPQRSTUVWXYZ23456789",s="";for(var i=0;i<6;i++)s+=cs[Math.floor(Math.random()*cs.length)];return s}
 function onlineHTML(msg){
  return '<h2>CREATIVE MODE</h2>'
- +'<p>カスタム設定で遊ぶモードです。観戦・カスタマイズ・CPU対戦・オンライン対戦ができます。カスタマイズの変更は <b style="color:#fff">CREATIVE MODE の試合でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。</p>'
+ +'<p>カスタム設定で遊ぶモードです。観戦・カスタマイズ・CPU対戦ができます。カスタマイズの変更は <b style="color:#fff">CREATIVE MODE の観戦・CPU対戦でのみ有効</b>で、通常の VS CPU / TRAINING には影響しません。オンライン対戦は通常ステータスの対戦で、カスタム設定は適用されません。</p>'
  +'<div class="bindRow"><div><span class="bname">👁 観戦（CPU vs CPU）</span><br><span class="bnote">CPU同士を戦わせて観戦。開始前に、対戦するCPUの人数と各枠のキャラを選べます（自分のキャラを選ぶ画面ではありません）。試合中はいつでも全体視点と各キャラの視点を切り替えられ、再生速度（×1／×2／×4）も変更できます</span></div><button class="bindKey" id="crSpecBtn">観戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">⚔ CPU対戦</span><br><span class="bnote">カスタム設定を有効にして、いつものCPU対戦</span></div><button class="bindKey" id="crCpuBtn">対戦する</button></div>'
  +'<div class="bindRow"><div><span class="bname">🎨 カスタマイズ</span><br><span class="bnote">全キャラの基本ステータスと各技のダメージ／KB・発生・全体・後硬直・判定などの詳細ステータスを個別に変更</span></div><button class="bindKey" id="crCustomBtn">カスタマイズ</button></div>'
  +'<p style="margin-top:14px">友達と最大8人までのオンライン対戦。接続方式は <b style="color:#fff">Supabase経由</b> のみです。全員の端末が同じ計算を回し、Supabase の Realtime 経由で各自の操作だけを送り合う方式です。自分の操作は即座に反映され、相手の操作は届いた時点で巻き戻して計算し直す（ロールバック）ため、通信の揺れがそのまま画面のブレになりません（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
- +'<p><b style="color:#bbf7d0">オンラインでは、ルームを作った人（オーナー）のカスタム設定が全プレイヤーに適用されます</b>（ゲスト側の設定は使われません）。</p>'
+ +'<p><b style="color:#bbf7d0">オンライン対戦は通常ステータスの対戦です</b>（CREATIVE MODE のカスタム設定はオンラインでは適用されません。カスタム設定が有効なのは観戦・CPU対戦だけです）。</p>'
  +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
  +'<p style="color:var(--muted)">※ ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
- +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ。あなたのカスタム設定が全員に適用されます</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
+ +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ（通常ステータスでの対戦です）</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
  +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
  +'<p id="bindMsg">'+(msg||"")+'</p>';
 }
@@ -2341,6 +2323,19 @@ function startCreativeSpectate(){
  $("modal").classList.remove("on");$("charSelect").classList.remove("on");
  beep(700,.07);startMatch("creative");
 }
+/* the NORMAL online sheet (PLAY's CREATE / JOIN LOBBY): plain
+   online play on the normal stats only — no CREATIVE MODE hub
+   entries and no custom settings anywhere on this path */
+function onlineNormalHTML(msg){
+ return '<h2>オンライン対戦</h2>'
+ +'<p>友達と最大8人までのオンライン対戦です。<b style="color:#fff">通常ステータスでの対戦</b>で、CREATIVE MODE のカスタム設定は適用されません。</p>'
+ +'<p>接続方式は <b style="color:#fff">Supabase経由</b> のみです。全員の端末が同じ計算を回し、Supabase の Realtime 経由で各自の操作だけを送り合う方式です。自分の操作は即座に反映され、相手の操作は届いた時点で巻き戻して計算し直す（ロールバック）ため、通信の揺れがそのまま画面のブレになりません（ホストが抜けると試合は終了します）。ルームを作ると6文字のコードが発行されるので、それを相手に伝えてください。接続してもすぐには始まらず、全員がロビーに集まって、ホストが「試合開始」を押した時に始まります。アカウント登録は不要です。</p>'
+ +'<p>メニューの <b style="color:#fff">FRIENDS</b> でアカウントを作ってログインし、ユーザーネーム検索からフレンドを追加しておくと、ルーム作成後にそのまま招待を送れて、相手はコードを伝えなくても部屋に入れます。</p>'
+ +'<p style="color:var(--muted)">※ ゲストが抜けるとそのキャラはCPUが引き継ぎますが、ホストが抜けると試合は終了します。ロビーでホストが退出するとルームは解散します。VS CPU / TRAINING は今まで通りオフラインで遊べます。</p>'
+ +'<div class="bindRow"><div><span class="bname">ルームを作る（ホスト）</span><br><span class="bnote">コードを発行して相手の参加を待つ</span></div><button class="bindKey" id="makeRoomBtn">ルーム作成</button></div>'
+ +'<div class="bindRow"><div><span class="bname">ルームに参加（ゲスト）</span><br><span class="bnote">相手から聞いた6文字コードを入力</span></div><span style="display:flex;gap:8px;flex-wrap:wrap"><input id="roomCodeInput" maxlength="6" placeholder="CODE" style="text-transform:uppercase;background:#0b142e;border:1.5px solid #475569;border-radius:8px;color:#fff;font-weight:900;padding:8px 10px;width:112px;font-size:15px;letter-spacing:.15em"><button class="bindKey" id="joinRoomBtn" style="min-width:80px">参加</button></span></div>'
+ +'<p id="bindMsg">'+(msg||"")+'</p>';
+}
 function wireOnlineBtns(){
  var mk=$("makeRoomBtn"),jn=$("joinRoomBtn");
  if(mk)mk.onclick=createRoom;
@@ -2350,17 +2345,33 @@ function wireOnlineBtns(){
  if(cp)cp.onclick=function(){beep(600,.06);crSpec=false;tryFullscreen();openCharSelect("creative")};
  if(cu)cu.onclick=function(){beep(600,.06);openCustomize()};
 }
-function openOnline(msg){
- openSheet(onlineHTML(msg));wireOnlineBtns();
+function wireNormalBtns(){
+ var mk=$("makeRoomBtn"),jn=$("joinRoomBtn");
+ if(mk)mk.onclick=createRoom;
+ if(jn)jn.onclick=function(){var inp=$("roomCodeInput");joinRoom(inp?inp.value.trim().toUpperCase():"")};
 }
-$("onlineBtn").onclick=function(){beep(600,.07);openOnline()};
+/* which online sheet is in use: "normal" (PLAY's CREATE / JOIN —
+   plain online, normal stats only) or "creative" (the CREATIVE
+   MODE hub). Every status / error message re-opens its sheet
+   through openOnline, so it lands back on the sheet the player
+   came from. The online matches themselves are identical either
+   way: normal stats, and no custom config is ever carried by a
+   room or applied to an online match. */
+var onlineSheet="normal";
+function openOnline(msg){
+ if(onlineSheet==="creative"){openSheet(onlineHTML(msg));wireOnlineBtns()}
+ else{openSheet(onlineNormalHTML(msg));wireNormalBtns()}
+}
+function openCreativeHub(msg){onlineSheet="creative";openOnline(msg)}
+function openNormalOnline(msg){onlineSheet="normal";openOnline(msg)}
+$("onlineBtn").onclick=function(){beep(600,.07);openCreativeHub()};
 function cleanupNet(){
  sbCleanup();
  clearRematchWatch();
  mrecDiscard(); /* match recorder: leaving the session discards the in-memory record; the on-device saved copy (v212) survives for the title screen's download button and is only overwritten by the next match */
  net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
  guestChar=null;hostChar=null;
- crNetCfg=null; /* CREATIVE MODE: forget any received owner config with the session */
+ /* online matches never receive a custom config, so there is no received config to forget here */
  lsReset();
  sv.active=false;sv.snaps=[];sv.lastSnap=null;sv.predPr=[];sv.predHist=[];sv.corrX=0;sv.corrY=0;sv.predOff=false;sv.predStepped=false;sv.snapAgeMs=0;sv.anchorF=null;sv.anchorAt=0;
  chatReset();
@@ -2589,7 +2600,7 @@ function sbSendGuests(room,msg){
 sbHostSend(sbEventFor(msg.t),msg);
 }
 function sbRosterMsg(room){
-return{t:"roster",phase:room.phase,cr:room.crCfg?1:0,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host,b:p.build}})}; /* cr: CREATIVE MODE room (the owner's custom config rides the start message as crc and applies to everyone) */
+return{t:"roster",phase:room.phase,players:room.players.map(function(p,i){return{i:i,pid:p.pid,name:p.name,char:p.char,host:p.host,b:p.build}})}; /* online rooms are always normal-stat rooms: no custom config is announced, carried or applied */
 }
 function sbBroadcastRoster(room){sbBroadcastRoom(room,sbRosterMsg(room))}
 function sbPlayerMatchIdx(room,pid){
@@ -2653,7 +2664,7 @@ player.cursor=0;player.lastSeq=-1;player.inHi=-1;player.mnJson=null;player.lastC
 room.players.push(player);
 if(!player.loopback&&sbClient){try{player.priv=sbClient.channel("jb-room-"+room.code+"-"+player.pid);player.priv.subscribe()}catch(e){player.priv=null}}
 sbDeliver(player,{t:"joined",pid:player.pid,host:false});
-sbDeliver(player,{t:"start",ls:1,bv:BUILD_ID,seed:room.seed,crc:room.crCfg||undefined,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})});
+sbDeliver(player,{t:"start",ls:1,bv:BUILD_ID,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})});
 sbHostRevivePlayer(room,player,ridx);
 return;
 }
@@ -2889,7 +2900,7 @@ room.frame=0;room.fNow=0;room.evQ.length=0;room.endSent=false;room.shkPeak=0;roo
 for(var i=0;i<room.players.length;i++){var p=room.players[i];p.cursor=0;p.lastSeq=-1;p.inHi=-1;p.mnJson=null;p.ackF=-1;p.ackAt=0}
 room.phase="match";
 room.lsMode=true; /* matches now run rollback input-sync (see the ROLLBACK layer); the snapshot stream this room also knows how to produce is the desync fallback only */
-var startMsg={t:"start",ls:1,bv:BUILD_ID,seed:room.seed,crc:room.crCfg||undefined,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})};
+var startMsg={t:"start",ls:1,bv:BUILD_ID,seed:room.seed,roster:room.matchRoster.map(function(r,i){return{i:i,pid:r.pid,name:r.name,char:r.char}})}; /* no config payload: online starts are always normal-stat */
 sbSendGuests(room,startMsg);
 /* the host builds its own match through the very same svOnMsg
 start handler a guest uses (startMatch("online")), delivered by
@@ -3002,7 +3013,7 @@ if(status==="SUBSCRIBED"){
 if(sbRoom)return;
 var room={code:net.code,phase:"lobby",players:[],byCid:{},joinCounter:0,frame:0,fNow:0,matchRoster:[],matchSlots:[],seed:0,evQ:[],endSent:false,shkPeak:0,lastSnapF:-1,dead:false,hostPlayer:null};
 sbRoom=room;
-room.crCfg=crSerializeCfg(); /* CREATIVE MODE: the room owner's (this device's) custom config is snapshotted at creation; it is the only config an online creative match ever uses */
+/* online rooms run on the normal stats only — no custom config is snapshotted at creation or distributed at start */
 var hp={pid:null,cid:sbCid,name:"",char:null,host:false,joinSeq:0,loopback:true,cursor:0,lastSeq:-1,inHi:-1,mnJson:null,lastChatAt:0,lastHb:Date.now(),goneHandled:false,departed:false,ackF:-1,ackAt:0,priv:null};
 room.hostPlayer=hp;room.byCid[sbCid]=hp;
 sbRoomJoin(room,hp,{t:"join",name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID});
@@ -3586,7 +3597,7 @@ function svOnMsg(m){
  }
  if(m.t==="roster"){
    net.roster=(m.players||[]).map(function(p){return{id:p.pid,name:p.name,host:!!p.host,char:p.char,ready:!!p.char,build:p.b}});
-   net.crRoom=!!m.cr; /* CREATIVE MODE room: the owner's config will apply to everyone (it arrives with the start message) */
+   /* the roster carries no custom-config flag: online rooms are always normal-stat rooms */
    renderLobby();
    return;
  }
@@ -3614,7 +3625,7 @@ function svOnMsg(m){
       have no character yet, so the start is blocked until everyone
       has actually picked and entered the lobby. */
    $("lobbyScreen").classList.remove("on");$("charSelect").classList.remove("on");showCenter("",0);
-   crNetCfg=m.crc?crParseCfg(m.crc):null; /* CREATIVE MODE: the room owner's config, applied by startMatch on every end alike (the host's own loopback start lands here too) */
+   /* no custom config is read from the start message (a start carries none): online matches always start on the normal stats — startMatch arms overrides for local creative matches only */
    startMatch("online");
    if(m.ls)lsBegin();else lsReset(); /* ls:1 start = rollback input-sync match (the seed startMatch just consumed via svReset is the shared PRNG seed on every end) */
    if(sbRecon.active||sbRecon.pending){sbReconStop();mrecEvent("自動再接続に成功し、同じ参加者として試合に復帰しました");showCenter("再接続しました",2200)} /* v212: the return is complete — the host's revive (back / lsret) and its full-state resync (lsrs) land right after this start and heal whatever the outage diverged; the event is recorded into the fresh match record lsBegin just opened */
@@ -3690,7 +3701,7 @@ function renderLobby(){
  $("lobbyCodeVal").textContent=net.code||"------";
  var r=net.roster||[];
  $("lobbyCount").textContent=r.length+" / 8 人";
- var crNote=$("lobbyCrNote");if(crNote)crNote.style.display=net.crRoom?"block":"none";
+ var crNote=$("lobbyCrNote");if(crNote)crNote.style.display="block"; /* every online room is a normal-stat room, so the note always shows */
  var h="";
  for(var i=0;i<r.length;i++){
    var p=r[i],badges="";
