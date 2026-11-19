@@ -493,6 +493,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["23:28"],tag:"調整",title:"XENO：↓+J「ローグリッチ」の上への吹っ飛ばしを下方修正（KB 900→810）／L「デジタルダート」のダメージを上方修正（28→36）",
+   items:["XENOの↓+J「ローグリッチ」：相手をほぼ真上に打ち上げる吹っ飛ばしを弱めました（KB 900→810、90%）。横方向の吹っ飛ばし（ほぼゼロ）・ダメージ10・判定78×40・被弾硬直0.34秒など、その他の数値は変更ありません。空中前+J「デジタルポップ」のKB 900は変更ありません",
+          "XENOのL（ウルト）「デジタルダート」：核が命中したときのダメージを28→36に上げました。このダメージはグリッチ拘束（1.8秒）の終了時に、拘束中の蓄積ダメージと一緒に一括で適用されます。拘束時間・蓄積と解放時の精算方法・KB 520など、その他の仕様は変更ありません",
+          "BUILD_ID を v319 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["23:11"],tag:"調整",title:"ORCHID：K「栄養補給」の葉エフェクトが効果時間中ずっと持続／再使用を上方修正（15秒→14秒）",
    items:["K「栄養補給」：発動時に周りを回る5つの葉のエフェクトが、発動モーションの間だけでなく効果時間中（移動速度アップの9秒間）ずっと回り続けるようになりました",
           "K「栄養補給」の再使用時間を15秒→14秒に短くしました（上方修正）。回復40・移動速度+9%／9秒・全攻撃への毒付与など、その他の性能は変わりません",
@@ -2411,7 +2415,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v318";
+var BUILD_ID="v319";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9393,12 +9397,12 @@ function startXenoAttack(f,type,foe){
      /* ローグリッチ (down+J, reworked — user spec): a low sliding
         sweep whose hit LAUNCHES the foe straight up to above her
         own head — the house straight-up convention (dir 0 /
-        up -1.0, like KAIRO's アイスフット) at KB 900, so the foe
+        up -1.0, like KAIRO's アイスフット) at KB 810 (was 900 — 90%, user spec), so the foe
         leaves with essentially NO sideways drift and pops up over
         her, ready to be met in the air */
      f.state="xlow";f.stateT=0.2;f.attackCd=0.24;f.comboWin=0;
      f.vx=f.face*430;
-     meleeHit(f,foe,78,40,10,900,0,-1.0,0.34,false,0,null,false,f.face);
+     meleeHit(f,foe,78,40,10,810,0,-1.0,0.34,false,0,null,false,f.face);
      xenoGlitchFx(f,6);spawnVecBurst("xcircuit",f.x+f.face*36,f.y+f.h*0.6,40,0.3,0,f.face,0.9);beep(880,.06,"square",.04);
    }else if(upHeld){
      /* ライジングコード (up+J): rising cut — landing it refunds
@@ -9590,7 +9594,7 @@ function startXenoAttack(f,type,foe){
       stick) at a constant 475 u/s (396 x1.2, user spec) with a capped turn rate —
       see the "xdart" steering in the projectile step. On a hit it
       detonates into a geometric crystal explosion (vecBurst
-      "xshard": neon shards around a circular core): 28 dmg /
+      "xshard": neon shards around a circular core): 36 dmg /
       KB 520, and the victim is GLITCH-BOUND for 1.8s — body
       warping in stepped slices, completely unable to act (the
       glitchT block in stepFighter). Numbers sit inside the
@@ -10656,7 +10660,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
     big, prominent lump-sum floater. The ult hit that APPLIES
     the bind is banked too (user spec): the xdart branch sets
     glitchT BEFORE calling applyHit, so the detonation's own
-    28 damage joins the bank and lands with the lump at
+    36 damage joins the bank and lands with the lump at
     release — only the bind's onset and the detonation
     dressing behave exactly as before. */
  if(att!==def&&(def.glitchT||0)>0){
@@ -14520,7 +14524,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
        else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||8,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);if((pr.hue||0)===0)xenoCyberExplosion(pr.x,pr.y,pr.vx>0?1:-1);else spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 8 dmg / KB 300 / lag 0.7s; purple = 16 dmg; red = 24 dmg + KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline. RED alone detonates as a full CYBER explosion on hit (user spec — xenoCyberExplosion: crystal shatter + digital pop + circuit traces + portal ring); blue / purple keep the small block-noise burst */
-       else if(pr.kind==="xdart"){foe.glitchT=Math.max(foe.glitchT||0,1.8);applyHit(pr.owner,foe,28,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 28 dmg / KB 520 + グリッチ拘束 1.8s — the bind is set BEFORE the hit is applied, so the detonation's own 28 damage is BANKED like every other hit during the bind and lands in the lump the instant the bind releases (user spec); the detonation burst and the bind's onset fire exactly as before. The detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* (the データビット branch above carries its own per-colour numbers; its burst is stepped block noise, not a particle spray) */
+       else if(pr.kind==="xdart"){foe.glitchT=Math.max(foe.glitchT||0,1.8);applyHit(pr.owner,foe,36,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 36 dmg / KB 520 + グリッチ拘束 1.8s — the bind is set BEFORE the hit is applied, so the detonation's own 36 damage is BANKED like every other hit during the bind and lands in the lump the instant the bind releases (user spec); the detonation burst and the bind's onset fire exactly as before. The detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* (the データビット branch above carries its own per-colour numbers; its burst is stepped block noise, not a particle spray) */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
        if(pr.kind!=="mimiball")return false /* every other projectile dies on hit, as before; the piercing mimiball falls through to the life/range check below and keeps flying */}
