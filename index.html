@@ -460,6 +460,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["13:43"],tag:"修正",title:"オンライン対戦：試合の途中で接続が切れてしまうバグを修正",
+   items:["ホスト側の回線が一度復旧したあと、もう一度切れると二度と復旧しなくなっていたバグを修正しました：再接続で作り直した接続には切断の検知が付いておらず、ホストだけが切断に気づかないまま試合を続け、参加者全員の試合が「接続が切れました」で終わっていました。再接続後も切断を検知して自動で再接続するようになり、検知漏れに備えた二重の監視も追加しました",
+          "参加者側の再接続で、復帰の返事だけ届いて試合再開の合図が届かなかった場合に、そのまま固まって試合に戻れなくなるバグを修正しました：待ち時間に上限を付け、合図が来なければ自動で接続し直すようになりました",
+          "BUILD_ID を v287 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["11:56"],tag:"調整",title:"KAIROウルト：ブースト終了時に速度が即座に通常へ戻るように",
    items:["KAIROのウルト「アブソリュート・ゼロ」：発動直後の0.1秒間の速度ブースト（通常の3倍）が終わる瞬間、速度が徐々に減速するのではなく、その場で即座に通常速度に戻るようになりました。ブースト中の3倍という倍率と、攻撃の発生が発動から0.1秒後である点は変わりません",
           "BUILD_ID を v286 に更新しました。対戦前に全員がページを再読み込みしてください"]},
@@ -2220,7 +2224,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v286";
+var BUILD_ID="v287";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:""};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -2391,7 +2395,8 @@ var sbLastHostHb=0; /* guest: performance.now() of the host's last heartbeat */
 var sbHbTimer=null; /* heartbeat / liveness interval while a room is live */
 var sbHostLive=false; /* host match hooks are active: this device is running a Supabase match on the local engine */
 var sbRejoinInfo=null; /* v210: {code, pid} of a match this guest was disconnected from mid-match (host judged gone while its own tab was frozen / stalled), kept in memory only so re-entering the SAME room code can reclaim the SAME participant id (see the rejoin branch in sbRoomJoin). Set only on the involuntary disconnect path (sbGuestHostGone); cleared when joining a different code or hosting. Never persisted anywhere */
-var sbRecon={active:false,pending:false,at:0,lastTry:0,tries:0,timer:null}; /* v212 guest auto-reconnect: while a match runs, a detected channel loss (heartbeat silence / channel error) no longer ends the match at once — the guest keeps its match state and re-joins the same room with its rejoin pid on a fresh channel, retrying for ~30s (SB_RECON_GIVEUP_MS). Success rides the v210 rejoin path (joined + addressed start + host revive + resync); only when the budget runs out does the match end the old way (sbReconGiveUp). */
+var sbRecon={active:false,pending:false,pendingAt:0,at:0,lastTry:0,tries:0,timer:null}; /* v212 guest auto-reconnect: while a match runs, a detected channel loss (heartbeat silence / channel error) no longer ends the match at once — the guest keeps its match state and re-joins the same room with its rejoin pid on a fresh channel, retrying for ~30s (SB_RECON_GIVEUP_MS). Success rides the v210 rejoin path (joined + addressed start + host revive + resync); only when the budget runs out does the match end the old way (sbReconGiveUp). pendingAt (v287) stamps when the joined reply landed and the wait for the addressed start began — that wait is bounded by the tick (see sbReconTick), no longer open-ended. */
+var sbHostBadAt=0; /* v287: host heartbeat-tick stamp of when the room channel's own state first read closed / errored (the channel-state watchdog in sbStartHeartbeat) */
 var sbHostRecon={active:false,at:0,lastTry:0,tries:0,subbed:false,timer:null}; /* v212 host auto-reconnect: the host's room state lives on this device, so a dropped host channel is re-created under the same room code and the room simply resumes (guests' liveness stamps are re-based so nobody is judged gone for the host's own outage). ~30s of failed attempts ends the room the old way. */
 var SB_RECON_GIVEUP_MS=30000; /* ~30s of reconnect attempts before giving up (both ends) */
 var SB_RECON_RETRY_MS=4000; /* an attempt that produced no joined reply / subscription within this span is retried on a fresh channel */
@@ -2465,7 +2470,7 @@ session exists (every cleanup passes through here as a no-op). */
 function sbCleanup(){
 if(sbGuestTimer){clearTimeout(sbGuestTimer);sbGuestTimer=null}
 if(sbHbTimer){clearInterval(sbHbTimer);sbHbTimer=null}
-if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}sbRecon.active=false;sbRecon.pending=false; /* v212: any session teardown retires a pending auto-reconnect */
+if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}sbRecon.active=false;sbRecon.pending=false;sbRecon.pendingAt=0;sbHostBadAt=0; /* v212: any session teardown retires a pending auto-reconnect */
 if(sbHostRecon.timer){clearInterval(sbHostRecon.timer);sbHostRecon.timer=null}sbHostRecon.active=false;
 fxSink=null;killBannerHook=null;sbHostLive=false;
 if(sbRoom){
@@ -2900,6 +2905,22 @@ sbHbTimer=setInterval(function(){
 tick++;
 if(sbRoom){
 if(tick%2===0)sbHostSend("sys",{t:"hb"});
+/* v287: channel-state watchdog (host) — a second detector for a
+   silently dead host channel, alongside the status callbacks.
+   The host never hears its own heartbeats (broadcast self is
+   off), so a channel death whose status callback never fires
+   (a socket-level drop the library gives up on without
+   reporting) used to be invisible here: the room sat on the
+   dead channel while every guest's reconnect ran out and
+   ended their match. The channel's own state still shows it,
+   so a state that reads closed / errored for ~2s straight
+   starts the same auto-reconnect. A state the library is
+   still working through (joining / joined) never triggers
+   it, and a successful (re)subscription re-arms it. */
+if(!sbHostRecon.active&&sbChan&&(sbChan.state==="closed"||sbChan.state==="errored")){
+if(!sbHostBadAt)sbHostBadAt=Date.now();
+else if(Date.now()-sbHostBadAt>2000){sbHostBadAt=0;sbHostReconStart()}
+}else sbHostBadAt=0;
 var room=sbRoom,now=Date.now();
 for(var i=room.players.length-1;i>=0;i--){var p=room.players[i];
 if(p.loopback||!p.pid)continue;
@@ -3067,13 +3088,13 @@ sbGuestEndMatch();
    ends the old way (sbReconGiveUp). */
 function sbReconStop(){
 if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}
-sbRecon.active=false;sbRecon.pending=false;
+sbRecon.active=false;sbRecon.pending=false;sbRecon.pendingAt=0;
 }
 function sbReconStart(){
 if(sbRecon.active)return true;
 if(!(running&&mode==="online"&&net.started&&!matchOver&&sbGuestJoined))return false;
 if(!net.code||!net.myId)return false;
-sbRecon.active=true;sbRecon.pending=false;sbRecon.at=performance.now();sbRecon.lastTry=0;sbRecon.tries=0;
+sbRecon.active=true;sbRecon.pending=false;sbRecon.pendingAt=0;sbRecon.at=performance.now();sbRecon.lastTry=0;sbRecon.tries=0;
 sbRejoinInfo={code:net.code,pid:net.myId};
 mrecEvent("接続が切れました。自動再接続を開始しました");
 showCenter("接続が切れました\n再接続しています…",3000);
@@ -3099,14 +3120,48 @@ if(status==="SUBSCRIBED"){
 sbChanSend("sys",{t:"join",cid:sbCid,name:(social.loggedIn&&social.name)?myDispName():"",v:BUILD_ID,rejoin:(sbRejoinInfo&&sbRejoinInfo.code===code)?sbRejoinInfo.pid:undefined});
 sbLastHostHb=performance.now();
 sbStartHeartbeat();
+}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
+/* v287: the attempt channel gets the same error watch the
+   first-join channel has (sbJoinRoom). Mid-attempt, a channel
+   already known dead is retried on a fresh one at the next
+   tick instead of idling out the retry span; and after a
+   successful reconnect THIS channel is the live one, so a
+   later drop on it re-enters auto-reconnect here at once
+   (the heartbeat watchdog would catch it too, seconds
+   later). A CLOSED caused by our own next attempt /
+   teardown never reaches here — those null sbChan before
+   unsubscribing, so the identity guard above returns. */
+if(sbRecon.active)sbRecon.lastTry=0;
+else if(sbGuestJoined&&running&&mode==="online"&&net.started&&!matchOver)sbReconStart();
 }
 });
 }
 function sbReconTick(){
 if(!sbRecon.active)return;
-if(sbGuestJoined){if(sbRecon.timer){clearInterval(sbRecon.timer);sbRecon.timer=null}sbRecon.pending=true;return} /* the joined reply landed; the addressed start (and with it the resync) is on its way — attempts stop here, and success is recorded in the start branch via the pending flag */
-if(performance.now()-sbRecon.at>SB_RECON_GIVEUP_MS){sbReconGiveUp();return}
-if(performance.now()-sbRecon.lastTry>SB_RECON_RETRY_MS)sbReconAttempt();
+var nowT=performance.now();
+if(sbRecon.pending){
+/* v287: the wait for the addressed start is BOUNDED. It used
+   to be open-ended — the tick stopped itself the moment the
+   joined reply landed — so if that one best-effort broadcast
+   never arrived (dropped in transit, or the host died in the
+   instant between its joined and start sends), this end hung
+   forever: no more attempts, no give-up, and the heartbeat
+   watchdog defers to the active reconnect, so the dead match
+   never even ended — the player sat in a match whose
+   connection was simply gone. Now the tick keeps running
+   while pending: past the retry span without a start, the
+   return counts as a failed attempt and is re-joined on a
+   fresh channel (the host re-sends joined + start and
+   revives the slot again; its different-cid claim window of
+   2.5s has already passed by then, so the claim lands);
+   past the give-up budget the match ends the usual way. */
+if(nowT-sbRecon.at>SB_RECON_GIVEUP_MS){sbReconGiveUp();return}
+if(nowT-(sbRecon.pendingAt||sbRecon.at)>SB_RECON_RETRY_MS){sbRecon.pending=false;sbRecon.pendingAt=0;sbReconAttempt()}
+return;
+}
+if(sbGuestJoined){sbRecon.pending=true;sbRecon.pendingAt=nowT;return} /* the joined reply landed; the addressed start (and with it the resync) is on its way — success is recorded in the start branch via the pending flag, and the pending branch above bounds the wait */
+if(nowT-sbRecon.at>SB_RECON_GIVEUP_MS){sbReconGiveUp();return}
+if(nowT-sbRecon.lastTry>SB_RECON_RETRY_MS)sbReconAttempt();
 }
 function sbReconGiveUp(){
 sbReconStop();
@@ -3155,6 +3210,22 @@ if(sbHostRecon.active){
 sbHostReconStop();
 if(running&&mode==="online"&&net.started&&!matchOver){mrecEvent("ホストの接続が復旧しました（自動再接続）");showCenter("再接続しました",2200)}
 }
+}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
+/* v287: the re-created channel carries the same error watch
+   the original room channel has (sbCreateRoom) — this was
+   the reported mid-match disconnect. After ONE successful
+   auto-reconnect, the live channel was an attempt channel
+   whose callback only handled SUBSCRIBED, so a SECOND drop
+   of the host's channel was never detected on the host at
+   all (and the host has no heartbeat watchdog for its own
+   silence: broadcast self is off, it never hears itself).
+   The host played on alone — guests judged gone one by one,
+   their slots handed to the CPU — while every guest's own
+   reconnect ran out its budget and ended their match.
+   Mid-attempt, a dead attempt is retried at once by the
+   tick; after a success, the whole reconnect restarts. */
+if(sbHostRecon.active){sbHostRecon.subbed=false;sbHostRecon.lastTry=0}
+else if(sbRoom)sbHostReconStart();
 }
 });
 }
@@ -3458,7 +3529,7 @@ function svOnMsg(m){
       occur here */
    net.role=net.isHost?"host":"guest";
    $("modal").classList.remove("on");
-   if(sbRecon.active||sbRecon.pending){sbRecon.pending=true;/* v212 auto-reconnect: this joined reply is our own return mid-match — the addressed start that follows rebuilds the match, so the character select must NOT open over the live game */}
+   if(sbRecon.active||sbRecon.pending){if(!sbRecon.pendingAt)sbRecon.pendingAt=performance.now();sbRecon.pending=true;/* v212 auto-reconnect: this joined reply is our own return mid-match — the addressed start that follows rebuilds the match, so the character select must NOT open over the live game. v287: pendingAt stamps the wait so sbReconTick can bound it */}
    else openCharSelect(net.isHost?"online-host":"online-guest");
    return;
  }
