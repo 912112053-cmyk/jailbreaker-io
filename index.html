@@ -493,6 +493,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["22:35"],tag:"調整",title:"TRAVIS：↓+K「シング・タイム」にガード崩しを追加（一度でも食らうとその発動中はガード不可）",
+   items:["TRAVISの↓+K「シング・タイム」：いずれか1ヒットでもガードされずに食らった相手は、その発動（歌唱）が終わるまで残りのヒットをガードできなくなりました。最初からガードできていれば、従来どおり防ぎ続けられます。ウルト「ワールドツアー」と同じ仕様です",
+          "ダメージ5×最大12ヒット・KB 300・被弾硬直0.2秒（1ヒットごと）・判定左右210×102・全体3.6秒・後硬直2.5秒（完全硬直）など、他の数値は変わりません",
+          "技一覧の表示も実装に合わせて更新しました。BUILD_ID を v313 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["22:32"],tag:"調整",title:"TRAVIS：U「ソニックブラスト」のリロードを下方修正（2.5秒→2.8秒）",
    items:["TRAVISのU「ソニックブラスト」のリロード間隔を長くしました（1発の回復にかかる時間 2.5秒 → 2.8秒）。装填数6発・ダメージ9・KB 220・弾速800など他の数値は変わりません",
           "技一覧とCREATIVE MODEの表示も実装に合わせて更新しました。BUILD_ID を v312 に更新しました。対戦前に全員がページを再読み込みしてください"]},
@@ -1101,7 +1105,7 @@ var travisMovesHTML='<h2>🎤 TRAVIS（トラヴィス）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>空中K — エアドロップキック</b><p>体を倒して両足を突き出すドロップキック。蹴っている最中、靴先から音波が放たれ続ける。押してから0.38秒で判定が出る。着地すると<b>着地硬直0.54秒</b>がある。</p>'+mvSpec(mvS('ダメージ','28')+mvS('KB','1250')+mvS('発生','0.38秒')+mvS('全体','0.44秒')+mvS('後硬直','0.54秒')+mvS('判定','102×86')+mvS('着地硬直','0.54秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+K — メテオソング</b> <span style="color:#38bdf8;font-weight:900">飛び道具・真下へ発射</span><p>発動と<b>同時に</b>、真下へ派手な音の弾を撃ち落とす。直撃でも強く、<b>地面に触れた瞬間に判定いっぱいの音の爆発</b>が起きて周囲を巻き込む。弾を撃った本人は、その場で<b>0.8秒間、空中で静止</b>して留まる（静止が終わると落下に戻る）。</p>'+mvSpec(mvS('ダメージ','本体40／爆発22')+mvS('KB','本体800／爆発1100')+mvS('発生','即時')+mvS('全体','0.80秒')+mvS('静止','0.8秒（空中）')+mvS('後硬直','0.88秒')+mvS('弾速','1020（真下）')+mvS('判定','本体96×66／爆発 左右102×102'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — シングソングジャンプ</b> <span style="color:#4ade80;font-weight:900">移動技・ダメージなし・クールタイム2.2秒</span><p>歌いながら<b>空中で0.8秒静止</b>して溜め、そのあと真上へ大きく跳び上がる。攻撃判定はない。着地すると<b>着地硬直0.34秒</b>がある。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','0.8秒（空中で静止）')+mvS('全体','1.14秒')+mvS('後硬直','0.34秒')+mvS('着地硬直','0.34秒')+mvS('上昇','vy -960')+mvS('再使用','2.2秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。歌っている間は移動できず、<b>ジャンプもダッシュもできず、浮いた台の上でも台すり抜けはできない</b>。さらに歌い終わった後の<b>後硬直2.5秒も完全硬直</b>で、その間は移動・ジャンプ・ダッシュ・ワザのすべてができない大きな隙になる。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','2.5秒（完全硬直）')+mvS('判定','左右210×102'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+K — シング・タイム</b> <span style="color:#c084fc;font-weight:900">その場で歌唱・3.6秒</span><p>その場に立ち止まって歌い続ける。左右の端にスピーカーが出現し、<b>大きな歌のフィールド（見た目は480×240のまま）</b>が展開する。ただし実際に当たる判定はフィールドより小さい<b>左右210×102</b>。歌声が<b>左右両側</b>へ広がり、届く相手に小ダメージを刻み続け（最大12ヒット）、<b>1ヒットごとに被弾硬直0.2秒</b>が入る。<b>いずれか1ヒットでもガードされずに食らった相手は、その発動（歌唱）が終わるまで残りのヒットをガードできなくなる</b>（最初からガードできていれば、そのまま防ぎ続けられる）。歌っている間は移動できず、<b>ジャンプもダッシュもできず、浮いた台の上でも台すり抜けはできない</b>。さらに歌い終わった後の<b>後硬直2.5秒も完全硬直</b>で、その間は移動・ジャンプ・ダッシュ・ワザのすべてができない大きな隙になる。</p>'+mvSpec(mvS('ダメージ','5×最大12ヒット')+mvS('KB','300')+mvS('被弾硬直','0.2秒（1ヒットごと）')+mvS('発生','0.32秒')+mvS('全体','3.6秒')+mvS('後硬直','2.5秒（完全硬直）')+mvS('判定','左右210×102')+mvS('ガード','一度でも食らうとその発動中はガード不可'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ソニックブラスト</b> <span style="color:#38bdf8;font-weight:900">飛び道具・6発</span><p>音波の塊を撃つ。6発まで撃てて、撃った分は2.8秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','220')+mvS('発生','即時')+mvS('全体','0.22秒')+mvS('後硬直','0.39秒')+mvS('弾速','800')+mvS('射程','約900（1.13秒）')+mvS('リロード','2.8秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — ワールドツアー（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>マイクを掲げてシャウトし、前方に<b>巨大な音波を3連射</b>する。一発ごとに大きく吹っ飛ばす。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体に紫色の電撃オーラがまとわりつく。<b>いずれか一発でもガードされずに食らった相手は、その発動が終わるまで残りの音波をガードできなくなる</b>（最初からガードできていれば、そのまま防ぎ続けられる）。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','34×3連射')+mvS('KB','660')+mvS('発生','即時／2・3発目は約0.28秒間隔')+mvS('全体','0.9秒')+mvS('後硬直','1.02秒')+mvS('判定','150×110')+mvS('弾速','740')+mvS('ガード','一度でも食らうとその発動中はガード不可'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1120')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -1902,7 +1906,7 @@ function Fighter(char,isPlayer,x,y){
  /* spawn (x, y) is the STANDARD-height top: y is re-based on the feet
     (sole line y+70) so a taller body spawns standing ON the floor —
     a 1.2x AXE never starts sunk into the ground */
- return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y+70-bs.h,px:x,py:y+70-bs.h,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:bs.w,h:bs.h,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,decoyCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,aiDrop:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,glitchT:0,buffT:0,venom:false,flyDur:0,ultBoostT:0,ultAct:0,tbT:0,tbIdx:-1,tbAct:0,shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
+ return {char:char,isPlayer:isPlayer,maxHp:st.hp,speedMul:st.spd,airMul:st.air||st.spd,kbMul:st.kb,dashSpd:st.dash,fallMul:st.fall||1,x:x,y:y+70-bs.h,px:x,py:y+70-bs.h,guarding:false,guardDir:isPlayer?1:-1,downPrev:false,lastDownTap:-9,vx:0,vy:0,w:bs.w,h:bs.h,face:isPlayer?1:-1,hp:st.hp,hpGhost:st.hp,lastHurt:-9,lastAttacker:null,lastAttackT:-9,score:0,kills:0,assists:0,deaths:0,dmgBy:{},jBoostT:0,jBaseY:0,jumps:1,firstJump:false,leftByJump:false,onGround:false,wasGround:false,groundPlat:null,coyote:0,fastfall:false,state:"idle",stateT:0,hitDone:true,attackCd:0,comboStep:0,comboWin:0,comboHits:0,comboT:0,comboDmg:0,dashCd:0,dashT:0,dashDir:1,airDashed:false,invuln:0,hitstun:0,frozen:0,flash:0,ammo:crMaxAmmo(char),reloadT:0,meter:0,ultChain:0,grabT:0,grabBy:null,heldT:0,heldBy:null,heldKb:0,heldUp:0,heldUlt:false,heldKind:0,spinHits:0,spinTick:0,airJ:0,airLag:0,landLagT:0,recLockT:0,thrustHits:0,batonWin:0,blinkWin:0,blinkCnt:0,specCd:0,decoyCd:0,diveArmed:false,diveHitMask:0,remote:false,hDown:false,hUp:false,hFwd:false,hBack:false,runPhase:0,dropT:0,dropPlat:null,aiT:0,aiMove:0,aiDrop:0,dead:false,respawnT:0,trail:[],ultChargeT:0,ultDir:1,pushBy:null,pushT:0,chaos:false,chaosT:0,awakenT:0,bleedT:0,bleedTick:0,bleedBy:null,burnT:0,burnBy:null,burnTick:0,flameT:0,flameDelay:0,flameTick:0,flameMode:0,flareTick:0,flyCd:0,javT:0,flameExp:0,flameExpBy:null,mistCd:0,poisonT:0,poisonBy:null,poisonTick:0,slowT:0,glitchT:0,buffT:0,venom:false,flyDur:0,ultBoostT:0,ultAct:0,tbT:0,tbIdx:-1,tbAct:0,singAct:0,sgT:0,sgIdx:-1,sgAct:0,warpT:0,warpKind:"",shX:x-52,shY:y+70,shFace:1,shAway:false,shState:"idle",shStateT:0,shHitT:0,shHitKind:"",shHp:190,shGoneT:0,shNearT:0,shFlash:0,shHurtT:99,fieldCd:0,heat:0,heatIdle:0,heatTick:0,heatStun:0};
 }
 var P1=null,P2=null;
 var fighters=[];
@@ -1912,7 +1916,7 @@ var cpuChars=["mix","mix","mix","mix","mix","mix","mix","mix"]; /* 8 slots: VS C
 var csMode="start",respawnSelectPending=false;
 var FIGHTER_COLORS=["#4ade80","#fb923c","#f472b6","#a78bfa","#facc15","#34d399","#60a5fa","#f87171"];
 function nearestOpponent(f){var best=null,bd=1e18;for(var i=0;i<fighters.length;i++){var o=fighters[i];if(o===f||o.dead)continue;var d=Math.abs(o.x-f.x)+Math.abs(o.y-f.y)*0.6;if(d<bd){bd=d;best=o}}return best||P2||P1}
-function resetFighter(f,x,y){f.x=x;f.y=y+70-f.h;f.px=x;f.py=f.y; /* respawn points are standard-height tops: re-base on the feet like Fighter() does, so a 1.2x body (AXE) never respawns sunk into the floor */f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.aiDrop=0;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.decoyCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.glitchT=0;f.glitchBank=0;f.glitchBankBy=null;f.buffT=0;f.venom=false;f.flyDur=0;f.ultBoostT=0;f.tbT=0;f.tbIdx=-1;f.tbAct=0;f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
+function resetFighter(f,x,y){f.x=x;f.y=y+70-f.h;f.px=x;f.py=f.y; /* respawn points are standard-height tops: re-base on the feet like Fighter() does, so a 1.2x body (AXE) never respawns sunk into the floor */f.guarding=false;f.downPrev=false;f.lastDownTap=-9;f.vx=0;f.vy=0;f.hp=f.maxHp||MAXHP;f.hpGhost=f.maxHp||MAXHP;f.jumps=1;f.firstJump=false;f.leftByJump=false;f.dmgBy={};f.jBoostT=0;f.jBaseY=0;f.hitstun=0;f.frozen=0;f.flash=0;f.invuln=1.5;f.dead=false;f.ammo=crMaxAmmo(f.char);f.reloadT=0;f.state="idle";f.dashT=0;f.dashCd=0;f.airDashed=false;f.fastfall=false;f.dropT=0;f.dropPlat=null;f.aiDrop=0;f.lastAttacker=null;f.comboHits=0;f.comboT=0;f.comboDmg=0;f.ultChain=0;f.grabT=0;f.grabBy=null;f.heldT=0;f.heldBy=null;f.heldKb=0;f.heldUp=0;f.heldUlt=false;f.heldKind=0;f.diveArmed=false;f.meteorArm=false;f.spinHits=0;f.spinTick=0;f.airJ=0;f.airLag=0;f.landLagT=0;f.recLockT=0;f.thrustHits=0;f.batonWin=0;f.blinkWin=0;f.blinkCnt=0;f.specCd=0;f.decoyCd=0;f.diveHitMask=0;f.ultChargeT=0;f.pushBy=null;f.pushT=0;f.chaos=false;f.chaosT=0;f.awakenT=0;f.bleedT=0;f.bleedTick=0;f.bleedBy=null;f.burnT=0;f.burnBy=null;f.burnTick=0;f.flameT=0;f.flameDelay=0;f.flameTick=0;f.flameMode=0;f.flareTick=0;f.flyCd=0;f.javT=0;f.flameExp=0;f.flameExpBy=null;f.mistCd=0;f.poisonT=0;f.poisonBy=null;f.poisonTick=0;f.slowT=0;f.glitchT=0;f.glitchBank=0;f.glitchBankBy=null;f.buffT=0;f.venom=false;f.flyDur=0;f.ultBoostT=0;f.tbT=0;f.tbIdx=-1;f.tbAct=0;f.sgT=0;f.sgIdx=-1;f.sgAct=0;f.warpT=0;f.warpKind="";f.shX=x-(f.face<0?-52:52);f.shY=y+f.h;f.shFace=f.face;f.shAway=false;f.shState="idle";f.shStateT=0;f.shHitT=0;f.shHitKind="";f.shHp=190;f.shGoneT=0;f.shNearT=0;f.shFlash=0;f.shHurtT=99;f.fieldCd=0;f._shPX=x;f._shPY=y+f.h;f.heat=0;f.heatIdle=0;f.heatTick=0;f.heatStun=0}
 function tryFullscreen(){try{var p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(function(){});if(screen.orientation&&screen.orientation.lock){var q=screen.orientation.lock("landscape");if(q&&q.catch)q.catch(function(){})}}catch(e){}}
 function startMatch(m){
  if(playerChar==="no66"&&!canUseNo66())playerChar="kairo"; /* final No.66 gate: every path into a match passes through here */
@@ -2387,7 +2391,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v312";
+var BUILD_ID="v313";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -3512,7 +3516,7 @@ f:room.frame,tm:sbRI(timer),cd:sbR2(Math.max(0,countdown)),ov:matchOver?1:0,ck:0
 fs:fighters.map(function(f,i){
 return{
 c:f.char,x:sbRI(f.x),y:sbRI(f.y),px:sbRI(f.px),py:sbRI(f.py),vx:sbRI(f.vx),vy:sbRI(f.vy),
-hp:sbR1(f.hp),hg:sbR1(f.hpGhost),sc:Math.floor(f.score||0),kl:f.kills||0,awk:sbR2(f.awakenT||0),mt:sbRI(f.meter),fc:f.face,st:f.state,sT:sbR2(f.stateT),ubt:sbR2(f.ultBoostT||0),uac:f.ultAct||0,tbt:sbR2(f.tbT||0),tbi:(f.tbIdx==null?-1:f.tbIdx),tba:f.tbAct||0,
+hp:sbR1(f.hp),hg:sbR1(f.hpGhost),sc:Math.floor(f.score||0),kl:f.kills||0,awk:sbR2(f.awakenT||0),mt:sbRI(f.meter),fc:f.face,st:f.state,sT:sbR2(f.stateT),ubt:sbR2(f.ultBoostT||0),uac:f.ultAct||0,tbt:sbR2(f.tbT||0),tbi:(f.tbIdx==null?-1:f.tbIdx),tba:f.tbAct||0,sgt:sbR2(f.sgT||0),sgi:(f.sgIdx==null?-1:f.sgIdx),sga:f.sgAct||0,sac:f.singAct||0,
 dead:f.dead?1:0,gd:f.guarding?1:0,hs:sbR2(f.hitstun),fr:sbR2(f.frozen),inv:sbR2(f.invuln),
 atk:sbR2(f.attackCd),dcd:sbR2(f.dashCd),spc:sbR2(f.specCd||0),mcd:sbR2(f.mistCd||0),fcd:sbR2(f.flyCd||0),
 uc:f.ultChain,am:f.ammo,chs:f.chaos?1:0,poi:sbR2(f.poisonT||0),brn:sbR2(f.burnT||0),bld:sbR2(f.bleedT||0),slo:sbR2(f.slowT||0),
@@ -4005,7 +4009,7 @@ $("lobbyLeaveBtn").onclick=function(){
      the "cpu" notice for our own name), or you are not a playing
      fighter at all (spectating / no local fighter). */
 var SIM_STEP=1/60;
-var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","diveHitMask","meteorArm","swingFx","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","aiDrop","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun","ultBoostT","ultAct","tbT","tbIdx","tbAct"];
+var RB_FSTATE=["char","maxHp","speedMul","airMul","kbMul","dashSpd","fallMul","x","y","px","py","guarding","guardDir","downPrev","lastDownTap","vx","vy","w","h","face","hp","hpGhost","lastHurt","lastAttackT","score","kills","assists","deaths","jBoostT","jBaseY","jumps","firstJump","leftByJump","onGround","wasGround","coyote","fastfall","state","stateT","hitDone","attackCd","comboStep","comboWin","comboHits","comboT","comboDmg","dashCd","dashT","dashDir","airDashed","invuln","hitstun","frozen","flash","ammo","reloadT","meter","ultChain","grabT","heldT","heldKb","heldUp","heldUlt","heldKind","spinHits","spinTick","blinkLeft","blinkHit","blinkWin","blinkCnt","airJ","airLag","landLagT","recLockT","thrustHits","batonWin","specCd","diveArmed","diveHitMask","meteorArm","swingFx","hDown","hUp","hFwd","hBack","runPhase","dropT","aiT","aiMove","aiDrop","dead","respawnT","landT","ultChargeT","ultDir","pushT","chaos","chaosT","burnT","burnTick","flameT","flameDelay","flameTick","flameMode","flareTick","flyCd","javT","mistCd","poisonT","poisonTick","slowT","buffT","venom","flyDur","rbBj","rbBk","rbBl","rbBu","rbPrevJ","rbPj","rbPk","rbPl","rbPu","rbPd","rbPdDir","rbPjump","awakenT","bleedT","bleedTick","shX","shY","shFace","shAway","shState","shStateT","shHitT","shHitKind","shHp","shGoneT","shNearT","shFlash","shHurtT","_shPX","_shPY","fieldCd","heat","heatIdle","heatTick","heatStun","ultBoostT","ultAct","tbT","tbIdx","tbAct","singAct","sgT","sgIdx","sgAct","warpT","warpKind"];
 var sv={active:false,acc:0,sendAcc:0,seq:0,predFrame:0,sampleFrame:0,sentFrame:0,startAt:0,snaps:[],lastSnap:null,prevCd:0,hist:{},inpHist:{},predPr:[],scratchPr:[],endShown:false,endResults:null,lastScorer:null,renderDelay:66,intervalEMA:33.3,jitterEMA:6,gapWin:[],brPrevA:null,brPrevStarved:false,lastArrival:0,lastSnapF:null,lastSendAt:0,pressPending:false,heldPrev:null,projPool:[],predHist:[],corrX:0,corrY:0,predOff:false,predStepped:false,snapAgeMs:0,anchorF:null,anchorAt:0,rateEMA:0.06};
 var svPressQ=[];
 var svMute=false;
@@ -4309,7 +4313,7 @@ function svApplySnapP1(s,hist){
  if(hist)svRestoreP1(hist); /* fields the snapshot does not carry (jump state, combo step, press buffers…) come from the predicted state at the same frame */
  f.char=s.c;applyCharStats(f);
  f.x=s.x;f.y=s.y;f.px=s.px;f.py=s.py;f.vx=s.vx;f.vy=s.vy;
- f.hp=s.hp;f.hpGhost=s.hg;f.score=Math.floor(s.sc||0);if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf;if(typeof s.shs==="string")f.shState=s.shs;if(typeof s.sht==="number")f.shStateT=s.sht}if(typeof s.shp==="number")f.shHp=s.shp;if(typeof s.shg==="number")f.shGoneT=s.shg; /* 【闇ゲージ】 forward-compat: SHADE's darkness gauge (shp) and vanish countdown (shg) ride the same snapshot once the host sim carries them; absent = the local sim's values stand */if(typeof s.ht==="number")f.heat=s.ht;if(typeof s.hst==="number")f.heatStun=s.hst; /* No.66 【熱量】 forward-compat: the heat gauge (ht) and overheat lock (hst) ride the same snapshot once the host sim carries them */if(typeof s.ubt==="number")f.ultBoostT=s.ubt;if(typeof s.uac==="number")f.ultAct=s.uac;if(typeof s.tbt==="number")f.tbT=s.tbt;if(typeof s.tbi==="number")f.tbIdx=s.tbi;if(typeof s.tba==="number")f.tbAct=s.tba; /* KAIRO ult speed-boost timer / TRAVIS ult guard-break mark: ride the snapshot so host matches agree */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
+ f.hp=s.hp;f.hpGhost=s.hg;f.score=Math.floor(s.sc||0);if(typeof s.kl==="number")f.kills=s.kl; /* v102 forward-compat: when the server snapshot carries a kill count (kl), take it so the in-match leaderboard tiebreak (score -> kills -> hp) works online too; absent = ignored */if(typeof s.awk==="number")f.awakenT=s.awk; /* snapshot awakening seconds remaining (awk): server is authoritative online, so a remote SMILEY's awakening (dark-red mask + bloodied suit, drawn from awakenT) shows on this screen too */if(typeof s.shx==="number"){f.shX=s.shx;f.shY=s.shy;f.shAway=!!s.sha;if(s.shf)f.shFace=s.shf;if(typeof s.shs==="string")f.shState=s.shs;if(typeof s.sht==="number")f.shStateT=s.sht}if(typeof s.shp==="number")f.shHp=s.shp;if(typeof s.shg==="number")f.shGoneT=s.shg; /* 【闇ゲージ】 forward-compat: SHADE's darkness gauge (shp) and vanish countdown (shg) ride the same snapshot once the host sim carries them; absent = the local sim's values stand */if(typeof s.ht==="number")f.heat=s.ht;if(typeof s.hst==="number")f.heatStun=s.hst; /* No.66 【熱量】 forward-compat: the heat gauge (ht) and overheat lock (hst) ride the same snapshot once the host sim carries them */if(typeof s.ubt==="number")f.ultBoostT=s.ubt;if(typeof s.uac==="number")f.ultAct=s.uac;if(typeof s.tbt==="number")f.tbT=s.tbt;if(typeof s.tbi==="number")f.tbIdx=s.tbi;if(typeof s.tba==="number")f.tbAct=s.tba;if(typeof s.sgt==="number")f.sgT=s.sgt;if(typeof s.sgi==="number")f.sgIdx=s.sgi;if(typeof s.sga==="number")f.sgAct=s.sga;if(typeof s.sac==="number")f.singAct=s.sac; /* KAIRO ult speed-boost timer / TRAVIS ult / シング・タイム guard-break marks: ride the snapshot so host matches agree */f.meter=s.mt;f.face=s.fc;f.state=s.st;f.stateT=s.sT;
  f.dead=!!s.dead;f.guarding=!!s.gd;f.hitstun=s.hs;f.frozen=s.fr;f.invuln=s.inv;
  f.attackCd=s.atk;f.dashCd=s.dcd;f.specCd=s.spc;f.mistCd=s.mcd;f.flyCd=s.fcd;
  f.ultChain=s.uc;f.ammo=s.am;f.chaos=!!s.chs;f.poisonT=s.poi;f.burnT=s.brn;f.bleedT=s.bld||0;f.slowT=s.slo||0;
@@ -4456,7 +4460,7 @@ function svReconcile(snap){
 }
 function svApplySnapRemote(f,sf){
  f.char=sf.c;applyCharStats(f);
- f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=Math.floor(sf.sc||0);if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht}if(typeof sf.shp==="number")f.shHp=sf.shp;if(typeof sf.shg==="number")f.shGoneT=sf.shg;if(typeof sf.shx==="number"){f._shPX=(typeof sf.x==="number")?sf.x:f.x;f._shPY=(typeof sf.y==="number")?sf.y+f.h:f.y+f.h} /* 【SHADE追尾】 an adopted snapshot re-bases SHADE's follow reference on the adopted position, so the follow copy never measures a displacement from a pre-adoption point */ /* 【闇ゲージ】 snapshot darkness gauge / vanish countdown — see svApplySnapP1 */if(typeof sf.ht==="number")f.heat=sf.ht;if(typeof sf.hst==="number")f.heatStun=sf.hst; /* No.66 【熱量】 snapshot heat gauge / overheat lock — see svApplySnapP1 */if(typeof sf.ubt==="number")f.ultBoostT=sf.ubt;if(typeof sf.uac==="number")f.ultAct=sf.uac;if(typeof sf.tbt==="number")f.tbT=sf.tbt;if(typeof sf.tbi==="number")f.tbIdx=sf.tbi;if(typeof sf.tba==="number")f.tbAct=sf.tba; /* ult boost / guard-break mark — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
+ f.vx=sf.vx;f.vy=sf.vy;f.hp=sf.hp;f.hpGhost=sf.hg;f.score=Math.floor(sf.sc||0);if(typeof sf.kl==="number")f.kills=sf.kl; /* v102 forward-compat: snapshot kill count (kl) — see svApplySnapP1 */if(typeof sf.awk==="number")f.awakenT=sf.awk; /* snapshot awakening seconds (awk) — see svApplySnapP1 */if(typeof sf.shx==="number"){f.shX=sf.shx;f.shY=sf.shy;f.shAway=!!sf.sha;if(sf.shf)f.shFace=sf.shf;if(typeof sf.shs==="string")f.shState=sf.shs;if(typeof sf.sht==="number")f.shStateT=sf.sht}if(typeof sf.shp==="number")f.shHp=sf.shp;if(typeof sf.shg==="number")f.shGoneT=sf.shg;if(typeof sf.shx==="number"){f._shPX=(typeof sf.x==="number")?sf.x:f.x;f._shPY=(typeof sf.y==="number")?sf.y+f.h:f.y+f.h} /* 【SHADE追尾】 an adopted snapshot re-bases SHADE's follow reference on the adopted position, so the follow copy never measures a displacement from a pre-adoption point */ /* 【闇ゲージ】 snapshot darkness gauge / vanish countdown — see svApplySnapP1 */if(typeof sf.ht==="number")f.heat=sf.ht;if(typeof sf.hst==="number")f.heatStun=sf.hst; /* No.66 【熱量】 snapshot heat gauge / overheat lock — see svApplySnapP1 */if(typeof sf.ubt==="number")f.ultBoostT=sf.ubt;if(typeof sf.uac==="number")f.ultAct=sf.uac;if(typeof sf.tbt==="number")f.tbT=sf.tbt;if(typeof sf.tbi==="number")f.tbIdx=sf.tbi;if(typeof sf.tba==="number")f.tbAct=sf.tba;if(typeof sf.sgt==="number")f.sgT=sf.sgt;if(typeof sf.sgi==="number")f.sgIdx=sf.sgi;if(typeof sf.sga==="number")f.sgAct=sf.sga;if(typeof sf.sac==="number")f.singAct=sf.sac; /* ult boost / guard-break marks — see svApplySnapP1 */f.meter=sf.mt;f.face=sf.fc;
  f.state=sf.st;f.stateT=sf.sT;f.dead=!!sf.dead;f.guarding=!!sf.gd;f.hitstun=sf.hs;f.frozen=sf.fr;
  f.invuln=sf.inv;f.attackCd=sf.atk;f.dashCd=sf.dcd;f.specCd=sf.spc;f.mistCd=sf.mcd;f.flyCd=sf.fcd;
  f.ultChain=sf.uc;f.ammo=sf.am;f.chaos=!!sf.chs;f.poisonT=sf.poi;f.burnT=sf.brn;f.bleedT=sf.bld||0;f.slowT=sf.slo||0;f.onGround=!!sf.og; /* bld / slo: bleed + ORCHID-slow seconds — draw() renders those status visuals from these fields, which snapshots did not carry before, so both were invisible online */
@@ -7654,7 +7658,7 @@ function drawCharFxOverlay(f,x,y,size,rot,flip,alpha){
 /* hard cap for attack step-in velocity: J mashing can never stack speed */
 function capVx(f,lim){if(f.vx>lim)f.vx=lim;else if(f.vx<-lim)f.vx=-lim}
 function tryDash(f,dir){
- if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0||(f.recLockT||0)>0||(f.char==="travis"&&f.state==="tsing")||(f.char==="sara"&&f.flameMode===1&&((f.flameT||0)>0||(f.flameDelay||0)>0)))return false; /* SARA 火炎放射の発動中はダッシュも不可 (user spec — 発動中は完全に動けない) */ /* 着地硬直中・完全硬直中はダッシュも不可。TRAVIS シング・タイム中もダッシュ不可 (user spec): tryDash is the single gate every dash input passes through (dash key / touch button / double-tap / CPU / rollback input bits), so this one refusal locks them all for the whole song */
+ if(!f||f.dashCd>0||f.hitstun>0||f.dead||(f.landLagT||0)>0||(f.recLockT||0)>0||(f.char==="travis"&&f.state==="tsing")||(f.char==="xeno"&&f.state==="xcharge")||(f.char==="sara"&&f.flameMode===1&&((f.flameT||0)>0||(f.flameDelay||0)>0)))return false; /* XENO ワープ予備動作中もダッシュ不可: the 0.3s charge hangs her in place (same single-gate logic as the song) */ /* SARA 火炎放射の発動中はダッシュも不可 (user spec — 発動中は完全に動けない) */ /* 着地硬直中・完全硬直中はダッシュも不可。TRAVIS シング・タイム中もダッシュ不可 (user spec): tryDash is the single gate every dash input passes through (dash key / touch button / double-tap / CPU / rollback input bits), so this one refusal locks them all for the whole song */
  if(f.ultChargeT>0||f.pushBy)return false;
  if(!f.onGround&&f.airDashed)return false;
  f.dashDir=dir||f.face;f.face=f.dashDir;
@@ -8885,7 +8889,7 @@ function startTravisAttack(f,type,foe){
         tsing-end hook raises recLockT to the remaining attackCd the
         moment the song ends, so he cannot move, jump, dash or act
         for the whole 2.5s (the SARA ハンドフレア pattern) */
-     f.state="tsing";f.stateT=3.6;f.attackCd=6.03;f.comboWin=0;f.spinHits=0;f.spinTick=-0.05; /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
+     f.state="tsing";f.stateT=3.6;f.attackCd=6.03;f.comboWin=0;f.singAct=(f.singAct||0)+1;f.spinHits=0;f.spinTick=-0.05; /* singAct: per-activation counter — the guard-break mark a tick sets (applyHit) is keyed to it, so only THIS song's remaining ticks ignore the victim's guard */ /* spinTick starts negative so the first tick lands 0.32s in, like the other delayed moves' thresholds */
      spawnParticles(f.x,f.y+f.h*0.4,14,"#c084fc",190);spawnRing(f.x,f.y+f.h*0.42,"#fcd34d",40);
      beep(520,.18,"sine",.05);setTimeout(function(){beep(660,.18,"sine",.05)},140);setTimeout(function(){beep(780,.22,"sine",.05)},280);
    }else if(upHeld){
@@ -9165,6 +9169,39 @@ function xenoRingFx(x,y,size){spawnVecBurst("xring",x,y,size||40,0.3,0,1,0.95)} 
 function xenoPortalFx(x,y,size){spawnVecBurst("xportal",x,y,size||56,0.34,0,1,0.95)} /* a CIRCULAR portal ring that snaps open in hard steps (see drawVecBursts) — the warp's door, spawned at both ends of the jump */
 function xenoCircuitFx(x,y,size){spawnVecBurst("xcircuit",x,y,size||44,0.34,0,1,0.95)} /* XENO-only circuit traces: right-angle data lines with node blocks, snapping outward in hard steps (see drawVecBursts) */
 function xenoPhaseFx(x,y,face,size){spawnVecBurst("xphase",x,y,size||56,0.3,0,face||1,0.95)} /* XENO-only phase-shift burst: sliced hologram ghosts trailing the jump + circuit spear-lines stabbing forward (see drawVecBursts) */
+function xenoCyberExplosion(x,y,face){ /* XENO U 赤い弾の命中 (user spec): a CYBER explosion, hers alone — a geometric crystal shatter (xshard) over a strobing digital pop (xpop), wrapped in block noise, circuit traces and a small portal ring, with loose red / pink / white data blocks hanging dead still for a blink. No borrowed fire / hit texture */
+ spawnVecBurst("xshard",x,y,96,0.45,0,face||1,1);
+ spawnVecBurst("xpop",x,y,80,0.4,0,face||1,0.95);
+ spawnVecBurst("xglitch",x,y,46,0.32,0,face||1,0.95);
+ xenoCircuitFx(x,y,58);xenoPortalFx(x,y,44);
+ for(var cei=0;cei<7;cei++)pushParticle({x:x+(Math.random()-0.5)*44,y:y+(Math.random()-0.5)*36,vx:0,vy:0,life:0.14+Math.random()*0.12,col:cei%3===0?"#ef4444":(cei%3===1?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.2,amb:1});
+ shake=Math.max(shake,4);beep(160,.16,"sawtooth",.06);setTimeout(function(){beep(1420,.1,"square",.04)},50);
+}
+function xenoWarpUpExec(f){ /* XENO ↑+K ワープの実移動 (shared by the instant ground press and the charged air press — see startXenoAttack / the xcharge tick in stepFighter): departure dressing (blocks + portal ring + circuit traces gathering at the door), the cut 300px straight up, then the arrival materialisation through a second ring. px/py snap with her — the warp is a cut, not a flight */
+ xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoCircuitFx(f.x,f.y+f.h*0.45,44); /* departure: the body dissolves into blocks inside the ring and is gone */
+ f.y=Math.max(f.y-300,-560);f.x=Math.max(50,Math.min(WORLD_W-50,f.x));f.vy=0;f.onGround=false;f.fastfall=false;f.jumps=1;f.airLag=Math.max(f.airLag||0,0.3);f.px=f.x;f.py=f.y;
+ xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring */
+ beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
+}
+function xenoWarpDownExec(f){ /* XENO ↓+K ワープダウンの実移動 (user spec — REPLACES the hologram decoy): a cut STRAIGHT DOWN that ALWAYS lands her ON a platform or the floor — never in the air, never over the void. The destination is the highest surface below her feet in her own column (the next ledge down, or the main floor); if nothing is below (already standing on the lowest surface) she re-materialises on the surface she stands on, and if her column has no surface at all (knocked out over the void) she is pulled back over the main floor, clamped inside it like the backstab warp. Departure / arrival wear the same digital portal dressing as the ↑+K warp */
+ xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoCircuitFx(f.x,f.y+f.h*0.45,44); /* departure: the body dissolves into blocks inside the ring and is gone */
+ var feet=f.y+f.h,best=null;
+ for(var wdi=0;wdi<platforms.length;wdi++){var wp=platforms[wdi];if(f.x+f.w/2<=wp.x||f.x-f.w/2>=wp.x+wp.w)continue;if(wp.y>feet+2&&(best===null||wp.y<best.y))best=wp}
+ var destX=f.x,destPlat=best;
+ if(!destPlat){
+   if(f.onGround&&f.groundPlat)destPlat=f.groundPlat; /* already on the lowest surface in this column: the warp lands her right back on it */
+   else{destPlat=platforms[0];if(destX<160)destX=160;if(destX>2440)destX=2440} /* over the void: the main floor is the only landing — pulled inside its span, never out over the pit */
+ }
+ f.x=destX;f.y=destPlat.y-f.h;f.vy=0;f.vx=0;f.onGround=true;f.groundPlat=destPlat;f.fastfall=false;f.jumps=1;f.landT=0.18;f.px=f.x;f.py=f.y;
+ xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring, feet on the surface */
+ beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
+}
+function xenoWarpChargeStart(f,kind){ /* XENO ワープ予備動作 (user spec): an AIR press of ↑+K / ↓+K does not warp at once — she hangs in place for 0.3s (state "xcharge", held by the gravity step) while the warp visibly CHARGES: her body tears and crumbles into digital blocks (drawXeno's xcharge rendering), portal rings gather in on her (the xcharge tick in stepFighter keeps spawning them), and only when warpT runs out does the cut fire (xenoWarpUpExec / xenoWarpDownExec). The shared flyCd 2.4s is paid at the press, like the instant ground warp; being hit cancels the charge (and applyHit's flyCd reset refunds it) */
+ f.flyCd=2.4;f.warpKind=kind;f.warpT=0.3;f.state="xcharge";f.stateT=0.3;f.attackCd=0.56;f.comboWin=0;f.hitDone=false;
+ f.vx=0;f.vy=0;f.fastfall=false;
+ xenoGlitchFx(f,9);xenoPortalFx(f.x,f.y+f.h*0.45,64);xenoCircuitFx(f.x,f.y+f.h*0.45,40);
+ beep(990,.07,"square",.045);
+}
 /* ---- XENO ↓+K ホログラムデコイ (user spec) ----
    A hologram clone of XENO herself, projected beside her for
    exactly 3 seconds. While it lives it fights like a CPU opponent
@@ -9369,31 +9406,36 @@ function startXenoAttack(f,type,foe){
      }
    }
  }else if(type==="k"){
-   if(downHeld&&f.onGround){
-     /* ホログラムデコイ (down+K, REPLACES ロースイープ — user spec):
-        she projects a hologram clone of herself beside her. The
-        clone lives exactly 3s and actively hunts and attacks the
-        foe on its own (see the decoy tick in simStepFrame), but
-        shatters on the SECOND hit it takes (see hitDecoy). ONLY this move pays
-        the 10s reuse timer (f.decoyCd) — plain K / air K are
-        untouched by it, and ↑+K keeps its shared flyCd. One clone
-        at a time: a press while one is live (or the timer runs)
-        is refused with the usual error beep */
-     if((f.decoyCd||0)>0||decoys.some(function(dd){return dd.owner===f})){beep(200,.07);return}
-     f.decoyCd=10;f.state="xdecoy";f.stateT=0.3;f.attackCd=0.36;f.comboWin=0;
-     var dcx2=f.x+f.face*56;if(dcx2<50)dcx2=50;if(dcx2>WORLD_W-50)dcx2=WORLD_W-50;
-     decoys.push({owner:f,x:dcx2,y:f.y,vx:0,vy:0,face:f.face,t:3,hp:2,atkCd:0.3,state:"idle",stateT:0,onGround:!!f.onGround,aiT:0,aiMove:0.5,shotCd:0.7,rushCd:0,dropT:0,groundPlat:null,airHop:false}); /* hp 2: the clone survives the first real hit and shatters on the second (see hitDecoy); aiT / aiMove / shotCd / rushCd / dropT / groundPlat / airHop: the clone's CPU-style brain (see the decoy tick in simStepFrame) */
-     xenoPortalFx(dcx2,f.y+f.h*0.45,50);xenoCircuitFx(dcx2,f.y+f.h*0.45,40);xenoGlitchFx(f,8);
-     pushFloater({x:dcx2,y:f.y-22,txt:"DECOY ONLINE",life:0.85,col:"#67e8f9"});
-     beep(1240,.06,"square",.045);setTimeout(function(){beep(1760,.07,"square",.04)},60);
+   if(downHeld){
+     /* ワープダウン (down+K, REPLACES ホログラムデコイ — user spec):
+        no damage — an instant WARP straight DOWN, the mirror of
+        ↑+K's upload. She breaks apart into digital blocks inside a
+        portal ring at the departure point and pops back into solid
+        form ON the highest surface below her feet in her own column
+        (the next ledge down, or the main floor) — the destination
+        is computed in xenoWarpDownExec, which guarantees she lands
+        standing on a platform or the floor: never mid-air, never
+        over the void. The reuse rides the same shared flyCd 2.4s
+        as ↑+K. Pressed in the AIR, the warp is not instant: she
+        hangs in place for 0.3s while the warp charges (state
+        "xcharge" — see xenoWarpChargeStart and the xcharge tick in
+        stepFighter), then the cut fires. The old hologram-decoy
+        move is gone: no clone is projected any more (the decoy
+        machinery stays in the file but nothing spawns it) */
+     if(f.flyCd>0){beep(200,.07);return}
+     if(!f.onGround){xenoWarpChargeStart(f,"down")}
+     else{f.flyCd=2.4;f.state="xwarp";f.stateT=0.26;f.attackCd=0.31;f.comboWin=0;xenoWarpDownExec(f)}
    }else if(upHeld){
-     /* ワープアップロード (up+K): no damage — an INSTANT WARP
-        straight up, not a rise. On the press her body breaks apart
-        into digital blocks at the departure point and vanishes;
-        in the same instant she pops back into solid form exactly
-        300px higher inside a circular portal ring (hologram
+     /* ワープアップロード (up+K): no damage — a WARP straight up,
+        not a rise. On a GROUND press her body breaks apart into
+        digital blocks at the departure point and vanishes; in the
+        same instant she pops back into solid form exactly 300px
+        higher inside a circular portal ring (hologram
         materialisation — see the "xportal" vecBurst and the xwarp
-        glitch in drawXeno). 300px is what the old vy -1080 rise
+        glitch in drawXeno; the cut itself lives in xenoWarpUpExec).
+        On an AIR press she first hangs in place for 0.3s while the
+        warp charges (xenoWarpChargeStart), then the same cut fires.
+        300px is what the old vy -1080 rise
         reached, level with WARDEN's チェーンジェイル (vy -1080,
         CD 2.4s) and MIMI's ブランコ (vy -1000, CD 2.4s), and the
         reuse rides the same shared flyCd 2.4s; like MIMI's swing
@@ -9402,11 +9444,8 @@ function startXenoAttack(f,type,foe){
         snap with her so the render interpolation never swoops —
         the warp is a cut, not a flight. */
      if(f.flyCd>0){beep(200,.07);return}
-     f.flyCd=2.4;f.state="xwarp";f.stateT=0.26;f.attackCd=0.31;f.comboWin=0;
-     xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58); /* departure: the body dissolves into blocks inside the ring and is gone */
-     f.y=Math.max(f.y-300,-560);f.x=Math.max(50,Math.min(WORLD_W-50,f.x));f.vy=0;f.onGround=false;f.fastfall=false;f.jumps=1;f.airLag=Math.max(f.airLag||0,0.3);f.px=f.x;f.py=f.y;
-     xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring */
-     beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
+     if(!f.onGround){xenoWarpChargeStart(f,"up")} /* AIR press (user spec): 0.3s hanging charge first, then the warp fires (see xenoWarpChargeStart / the xcharge tick in stepFighter) */
+     else{f.flyCd=2.4;f.state="xwarp";f.stateT=0.26;f.attackCd=0.31;f.comboWin=0;xenoWarpUpExec(f)}
    }else if(!f.onGround){
      /* エアバースト (air K): a hovering data burst on BOTH sides */
      f.state="xburst";f.stateT=0.3;f.attackCd=0.42;f.comboWin=0;
@@ -10573,7 +10612,15 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
     who guarded from the first wave on was never marked, so their
     guard keeps working for the whole activation. */
  var tbBreak=att&&att!==def&&att.char==="travis"&&isUlt&&crKeyCtx==="proj:sonic"&&(def.tbT||0)>0&&(def.tbIdx==null?-1:def.tbIdx)===fighters.indexOf(att)&&(def.tbAct||0)===(att.ultAct||0);
- if(!pierce&&!tbBreak&&def.guarding&&def.onGround){ /* pierce: guard-breaking hits (AXE's lariat) skip this guard block and land in full */
+ /* TRAVIS シング・タイム exception (user spec): the same rule for the
+    song — a fighter who has already TAKEN one tick of the current
+    シング・タイム activation unguarded (marked sgT / sgIdx / sgAct in
+    the full-hit branch below) cannot guard the REST of that same
+    activation; the guard block is skipped for those ticks and they
+    land in full. A fighter who guarded from the first tick on was
+    never marked, so their guard keeps working for the whole song */
+ var sgBreak=att&&att!==def&&att.char==="travis"&&att.state==="tsing"&&(def.sgT||0)>0&&(def.sgIdx==null?-1:def.sgIdx)===fighters.indexOf(att)&&(def.sgAct||0)===(att.singAct||0);
+ if(!pierce&&!tbBreak&&!sgBreak&&def.guarding&&def.onGround){ /* pierce: guard-breaking hits (AXE's lariat) skip this guard block and land in full */
    var gSide=(att&&att!==def)?(att.x>=def.x?1:-1):(dir<0?1:-1);
    if(gSide===(def.guardDir||def.face)){
      var gd=d100(dmg*0.2);
@@ -10589,7 +10636,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
      return true;
    }
  }
- var hpBeforeH=def.hp;def.hp-=dmg;recordDmg(att,def,hpBeforeH-Math.max(0,def.hp));if(att&&att!==def&&att.char==="travis"&&isUlt&&crKeyCtx==="proj:sonic"){def.tbIdx=fighters.indexOf(att);def.tbAct=att.ultAct||0;def.tbT=1.5} /* TRAVIS ult (user spec): this wave LANDED (it was not guarded) — the victim is marked for the rest of THIS activation and cannot guard its remaining waves (see tbBreak at the guard block). The 1.5s mark comfortably covers the 0.28s wave spacing plus travel-time differences, and every further landed wave refreshes it; a guarded wave never sets it */if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+d100((hpBeforeH-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal (user spec): heals 20% of the HP he actually took with every hit he deals while Berserker lasts — bleed ticks included, overkill past 0 HP excluded (same measure as the damage ledger; was 15%) — decimals kept, no integer rounding */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.14;
+ var hpBeforeH=def.hp;def.hp-=dmg;recordDmg(att,def,hpBeforeH-Math.max(0,def.hp));if(att&&att!==def&&att.char==="travis"&&isUlt&&crKeyCtx==="proj:sonic"){def.tbIdx=fighters.indexOf(att);def.tbAct=att.ultAct||0;def.tbT=1.5} /* TRAVIS ult (user spec): this wave LANDED (it was not guarded) — the victim is marked for the rest of THIS activation and cannot guard its remaining waves (see tbBreak at the guard block). The 1.5s mark comfortably covers the 0.28s wave spacing plus travel-time differences, and every further landed wave refreshes it; a guarded wave never sets it */if(att&&att!==def&&att.char==="travis"&&att.state==="tsing"){def.sgIdx=fighters.indexOf(att);def.sgAct=att.singAct||0;def.sgT=Math.max(0.6,(att.stateT||0)+0.35)} /* TRAVIS シング・タイム (user spec): this tick LANDED (it was not guarded) — the victim is marked for the rest of THIS song activation and cannot guard its remaining ticks (see sgBreak at the guard block). The mark lasts the song's remaining stateT plus a small tail, so it covers every remaining 0.27s tick until the song ends and no longer; every further landed tick refreshes it, and a guarded tick never sets it */if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+d100((hpBeforeH-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal (user spec): heals 20% of the HP he actually took with every hit he deals while Berserker lasts — bleed ticks included, overkill past 0 HP excluded (same measure as the damage ledger; was 15%) — decimals kept, no integer rounding */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.14;
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*((def.char==="smiley"&&(def.awakenT||0)>0)?1.00:(def.kbMul||1)); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off. SMILEY Berserker rider (user spec): while Berserker lasts, knockback TAKEN uses x1.00 instead of his base x1.12 */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
@@ -10614,7 +10661,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
 }
 function killFighter(def,att){
  clearDecoysOf(def,true); /* XENO: her hologram decoys die with her — no orphan clones fighting on after the KO */
- def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.tbT=0;def.tbIdx=-1;def.tbAct=0;def.ultBoostT=0; /* dying also clears the TRAVIS ult guard-break mark and any ult speed boost */def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.glitchT=0;def.glitchBank=0;def.glitchBankBy=null;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
+ def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.tbT=0;def.tbIdx=-1;def.tbAct=0;def.sgT=0;def.sgIdx=-1;def.sgAct=0;def.warpT=0;def.warpKind="";def.ultBoostT=0; /* dying also clears the TRAVIS ult / シング・タイム guard-break marks, any pending XENO warp charge and any ult speed boost */def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.glitchT=0;def.glitchBank=0;def.glitchBankBy=null;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
  for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}if(fighters[kf].heldBy===def){fighters[kf].heldT=0;fighters[kf].heldBy=null;fighters[kf].heldKb=0}} /* a dead grabber releases whoever it was holding, with no throw */
  if(def.isPlayer&&mode!=="online"&&!matchOver)respawnSelectPending=true; /* every death re-opens character select (local modes) */
  shake=16;hitstop=0.08;
@@ -10756,6 +10803,7 @@ function stepFighter(f,dt,input,foe){
  f.slowT=Math.max(0,(f.slowT||0)-dt); /* ORCHID ポイズンショット slow: movement x0.88 while it lasts */
  var ultBoostWas=(f.ultBoostT||0)>0;f.ultBoostT=Math.max(0,(f.ultBoostT||0)-dt);var ultBoostEnded=ultBoostWas&&f.ultBoostT<=0; /* KAIRO ult: movement-speed x3 boost timer (0.1s from activation, set in startAttackCore). ultBoostEnded marks the exact frame the window closes — the movement block below snaps vx straight back to the normal cap on that frame instead of letting the 3x speed bleed off gradually (user spec) */
  f.tbT=Math.max(0,(f.tbT||0)-dt); /* TRAVIS ult guard-break mark: while this runs, this fighter cannot guard that activation's remaining waves (set in applyHit) */
+ f.sgT=Math.max(0,(f.sgT||0)-dt); /* TRAVIS シング・タイム guard-break mark: while this runs, this fighter cannot guard that song activation's remaining ticks (set in applyHit, keyed to singAct) */
  f.buffT=Math.max(0,(f.buffT||0)-dt); /* ORCHID 栄養補給 speed buff: movement x1.07 for 8s */
  /* SARA モードカオス duration: 13s max — when chaosT runs out the mode
     ends on the spot (it also ends on death: killFighter / resetFighter).
@@ -11257,6 +11305,31 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
    f.spinTick+=dt;
    if(f.spinTick>=0.08&&f.spinHits<4){f.spinTick=0;f.spinHits++;var batHit=[];meleeHit(f,foe,112,74,4,330,f.face,-0.3,0,false,0,batHit);meleeHit(f,foe,112,74,4,330,-f.face,-0.2,0,false,0,batHit); /* 回転警棒 上方修正 (user spec): 判定 左右84x74 -> 周囲112x74 / ダメージ 前4・後4 -> 4 / KB 前330・後330 -> 330 (数値は据え置き、周囲化に合わせて1ティック1ヒットに統一) */spawnParticles(f.x,f.y+f.h*0.45,5,"#fde68a",170)}
  }
+ /* XENO ワープ予備動作 (air ↑+K / ↓+K, user spec): while warpT runs
+    she HANGS in place (vx / vy zeroed here and again in the gravity
+    step, so steering / fastfall cannot drift her) and the warp
+    visibly CHARGES around her — stepped block-noise bursts pop off
+    her body, loose data blocks CONVERGE on her from a shrinking
+    radius (particles spawned on a ring with inward velocity), and
+    portal rings keep snapping shut around her, tighter as the cut
+    nears; drawXeno's xcharge rendering tears and crumbles the body
+    itself for the whole charge. When warpT runs out the cut fires
+    (up = xenoWarpUpExec, down = xenoWarpDownExec, which lands her
+    on the surface below) and the arrival state "xwarp" takes over.
+    Being HIT cancels the charge outright (the hit's own flyCd
+    reset in applyHit refunds the cooldown the press paid) */
+ if(f.char==="xeno"&&(f.warpT||0)>0){
+   if(f.hitstun>0){f.warpT=0;f.warpKind="";if(f.state==="xcharge"){f.state="idle";f.stateT=0}}
+   else{
+     f.warpT-=dt;f.vx=0;f.vy=0;
+     var xchP=1-Math.max(0,f.warpT)/0.3; /* 0 at the press -> 1 at the cut */
+     if(Math.random()<0.55)spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,30+xchP*22,0.2,0,f.face,0.9);
+     if(Math.random()<0.4)xenoPortalFx(f.x,f.y+f.h*0.45,64-xchP*26); /* the gathering ring closes in as the charge builds */
+     if(Math.random()<0.5)xenoCircuitFx(f.x,f.y+f.h*0.45,34+xchP*16);
+     for(var xci=0;xci<2;xci++){var xca=Math.random()*6.283,xcr=44-xchP*20;pushParticle({x:f.x+Math.cos(xca)*xcr,y:f.y+f.h*0.45+Math.sin(xca)*xcr*0.8,vx:-Math.cos(xca)*130,vy:-Math.sin(xca)*104,life:0.3,col:Math.random()<0.5?"#67e8f9":(Math.random()<0.6?"#f0abfc":"#f8fafc"),size:2.4+Math.random()*2.6,amb:1})} /* data blocks stream INWARD onto her body — the portal gathering, readable at a glance */
+     if(f.warpT<=0){var xwk=f.warpKind;f.warpKind="";f.warpT=0;f.state="xwarp";f.stateT=0.26;if(xwk==="down")xenoWarpDownExec(f);else xenoWarpUpExec(f)}
+   }
+ }
  /* GLITCH ORBIT (XENO air J): the same skeleton as KAIRO's HOVER
     SPIN above — but the hover is GONE (user spec): nothing here
     touches f.vy, so she falls at the normal rate while the move
@@ -11630,7 +11703,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
      /* bleed any speed above air max back down — no endless post-dash glide */
      if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
    }
-   if(input.jump&&!(f.char==="travis"&&f.state==="tsing")){ /* TRAVIS シング・タイム中はジャンプ不可 (user spec): the song roots him for its whole 3.6s — ground jump, coyote jump, the airborne first jump and the double jump all pass through this one gate, so none of them can fire while state "tsing" lasts (dash is locked in tryDash) */
+   if(input.jump&&!(f.char==="travis"&&f.state==="tsing")&&!(f.char==="xeno"&&f.state==="xcharge")){ /* TRAVIS シング・タイム中はジャンプ不可 (user spec): the song roots him for its whole 3.6s — ground jump, coyote jump, the airborne first jump and the double jump all pass through this one gate, so none of them can fire while state "tsing" lasts (dash is locked in tryDash). XENO ワープ予備動作中もジャンプ不可: the 0.3s charge hangs her in place, so a jump press during it must not spend her double jump into a hold that zeroes the velocity anyway */
      if(f.onGround||f.coyote>0){f.vy=-SJUMP_V;f.onGround=false;f.coyote=0;f.fastfall=false;f.firstJump=false;f.leftByJump=true;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;if(f.char!=="sara")spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90); /* SARA: ジャンプ時のパーティクルも出さない (user request) */if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)}
      else if(f.firstJump){f.firstJump=false;f.vy=-SJUMP_V;f.fastfall=false;f.jBoostT=JUMP_HOLD_S;f.jBaseY=f.y+f.h;if(f.char!=="sara")spawnParticles(f.x,f.y+f.h,f.char==="axe"?9:6,charFX(f),f.char==="axe"?140:90);if(f.char==="axe")shake=Math.max(shake,2.5);beep(f.isPlayer?520:330,.06,"sine",.035)} /* AIRBORNE FIRST JUMP (v93 bug fix): the fighter is airborne WITHOUT having jumped (walked off a ledge, dropped through, dashed off an edge, was launched) — f.firstJump was armed by the became-airborne check below, so this press is the FIRST jump of the stint, not the double jump. f.jumps (the double jump) stays available afterwards. It follows the same two-height rule as the ground jump: it starts at SJUMP_V and arms the same hold window (f.jBoostT / f.jBaseY). */
      else if(f.jumps>0){f.jumps--;f.vy=-DJUMP_V;f.jBoostT=0;f.fastfall=false;if(f.char!=="sara")spawnParticles(f.x,f.y+f.h,f.char==="kojiro"?12:9,charFX(f),130); /* SARA: 2段ジャンプ時のパーティクルも出さない (user request) */beep(f.isPlayer?700:420,.06,"sine",.035)} /* DOUBLE jump: original spec, untouched — fixed DJUMP_V, no hold decision, and it cancels any still-pending first-jump window */
@@ -11701,6 +11774,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
  else if(f.char==="orchid"&&f.state==="orope"&&!f.hitDone&&f.hitstun<=0){f.vy=0;f.vx=0} /* ORCHID ロープフィッシング: fully stationary in the air during the 0.3s startup （空中静止, user spec) — once the vine fires (hitDone) gravity takes her again */
  else if(f.char==="no66"&&(f.state==="n66atom"||f.state==="n66msl")&&f.hitstun<=0){f.vy=0;f.vx=0} /* No.66 ダウンアトミック / ホーミングミサイル: fully stationary in the air while the move lasts （空中でもその場で静止, user spec) */
  else if(f.char==="travis"&&f.state==="tmsong"&&f.hitstun<=0){f.vy=0;f.vx=0} /* TRAVIS メテオソング: fully stationary in the air for the whole 0.8s state （空中で静止， user spec — the ball already left on the press; vx is zeroed too, right before integration, so steering / fastfall input cannot drift him while he hangs) */
+ else if(f.char==="xeno"&&f.state==="xcharge"&&f.hitstun<=0){f.vy=0;f.vx=0} /* XENO ワープ予備動作: fully stationary in the air for the whole 0.3s charge （空中で静止, user spec) — the cut fires from the xcharge tick in the state hooks above; vx is zeroed too, right before integration, so steering / fastfall input cannot drift her while the portal gathers */
  else if(f.char==="orchid"&&(f.flyDur||0)>0){f.vy=-120} /* ORCHID 飛翔: a steady vy -120 rise for the whole 4s (user balance spec — was 5s) */
  else if(f.char==="kairo"&&(f.flyDur||0)>0){f.vy=-550} /* KAIRO フロストスピン: a steady vy -550 rise for 0.55s (user spec) */
  else f.vy+=g*dt;
@@ -13532,7 +13606,7 @@ function drawXeno(f){
  var maskOff=!flash&&(cyc<0.5||f.state==="xult"||f.state==="xblink"); /* the mask-drop window inside the cyber cycle */
  if(f._xmP!==undefined&&f._xmP!==maskOff)f._xmT=3; /* the mask switch itself tears for three steps */
  f._xmP=maskOff;if(f._xmT>0)f._xmT--;
- var glitch=(Math.floor(time*7+seedX)%13)<2||f.state==="xult"||f.state==="xjk"||f.state==="xwarp"||(f._xmT>0); /* xwarp: the arrival materialisation tears and RGB-splits for the whole warp state */
+ var glitch=(Math.floor(time*7+seedX)%13)<2||f.state==="xult"||f.state==="xjk"||f.state==="xwarp"||f.state==="xcharge"||(f._xmT>0); /* xwarp: the arrival materialisation tears and RGB-splits for the whole warp state. xcharge: the warp CHARGE tears her the same way for its whole 0.3s — the body visibly coming apart is the omen that a warp is coming */
  var isGuardX=!!f.guarding||f.state==="guard";
  var bob=isGuardX?2:((Math.floor(time*6)+seedX)%3-1)*0.9; /* stepped bob: jumps between three heights at 6Hz */
  ctx.translate(0,bob);
@@ -13673,13 +13747,26 @@ function drawXeno(f){
     blocks pop in and out over the body at hard-stepped spots —
     she assembles out of block noise the instant she arrives,
     never fades in */
- if(f.state==="xwarp"){
-   for(var mb2=0;mb2<7;mb2++){
+ /* warp CHARGE (xcharge, user spec): the same block noise, but
+    read in reverse — while the 0.3s charge lasts the blocks
+    multiply and coarsen as the cut nears (the body digitally
+    CRUMBLING apart), and a portal ring GATHERS in on her: its
+    radius snaps shut step by step from wide to body-tight,
+    drawn from stateT (0.3 at the press -> 0 at the cut) */
+ if(f.state==="xwarp"||f.state==="xcharge"){
+   var chgP=f.state==="xcharge"?1-Math.max(0,f.stateT)/0.3:0;
+   for(var mb2=0;mb2<7+(f.state==="xcharge"?Math.floor(chgP*6):0);mb2++){
      var mh1=Math.sin(stp*149.3+mb2*83.7+seedX)*43758.5453;mh1-=Math.floor(mh1);
      var mh2=Math.sin(stp*97.1+mb2*61.3)*43758.5453;mh2-=Math.floor(mh2);
-     if(mh1<0.3)continue;
+     if(mh1<(f.state==="xcharge"?0.3-chgP*0.18:0.3))continue; /* charge: fewer blocks blink OFF as the cut nears — the crumbling only gets denser */
      ctx.fillStyle=mb2%3===0?"rgba(240,171,252,.9)":(mb2%3===1?"rgba(103,232,249,.9)":"rgba(248,250,252,.9)");
-     var mbs=2.4+mh2*3.4;ctx.fillRect((mh2-0.5)*30-mbs/2,-12+mh1*62-mbs/2,mbs,mbs);
+     var mbs=(2.4+mh2*3.4)*(f.state==="xcharge"?1+chgP*0.5:1);ctx.fillRect((mh2-0.5)*30-mbs/2,-12+mh1*62-mbs/2,mbs,mbs);
+   }
+   if(f.state==="xcharge"){
+     var cgSt=Math.min(3,Math.floor(chgP*4)),cgR=34-cgSt*5.5; /* the gathering ring: radius SNAPS shut through four hard steps (34 -> ~17), rim ticks blink per step — the xportal ring's own stepped language, closing instead of opening */
+     ctx.globalAlpha*=0.92;ctx.lineWidth=2.6;ctx.strokeStyle="#67e8f9";ctx.beginPath();ctx.arc(0,29,cgR,0,6.29);ctx.stroke();
+     ctx.lineWidth=1.8;ctx.strokeStyle="#f0abfc";ctx.beginPath();ctx.arc(0,29,cgR*0.66,0,6.29);ctx.stroke();
+     for(var ctk=0;ctk<8;ctk++){if((ctk+cgSt)%3===2)continue;var cpa=ctk*0.785+(cgSt%2)*0.39;ctx.fillStyle=ctk%2?"#f0abfc":"#67e8f9";ctx.fillRect(Math.cos(cpa)*cgR*0.88-1.3,29+Math.sin(cpa)*cgR*0.88-1.3,2.6,2.6)}
    }
  }
  /* orbiting data bits: they TELEPORT between hard positions on the
@@ -13964,6 +14051,12 @@ function draw(){
    /* stepped fragment bits behind the shot: chunky blocks pop in for one step in the shot's colour pair, then are gone */
    for(var xf3=0;xf3<4;xf3++){if((xs2+xf3)%2)continue;var xfh=Math.sin(xs2*47.3+xf3*89.7)*43758.5453;xfh-=Math.floor(xfh);ctx.fillStyle=xf3%2?xc2:xc;ctx.globalAlpha=0.8;ctx.fillRect(-xsgn*(13+xf3*6)-1.5,(xfh-0.5)*15-1.5,3,3)}
    ctx.globalAlpha=1;
+   if((pr.hue||0)===0){ /* RED bit only (user spec): the glitch advance is DRAWN too — two hard-offset ghost copies of the round blink at stepped spots BEHIND and AHEAD of the real position (where the last teleport hop came from / where the next threatens to land), so the shot visibly judders back and forth as it cheats forward */
+     var xgh=Math.sin(xs2*83.7)*43758.5453;xgh-=Math.floor(xgh);
+     ctx.globalAlpha=(xs2%2)?0.34:0.18;ctx.fillStyle="#ef4444";ctx.fillRect(-xsgn*(11+xgh*7)-4.5,-4.5,9,9);ctx.fillRect(xsgn*(8+xgh*6)-4,-4,8,8);
+     ctx.globalAlpha=0.5;ctx.fillStyle="#f8fafc";ctx.fillRect(-xsgn*(11+xgh*7)-1.2,-1.2,2.4,2.4);
+     ctx.globalAlpha=1;
+   }
    /* the bullet itself (user spec: unmistakably a flying shot) — a BIG digital round, roughly twice the old size: a bright core block wrapped in a hard-offset ghost of the NEXT palette colour, ringed by a snapping square target frame in the shot's own colour so it reads as a projectile at a glance. Each shot's colour is rolled at random — red / blue / purple (pr.hue, set at the muzzle by xbitSpawn) — and the ghost offset shows the next of those three */
    ctx.strokeStyle=xc;ctx.lineWidth=2;ctx.globalAlpha=(xs2%2)?0.95:0.55;var xfr=9.5+(xs2%3)*1.2;ctx.strokeRect(-xfr,-xfr,xfr*2,xfr*2);ctx.globalAlpha=1; /* the snapping target frame around the round */
    ctx.fillStyle=xc2;ctx.globalAlpha=0.65;ctx.fillRect(-5.5+xg*2,-5.5,11,11);
@@ -14157,7 +14250,7 @@ function syncHUD(){
  hudTxt($("scoreText"),Math.floor(P1.score||0));
  $("ammoText").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / "+crMaxAmmo("sara")+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("BOMB "+P1.ammo+" / "+crMaxAmmo("orchid")+(P1.reloadT>0?"…":"")+" · MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / "+crMaxAmmo("travis")+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):(P1.ammo+" / "+crMaxAmmo(P1.char)+(P1.reloadT>0?"…":"")))))));
  if(P1.char==="mimi")$("ammoText").textContent=(P1.shGoneT||0)>0?("SHADE あと"+Math.ceil(P1.shGoneT)+"秒"):("SHADE "+Math.ceil(P1.shHp==null?190:P1.shHp)+" · WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")); /* MIMI&SHADE: the pill carries the 【闇ゲージ】 value (or SHADE's revival countdown while it is vanished) next to the U warp cooldown */
- if(P1.char==="xeno")$("ammoText").textContent="BITS "+P1.ammo+" / "+crMaxAmmo("xeno")+(P1.reloadT>0?"…":"")+" · DECOY "+(P1.decoyCd>0?P1.decoyCd.toFixed(1):"READY"); /* XENO (hidden): the pill carries her ↓+K decoy reuse timer — the 10s paid only by that move */
+ if(P1.char==="xeno")$("ammoText").textContent="BITS "+P1.ammo+" / "+crMaxAmmo("xeno")+(P1.reloadT>0?"…":"")+" · WARP "+(P1.flyCd>0?P1.flyCd.toFixed(1):"READY"); /* XENO (hidden): the pill carries her warp reuse timer — the shared flyCd 2.4s paid by both ↑+K and ↓+K warps */
  if(P1.char==="no66")$("ammoText").textContent=(P1.heatStun>0)?"OVERHEAT!":("熱量 "+Math.floor(P1.heat||0)+((P1.heat||0)>65?" · 灼熱":"")); /* No.66: the pill carries the 【熱量】 heat gauge — and the OVERHEAT warning while the lock runs */ $("jCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":"J CHAIN "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
  var db=$("dashBtn");
  if(P1.dashCd>0){db.textContent="DASH "+P1.dashCd.toFixed(1);db.classList.add("cooling")}
@@ -14170,10 +14263,10 @@ function syncHUD(){
  /* keyboard HUD (bottom bar) mirrors the touch boxes */
  var chainTxt=P1.char==="warden"?"BATON":(P1.char==="kojiro"?"KEN":(P1.char==="axe"?"AXE":(P1.char==="sara"?"RUSH":(P1.char==="orchid"?"VINE":(P1.char==="travis"?"MIC":(P1.char==="smiley"?"KNIFE":(P1.char==="no66"?"MECH":"CLAW")))))));
  $("kbJCnt").textContent=P1.meter>=100?"ULT!":(!P1.onGround?"AIR J":(Math.abs(P1.vx)>330?"DASH J":chainTxt+" "+(P1.comboWin>0?((P1.comboStep+1)%((P1.char==="sara"||P1.char==="smiley")?4:3))+1:1)));
- $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"ROCK":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"NUTRI":(P1.char==="travis"?"BLOW":(P1.char==="smiley"?"STAB":(P1.char==="no66"?"GATLING":(P1.char==="xeno"?"DECOY":"TAIL"))))))));
+ $("kbKCnt").textContent=P1.char==="warden"?"BASH":(P1.char==="kojiro"?"KESA":(P1.char==="axe"?"ROCK":(P1.char==="sara"?"NOVA":(P1.char==="orchid"?"NUTRI":(P1.char==="travis"?"BLOW":(P1.char==="smiley"?"STAB":(P1.char==="no66"?"GATLING":(P1.char==="xeno"?"WARP":"TAIL"))))))));
  $("kbAmmo").textContent=P1.char==="kojiro"?("IAIDO "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="axe"?("LARIAT "+(P1.specCd>0?P1.specCd.toFixed(1):"READY")):(P1.char==="sara"?("JAVELIN "+P1.ammo+" / "+crMaxAmmo("sara")+(P1.specCd>0?" "+P1.specCd.toFixed(1):"")):(P1.char==="orchid"?("BOMB "+P1.ammo+" / "+crMaxAmmo("orchid")+(P1.reloadT>0?"…":"")+" · MIST "+(P1.mistCd>0?P1.mistCd.toFixed(1):"READY")):(P1.char==="travis"?("BLAST "+P1.ammo+" / "+crMaxAmmo("travis")+(P1.reloadT>0?"…":"")):(P1.char==="smiley"?("KNIFE "+P1.ammo+" / 3"+(P1.reloadT>0?"…":"")):((P1.char==="warden"?"BOLT ":"SHARD ")+P1.ammo+" / "+crMaxAmmo(P1.char)+(P1.reloadT>0?"…":"")))))));
  if(P1.char==="mimi")$("kbAmmo").textContent="WARP "+(P1.specCd>0?P1.specCd.toFixed(1):"READY");
- if(P1.char==="xeno")$("kbAmmo").textContent="BITS "+P1.ammo+" / "+crMaxAmmo("xeno")+(P1.reloadT>0?"…":"")+" · DECOY "+(P1.decoyCd>0?P1.decoyCd.toFixed(1):"READY");
+ if(P1.char==="xeno")$("kbAmmo").textContent="BITS "+P1.ammo+" / "+crMaxAmmo("xeno")+(P1.reloadT>0?"…":"")+" · WARP "+(P1.flyCd>0?P1.flyCd.toFixed(1):"READY");
  if(P1.char==="no66")$("kbAmmo").textContent=(P1.heatStun>0)?"OVERHEAT!":("熱量 "+Math.floor(P1.heat||0)+((P1.heat||0)>65?" · 灼熱":"")); var kbd=$("kbDash");
  if(P1.dashCd>0){$("kbDashCnt").textContent="DASH "+P1.dashCd.toFixed(1);kbd.classList.add("cooling")}
  else{$("kbDashCnt").textContent="DASH";kbd.classList.remove("cooling")}
@@ -14280,12 +14373,19 @@ function simStepFrame(getInp){
      var rkT=null;for(var rki=0;rki<platforms.length;rki++){var rp3=platforms[rki];if(pr.x>rp3.x-6&&pr.x<rp3.x+rp3.w+6&&rp3.y>=pr.y-20&&(rkT===null||rp3.y<rkT))rkT=rp3.y}
      if(rkT!==null&&rkT-pr.y<=36){pr.y=rkT-6;pr.vy=0}else pr.rolled=false;
    }
+   if(pr.kind==="xbit"&&(pr.hue||0)===0){ /* XENO U 赤い弾 (user spec): the RED bit does not fly straight — it advances like a glitch: every other step it TELEPORTS a short hop, irregularly forward or BACKWARD (small rapid back-and-forth judder laid over its slow 560 base speed), with a slight vertical tear and a still red data block left hanging at the spot it jumped from. The hops average out positive, so it still cheats its way forward — just never smoothly, never predictably */
+     pr.xg=(pr.xg||0)+1;
+     if(pr.xg%2===0){var xgj=Math.sin(pr.xg*127.1+pr.x*0.37+pr.y*0.11)*43758.5453;xgj-=Math.floor(xgj);var xgDir=pr.vx>0?1:-1;var xgOldX=pr.x,xgOldY=pr.y;
+       pr.x+=xgDir*(xgj<0.34?-(14+xgj*38):(xgj>0.72?(18+(xgj-0.72)*90):0));pr.y+=(xgj-0.5)*5;
+       if(Math.random()<0.6)pushParticle({x:xgOldX,y:xgOldY,vx:0,vy:0,life:0.14,col:Math.random()<0.6?"#ef4444":"#f8fafc",size:2.6+Math.random()*2.6,amb:1});
+     }
+   }
    pr.x+=pr.vx*STEP;pr.y+=pr.vy*STEP;if(pr.kind==="javelin"||pr.grav){if(!pr.rolled)pr.vy+=980*STEP} /* pr.grav: AXE's air-K 砲岩 boulder — same rock as ground K, but gravity pulls it into an arc; No.66's grenades ride the same branch, except while the launcher grenade is rolling (rolled), when gravity is off */else if(pr.kind!=="wave"&&pr.kind!=="slash"&&pr.kind!=="rock"&&pr.kind!=="blast"&&pr.kind!=="knife"&&pr.kind!=="sonic"&&pr.kind!=="msong"&&pr.kind!=="mimiball"&&pr.kind!=="lwave"&&pr.kind!=="pellet"&&pr.kind!=="pellet0"&&pr.kind!=="missile"&&pr.kind!=="umissile"&&pr.kind!=="xdart")pr.vy+=128*STEP /* xdart flies flat: its steering owns the velocity vector outright */ /* rock flies flat: no gravity sag, so 弾速 330 really carries it the full 射程 ~720. v102: the new TRAVIS / SMILEY shots (blast / knife / sonic) fly flat too; msong keeps its constant 1020 downward speed (no sag added) */;pr.life-=STEP;if(pr.kind==="lwave"){var lwT=null;for(var li2=0;li2<platforms.length;li2++){var lp2=platforms[li2];if(pr.x>lp2.x-6&&pr.x<lp2.x+lp2.w+6&&lp2.y>=pr.y-14&&(lwT===null||lp2.y<lwT))lwT=lp2.y}if(lwT!==null&&lwT-pr.y<=30){pr.y=lwT-12;pr.vy=0}else pr.vy+=1400*STEP;if(Math.random()<0.55)pushParticle({x:pr.x-(pr.vx>0?16:-16)+(Math.random()-0.5)*10,y:pr.y+6,vx:-pr.vx*0.04,vy:-26-Math.random()*36,life:.32,col:Math.random()<0.5?"#fef9c3":"#fde68a",size:2+Math.random()*2.5})} /* MIMI ↓+K light shockwave: it HUGS the ground — each step it snaps to the highest floor at/below its level within reach; past a ledge edge no floor is close, so gravity pulls it down until the lower floor comes within snap range and it lands on that instead. Golden sparks trail off its back *//* SARA ファイアジャヴェリン: 飛翔中の炎の軌跡パーティクルは削除済み (user request — 技発動時の半透明パーティクルは出さない。弾本体の見た目と着弾後に残る火の玉はこれまで通り) */if(pr.kind==="slash")pushParticle({x:pr.x-(pr.vx>0?1:-1)*16,y:pr.y+(Math.random()-.5)*64,vx:-pr.vx*.06,vy:(Math.random()-.5)*30,life:.22,col:Math.random()<.5?"#f87171":"#fecaca",size:2+Math.random()*3});if(pr.kind==="xbit"&&Math.random()<0.6)pushParticle({x:pr.x+(Math.random()-0.5)*14,y:pr.y+(Math.random()-0.5)*14,vx:0,vy:0,life:.16,col:Math.random()<0.55?XBIT_COLS[pr.hue||0]:(Math.random()<0.5?"#f8fafc":XBIT_COLS[((pr.hue||0)+1)%3]),size:2.8+Math.random()*2.8,amb:1}); /* XENO デジタル弾: shed bits hang dead still for a blink and vanish, in the shot's own colour (and the next of the three shot colours) — no drifting trail */
 if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0.22,(pr.vx>0?-0.62:Math.PI+0.62),1,0.65);else if((pr.kind==="bolt"||pr.kind==="shard"||pr.kind==="blast"||pr.kind==="sonic"||pr.kind==="msong"||pr.kind==="mimiball")&&Math.random()<0.16)spawnCharBurst(pr.owner?pr.owner.char:"kairo",pr.x,pr.y,56,0.18,Math.random()*6.28,1,0.5);if(pr.kind==="rock"&&Math.random()<0.4)pushParticle({x:pr.x-(pr.vx>0?10:-10),y:pr.y+6,vx:(Math.random()-0.5)*26,vy:16+Math.random()*26,life:.3,col:"#a8a29e",size:2+Math.random()*2.5});if((pr.kind==="missile"||pr.kind==="umissile")&&Math.random()<0.75)pushParticle({x:pr.x-pr.vx*0.03,y:pr.y-pr.vy*0.03,vx:-pr.vx*0.05,vy:-pr.vy*0.05-12,life:.34,col:Math.random()<0.5?"#e2e8f0":"#94a3b8",size:2.4+Math.random()*2.4}); /* No.66 missiles: a smoke trail off the tail */if((pr.kind==="gren"||pr.kind==="glauncher")&&Math.random()<0.3)pushParticle({x:pr.x,y:pr.y-6,vx:(Math.random()-0.5)*20,vy:-26-Math.random()*20,life:.3,col:"#78716c",size:2+Math.random()*2}); /* No.66 grenades: a wisp off the fuse */if(pr.kind==="pbomb"&&Math.random()<0.4)pushParticle({x:pr.x+(Math.random()-0.5)*8,y:pr.y+8,vx:(Math.random()-0.5)*24,vy:14+Math.random()*22,life:.32,col:Math.random()<0.5?"#a855f7":"#a3e635",size:2+Math.random()*2.6}); /* ORCHID ポイズンボム: poison drips off the sphere as it flies *//* XENO デコイ: projectiles NEVER collide with a hologram decoy — every shot passes straight through it and flies on (user spec); only melee boxes and direct hits shatter it (see meleeHit / shadeHit / applyHit), so there is deliberately no projectile hook here */
      var foe=null,shadeFoe=false;for(var qi=0;qi<fighters.length;qi++){var qf=fighters[qi];if(qf===pr.owner||qf.dead||qf.invuln>0)continue;if(pr.kind==="mimiball"&&pr.hitSet&&pr.hitSet.indexOf(qf)>=0)continue; /* piercing orb: a foe already struck by this orb is passed over, so the next foe in line gets hit instead */if(qf.char==="mimi"&&shadeAlive(qf)&&Math.abs(qf.shX-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30)))))))+58&&Math.abs((qf.shY-52)-pr.y)<66){foe=qf;shadeFoe=true;break} /* 【闇ゲージ】 a shot that reaches SHADE's body drains its darkness gauge (KB nullified) instead of flying through the shadow */if(Math.abs(qf.x-pr.x)<(pr.kind==="lwave"?36:(pr.kind==="slash"?50:(pr.kind==="sonic"?75:(pr.kind==="mimiball"?76:(pr.kind==="msong"?48:(pr.kind==="rock"?57:(pr.kind==="throwaxe"?38:30))))))) /* rock box 114x86: half-width 57. sonic box 150x110: half-width 75 (v102 spec). msong body box 96x66: half-width 48. mimiball box 152x130: half-width 76 (was 130x110 / 65, requester balance spec) */&&Math.abs((qf.y+qf.h/2)-pr.y)<qf.h*(pr.kind==="lwave"?0.6:(pr.kind==="slash"?0.68:(pr.kind==="sonic"?0.5:(pr.kind==="mimiball"?0.65:(pr.kind==="msong"?0.66:(pr.kind==="rock"?0.62:(pr.kind==="throwaxe"?0.6:0.56)))))))){foe=qf;break}}
      if(foe){
        crKeyCtx="proj:"+pr.kind; /* CREATIVE MODE: every hit in this dispatch keys off the projectile kind (cleared where the dispatch ends, below) */
-       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||8):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
+       if(shadeFoe){var shDmg=(pr.kind==="pellet"?1:(pr.kind==="pellet0"?1:(pr.kind==="gren"?14:(pr.kind==="glauncher"?16:(pr.kind==="missile"?18:(pr.kind==="umissile"?16:(pr.kind==="slash"?66:(pr.kind==="wave"?16:(pr.kind==="bolt"?12:(pr.kind==="throwaxe"?21:(pr.kind==="rock"?26:(pr.kind==="javelin"?24:(pr.kind==="blast"?9:(pr.kind==="msong"?40:(pr.kind==="knife"?10:(pr.kind==="sonic"?34:(pr.kind==="mimiball"?52:(pr.kind==="lwave"?6:(pr.kind==="pbomb"?18:(pr.kind==="xbit"?(pr.xdmg||8):(pr.kind==="xdart"?28:13)))))))))))))))))))));applyShadeHit(pr.owner,foe,shDmg,pr.x,pr.y,pr.kind==="slash"||pr.kind==="sonic"||pr.kind==="mimiball"||pr.kind==="xdart");if(pr.kind==="xbit"&&(pr.hue||0)===0)xenoCyberExplosion(pr.x,pr.y,pr.vx>0?1:-1); /* XENO 赤い弾 vs SHADE: the cyber explosion fires on a shade hit too — same detonation as a body hit */if(pr.kind==="mimiball"){(pr.hitSet=pr.hitSet||[]).push(foe);spawnParticles(pr.x,pr.y,12,"#7e22ce",210);spawnRing(pr.x,pr.y,"#a855f7",40)}} /* 【闇ゲージ】 the shot's damage goes to SHADE's darkness gauge at the kind's usual number (slash 66 / wave 16 / bolt 12 / throwaxe 21 / rock 26 / javelin 24 / blast 9 / msong 40 / knife 10 / sonic 34 / mimiball 52 / lwave 6 / pbomb 18 / shard 13); the piercing orb records the pair and flies on, every other shot is spent by the return below */
        else if(pr.kind==="slash"){applyHit(pr.owner,foe,56,740,pr.vx>0?1:-1,-0.42,true,pr.x,pr.y)} /* KOJIRO ult 斬空 (user spec): damage 66 -> 56, KB 740 unchanged */
        else if(pr.kind==="wave"){applyHit(pr.owner,foe,16,0,pr.vx>0?1:-1,0,false,pr.x,pr.y,true)} /* WARDEN down+J shockwave: damage ONLY — no knockback, no hitstun (user tuning) */
        else if(pr.kind==="bolt"){applyHit(pr.owner,foe,12,180,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y)} /* WARDEN bolt KB 220 -> 180 (user spec) */
@@ -14304,7 +14404,7 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
        else if(pr.kind==="missile"){applyHit(pr.owner,foe,18,640,pr.vx>0?1:-1,-0.3,false,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 U ホーミングミサイル: 18 dmg / KB 640 */
        else if(pr.kind==="umissile"){applyHit(pr.owner,foe,16,600,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);spawnParticles(pr.x,pr.y,12,"#fb923c",220);spawnRing(pr.x,pr.y,"#fbbf24",36)} /* No.66 ult バーストエンドフォース: each homing missile = 16 dmg / KB 600 */
        else if(pr.kind==="pbomb"){applyHit(pr.owner,foe,18,210,pr.vx>0?1:-1,-0.25,false,pr.x,pr.y);applyPoison(pr.owner,foe,crDurV("orchid","proj:pbomb","durPo",1.2));spawnParticles(pr.x,pr.y,12,"#a855f7",200);spawnParticles(pr.x,pr.y,6,"#a3e635",150);spawnRing(pr.x,pr.y,"#c084fc",34)} /* ORCHID ポイズンボム (user balance spec): 18 dmg / KB 210 + 毒 1.2秒 on a direct hit */
-       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||8,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 8 dmg / KB 300 / lag 0.7s; purple = 16 dmg; red = 24 dmg + KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline */
+       else if(pr.kind==="xbit"){applyHit(pr.owner,foe,pr.xdmg||8,pr.xkb||300,pr.vx>0?1:-1,-0.18,false,pr.x,pr.y,false,pr.xhs||0);foe.slowT=Math.max(foe.slowT||0,pr.xslow||0.7);if((pr.hue||0)===0)xenoCyberExplosion(pr.x,pr.y,pr.vx>0?1:-1);else spawnVecBurst("xglitch",pr.x,pr.y,30,0.3,0,pr.vx>0?1:-1,0.95)} /* XENO データビット: the numbers rolled with the shot's colour ride on the projectile (blue = the baseline 8 dmg / KB 300 / lag 0.7s; purple = 16 dmg; red = 24 dmg + KB 390 + fixed 0.32s hitstun + lag 0.95s) — the fallbacks keep any colourless bit at the blue baseline. RED alone detonates as a full CYBER explosion on hit (user spec — xenoCyberExplosion: crystal shatter + digital pop + circuit traces + portal ring); blue / purple keep the small block-noise burst */
        else if(pr.kind==="xdart"){foe.glitchT=Math.max(foe.glitchT||0,1.8);applyHit(pr.owner,foe,28,520,pr.vx>0?1:-1,-0.3,true,pr.x,pr.y);pushFloater({x:foe.x,y:foe.y-26,txt:"GLITCH BIND!",life:0.95,col:"#a78bfa"});spawnVecBurst("xshard",pr.x,pr.y,120,0.45,0,pr.vx>0?1:-1,1);spawnVecBurst("xglitch",pr.x,pr.y,44,0.35,0,1,0.95);xenoCircuitFx(pr.x,pr.y,58);xenoPortalFx(pr.x,pr.y,52);shake=Math.max(shake,6);beep(150,.22,"sawtooth",.07);setTimeout(function(){beep(1560,.18,"square",.05)},60)} /* XENO ult デジタルダート: 28 dmg / KB 520 + グリッチ拘束 1.8s — the bind is set BEFORE the hit is applied, so the detonation's own 28 damage is BANKED like every other hit during the bind and lands in the lump the instant the bind releases (user spec); the detonation burst and the bind's onset fire exactly as before. The detonation is a geometric crystal burst around a circular core, and the bind warps the victim's body in draw() while stepFighter holds them in complete stun */ /* (the データビット branch above carries its own per-colour numbers; its burst is stepped block noise, not a particle spray) */
        else{applyHit(pr.owner,foe,13,260,pr.vx>0?1:-1,-0.16,false,pr.x,pr.y);foe.frozen=Math.max(foe.frozen,crDurV(pr.owner?pr.owner.char:"kairo","proj:shard","durF",1.2))} /* KAIRO ice shard: KB 245 -> 260 (user spec). 凍結 0.85s -> 1.2s (movement x0.45, user spec) — Math.max so a shard never shortens a longer freeze already running (e.g. the ice floor's 1.2s) */
        crKeyCtx=null;
