@@ -494,6 +494,11 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/20",times:["01:15"],tag:"修正",title:"オンライン対戦：ゲスト側で自分のキャラがラグく見える問題を修正（XENOウルトの誘導が端末ごとに食い違っていた）",
+   items:["XENOのウルト「デジタルの核」は、撃った本人の画面だけキー／スティックの生の値で誘導し、他の全員の画面では同期された入力から誘導していたため、斜め方向へ誘導すると端末ごとに核の進路が少しずつ食い違っていました",
+          "この食い違いがチェックサム不一致→再同期を繰り返し、短時間に3回必要になると試合の残りが写真（保険）方式へ切り替わって、ゲストは自分のキャラが遅れて見える状態で最後まで戦うことになっていました（2026/11/20 01:10の試合ログで確認）",
+          "入力同期中は、撃った本人の画面でも他の全員と同じく同期された入力だけで誘導するよう統一しました。これで核の進路が全端末で一致し、再同期と方式切替が起きなくなります。核の速度475・旋回上限・寿命20秒・ダメージ36など性能は変更ありません",
+          "BUILD_ID を v327 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/20",times:["00:29"],tag:"調整",title:"No.66：前+J／空中J「メタルバッシュ」に判定継続を追加（地上0.3秒／空中0.24秒）",
    items:["前+J「メタルバッシュ」：判定が突進中0.3秒間継続するようになりました。これまでは押した瞬間に範囲内にいた相手にしか当たらなかったのが、突進の途中で範囲へ入った相手にも当たります（同じ相手には1回の使用につき1回だけ当たります）",
           "空中J「メタルバッシュ」：判定が0.24秒間継続するようになりました（同じ相手には1回の使用につき1回だけ当たります）",
@@ -2513,7 +2518,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v326";
+var BUILD_ID="v327";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -14679,10 +14684,30 @@ function simStepFrame(getInp){
    }
    if(pr.kind==="xdart"){ /* XENO ult デジタルの核: flies straight ahead at a constant 475 u/s (396 x1.2, user spec), STEERED by the firing player's direction input while it flies — the heading turns toward the held direction at a capped 5.2 rad/s, and with no direction held it keeps its course. The firing player's own core reads keys / stick directly; in an online match a REMOTE owner's core steers from that fighter's synced held-direction fields (hFwd / hBack / hUp / hDown, set from the input bundles on every end), so every screen flies the core along the same course. It also sheds still digital blocks as it goes */
      var xo2=pr.owner;
-     if(xo2&&xo2.isPlayer&&!xo2.dead&&!(mode==="creative"&&crSpec)){
+     /* v327 divergence fix (the 2026-11-20 guest-lag log): while the
+        rollback layer runs (ls.active) there is NO authority — every
+        end must derive the core's course from the input rows alone.
+        The keys / stick branch below cannot do that: lsStepFrame
+        stages the owner's keys / stick from its row bits with
+        SYNTHETIC stick values (dx ±0.5, dy 0.8), so a diagonal hold
+        aims the owner's own end at atan2(1.8, 1.5) ≈ 50° while every
+        other end's h-field branch aims at atan2(1, 1) = 45° — the
+        core flew a different course per end, the checkpoint
+        checksums diverged, and each resync only held until the core
+        was steered diagonally again: resync, resync, then the loop
+        guard's permanent snapshot fallback, after which the guest
+        spent the rest of the match on snapshot prediction (their
+        own fighter corrected against burst-delivered state — the
+        reported "guest lags on their own screen"). So in input-sync
+        mode the owner's end takes the h-field branch too, exactly
+        like every other end; the keys / stick branch remains for
+        offline play and for snapshot mode, where the owner's end
+        (the host) IS the authority and its live reading is the
+        reference everyone else renders. */
+     if(xo2&&xo2.isPlayer&&!xo2.dead&&!(mode==="creative"&&crSpec)&&!(typeof ls!=="undefined"&&ls&&ls.active)){
        var sdx2=((keys.right?1:0)-(keys.left?1:0))+stick.dx,sdy2=((keys.down?1:0)-(keys.jump?1:0))+stick.dy;
        if(Math.abs(sdx2)>0.25||Math.abs(sdy2)>0.25){var xca2=Math.atan2(pr.vy,pr.vx),xta2=Math.atan2(sdy2,sdx2),xda3=xta2-xca2;while(xda3>Math.PI)xda3-=2*Math.PI;while(xda3<-Math.PI)xda3+=2*Math.PI;var xmx2=5.2*STEP;if(xda3>xmx2)xda3=xmx2;else if(xda3<-xmx2)xda3=-xmx2;var xna2=xca2+xda3;pr.vx=Math.cos(xna2)*475;pr.vy=Math.sin(xna2)*475}
-     }else if(xo2&&!xo2.dead&&mode==="online"){
+     }else if(xo2&&!xo2.dead&&(mode==="online"||(typeof ls!=="undefined"&&ls&&ls.active))){ /* v327: the ls.active half covers CREATIVE online rooms (mode "creative"), whose rollback matches hit the same per-end split as normal rooms before the fix — owner's end steering, every other end homing */
        var rdx2=(xo2.hFwd?xo2.face:0)+(xo2.hBack?-xo2.face:0),rdy2=(xo2.hDown?1:0)+(xo2.hUp?-1:0);
        if(rdx2!==0||rdy2!==0){var rca2=Math.atan2(pr.vy,pr.vx),rta2=Math.atan2(rdy2,rdx2),rda3=rta2-rca2;while(rda3>Math.PI)rda3-=2*Math.PI;while(rda3<-Math.PI)rda3+=2*Math.PI;var rmx2=5.2*STEP;if(rda3>rmx2)rda3=rmx2;else if(rda3<-rmx2)rda3=-rmx2;var rna2=rca2+rda3;pr.vx=Math.cos(rna2)*475;pr.vy=Math.sin(rna2)*475}
      }
