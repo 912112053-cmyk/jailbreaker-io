@@ -493,6 +493,10 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/19",times:["23:11"],tag:"調整",title:"ORCHID：K「栄養補給」の葉エフェクトが効果時間中ずっと持続／再使用を上方修正（15秒→14秒）",
+   items:["K「栄養補給」：発動時に周りを回る5つの葉のエフェクトが、発動モーションの間だけでなく効果時間中（移動速度アップの9秒間）ずっと回り続けるようになりました",
+          "K「栄養補給」の再使用時間を15秒→14秒に短くしました（上方修正）。回復40・移動速度+9%／9秒・全攻撃への毒付与など、その他の性能は変わりません",
+          "技一覧の表示も実装に合わせて更新しました。BUILD_ID を v318 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/19",times:["23:02"],tag:"調整",title:"No.66：ガトリング弾の被弾エフェクトを削除",
    items:["No.66のJ 2段目「チェーンガトリング」、J+K同時押し「ガトリングフック」の連射部分、K／空中K「ガトリング」で発射される弾が当たったときのエフェクト（ヒット時のパーティクル・リング・火花・ダメージ数字・画面の揺れ・ヒットストップ・ヒット音・被弾フラッシュ）が出ないようになりました",
           "弾のダメージ・吹き飛ばし・被弾硬直・灼熱状態での燃焼付与など、性能はそのままです。ガトリングフック最後の殴りは弾ではないため、これまでどおりエフェクトが出ます",
@@ -1097,7 +1101,7 @@ var orchidMovesHTML='<h2>🌿 ORCHID（オーキッド）— 技一覧</h2><p>�
 +'<div class="moveRow"><div><b>空中J — ツタフック</b> <span style="color:var(--cyan);font-weight:900">長リーチ・2連撃</span><p>前方に遠距離まで届くツタを伸ばしての<b>2連撃</b>（2発目は約0.32秒後に、さらに遠くまで届く）。間合いが離れた相手にも届く、空中での間合い作りの一手。少し滞空する。</p>'+mvSpec(mvS('ダメージ','10＋10')+mvS('KB','550')+mvS('発生','即時／2発目 約0.32秒')+mvS('全体','0.55秒')+mvS('後硬直','0.55秒')+mvS('判定','146×76 → 158×62')+mvS('着地硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ロープフィッシング</b> <span style="color:#c084fc;font-weight:900">下方攻撃</span><p>空中で静止し、下方向に長いツタの腕を突きおろして攻撃する。真下の相手を地面へ叩きつける。判定の一番下（ツタの先端）には<b>掴み判定</b>があり、そこで捕まえた相手は掴んで投げる。</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','660')+mvS('発生','0.3秒（空中静止）')+mvS('全体','0.66秒')+mvS('後硬直','0.53秒（完全硬直）')+mvS('判定','下方向104×240')+mvS('掴み','判定の最下部'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — ツタ絡みコンボ</b> <span style="color:#f472b6;font-weight:900">2ヒット・2段目は掴み</span><p>ツタを絡める即時ヒットに、引き絞る遅延ヒットが続く2ヒット。2段目は<b>掴み</b>：当たると相手を0.4秒間つかんでから投げ飛ばす。Jチェーンはリセットされる。地上で出すと後硬直<b>0.38秒</b>の間は<b>完全硬直</b>。空中で出すと後硬直は<b>0.55秒</b>になるが<b>完全硬直はなく</b>、硬直中も移動・ジャンプ・ダッシュができる（次の技は後硬直が終わるまで出せない）。着地時に<b>着地硬直0.4秒</b>が追加される。</p>'+mvSpec(mvS('ダメージ','14＋16')+mvS('KB','380／720（掴み）')+mvS('発生','即時／2段目 約0.3秒')+mvS('全体','0.84秒')+mvS('後硬直','地上0.38秒（完全硬直）／空中0.55秒（完全硬直なし）')+mvS('判定','前134×64／前130×84')+mvS('被弾硬直','0.34秒／なし')+mvS('完全硬直','地上のみ（空中はなし）')+mvS('着地硬直','空中で出した場合0.4秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム15秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','15秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
++'<div class="moveRow"><div><b>K — 栄養補給</b> <span style="color:#4ade80;font-weight:900">回復・自己強化・クールタイム14秒</span><p>根から栄養を吸い上げ、<b>HPを40回復</b>し、<b>移動速度+9%を9秒間</b>得る。効果時間中は<b>5つの葉が周りを回り続ける</b>。後硬直の間は<b>完全硬直</b>。以降は<b>全ての攻撃で相手に毒0.4秒を付与</b>できるようになる（倒されると失われる）。</p>'+mvSpec(mvS('回復','40 HP')+mvS('発生','—')+mvS('全体','0.60秒')+mvS('後硬直','0.82秒（完全硬直）')+mvS('再使用','14秒')+mvS('追加効果','速度+9%／9秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↓+K — ポイズンミスト</b> <span style="color:#4ade80;font-weight:900">設置型・クールタイム6.2秒</span><p>左右へ広範囲の毒霧を召喚する。霧は<b>その場に8秒間残り</b>、範囲内の相手に<b>0.1秒ごとに2ダメージ</b>を与え続ける（ノックバックなし）。後硬直の間は<b>完全硬直</b>。</p>'+mvSpec(mvS('ダメージ','2／0.1秒')+mvS('KB','なし')+mvS('発生','即時')+mvS('全体','0.45秒')+mvS('後硬直','0.67秒（完全硬直）')+mvS('範囲','左右に広がる楕円（横幅410）')+mvS('持続','8秒')+mvS('再使用','6.2秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — 飛翔</b> <span style="color:#38bdf8;font-weight:900">移動技・クールタイム7.0秒</span><p><b>vy-120で4秒かけて真上へ上昇し続ける</b>。上昇中は回転しながらツタを振り、<b>0.3秒ごとに両側へ6ダメージ</b>の攻撃が出る。横移動は通常どおり可能。地上・空中どちらでも出せる。着地すると<b>着地硬直0.42秒</b>がある。</p>'+mvSpec(mvS('ダメージ','6／0.3秒（両側）')+mvS('KB','300')+mvS('発生','即時')+mvS('全体','0.50秒（上昇は4秒間継続）')+mvS('後硬直','0.57秒')+mvS('判定','72×66（両側）')+mvS('再使用','7.0秒')+mvS('着地硬直','0.42秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — ポイズンボム</b> <span style="color:#c084fc;font-weight:900">飛び道具・毒・3発</span><p>紫の毒の球体を射出する。3発まで撃てて、撃った分は2.2秒ごとに1発ずつ自動リロードされる。球は放物線を描いて飛び、<b>地面に3回バウンドし、3回目のバウンドで消失</b>する。当たった相手に<b>毒1.2秒</b>。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','18')+mvS('KB','210')+mvS('発生','0.2秒')+mvS('全体','0.4秒')+mvS('後硬直','0.54秒')+mvS('弾速','660')+mvS('リロード','2.2秒')+mvS('追加効果','毒1.2秒'))+'</div></div>'
@@ -2407,7 +2411,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v317";
+var BUILD_ID="v318";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -8730,9 +8734,9 @@ function startOrchidAttack(f,type,foe){
         +7% / 8s), and from then on ALL of her attacks also apply
         poison 0.4s (venom flag, applied in applyHit; lost on death).
         後硬直 0.82秒 is now 完全硬直 (applyFullLock) — the old 0.6s
-        self-stun is gone. CD 15s (was 14s) on specCd */
+        self-stun is gone. CD 14s (buffed from 15s, user spec) on specCd */
      if(f.specCd>0){beep(200,.07);return}
-     f.specCd=15;f.state="onutri";f.stateT=0.6;f.attackCd=0.75;f.comboWin=0;applyFullLock(f);
+     f.specCd=14;f.state="onutri";f.stateT=0.6;f.attackCd=0.75;f.comboWin=0;applyFullLock(f);
      var healed=Math.min(40,(f.maxHp||MAXHP)-f.hp);if(healed<0)healed=0;
      f.hp+=healed;f.buffT=9;f.venom=true;
      pushFloater({x:f.x,y:f.y-30,txt:"+"+healed+" HP",life:1.05,col:"#4ade80"}); /* 技名部分のみ削除し、回復量の表示は残す (user request) */
@@ -12531,6 +12535,12 @@ function drawOrchid(f){
  /* 栄養補給 afterglow: venom shimmer on the hands, speed ring while buffed */
  if(f.venom){ctx.fillStyle="rgba(192,132,252,.5)";ctx.beginPath();ctx.arc(13,35,4+Math.sin(time*8)*1,0,6.29);ctx.fill();ctx.beginPath();ctx.arc(-13,35,3.4+Math.cos(time*7)*0.9,0,6.29);ctx.fill()}
  if(f.buffT>0){ctx.strokeStyle="rgba(74,222,128,.45)";ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(0,27,30+Math.sin(time*10)*2,0,6.29);ctx.stroke()}
+ /* 栄養補給 (user spec): the FIVE orbiting leaves PERSIST for the
+    whole effect duration (buffT — the 9s speed buff), not just the
+    0.6s drink animation. Same leaves, same orbit as the onutri state
+    draws; that state is skipped here so they are never drawn twice.
+    buffT rides the snapshots (bft), so this shows online too */
+ if(f.buffT>0&&f.state!=="onutri"){for(var lf2=0;lf2<5;lf2++){var la2=time*5.2+lf2*1.2566;ctx.save();ctx.translate(Math.cos(la2)*30,27+Math.sin(la2)*24);ctx.rotate(la2+1.2+Math.sin(time*11+lf2*2.1)*0.5);ctx.fillStyle=lf2%2?"#4ade80":"#a3e635";ctx.beginPath();ctx.ellipse(0,0,6.5,3,0,0,6.29);ctx.fill();ctx.strokeStyle="rgba(21,101,52,.7)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-6,0);ctx.lineTo(6,0);ctx.stroke();ctx.restore()}}
  if(f.frozen>0){ctx.fillStyle="rgba(165,243,252,.5)";ctx.fillRect(-21,-6,42,62)}
  ctx.restore();
  hpBar(f);
