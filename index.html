@@ -494,6 +494,12 @@ $("modal").addEventListener("click",function(e){if(e.target===this){this.classLi
    1件の形式: {date:"YYYY/MM/DD", times:["HH:MM",...], tag:"カテゴリ",
                title:"見出し", items:["変更内容", ...]}（新しい順に並べる） */
 var UPDATE_LOG=[
+ {date:"2026/11/20",times:["17:13"],tag:"調整",title:"XENO：↓+J「ローグリッチ」の打ち上げを、相手のノックバック耐性に関わらず頭上の少し上まで届く固定高さ方式に変更しました",
+   items:["XENOの↓+J「ローグリッチ」の打ち上げが、固定のノックバック（KB 810）方式から「到達点固定」方式になりました。命中した相手は、その相手のノックバック耐性や残りHPにかかわらず、XENOの頭頂の少し上（約25px上）まで、ほぼ真上に打ち上がります。上昇の初速は相手の現在位置から到達点までの高さと上昇重力から逆算して決まるため、耐性の高い相手でも低い相手でも同じ高さまで飛びます",
+          "相手がすでに到達点より高い位置で命中した場合でも、最低限の打ち上げ（最低48px分）が必ず成立します。横方向の吹っ飛ばしはこれまで通りほぼゼロです",
+          "ダメージ10・発生（即時）・全体0.20秒・後硬直0.31秒・判定78×40・被弾硬直0.34秒など、その他の性能は変更ありません",
+          "CREATIVE MODEのカスタマイズでは、この技のKB欄の値が「到達高さへの倍率」として働きます（初期値810＝等倍。大きくすると打ち上げの到達点が高くなり、小さくすると低くなります）",
+          "技一覧の表示も実装に合わせて更新しました。BUILD_ID を v332 に更新しました。対戦前に全員がページを再読み込みしてください"]},
  {date:"2026/11/20",times:["16:30"],tag:"調整",title:"XENO：ウルト「デジタルダート」の核を強化し、操作をI/J/K/Lキーに変更しました",
    items:["核の速度を475→570（1.2倍）に上げ、大きさも1.2倍にしました（見た目と当たり判定の両方）。持続時間は20秒→15秒に短くなりました。ダメージ36・グリッチ拘束1.8秒・旋回上限など、その他の仕様は変更ありません",
           "核の操作キーを、方向入力から I / J / K / L キーに変更しました（I=上、J=左、K=下、L=右）。何も押していなければ核は直進します。オンライン対戦では、操作は全員に同期された入力から読み取るため、核の進路は全員の画面で一致します",
@@ -1309,7 +1315,7 @@ var xenoMovesHTML='<h2>👾 XENO（ゼノ）— 技一覧</h2><p>天才ハッカ
 +'<div class="moveRow"><div><b>前+J — フェイズシフト</b><p>データ層を抜けて約105先へ位相移動し、到着と同時に刺す。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','380')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.67秒')+mvS('判定','80×58')+mvS('被弾硬直','0.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックドア</b><p>前に斬りながら後ろへ滑り、間合いを作る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.39秒')+mvS('判定','72×54'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングコード</b><p>上昇斬り。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','540（真上寄り）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','62×86')+mvS('上昇','vy -520')+mvS('追加効果','当てるとジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — ローグリッチ</b><p>低く滑り込みながらの足元斬り。当たった相手は<b>ほぼ真上</b>へ打ち上がり、自分の頭上まで浮くので空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('KB','810（真上）')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.31秒')+mvS('判定','78×40')+mvS('被弾硬直','0.34秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — ローグリッチ</b><p>低く滑り込みながらの足元斬り。当たった相手は、<b>ノックバック耐性に関わらず</b>、自分の頭上の少し上まで<b>ほぼ真上</b>へ打ち上がるので空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('打ち上げ','頭上の少し上まで（固定・耐性無効）')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.31秒')+mvS('判定','78×40')+mvS('被弾硬直','0.34秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中J — グリッチオービット</b> <span style="color:#f472b6;font-weight:900">最大3ヒット・空中で2回まで</span><p>空中で体の周囲にグリッチの輪を発生させる周囲攻撃。落下は止まらず、そのまま落ちながら最大3ヒットする。発生中は近くの相手を<b>弱く引き寄せる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','10×最大3ヒット')+mvS('KB','290')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','周囲108×66')+mvS('被弾硬直','0.28秒（1ヒットずつ）'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中前+J — デジタルポップ</b><p>片手を突き出し、指先でデジタル爆発を起こす一撃。判定が広く、吹っ飛ばしも強い。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','900')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','84×64')+mvS('被弾硬直','0.3秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ダイブハック</b><p>斜め下へ突進しながらの斬り下ろし。相手を下方向へ叩き落とす。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','600（下方向）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('判定','74×84'))+'</div></div>'
@@ -1844,7 +1850,7 @@ function crXMove(ch,k){if(!crEff||!ch||!k||!crEff[ch]||!crEff[ch].moves)return n
 function crXVal(ch,k,field){var m=crXMove(ch,k);return(m&&typeof m[field]==="number")?m[field]:null}
 function crXField(ch,k,field){var l=(typeof CR_EXTRA!=="undefined"&&CR_EXTRA[ch])?CR_EXTRA[ch][k]:null;if(!l)return null;for(var i=0;i<l.length;i++){if(l[i][0]===field)return l[i]}return null}
 function crXDef(ch,k,field){var f=crXField(ch,k,field);return f?f[2]:null}
-function crXLabel(ch,k,field){if(field==="d")return"ダメージ";if(field==="k")return"KB";var f=crXField(ch,k,field);return f?f[1]:field}
+function crXLabel(ch,k,field){if(field==="d")return"ダメージ";if(field==="k")return(ch==="xeno"&&k==="xlow")?"KB（打ち上げ高さ倍率）":"KB";var f=crXField(ch,k,field);return f?f[1]:field} /* XENO xlow (v332): its launch is a fixed apex, so the KB field is a multiplier on the REACH HEIGHT, not a knockback value — the label says so wherever the field is named */
 function crDurV(ch,k,field,def){var v=crActive?crXVal(ch,k,field):null;return v==null?def:v}
 function crBoxScale(ch,k,field){if(!crActive)return 1;var v=crXVal(ch,k,field),d=crXDef(ch,k,field);return(v!=null&&d)?v/d:1}
 function crResolveKey(f,type){
@@ -2063,7 +2069,7 @@ function crRenderList(){
    var dv=(typeof mo.d==="number")?mo.d:null,kv=(typeof mo.k==="number")?mo.k:null;
    h+='<div class="crRow"><span class="crName">'+mv[1]+'</span>'
      +'<span class="crFld">ダメージ <input class="crIn'+(dv!==null?" mod":"")+'" type="number" min="0" max="999" step="1" value="'+(dv!==null?dv:mv[2])+'" data-ch="'+c+'" data-kind="d" data-key="'+mv[0]+'"></span>'
-     +(mv[3]===null?"":('<span class="crFld">KB <input class="crIn'+(kv!==null?" mod":"")+'" type="number" min="0" max="3000" step="10" value="'+(kv!==null?kv:mv[3])+'" data-ch="'+c+'" data-kind="k" data-key="'+mv[0]+'"></span>'))
+     +(mv[3]===null?"":('<span class="crFld">'+((c==="xeno"&&mv[0]==="xlow")?"KB（打ち上げ高さ倍率）":"KB")+' <input class="crIn'+(kv!==null?" mod":"")+'" type="number" min="0" max="3000" step="10" value="'+(kv!==null?kv:mv[3])+'" data-ch="'+c+'" data-kind="k" data-key="'+mv[0]+'"></span>'))
      +crExtraFieldsHTML(c,mv[0],mo)
      +'</div>';
   }
@@ -2593,7 +2599,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v331";
+var BUILD_ID="v332";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -9645,15 +9651,27 @@ function startXenoAttack(f,type,foe){
      xenoGlitchFx(f,10);xenoRingFx(f.x,f.y+f.h*0.45,54);
      beep(1480,.05,"square",.04);
    }else if(downHeld){
-     /* ローグリッチ (down+J, reworked — user spec): a low sliding
-        sweep whose hit LAUNCHES the foe straight up to above her
-        own head — the house straight-up convention (dir 0 /
-        up -1.0, like KAIRO's アイスフット) at KB 810 (was 900 — 90%, user spec), so the foe
-        leaves with essentially NO sideways drift and pops up over
-        her, ready to be met in the air */
+     /* ローグリッチ (down+J, reworked — owner spec v332): a low
+        sliding sweep whose hit LAUNCHES the foe straight up to a
+        FIXED apex — the foe's feet top out a little above her own
+        head (25px over her crown) NO MATTER the foe's knockback
+        resistance (kbMul), remaining HP or anything else that
+        scales ordinary knockback. This is no longer a KB launch:
+        the apex goes to meleeHit / applyHit as a world Y
+        (launchY) and the launch speed is solved per victim from
+        their current feet position and the rise gravity, with a
+        48px minimum rise so a foe already above the apex still
+        pops (see applyHit). Sideways stays the house straight-up
+        convention (dir 0 — essentially NO drift), and damage 10 /
+        box 78x40 / hitstun 0.34s are unchanged. CREATIVE: the
+        move's KB field (base 810) no longer scales a launch
+        speed — it scales the REACH HEIGHT above her own feet by
+        kb/810 (xlApexY below), so the editor value and the
+        implementation stay in step */
      f.state="xlow";f.stateT=0.2;f.attackCd=0.24;f.comboWin=0;
      f.vx=f.face*430;
-     meleeHit(f,foe,78,40,10,810,0,-1.0,0.34,false,0,null,false,f.face);
+     var xlApexY=(f.y+f.h)-(f.h+25)*(crHit(f,"xlow",10,810)[1]/810);
+     meleeHit(f,foe,78,40,10,810,0,-1.0,0.34,false,0,null,false,f.face,null,xlApexY);
      xenoGlitchFx(f,6);spawnVecBurst("xcircuit",f.x+f.face*36,f.y+f.h*0.6,40,0.3,0,f.face,0.9);beep(880,.06,"square",.04);
    }else if(upHeld){
      /* ライジングコード (up+J): rising cut — landing it refunds
@@ -10686,7 +10704,7 @@ function startAttack(f,type){
  if(typeof ov.dur==="number"&&(f.flameT||0)!==pre.flT)f.flameT=ov.dur;
  if(typeof ov.tot==="number"&&(f.flyDur||0)!==pre.flyD)f.flyDur=ov.tot;
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxDir,kbXMul){ /* kbXMul (optional, trailing): forwarded to applyHit as kbX — scales only the horizontal launch component (AXE 震撃 passes 0.05) */
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxDir,kbXMul,launchY){ /* kbXMul (optional, trailing): forwarded to applyHit as kbX — scales only the horizontal launch component (AXE 震撃 passes 0.05). launchY (optional, trailing): forwarded to applyHit as launchY — a fixed-apex launch whose vertical speed is solved from the victim's position to that world Y, ignoring knockback resistance (XENO ↓+J ローグリッチ) */
  if(crActive&&att&&att.char){var _mk=crKeyCtx||att.state;if(_mk){var _bw=crXVal(att.char,_mk,"bw"),_bh=crXVal(att.char,_mk,"bh");if(_bw!=null){var _bwd=crXDef(att.char,_mk,"bw");if(_bwd)range*=_bw/_bwd}if(_bh!=null){var _bhd=crXDef(att.char,_mk,"bh");if(_bhd)h*=_bh/_bhd}if(burn>0)burn=crDurV(att.char,_mk,"durB",burn)}}
  /* boxDir (optional): when given, the hit BOX is centred in this
     direction instead of dir — dir keeps driving only the knockback.
@@ -10718,7 +10736,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
  for(var i=0;i<targets.length;i++){var t=targets[i];if(t===att||t.dead||(hitList&&hitList.indexOf(t)>=0))continue;
    var dx=t.x-cx,dy=(t.y+t.h/2)-cy;
    if(!grab&&t.char==="mimi"&&shadeAlive(t)&&Math.abs(t.shX-cx)<range*0.72+58&&Math.abs((t.shY-52)-cy)<h*0.5+54){if(applyShadeHit(att,t,dmg,cx,cy,false)){hitAny=true;if(hitList)hitList.push(t)}} /* 【闇ゲージ】 a swing that reaches SHADE's body drains its darkness gauge (KB fully nullified) — a separate body, so it can be struck alongside MIMI herself; a shared hitList still caps one move at one strike per pair */
-   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce,kbXMul);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.5;t.bleedT=Math.max(t.bleedT||0,1.5);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.5s for 1.5s (was 0.4s / 1.6s) */}}
+   if(Math.abs(dx)<range*0.72+t.w/2&&Math.abs(dy)<h){var landed=grab?applyGrabHit(att,t,dmg,kb,up,false,cx,cy,0):applyHit(att,t,dmg,kb,dir,up,false,cx,cy,false,hs,pierce,kbXMul,launchY);if(landed){hitAny=true;if(hitList)hitList.push(t);if(burn>0){t.burnT=Math.max(t.burnT||0,burn);t.burnBy=att}if(att.char==="smiley"&&(att.awakenT||0)>0&&!t.dead){if(!(t.bleedT>0))t.bleedTick=0.5;t.bleedT=Math.max(t.bleedT||0,1.5);t.bleedBy=att} /* Berserker bleed (user spec): 2 dmg every 0.5s for 1.5s (was 0.4s / 1.6s) */}}
  }
  return hitAny;
 }
@@ -10896,7 +10914,7 @@ function releaseGrab(f){
  pushFloater({x:f.x,y:f.y-24,txt:"THROW!",life:.7,col:"#fde68a"});
  beep(300,.1,"sawtooth",.05);
 }
-function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX (optional, trailing): scales ONLY the horizontal launch (def.vx) — the vertical launch, hitstun, hitstop and shake all keep deriving from the unscaled kbs. Current user: AXE 震撃 (kbX 0.05 — horizontal launch at 5%, see the lowclaw hit in stepFighter) */
+function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX,launchY){ /* kbX (optional, trailing): scales ONLY the horizontal launch (def.vx) — the vertical launch, hitstun, hitstop and shake all keep deriving from the unscaled kbs. Current user: AXE 震撃 (kbX 0.05 — horizontal launch at 5%, see the lowclaw hit in stepFighter). launchY (optional, trailing): a FIXED-APEX launch — when given (a world Y), the victim's vertical launch ignores kb / kbMul / remaining-HP scaling entirely and instead solves the exact initial speed (jumpBoostV inverts the sim's own discrete rise integration under GRAV) that carries the victim's FEET from their current position up to that Y, with a 48px minimum rise so the pop still reads when the victim is already above the apex. The horizontal launch, hitstun, hitstop and shake keep deriving from kb as usual. Current user: XENO ↓+J ローグリッチ (apex = a little above her own head — see startXenoAttack) */
  /* CREATIVE MODE override (see the CREATIVE MODE block): under a
     crKeyCtx (projectile / SHADE / placed-object dispatch) the key
     is authoritative even for noKb hits; otherwise the attacker's
@@ -11035,7 +11053,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX){ /* kbX 
  var lowHp=1-Math.max(0,def.hp)/(def.maxHp||MAXHP);
  var kbs=kb*0.8*(1+lowHp*1.15)*((def.char==="smiley"&&(def.awakenT||0)>0)?1.00:(def.kbMul||1)); /* knockback is part of the 0.8x speed pass; heavy fighters shrug some of it off. SMILEY Berserker rider (user spec): while Berserker lasts, knockback TAKEN uses x1.00 instead of his base x1.12 */
  if(noKb){ /* damage only: no launch, no hitstun, no state disruption at all */ }
- else{def.vx=dir*kbs*(kbX==null?1:kbX);def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0)def.hitstun+=0.08;def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). SMILEY Berserker rider (user spec): while Berserker lasts, EVERY hit SMILEY deals — listed-hs and derived alike, melee / delayed ticks / projectiles all route through here — inflicts +0.08s of hitstun on top (noKb DoT ticks never reach this branch, so bleed stays stun-free as specced; guarded hits stay stun-free in the guard block above). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
+ else{def.vx=dir*kbs*(kbX==null?1:kbX);if(launchY!=null){var lRise=(def.y+def.h)-launchY;if(lRise<48)lRise=48;def.vy=-jumpBoostV(lRise,SIM_STEP)}else def.vy=up*kbs-(lowHp>0.55?70:0);def.hitstun=(hs>0)?hs:Math.min(0.5,0.13+kbs/3600);if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0)def.hitstun+=0.08;def.dashT=0;def.fastfall=false} /* hs: 被弾硬直 (user spec) — a move that lists one inflicts EXACTLY that many seconds of stun on the foe it hits, fixed by the move itself and independent of knockback / remaining HP; the knockback launch above is applied separately as always. Only moves that pass hs get this; every other hit keeps the KB/HP-derived stun (0.13 + kbs/3600, capped at 0.5). SMILEY Berserker rider (user spec): while Berserker lasts, EVERY hit SMILEY deals — listed-hs and derived alike, melee / delayed ticks / projectiles all route through here — inflicts +0.08s of hitstun on top (noKb DoT ticks never reach this branch, so bleed stays stun-free as specced; guarded hits stay stun-free in the guard block above). 被弾で2段ジャンプは回復しない (bug fix): taking a hit NEVER refunds the victim's double jump — def.jumps is deliberately left untouched here, so a fighter who already spent their double jump stays without it until they land (landing is the only victim-side refill). Attacker-side refunds on specific moves (rising slashes, SARA 飛翔) are a separate, intended mechanic and are unchanged. */
  if(!hitFxMute){hitstop=isUlt?0.09:0.035;shake=Math.min(13,3+kbs*0.011)}
  if(!hitFxMute){if(!noParts)spawnParticles(cx||def.x,cy||def.y+def.h*0.45,isUlt?26:12,isUlt?"#fde68a":(att?charFX(att):"#b9f3ff"),isUlt?300:210);
  pushFloater({x:def.x,y:def.y-16,txt:"-"+dmg,life:.7,col:"#fff"});
