@@ -1643,7 +1643,7 @@ function jumpBoostV(remaining,dt){if(remaining<=0)return 0;var lo=0,hi=1600;for(
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
 var AIR_STOP=3000; /* v338: in the air with no left/right held, the SELF part of vx (see the split-velocity note in stepFighter) dies at this rate — full air speed stops in ~0.13s, so run momentum no longer carries across a jump. External velocity (knockback / dash / lunges) never pays this rate */
-var AIR_INERTIA=0.4; /* v340 (owner spec, ALL characters): air inertia 0.4 — with no left/right held, selfVx bleeds at AIR_STOP only down to AIR_INERTIA x the self speed the fighter last held under their own power (f.airBase: refreshed on the ground and while a direction is held), then keeps gliding at that 40% residue (the pre-v338 glide was 100%). While a direction IS held, air accel / cap / bleed are untouched, so held-input air speed is exactly the pre-change behaviour */
+var AIR_INERTIA=0.5; /* v341 (owner spec, ALL characters): air inertia 0.5 — with no left/right held, selfVx bleeds at AIR_STOP only down to AIR_INERTIA x the self speed the fighter last held under their own power (f.airBase: refreshed on the ground and while a direction is held), then keeps gliding at that 50% residue (the pre-v338 glide was 100%). While a direction IS held, air accel / cap / bleed are untouched, so held-input air speed is exactly the pre-change behaviour */
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
 var BUFFER_S=0.12,COYOTE_S=0.09;
 var MAXHP=250,REGEN_DELAY=4.5,REGEN_RATE=12.75; /* out-of-combat regen: 15 -> 12.75 HP/s (healing -15%, user tuning). The delay before regen starts (4.5s) is unchanged */
@@ -2609,7 +2609,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v340";
+var BUILD_ID="v341";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -12423,18 +12423,18 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
         stops in ~0.13s, so no run momentum crosses the jump), while
         extVx keeps flying and only pays the old over-cap bleed,
         charged to extVx first and then to selfVx. v339: that death
-        now stops at the AIR_INERTIA floor (40% of f.airBase, v340) instead
+        now stops at the AIR_INERTIA floor (50% of f.airBase, v341) instead
         of 0 — see the no-input branch below. */
      if(dirIn!==0){
        if(dirIn>0){f.face=1;if(f.vx<AMAX)f.vx=Math.min(f.vx+AACC*dt*frozenFactor,AMAX)}
        else{f.face=-1;if(f.vx>-AMAX)f.vx=Math.max(f.vx-AACC*dt*frozenFactor,-AMAX)}
        /* bleed any speed above air max back down — no endless post-dash glide */
        if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
-       f.selfVx=Math.max(-AMAX,Math.min(AMAX,f.vx));f.extVx=f.vx-f.selfVx;f.airBase=f.selfVx; /* v339: while a direction is held the carry reference tracks the current self speed, so the 0.4 residue (v340) is measured from the speed at release — held-input air movement itself is unchanged */
+       f.selfVx=Math.max(-AMAX,Math.min(AMAX,f.vx));f.extVx=f.vx-f.selfVx;f.airBase=f.selfVx; /* v339: while a direction is held the carry reference tracks the current self speed, so the 0.5 residue (v341) is measured from the speed at release — held-input air movement itself is unchanged */
      }else{
-       /* v340: inertia 0.4 — selfVx bleeds at AIR_STOP only down to
+       /* v341: inertia 0.5 — selfVx bleeds at AIR_STOP only down to
           AIR_INERTIA x f.airBase (the last self speed held on the
-          ground or under a held direction), then keeps that 40%
+          ground or under a held direction), then keeps that 50%
           residue for the rest of the flight instead of dying to 0 */
        var airSg=Math.sign(f.selfVx);var airFl=(f.airBase&&Math.sign(f.airBase)===airSg)?Math.abs(f.airBase)*AIR_INERTIA:0;var airEx=Math.abs(f.selfVx)-airFl;if(airEx>0){f.selfVx-=airSg*Math.min(airEx,AIR_STOP*dt);if(Math.sign(f.selfVx)!==airSg)f.selfVx=0}
        f.vx=f.selfVx+f.extVx;
