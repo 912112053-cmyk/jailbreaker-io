@@ -1642,8 +1642,7 @@ function jumpRiseFrom(v,dt){var vy=-v,rise=0,n=0;while(n++<300){var g=vy>0?GRAV_
 function jumpBoostV(remaining,dt){if(remaining<=0)return 0;var lo=0,hi=1600;for(var i=0;i<24;i++){var mid=(lo+hi)/2;if(jumpRiseFrom(mid,dt)<remaining)lo=mid;else hi=mid}return hi}
 var RUN_MAX=400,RUN_ACC=2320,RUN_FRICTION=12000,SKID=2800;
 var AIR_ACC=1840,AIR_MAX=388;
-var AIR_STOP=3000; /* v338: in the air with no left/right held, the SELF part of vx (see the split-velocity note in stepFighter) dies at this rate — full air speed stops in ~0.13s, so run momentum no longer carries across a jump. External velocity (knockback / dash / lunges) never pays this rate */
-var AIR_INERTIA=0.5; /* v341 (owner spec, ALL characters): air inertia 0.5 — with no left/right held, selfVx bleeds at AIR_STOP only down to AIR_INERTIA x the self speed the fighter last held under their own power (f.airBase: refreshed on the ground and while a direction is held), then keeps gliding at that 50% residue (the pre-v338 glide was 100%). While a direction IS held, air accel / cap / bleed are untouched, so held-input air speed is exactly the pre-change behaviour */
+var AIR_STOP_TIME=1.1; /* v342 (owner spec, ALL characters): air friction is a CONSTANT deceleration (Smash-style), applied only while no left/right is held in the air: the SELF part of vx (see the split-velocity note in stepFighter) loses speed at (that fighter's current max air speed AMAX / AIR_STOP_TIME) per second, all the way to exactly 0 — no floor, no residue glide. From full air speed a fighter coasts to a stop in ~1.1s, and because the rate is derived from AMAX it scales with each character's own air speed. External velocity (knockback / dash / lunges) never pays this friction. While a direction IS held, air accel / cap / bleed are untouched, so held-input air speed is exactly the pre-change behaviour (reverse input still decelerates through the air-accel side, never through this friction) */
 var DASH_SPEED=1024,DASH_TIME=0.15,DASH_CD=2.4;
 var BUFFER_S=0.12,COYOTE_S=0.09;
 var MAXHP=250,REGEN_DELAY=4.5,REGEN_RATE=12.75; /* out-of-combat regen: 15 -> 12.75 HP/s (healing -15%, user tuning). The delay before regen starts (4.5s) is unchanged */
@@ -2609,7 +2608,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v341";
+var BUILD_ID="v342";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -12332,9 +12331,11 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
     own movement produced (ground run speed, air steering) — and
     f.extVx — everything else (knockback, dash, attack lunges,
     suction, charge carry). In the air with no left/right held,
-    selfVx now dies fast (AIR_STOP) instead of gliding on carried
-    run momentum; extVx is never touched by that rule and keeps the
-    old behaviour exactly (including the over-cap bleed). The split
+    selfVx decays at a constant rate (v342: AMAX / AIR_STOP_TIME per
+    second, ~1.1s from full air speed to a complete stop) instead of
+    gliding on carried run momentum; extVx is never touched by that
+    rule and keeps the old behaviour exactly (including the
+    over-cap bleed). The split
     is reconciled here each step: any change to vx since the split
     was last written (a hit landing, a lunge, a suction tick) is
     absorbed into extVx, and a vx forced to exactly 0 (pins, warps,
@@ -12419,24 +12420,30 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
         unchanged (same air accel / cap / over-cap bleed) and the
         result is re-split at the air cap: within the cap counts as
         self movement, any excess stays external. With NO direction
-        held, selfVx alone dies at AIR_STOP (3000/s — full air speed
-        stops in ~0.13s, so no run momentum crosses the jump), while
-        extVx keeps flying and only pays the old over-cap bleed,
-        charged to extVx first and then to selfVx. v339: that death
-        now stops at the AIR_INERTIA floor (50% of f.airBase, v341) instead
-        of 0 — see the no-input branch below. */
+        held, selfVx alone pays the constant air friction (v342:
+        AMAX / AIR_STOP_TIME per second, down to exactly 0 — the
+        v339–v341 AIR_INERTIA floor is gone), while extVx keeps
+        flying and only pays the old over-cap bleed, charged to
+        extVx first and then to selfVx — see the no-input branch
+        below. */
      if(dirIn!==0){
        if(dirIn>0){f.face=1;if(f.vx<AMAX)f.vx=Math.min(f.vx+AACC*dt*frozenFactor,AMAX)}
        else{f.face=-1;if(f.vx>-AMAX)f.vx=Math.max(f.vx-AACC*dt*frozenFactor,-AMAX)}
        /* bleed any speed above air max back down — no endless post-dash glide */
        if(Math.abs(f.vx)>AMAX)f.vx-=Math.sign(f.vx)*Math.min(Math.abs(f.vx)-AMAX,1400*dt);
-       f.selfVx=Math.max(-AMAX,Math.min(AMAX,f.vx));f.extVx=f.vx-f.selfVx;f.airBase=f.selfVx; /* v339: while a direction is held the carry reference tracks the current self speed, so the 0.5 residue (v341) is measured from the speed at release — held-input air movement itself is unchanged */
+       f.selfVx=Math.max(-AMAX,Math.min(AMAX,f.vx));f.extVx=f.vx-f.selfVx;f.airBase=f.selfVx; /* v339: while a direction is held the carry reference tracks the current self speed (kept in sync for snapshot / rollback compatibility; since v342 the no-input friction no longer reads it — held-input air movement itself is unchanged) */
      }else{
-       /* v341: inertia 0.5 — selfVx bleeds at AIR_STOP only down to
-          AIR_INERTIA x f.airBase (the last self speed held on the
-          ground or under a held direction), then keeps that 50%
-          residue for the rest of the flight instead of dying to 0 */
-       var airSg=Math.sign(f.selfVx);var airFl=(f.airBase&&Math.sign(f.airBase)===airSg)?Math.abs(f.airBase)*AIR_INERTIA:0;var airEx=Math.abs(f.selfVx)-airFl;if(airEx>0){f.selfVx-=airSg*Math.min(airEx,AIR_STOP*dt);if(Math.sign(f.selfVx)!==airSg)f.selfVx=0}
+       /* v342: constant-deceleration air friction (Smash-style) —
+          selfVx loses (AMAX / AIR_STOP_TIME) per second, every step,
+          until it reaches exactly 0. There is no floor: the v341
+          AIR_INERTIA residue glide is gone, so a fighter who lets go
+          of the stick at full air speed coasts to a complete stop in
+          ~1.1s. AMAX here is this fighter's current max air speed
+          (per-character airMul plus live modifiers already applied);
+          if a state zeroes AMAX outright (KOJIRO sweep root), fall
+          back to the character's base air cap so the friction rate
+          never collapses to 0. extVx is untouched by this friction */
+       var airSg=Math.sign(f.selfVx);if(airSg!==0){var airRate=(AMAX>0?AMAX:AIR_MAX*(f.airMul||f.speedMul||1))/AIR_STOP_TIME;var airDec=airRate*dt;if(Math.abs(f.selfVx)<=airDec)f.selfVx=0;else f.selfVx-=airSg*airDec}
        f.vx=f.selfVx+f.extVx;
        if(Math.abs(f.vx)>AMAX){
          var airBl=Math.min(Math.abs(f.vx)-AMAX,1400*dt),airBs=Math.sign(f.vx);
@@ -12489,7 +12496,7 @@ if(f.char==="sara"&&f.state==="snova"&&!f.hitDone&&f.stateT<=0.26){f.hitDone=tru
     already wrote its own split above. */
  if(vxExtOwned){f.selfVx=0;f.extVx=f.vx}
  else if(vxLockOwned||f.onGround){f.selfVx=f.vx;f.extVx=0}
- if(f.onGround)f.airBase=f.selfVx; /* v339: grounded self speed is the carry the 0.2 air inertia is measured from (refreshed every grounded step, so the step a jump leaves the ground still carries the run speed it just wrote) */
+ if(f.onGround)f.airBase=f.selfVx; /* v339: grounded self speed recorded as the carry reference (refreshed every grounded step). Since v342 the air friction is a constant deceleration to 0 and no longer reads this value; it is still maintained so the snapshot / rollback fields stay in lockstep */
  f.trail=f.trail.filter(function(t){t.life-=dt;return t.life>0});
  /* per-character ambient motion FX: Kairo sheds ice crystals as he runs,
     WARDEN throws servo sparks and stomps, KOJIRO leaves wind petals,
