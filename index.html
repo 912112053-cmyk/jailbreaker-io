@@ -1312,7 +1312,7 @@ var no66MovesHTML='<h2>🤖 No.66（ナンバー66）— 技一覧</h2><p>両腕
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。重機なのでダッシュは控えめ。</p>'+mvSpec(mvS('速度','880')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>ガード（全キャラ共通）</b><p>地上で S＋A（右向き）／ S＋D（左向き）を押し続けると正面からの攻撃を防ぐ。時間制限なし。</p>'+mvSpec(mvS('被ダメージ','20%（80%カット）・小数点まで計算')+mvS('被弾硬直','なし')+mvS('後硬直','なし（離せば即解除）')+mvS('弱点','背後からは防げない'))+'</div></div>';
 var xenoMovesHTML='<h2>👾 XENO（ゼノ）— 技一覧</h2><p>天才ハッカー。フードに縫い付けた短いうさ耳と、ピンクに光るX字の目の白マスクが目印の<b>軽量スピードタイプ</b>。HPは235と低く吹っ飛ばされやすい代わりに足が速く、<b>5段チェーンのデータナイフ</b>、色ごとに性能が変わる飛び道具<b>データビット</b>、上下ワープと敵の背後へのワープで縦横無尽に戦う。ウルトの核は飛んでいる間に<b>I / J / K / L キーで操舵</b>でき、当たった相手を<b>グリッチ拘束</b>する。</p>'
-+mvSpec(mvS('HP','235')+mvS('地上速度','424')+mvS('空中速度','404')+mvS('受けKB','×1.1')+mvS('ダッシュ','1150')+mvS('ウルト溜まり','標準'))
++mvSpec(mvS('HP','235')+mvS('地上速度','424')+mvS('空中速度','404')+mvS('受けKB','×1.1')+mvS('ダッシュ','1150')+mvS('ウルト溜まり','遅め（従来の0.7倍）'))
 +mvLegend
 +'<div class="moveRow"><div><b>J 1段目 — データナイフ</b> <span style="color:var(--cyan);font-weight:900">チェーン1段目／猶予0.8秒・全5段</span><p>目の前の空間を歪ませながらデータナイフで切り裂く、<b>5段チェーン</b>の起点。段が進むごとに空間の歪みが大きくなる。猶予（0.8秒）以内に J を押し続けると次段へ。</p>'+mvSpec(mvS('ダメージ','6')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.18秒')+mvS('後硬直','0.16秒')+mvS('判定','72×50')+mvS('被弾硬直','0.32秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>J 2段目 — データナイフ</b> <span style="color:var(--cyan);font-weight:900">チェーン2段目／猶予0.8秒</span><p>空間を歪ませる斬撃の2段目。</p>'+mvSpec(mvS('ダメージ','6')+mvS('KB','240')+mvS('発生','即時')+mvS('全体','0.18秒')+mvS('後硬直','0.17秒')+mvS('判定','72×52')+mvS('被弾硬直','0.32秒'))+'</div></div>'
@@ -1322,17 +1322,17 @@ var xenoMovesHTML='<h2>👾 XENO（ゼノ）— 技一覧</h2><p>天才ハッカ
 +'<div class="moveRow"><div><b>前+J — フェイズシフト</b><p>データ層を抜けて約105先へ位相移動し、到着と同時に刺す。ダッシュ中・走行中の J でも出る。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','380')+mvS('発生','即時（移動後）')+mvS('全体','0.30秒')+mvS('後硬直','0.67秒')+mvS('判定','80×58')+mvS('被弾硬直','0.5秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>後ろ+J — バックドア</b><p>前に斬りながら後ろへ滑り、間合いを作る。</p>'+mvSpec(mvS('ダメージ','9')+mvS('KB','330')+mvS('発生','即時')+mvS('全体','0.24秒')+mvS('後硬直','0.39秒')+mvS('判定','72×54'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+J — ライジングコード</b><p>上昇斬り。当てると<b>2段ジャンプが回復</b>し、浮かせた相手を空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','11')+mvS('KB','540（真上寄り）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.45秒')+mvS('判定','62×86')+mvS('上昇','vy -520')+mvS('追加効果','当てるとジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
-+'<div class="moveRow"><div><b>↓+J — ローグリッチ</b><p>低く滑り込みながらの足元斬り。当たった相手は、<b>ノックバック耐性に関わらず</b>、自分の頭上の少し上まで<b>ほぼ真上</b>へ打ち上がるので空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('打ち上げ','頭上の少し上まで（固定・耐性無効）')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.31秒')+mvS('判定','78×40')+mvS('被弾硬直','0.44秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中J — グリッチオービット</b> <span style="color:#f472b6;font-weight:900">最大3ヒット・空中で2回まで</span><p>空中で体の周囲にグリッチの輪を発生させる周囲攻撃。落下は止まらず、そのまま落ちながら最大3ヒットする。発生中は近くの相手を<b>弱く引き寄せる</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','10×最大3ヒット')+mvS('KB','290')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','周囲108×66')+mvS('被弾硬直','0.38秒（1ヒットずつ）'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中前+J — デジタルポップ</b><p>片手を突き出し、指先でデジタル爆発を起こす一撃。判定が広く、吹っ飛ばしも強い。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','900')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','84×64')+mvS('被弾硬直','0.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>↓+J — ローグリッチ</b><p>低く滑り込みながらの足元斬り。当たった相手は、<b>ノックバック耐性に関わらず</b>、自分の頭上の少し上まで<b>ほぼ真上</b>へ打ち上がるので空中で追撃できる。</p>'+mvSpec(mvS('ダメージ','10')+mvS('打ち上げ','頭上の少し上まで（固定・耐性無効）')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.31秒')+mvS('判定','94×40')+mvS('被弾硬直','0.44秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中J — グリッチオービット</b> <span style="color:#f472b6;font-weight:900">最大3ヒット・空中で2回まで</span><p>空中で体の周囲にグリッチの輪を発生させる周囲攻撃。落下は止まらず、そのまま落ちながら最大3ヒットする。発生中の<b>引き寄せは廃止</b>され、ヒットした相手は<b>外向きに吹き飛ぶ</b>。空中で2回まで使える。</p>'+mvSpec(mvS('ダメージ','10×最大3ヒット')+mvS('KB','200')+mvS('発生','即時')+mvS('全体','0.38秒')+mvS('後硬直','0.49秒')+mvS('判定','周囲108×78')+mvS('被弾硬直','0.38秒（1ヒットずつ）'))+'</div></div>'
++'<div class="moveRow"><div><b>空中前+J — デジタルポップ</b><p>片手を突き出し、指先でデジタル爆発を起こす一撃。判定が広く、吹っ飛ばしも強い。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','900')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.41秒')+mvS('判定','84×76')+mvS('被弾硬直','0.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中↓+J — ダイブハック</b><p>斜め下へ突進しながらの斬り下ろし。相手を下方向へ叩き落とす。</p>'+mvSpec(mvS('ダメージ','14')+mvS('KB','600（下方向）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.47秒')+mvS('判定','74×84'))+'</div></div>'
 +'<div class="moveRow"><div><b>J+K 同時押し — バグクラッシュ</b><p>JとKをほぼ同時に押す（90ms以内）と出る合体技。RGBにずれたグリッチの一撃で押し込む。Jチェーンはリセットされる。</p>'+mvSpec(mvS('ダメージ','15')+mvS('KB','420')+mvS('発生','即時')+mvS('全体','0.40秒')+mvS('後硬直','0.57秒')+mvS('判定','76×62')+mvS('被弾硬直','0.42秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>K — グリッチラッシュ</b><p>前方へ滑り込みながらの回路状の一撃。<b>後硬直0.43秒</b>の間は<b>グリッチラッシュ自体だけが再使用できない</b>（K→Kの連打のみ待つ）。それ以外の技（J系・U・L・ワープなど）は後硬直中でも待たずにすぐ出せる。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','430')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.43秒（この技の再使用のみ制限）')+mvS('判定','84×60')+mvS('被弾硬直','0.4秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>前+K — バックスタブワープ</b> <span style="color:#4ade80;font-weight:900">ワープ・ダメージなし</span><p>相手が中距離（約70〜640）にいるときに前+Kを押すと、相手の<b>背後へ瞬間移動</b>する（相手の向きの後ろ側90の位置に出現し、相手の背中を向いた状態になる。ワープ直後にすぐ攻撃が届く距離）。出現位置は必ずステージの床の上になる範囲に収まる。範囲に相手がいない場合は通常の<b>グリッチラッシュ</b>になる。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.57秒')+mvS('移動','相手の背後90へワープ'))+'</div></div>'
++'<div class="moveRow"><div><b>K — グリッチラッシュ</b><p>前方へ滑り込みながらの回路状の一撃。判定は<b>下方向へ約20px広く</b>、低い位置の相手にも届く。<b>後硬直0.43秒</b>の間は<b>グリッチラッシュ自体だけが再使用できない</b>（K→Kの連打のみ待つ）。それ以外の技（J系・U・L・ワープなど）は後硬直中でも待たずにすぐ出せる。逆に、グリッチラッシュ自体も<b>他の技の後硬直中に出せる</b>（出せないのは被弾硬直・拘束など、後硬直以外の行動不能の間だけ）。</p>'+mvSpec(mvS('ダメージ','13')+mvS('KB','430')+mvS('発生','即時')+mvS('全体','0.34秒')+mvS('後硬直','0.43秒（この技の再使用のみ制限）')+mvS('判定','84×80')+mvS('被弾硬直','0.4秒'))+'</div></div>'
++'<div class="moveRow"><div><b>前+K — バックスタブワープ</b> <span style="color:#4ade80;font-weight:900">ワープ・ダメージなし</span><p>相手が中距離（約70〜640）にいるときに前+Kを押すと、相手の<b>背後へ瞬間移動</b>する（相手の向きの後ろ側90の位置に出現し、相手の背中を向いた状態になる。ワープ直後にすぐ攻撃が届く距離）。出現位置は必ずステージの床の上になる範囲に収まる。範囲に相手がいない場合は通常の<b>グリッチラッシュ</b>になる。</p>'+mvSpec(mvS('ダメージ','なし')+mvS('発生','即時')+mvS('全体','0.26秒')+mvS('後硬直','0.35秒')+mvS('移動','相手の背後90へワープ'))+'</div></div>'
 +'<div class="moveRow"><div><b>空中K — エアバースト</b><p>空中で体の<b>前後両側</b>にデータバーストを放つ（重なる位置でもヒットは1回だけ）。</p>'+mvSpec(mvS('ダメージ','12')+mvS('KB','540')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.49秒')+mvS('判定','88×80（前後）')+mvS('被弾硬直','0.4秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>↑+K — ワープアップロード</b> <span style="color:#4ade80;font-weight:900">移動技・範囲攻撃つき・クールタイム2.4秒（空中↓+Kと共通）・ジャンプ回復</span><p>体がデジタルブロックに崩れて消え、<b>真上300</b>の位置にポータルから再構成されるワープ。上昇ではなく瞬間移動。空中で押した場合は<b>0.3秒間 空中で静止</b>してワープの予備動作（体が崩れてポータルが集まるモーション）をしてから移動する。到達した後は<b>空中で0.3秒間静止</b>し、その静止中に<b>自分の周囲へ範囲攻撃</b>を行う（ダメージ12・判定130×100・KB 520で中心から外向き・1回のワープにつき相手ごとに1ヒットまで）。使うと二段ジャンプが回復する。</p>'+mvSpec(mvS('ダメージ','12（到達後の範囲攻撃）')+mvS('KB','520（範囲攻撃・中心から外向き）')+mvS('判定','130×100（範囲攻撃）')+mvS('発生','即時（空中では0.3秒の予備動作の後）')+mvS('全体','0.26秒')+mvS('後硬直','0.38秒')+mvS('着地硬直','0.3秒')+mvS('移動','真上300へワープ')+mvS('再使用','2.4秒（空中↓+Kと共通）')+mvS('追加効果','ジャンプ回復（二段ジャンプ回復）'))+'</div></div>'
-+'<div class="moveRow"><div><b>地上↓+K — ホログラムデコイ</b> <span style="color:#4ade80;font-weight:900">分身生成・クールタイム10秒</span><p>地上で↓+Kを押すと、半透明で明滅する<b>ホログラムの分身</b>を自分の前に投影する。デコイは<b>3秒間</b>、CPUと同じ判断で自律的に戦う：中距離ではデータビットを撃ち、距離に応じて近づいたり間合いを取ったりし、上の段にいる相手はジャンプで追いかけ、場外に出たら復帰する。近距離ではデータナイフとグリッチラッシュを使い分ける。デコイの攻撃は自分の攻撃として扱われる（スコア・コンボ・ゲージも自分に入る）。デコイはホログラムなので<b>飛び道具はすり抜けて当たらない</b>が、<b>飛び道具以外の攻撃を2発受けると消える</b>（1発目では投影が不安定になるだけ）。</p>'+mvSpec(mvS('ダメージ','なし（デコイの攻撃は各技の性能どおり）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.36秒')+mvS('持続','3秒')+mvS('耐久','飛び道具以外の攻撃2発で消滅（飛び道具は当たらない）')+mvS('再使用','10秒'))+'</div></div>'
-+'<div class="moveRow"><div><b>空中↓+K — ワープダウン</b> <span style="color:#4ade80;font-weight:900">移動技・範囲攻撃つき・クールタイム2.4秒（↑+Kと共通）</span><p>空中で↓+Kを押すと、<b>0.3秒間 空中で静止</b>してワープの予備動作（体が崩れてポータルが集まるモーション）をしてから、体がデジタルブロックに崩れて消え、<b>真下にある台か床の上に必ず着地</b>して再構成されるワープ。自分の真下に何もない場所（場外など）ではメインフロアの上に戻る。<b>着地した瞬間に、自分の周囲へ範囲攻撃</b>を行う（ダメージ12・判定130×100・KB 520で中心から外向き・1回のワープにつき相手ごとに1ヒットまで）。また、このワープを使った後は、<b>次に着地するまでの間、落下速度（最大落下速度）が通常の80%</b>に抑えられる。（地上で↓+Kを押した場合はワープではなく「ホログラムデコイ」になる）</p>'+mvSpec(mvS('ダメージ','12（着地時の範囲攻撃）')+mvS('KB','520（範囲攻撃・中心から外向き）')+mvS('判定','130×100（範囲攻撃）')+mvS('発生','0.3秒の予備動作の後')+mvS('全体','0.26秒')+mvS('後硬直','0.38秒')+mvS('移動','真下の台／床へワープ（必ず着地）')+mvS('落下速度','ワープダウン使用後〜次に着地するまで通常の80%')+mvS('再使用','2.4秒（↑+Kと共通）'))+'</div></div>'
++'<div class="moveRow"><div><b>地上↓+K — ホログラムデコイ</b> <span style="color:#4ade80;font-weight:900">分身生成・クールタイム10秒</span><p>地上で↓+Kを押すと、半透明で明滅する<b>ホログラムの分身</b>を自分の前に投影する。デコイは<b>3秒間</b>、CPUと同じ判断で自律的に戦う：中距離ではデータビットを撃ち、距離に応じて近づいたり間合いを取ったりし、上の段にいる相手はジャンプで追いかけ、場外に出たら復帰する。デコイの使う技は<b>本体XENOと完全に同じ</b>で、データナイフの5段チェーン・J系／K系の各派生・データビット・↑+K／空中↓+Kのワープまで、本体と同じ技処理・同じ性能（ダメージ・ノックバック・硬直・判定・発生・後硬直）で出す（ただしデコイ自身がデコイを増やすことはない）。デコイの攻撃は自分の攻撃として扱われる（スコア・コンボ・ゲージも自分に入る）。デコイはホログラムなので<b>飛び道具はすり抜けて当たらない</b>が、<b>飛び道具以外の攻撃を2発受けると消える</b>（1発目では投影が不安定になるだけ）。</p>'+mvSpec(mvS('ダメージ','なし（デコイの攻撃は各技の性能どおり）')+mvS('発生','即時')+mvS('全体','0.30秒')+mvS('後硬直','0.36秒')+mvS('持続','3秒')+mvS('耐久','飛び道具以外の攻撃2発で消滅（飛び道具は当たらない）')+mvS('再使用','10秒'))+'</div></div>'
++'<div class="moveRow"><div><b>空中↓+K — ワープダウン</b> <span style="color:#4ade80;font-weight:900">移動技・範囲攻撃つき・クールタイム2.4秒（↑+Kと共通）</span><p>空中で↓+Kを押すと、<b>0.3秒間 空中で静止</b>してワープの予備動作（体が崩れてポータルが集まるモーション）をしてから、体がデジタルブロックに崩れて消え、<b>真下にある台か床の上に必ず着地</b>して再構成されるワープ。<b>出現した瞬間から0.15秒間は無敵</b>で、その間に着地範囲攻撃を出す。自分の真下に何もない場所（場外など）ではメインフロアの上に戻る。<b>着地した瞬間に、自分の周囲へ範囲攻撃</b>を行う（ダメージ12・判定130×100・KB 620で中心から外向き・1回のワープにつき相手ごとに1ヒットまで）。また、このワープを使った後は、<b>次に着地するまでの間、落下速度（最大落下速度）が通常の80%</b>に抑えられる。（地上で↓+Kを押した場合はワープではなく「ホログラムデコイ」になる）</p>'+mvSpec(mvS('ダメージ','12（着地時の範囲攻撃）')+mvS('KB','620（範囲攻撃・中心から外向き）')+mvS('判定','130×100（範囲攻撃）')+mvS('発生','0.3秒の予備動作の後')+mvS('全体','0.26秒')+mvS('後硬直','0.38秒')+mvS('移動','真下の台／床へワープ（必ず着地）')+mvS('落下速度','ワープダウン使用後〜次に着地するまで通常の80%')+mvS('追加効果','出現直後0.15秒間 無敵')+mvS('再使用','2.4秒（↑+Kと共通）'))+'</div></div>'
 +'<div class="moveRow"><div><b>U — データビット</b> <span style="color:#38bdf8;font-weight:900">飛び道具・3発</span><p>グリッチしたデータの塊を投げる飛び道具。撃つたびに<b>色がランダム</b>に決まり、色ごとに性能が変わる：<b style="color:#60a5fa">青</b>は最速（弾速1240）で標準の威力、<b style="color:#c084fc">紫</b>は中速（880）で威力2倍、<b style="color:#f87171">赤</b>は最遅（560）で威力3倍・吹っ飛ばしも強く、前後にブレながら反則的に進み、当たるとサイバー爆発を起こす。当たった相手は色ごとの時間だけ<b>移動速度が-12%になる</b>。3発まで撃てて、撃った分は1.3秒ごとに1発ずつ自動リロードされる。（スマホでは K/L 枠の L 側タップ）</p>'+mvSpec(mvS('ダメージ','青8／紫16／赤24')+mvS('KB','青300／紫300／赤390')+mvS('発生','即時')+mvS('全体','0.20秒')+mvS('後硬直','0.33秒')+mvS('弾速','青1240／紫880／赤560')+mvS('寿命','1.05秒')+mvS('被弾硬直','赤のみ固定0.42秒')+mvS('追加効果','命中した相手の移動が遅くなる（青・紫0.7秒／赤0.95秒）')+mvS('リロード','1.3秒'))+'</div></div>'
 +'<div class="moveRow"><div><b>L — デジタルダート（必殺）</b> <span style="color:#fde68a;font-weight:900">ゲージMAX時・キーボードは L</span><p>ゲージを全て使い、直径約37の<b>デジタルの核</b>を前方へ1発撃ち出す。核は飛んでいる間、<b>I / J / K / L キーで操舵</b>できる（I=上・J=左・K=下・L=右／入力がなければ直進する／曲がる速さには上限あり）。核を操作している間は、<b>J / K / L の技が全て使用不可</b>になる（核が消えれば通常どおり使える）。何かに当たるまで<b>15秒</b>残り続ける。当たるとサイバー爆発し、相手を<b>1.8秒間グリッチ拘束</b>する（拘束中は一切動けない）。この36ダメージを含む、拘束中に受けたダメージはすべて蓄積され、<b>拘束が終わる瞬間にまとめて適用</b>される。命中してもゲージは戻らない（再チャージの連鎖はない）。ゲージMAX中は体にピンク色の電撃オーラがまとわりつく。（スマホでは ULT ボタン）</p>'+mvSpec(mvS('ダメージ','36（拘束終了時に蓄積分と一括適用）')+mvS('KB','520')+mvS('発生','即時')+mvS('全体','0.40秒')+mvS('後硬直','0.57秒')+mvS('弾速','627（IJKLで操舵可能）')+mvS('大きさ','直径 約37')+mvS('寿命','15秒')+mvS('追加効果','グリッチ拘束1.8秒（拘束中のダメージは蓄積され、終了時に一括適用）'))+'</div></div>'
 +'<div class="moveRow"><div><b>Space / Shift / ダブルタップ — ダッシュ</b><p>横方向だけの高速移動（上下には出ない）。空中でも1回使える。</p>'+mvSpec(mvS('速度','1150')+mvS('持続','0.15秒')+mvS('後硬直','なし（移動技）')+mvS('再使用','2.4秒'))+'</div></div>'
@@ -1813,7 +1813,7 @@ travis:[["tmike1","J 1段目 — マイクスイング",10,300],["tmike2","J 2�
 smiley:[["sknife1","J 1段目 — ナイフ",7,240],["sknife2","J 2段目 — ナイフ",7,240],["sknife3","J 3段目 — 連撃（1ヒット）",3,280],["sknife4","J 4段目 — フィニッシュ",12,460],["sblink","前+J — ブリンク斬り",12,360],["sriseup","ライジング",11,540],["sback","バックスラッシュ",9,320],["sslide","↓+J — スライド",9,580],["sairj","空中J — 回転ダガー",10,280],["diveclaw","空中↓+J — ダイブ",13,560],["jkcombo","J+K — ナイフコンボ",9,420],["sknife","K — ナイフ乱舞（1ヒット）",3,0],["sairknife","空中K — 空中ナイフ（1ヒット）",3,0],["ssweep","↓+K — スイープ",5,280],["proj:knife","U — スローイングナイフ",10,240]],
 mimi:[["mbun1","J 1段目 — バニータッチ",5,180],["sh:claw","SHADE J1 — クロー",12,300],["mbun2","J 2段目 — バニーキック",6,220],["sh:upper1","SHADE J2 — アッパー",14,320],["mpush3","J 3段目 — プッシュ",10,320],["sh:fist","SHADE J3 — フィスト",20,1000],["mfpush","前+J — プッシュダッシュ",10,800],["sh:sweep","SHADE 前+J — スイープ",13,770],["mlowj","↓+J — ロースライド",6,680],["sh:low","SHADE ↓+J — スライド",12,660],["mairspin","空中J — 回転（1ヒット）",4,300],["mdrop","空中↓+J — 掴み投げ",5,560],["sh:smeteor","SHADE — メテオフィスト",24,700],["mlight","J+K — ライトコンボ",9,720],["sh:supper","SHADE J+K — アッパー",28,1130],["sh:sslam","SHADE ↑+K — 連打スラム 1発目",16,760],["sh:sslam2","SHADE ↑+K — 連打スラム 2発目",16,760],["sh:sslam3","SHADE ↑+K — 連打スラム 3発目",20,920],["proj:lwave","↓+K — これならできるよ！",6,210],["proj:mimiball","L — 大好きだよSHADE",52,920]],
 no66:[["n66j1","J 1段目 — ファーストタッチ",12,320],["proj:pellet","J 2段目／J+K — ガトリング弾（1発）",1,50],["n66j3","J 3段目 — ファイナルボム",19,820],["n66hook","J+K — ガトリングフック（最終弾）",20,920],["n66bash","前+J／空中J — メタルバッシュ",16,840],["n66ubomb","↓+J — アンダーボム",17,710],["proj:gren","空中↓+J — ダウンアトミック（爆発）",14,620],["proj:pellet0","K — ガトリング弾（1発）",1,null],["n66blast","↑+K — ブラストアップ（爆風）",15,720],["proj:glauncher","↓+K — グレネードランチャー（爆発）",19,720],["proj:missile","U — ホーミングミサイル",16,300],["proj:umissile","L — バーストエンドフォース（1発）",14,240]],
-xeno:[["xknife1","J 1段目 — データナイフ",6,240],["xknife2","J 2段目 — データナイフ",6,240],["xknife3","J 3段目 — データナイフ",7,280],["xknife4","J 4段目 — データナイフ",8,330],["xknife5","J 5段目 — データナイフ（フィニッシュ）",13,520],["xblink","前+J — フェイズシフト",12,380],["xback","後ろ+J — バックドア",9,330],["xrise","↑+J — ライジングコード",11,540],["xlow","↓+J — ローグリッチ",10,810],["xairj","空中J — グリッチオービット（1ヒット）",10,290],["xpop","空中前+J — デジタルポップ",12,900],["xdive","空中↓+J — ダイブハック",14,600],["xjk","J+K — バグクラッシュ",15,420],["xrush","K — グリッチラッシュ",13,430],["xburst","空中K — エアバースト",12,540],["xwarp","↑+K／空中↓+K／前+K — ワープ",12,520],["xdecoy","地上↓+K — ホログラムデコイ（分身のデータナイフ）",8,340],["proj:xbit","U — データビット（青・基準値）",8,300],["xult","L — デジタルダート（核）",36,520]]
+xeno:[["xknife1","J 1段目 — データナイフ",6,240],["xknife2","J 2段目 — データナイフ",6,240],["xknife3","J 3段目 — データナイフ",7,280],["xknife4","J 4段目 — データナイフ",8,330],["xknife5","J 5段目 — データナイフ（フィニッシュ）",13,520],["xblink","前+J — フェイズシフト",12,380],["xback","後ろ+J — バックドア",9,330],["xrise","↑+J — ライジングコード",11,540],["xlow","↓+J — ローグリッチ",10,810],["xairj","空中J — グリッチオービット（1ヒット）",10,200],["xpop","空中前+J — デジタルポップ",12,900],["xdive","空中↓+J — ダイブハック",14,600],["xjk","J+K — バグクラッシュ",15,420],["xrush","K — グリッチラッシュ",13,430],["xburst","空中K — エアバースト",12,540],["xwarp","↑+K／前+K — ワープ（範囲攻撃）",12,520],["xwarpdown","空中↓+K — ワープダウン（着地範囲攻撃）",12,620],["xdecoy","地上↓+K — ホログラムデコイ（分身は本体と同じ技）",8,340],["proj:xbit","U — データビット（青・基準値）",8,300],["xult","L — デジタルダート（核）",36,520]]
 };
 function crHit(att,key,dmg,kb){
  if(!crActive||!crEff||!att||!att.char||!key)return[dmg,kb];
@@ -1832,7 +1832,7 @@ travis:{"tmike1":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0
 smiley:{"sknife1":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.15,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"sknife2":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"sknife3":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.24,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",54,10,600,1]],"sknife4":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",56,10,600,1]],"sblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.73,0,6,0.01],["hs","被弾硬直",0.45,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"sriseup":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",84,10,600,1]],"sback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"sslide":[["tot","全体",0.16,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",34,10,600,1]],"sairj":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",64,10,600,1]],"diveclaw":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.38,0,3,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",60,10,600,1]],"jkcombo":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["land","着地硬直",0.18,0,3,0.01],["hs","被弾硬直",0.3,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",56,10,600,1]],"sknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"sairknife":[["tot","全体",1.8,0.05,6,0.01],["rec","後硬直",0.5,0,6,0.01],["hs","被弾硬直",0.2,0,2,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",86,10,600,1]],"ssweep":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.28,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",36,10,600,1]],"proj:knife":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.32,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",2.4,0.1,30,0.05],["spd","弾速",1060,10,4000,10],["durL","寿命",1,0.1,30,0.1]]},
 mimi:{"mbun1":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:claw":[["bw","判定 幅",116,10,600,1],["bh","判定 高さ",74,10,600,1]],"mbun2":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:upper1":[["bw","判定 幅",120,10,600,1],["bh","判定 高さ",94,10,600,1]],"mpush3":[["tot","全体",0.6,0.05,6,0.01],["rec","後硬直",0.65,0,6,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",72,10,600,1]],"sh:fist":[["bw","判定 幅",136,10,600,1],["bh","判定 高さ",88,10,600,1]],"mfpush":[["tot","全体",0.52,0.05,6,0.01],["rec","後硬直",0.58,0,6,0.01],["hs","被弾硬直",0.22,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",62,10,600,1]],"sh:sweep":[["bw","判定 幅",134,10,600,1],["bh","判定 高さ",98,10,600,1]],"mlowj":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",68,10,600,1],["bh","判定 高さ",34,10,600,1]],"sh:low":[["bw","判定 幅",92,10,600,1],["bh","判定 高さ",40,10,600,1]],"mairspin":[["tot","全体",0.38,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["land","着地硬直",0.2,0,3,0.01],["hs","被弾硬直",0.22,0,2,0.01]],"mdrop":[["tot","全体",0.32,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",98,10,600,1],["bh","判定 高さ",68,10,600,1]],"sh:smeteor":[["bw","判定 幅",112,10,600,1],["bh","判定 高さ",92,10,600,1]],"mlight":[["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.22,0,3,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",62,10,600,1]],"proj:lwave":[["tot","全体",0.54,0.05,6,0.01],["rec","後硬直",1.1,0,6,0.01],["spd","弾速",560,10,4000,10]],"proj:mimiball":[["tot","全体",0.7,0.05,6,0.01],["rec","後硬直",0.92,0,6,0.01],["spd","弾速",620,10,4000,10],["durL","寿命",2.5,0.1,30,0.1]]},
 no66:{"n66j1":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.22,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",70,10,600,1],["bh","判定 高さ",60,10,600,1]],"proj:pellet":[["tot","全体",0.62,0.05,6,0.01],["rec","後硬直",0.3,0,6,0.01],["hs","被弾硬直",0.16,0,2,0.01],["spd","弾速",980,10,4000,10]],"n66j3":[["tot","全体",0.42,0.05,6,0.01],["rec","後硬直",0.69,0,6,0.01],["bw","判定 幅",86,10,600,1],["bh","判定 高さ",66,10,600,1]],"n66hook":[["tot","全体",0.95,0.05,6,0.01],["rec","後硬直",0.85,0,6,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",66,10,600,1]],"n66bash":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.63,0,6,0.01],["land","着地硬直",0.31,0,3,0.01],["bw","判定 幅",96,10,600,1],["bh","判定 高さ",70,10,600,1]],"n66ubomb":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["bw","判定 幅",100,10,600,1],["bh","判定 高さ",64,10,600,1]],"proj:gren":[["su","発生",0.2,0,2,0.01],["tot","全体",0.7,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["land","着地硬直",0.2,0,3,0.01]],"proj:pellet0":[["tot","全体",0.95,0.05,6,0.01],["rec","後硬直",0.97,0,6,0.01],["hs","被弾硬直",0.16,0,2,0.01],["cd","再使用時間",2.6,0,30,0.1],["spd","弾速",980,10,4000,10]],"n66blast":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.62,0,6,0.01],["cd","再使用時間",2.6,0,30,0.1]],"proj:glauncher":[["su","発生",0.12,0,2,0.01],["tot","全体",0.48,0.05,6,0.01],["rec","後硬直",0.4,0,6,0.01],["spd","弾速",640,10,4000,10]],"proj:missile":[["su","発生",0.3,0,2,0.01],["tot","全体",0.7,0.05,6,0.01],["rec","後硬直",0.88,0,6,0.01],["spd","弾速",480,10,4000,10],["durL","寿命",2.8,0.1,30,0.1]],"proj:umissile":[["tot","全体",1.2,0.05,6,0.01],["rec","後硬直",1.12,0,6,0.01],["spd","弾速",480,10,4000,10],["durL","寿命",3.2,0.1,30,0.1]]},
-xeno:{"xknife1":[["tot","全体",0.18,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"xknife2":[["tot","全体",0.18,0.05,6,0.01],["rec","後硬直",0.17,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"xknife3":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",54,10,600,1]],"xknife4":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",56,10,600,1]],"xknife5":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",58,10,600,1]],"xblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["hs","被弾硬直",0.5,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"xback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.39,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"xrise":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.45,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",86,10,600,1]],"xlow":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.31,0,6,0.01],["hs","被弾硬直",0.44,0,2,0.01],["bw","判定 幅",78,10,600,1],["bh","判定 高さ",40,10,600,1]],"xairj":[["tot","全体",0.38,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["hs","被弾硬直",0.38,0,2,0.01],["bw","判定 幅",108,10,600,1],["bh","判定 高さ",66,10,600,1]],"xpop":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",64,10,600,1]],"xdive":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.47,0,6,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",84,10,600,1]],"xjk":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["hs","被弾硬直",0.42,0,2,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",62,10,600,1]],"xrush":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",60,10,600,1]],"xburst":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",80,10,600,1]],"xwarp":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["cd","再使用時間",2.4,0,30,0.1],["bw","判定 幅",130,10,600,1],["bh","判定 高さ",100,10,600,1]],"xdecoy":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["cd","再使用時間",10,0,30,0.1],["dur","デコイ持続",3,0,60,0.5]],"proj:xbit":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.33,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",1.3,0.1,30,0.05],["durL","寿命",1.05,0.1,30,0.1]],"xult":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["spd","弾速",627,10,4000,10],["durL","寿命",15,0.1,30,0.1]]},
+xeno:{"xknife1":[["tot","全体",0.18,0.05,6,0.01],["rec","後硬直",0.16,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",50,10,600,1]],"xknife2":[["tot","全体",0.18,0.05,6,0.01],["rec","後硬直",0.17,0,6,0.01],["hs","被弾硬直",0.32,0,2,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",52,10,600,1]],"xknife3":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.18,0,6,0.01],["hs","被弾硬直",0.34,0,2,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",54,10,600,1]],"xknife4":[["tot","全体",0.22,0.05,6,0.01],["rec","後硬直",0.2,0,6,0.01],["hs","被弾硬直",0.36,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",56,10,600,1]],"xknife5":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.37,0,6,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",58,10,600,1]],"xblink":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.67,0,6,0.01],["hs","被弾硬直",0.5,0,2,0.01],["bw","判定 幅",80,10,600,1],["bh","判定 高さ",58,10,600,1]],"xback":[["tot","全体",0.24,0.05,6,0.01],["rec","後硬直",0.39,0,6,0.01],["bw","判定 幅",72,10,600,1],["bh","判定 高さ",54,10,600,1]],"xrise":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.45,0,6,0.01],["bw","判定 幅",62,10,600,1],["bh","判定 高さ",86,10,600,1]],"xlow":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.31,0,6,0.01],["hs","被弾硬直",0.44,0,2,0.01],["bw","判定 幅",94,10,600,1],["bh","判定 高さ",40,10,600,1]],"xairj":[["tot","全体",0.38,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["hs","被弾硬直",0.38,0,2,0.01],["bw","判定 幅",108,10,600,1],["bh","判定 高さ",78,10,600,1]],"xpop":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.41,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",76,10,600,1]],"xdive":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.47,0,6,0.01],["bw","判定 幅",74,10,600,1],["bh","判定 高さ",84,10,600,1]],"xjk":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["hs","被弾硬直",0.42,0,2,0.01],["bw","判定 幅",76,10,600,1],["bh","判定 高さ",62,10,600,1]],"xrush":[["tot","全体",0.34,0.05,6,0.01],["rec","後硬直",0.43,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",84,10,600,1],["bh","判定 高さ",80,10,600,1]],"xburst":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.49,0,6,0.01],["hs","被弾硬直",0.4,0,2,0.01],["bw","判定 幅",88,10,600,1],["bh","判定 高さ",80,10,600,1]],"xwarp":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["cd","再使用時間",2.4,0,30,0.1],["bw","判定 幅",130,10,600,1],["bh","判定 高さ",100,10,600,1]],"xwarpdown":[["tot","全体",0.26,0.05,6,0.01],["rec","後硬直",0.38,0,6,0.01],["cd","再使用時間",2.4,0,30,0.1],["bw","判定 幅",130,10,600,1],["bh","判定 高さ",100,10,600,1]],"xdecoy":[["tot","全体",0.3,0.05,6,0.01],["rec","後硬直",0.36,0,6,0.01],["cd","再使用時間",10,0,30,0.1],["dur","デコイ持続",3,0,60,0.5]],"proj:xbit":[["tot","全体",0.2,0.05,6,0.01],["rec","後硬直",0.33,0,6,0.01],["ammo","装填数",3,1,99,1],["rel","リロード時間",1.3,0.1,30,0.05],["durL","寿命",1.05,0.1,30,0.1]],"xult":[["tot","全体",0.4,0.05,6,0.01],["rec","後硬直",0.57,0,6,0.01],["spd","弾速",627,10,4000,10],["durL","寿命",15,0.1,30,0.1]]},
 };
 /* ---- CREATIVE MODE detail stats (v279) ----
    Beyond damage / KB, every move may now carry the numeric stats it
@@ -2607,7 +2607,7 @@ function jbHttpBase(){
    differs — mixed builds would run different simulations and the
    rollback layer would desync instantly, so the mismatch is
    surfaced with VERSION_MSG instead of failing silently. */
-var BUILD_ID="v334";
+var BUILD_ID="v335";
 var VERSION_MSG="バージョンが違います。全員がページを再読み込みしてください";
 var net={role:null,transport:"supabase",code:null,roster:[],myId:null,myIdx:0,isHost:false,expectHost:false,createRetry:0,started:false,selfName:"",selfChar:null,match:null,leaving:false,dissolved:false,seed:0,lobbyMsg:"",kind:"normal",crMods:0};
 var guestChar=null,hostChar=null,forceP2Char=null;
@@ -4361,6 +4361,13 @@ function rbApplyInput(f,bits,F){
     else if((bits&16384)&&holdUltReady(f)){f.rbBu=-999;startAttack(f,"ult")}
    }
   }
+  if(f.attackCd>0&&f.hitstun<=0&&(f.recLockT||0)<=0&&(f.landLagT||0)<=0){ /* XENO グリッチラッシュ recovery bypass (owner spec): while ANOTHER move's recovery (attackCd) still runs, a parked K press that resolves to the plain rush fires anyway — the same 3f lone-press grace and 21f buffer window as the normal dispatch above. A K press that resolves to a different move (デコイ / ワープ) stays parked and still fires when the recovery ends, exactly as before; only an expired window drops it */
+   var tkx=f.rbBk;
+   if(tkx>-100&&F-tkx>=3){
+    if(xenoRushBypass(f)){if(F-tkx<=21){mrecPress(f,"k",tkx);startAttack(f,"k")}f.rbBk=-999}
+    else if(F-tkx>21)f.rbBk=-999;
+   }
+  }
  }
  return inp;
 }
@@ -4984,7 +4991,7 @@ function svOnSnap(m){
  if(m.dc){var nd=m.dc.length;
   for(var dci9=0;dci9<nd;dci9++){var so=m.dc[dci9],od=decoys[dci9];
    if(od){od.x=so.x;od.y=so.y;od.t=so.t;od.face=so.fc;od.state=so.st;od.stateT=so.sT;od.owner=(typeof so.o==="number"&&so.o>=0&&fighters[so.o])?fighters[so.o]:null}
-   else decoys.push({x:so.x,y:so.y,t:so.t,face:so.fc,state:so.st,stateT:so.sT,owner:(typeof so.o==="number"&&so.o>=0&&fighters[so.o])?fighters[so.o]:null,vx:0,vy:0,hp:2,atkCd:0,shotCd:0,rushCd:0,dropT:0,aiT:0,aiMove:0.5,onGround:true,groundPlat:null,airHop:false});
+   else decoys.push({x:so.x,y:so.y,t:so.t,face:so.fc,state:so.st,stateT:so.sT,owner:(typeof so.o==="number"&&so.o>=0&&fighters[so.o])?fighters[so.o]:null,vx:0,vy:0,px:so.x,py:so.y,w:46,h:70,hp:2,attackCd:0,comboStep:0,comboWin:0,hitDone:true,spinHits:0,spinTick:0,airJ:0,jumps:1,ammo:3,reloadT:0,flyCd:0,rushCd:0,decoyCd:0,warpT:0,warpKind:"",warpHoverT:0,invuln:0,xDownFall:false,airLag:0,landT:0,dashT:0,fastfall:false,trail:[],inDown:false,inUp:false,inFwd:false,inBack:false,dropT:0,aiT:0,aiMove:0.5,onGround:true,groundPlat:null,airHop:false});
   }
   if(decoys.length>nd)decoys.length=nd;
  }
@@ -9503,9 +9510,9 @@ function xenoCyberExplosion(x,y,face){ /* XENO U 赤い弾の命中 (user spec):
  for(var cei=0;cei<7;cei++)pushParticle({x:x+(Math.random()-0.5)*44,y:y+(Math.random()-0.5)*36,vx:0,vy:0,life:0.14+Math.random()*0.12,col:cei%3===0?"#ef4444":(cei%3===1?"#f0abfc":"#f8fafc"),size:2.6+Math.random()*3.2,amb:1});
  shake=Math.max(shake,4);beep(160,.16,"sawtooth",.06);setTimeout(function(){beep(1420,.1,"square",.04)},50);
 }
-function xenoWarpBlast(f){ /* XENO ↑+K / ↓+K ワープ範囲攻撃 (owner spec): the ↑+K upload and the ↓+K warp-down BOTH detonate a CYBER BLAST around her body on arrival — 12 dmg, a 130x100 box centred on her, KB 520 launched AWAY from her centre, at most ONE hit per foe per warp (the two meleeHit calls share one hit list — the house pattern for surrounding boxes, see エアバースト). The dressing is hers alone: a geometric crystal shatter (xshard) over stepped block noise (xglitch), circuit traces and a snapping portal ring — no other character's effect is borrowed. The 前+K backstab warp does NOT blast: it never routes through the two exec functions below. CREATIVE keying rides state "xwarp" (every caller sets it before the exec runs), so the blast's damage / KB / box answer to the xwarp entry like any other move */
+function xenoWarpBlast(f,kb){ /* XENO ↑+K / ↓+K ワープ範囲攻撃 (owner spec): the ↑+K upload and the ↓+K warp-down BOTH detonate a CYBER BLAST around her body on arrival — 12 dmg, a 130x100 box centred on her, KB 520 (↑+K) / 620 (↓+K, v335) launched AWAY from her centre, at most ONE hit per foe per warp (the two meleeHit calls share one hit list — the house pattern for surrounding boxes, see エアバースト). The dressing is hers alone: a geometric crystal shatter (xshard) over stepped block noise (xglitch), circuit traces and a snapping portal ring — no other character's effect is borrowed. The 前+K backstab warp does NOT blast: it never routes through the two exec functions below. CREATIVE keying rides state "xwarp" (every caller sets it before the exec runs), so the blast's damage / KB / box answer to the xwarp entry like any other move */
  var wbf=null;for(var wbi=0;wbi<fighters.length;wbi++){if(fighters[wbi]!==f){wbf=fighters[wbi];break}}
- var wbHit=[];meleeHit(f,wbf,130,100,12,520,f.face,-0.3,0,false,0,wbHit);meleeHit(f,wbf,130,100,12,520,-f.face,-0.3,0,false,0,wbHit);
+ var wbHit=[];var wbKb=kb||520;meleeHit(f,wbf,130,100,12,wbKb,f.face,-0.3,0,false,0,wbHit);meleeHit(f,wbf,130,100,12,wbKb,-f.face,-0.3,0,false,0,wbHit);
  spawnVecBurst("xshard",f.x,f.y+f.h*0.45,112,0.4,0,f.face,1);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,66,0.32,0,f.face,0.95);
  xenoCircuitFx(f.x,f.y+f.h*0.45,74);xenoRingFx(f.x,f.y+f.h*0.45,66);
  beep(230,.13,"sawtooth",.055);setTimeout(function(){beep(1340,.08,"square",.04)},45);
@@ -9529,7 +9536,8 @@ function xenoWarpDownExec(f){ /* XENO 空中↓+K ワープダウンの実移動
  f.x=destX;f.y=destPlat.y-f.h;f.vy=0;f.vx=0;f.onGround=true;f.groundPlat=destPlat;f.fastfall=false;f.jumps=1;f.landT=0.18;f.px=f.x;f.py=f.y;
  f.xDownFall=true; /* ↓+K使用後 (owner spec): 次に着地するまで、落下速度（最大落下速度）は通常の80% — the flag is armed here, on the warp's own arrival, and cleared by her NEXT physics landing in stepFighter (the onGround transition), so any fall she takes after using ワープダウン — walking off the ledge she landed on, being launched again — falls at 80% of the normal cap until she touches down */
  xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58);xenoRingFx(f.x,f.y+f.h*0.45,40); /* arrival: she snaps back into solid form through the second ring, feet on the surface */
- xenoWarpBlast(f); /* 着地時 (owner spec): the instant she materialises ON the surface, the cyber blast fires around her */
+ f.invuln=Math.max(f.invuln||0,0.15); /* 出現直後の無敵 (v335, owner spec): from the instant she materialises she is untouchable for 0.15s — the whole span until the landing blast below has fired */
+ var _wk335=crKeyCtx;crKeyCtx="xwarpdown";xenoWarpBlast(f,620);crKeyCtx=_wk335; /* 着地時 (owner spec): the instant she materialises ON the surface, the cyber blast fires around her — KB 620 (v335, owner spec; was 520 — the ↑+K upload blast stays 520), keyed to its own CREATIVE entry (xwarpdown) so the two blasts keep separate numbers */
  beep(1560,.06,"square",.045);setTimeout(function(){beep(660,.09,"sawtooth",.04)},60);
 }
 function xenoWarpChargeStart(f,kind){ /* XENO ワープ予備動作 (user spec): an AIR press of ↑+K / ↓+K does not warp at once — she hangs in place for 0.3s (state "xcharge", held by the gravity step) while the warp visibly CHARGES: her body tears and crumbles into digital blocks (drawXeno's xcharge rendering), portal rings gather in on her (the xcharge tick in stepFighter keeps spawning them), and only when warpT runs out does the cut fire (xenoWarpUpExec / xenoWarpDownExec). The shared flyCd 2.4s is paid at the press, like the instant ground warp; being hit cancels the charge (and applyHit's flyCd reset refunds it) */
@@ -9543,9 +9551,14 @@ function xenoWarpChargeStart(f,kind){ /* XENO ワープ予備動作 (user spec):
    exactly 3 seconds. While it lives it fights like a CPU opponent
    (user spec): a decision brain on aiControl's own pattern — a
    fresh decision every 0.2–0.45s (aiT / aiMove), closing in while
-   far, shooting her data bits at mid range, striking with the
-   data knife (8 dmg / KB 340 every 0.55s) or lunging with the
-   glitch rush in close, jumping up after a foe on a higher level,
+   far, and fighting with the REAL XENO's own moves (v335, owner
+   spec — see decoyUseMove: the clone's strikes are fired through
+   startXenoAttack itself via a body swap, so every move — the
+   five-stage knife chain, every J / K variant, the data bits,
+   the ↑+K / air ↓+K warps — lands with the original's exact
+   damage / KB / hitstun / boxes / startup / recovery; only the
+   ground ↓+K is never chosen, so a clone never projects a clone),
+   jumping up after a foe on a higher level,
    dropping through ledges after one below, and recovering toward
    the stage when knocked toward the void — every hit credited to
    its owner through applyHit / her own projectiles, so score /
@@ -9561,8 +9574,8 @@ function xenoWarpChargeStart(f,kind){ /* XENO ワープ予備動作 (user spec):
    pacing and ↑+K keeps its shared flyCd. Drawing is drawDecoy:
    a translucent, flickering hologram copy of her sprite with
    scanlines and RGB-split ghosts — never a solid second body. */
-function spawnDecoy(f){ /* XENO 地上↓+K ホログラムデコイの投影 (owner spec v333 — the move returns, routed from the GROUND ↓+K press in startXenoAttack; the AIR press keeps ワープダウン): the clone materialises just ahead of her, on her own footing, already facing her way, with the full field set the decoy tick in simStepFrame reads (brain timers on the CPU's fields / rhythm, physics state, and hp 2 — TWO non-projectile hits bring it down, see hitDecoy; projectiles never touch it at all). Lifetime rides the CREATIVE xdecoy "dur" field (default 3s), exactly like the other placed objects' durations. The projection dressing is hers alone: stepped glitch blocks, a portal ring snapping open at the clone's position and circuit traces — the same digital vocabulary as her warps, no borrowed effect */
- var dc={owner:f,x:f.x+f.face*58,y:f.y+f.h-70,vx:0,vy:0,face:f.face,t:crDurV("xeno","xdecoy","dur",3),hp:2,state:"idle",stateT:0,atkCd:0.35,shotCd:0.5,rushCd:0,dropT:0,aiT:0.1,aiMove:0.5,onGround:!!f.onGround,groundPlat:f.groundPlat||null,airHop:false};
+function spawnDecoy(f){ if(DECOY_ACT>0)return; /* a decoy never projects another decoy (owner spec) */ /* XENO 地上↓+K ホログラムデコイの投影 (owner spec v333 — the move returns, routed from the GROUND ↓+K press in startXenoAttack; the AIR press keeps ワープダウン): the clone materialises just ahead of her, on her own footing, already facing her way, with the full field set the decoy tick in simStepFrame reads (brain timers on the CPU's fields / rhythm, physics state, and hp 2 — TWO non-projectile hits bring it down, see hitDecoy; projectiles never touch it at all). Lifetime rides the CREATIVE xdecoy "dur" field (default 3s), exactly like the other placed objects' durations. The projection dressing is hers alone: stepped glitch blocks, a portal ring snapping open at the clone's position and circuit traces — the same digital vocabulary as her warps, no borrowed effect */
+ var dc={owner:f,x:f.x+f.face*58,y:f.y+f.h-70,px:f.x+f.face*58,py:f.y+f.h-70,vx:0,vy:0,w:46,h:70,face:f.face,t:crDurV("xeno","xdecoy","dur",3),hp:2,state:"idle",stateT:0,attackCd:0.35,comboStep:0,comboWin:0,hitDone:true,spinHits:0,spinTick:0,airJ:0,jumps:1,ammo:3,reloadT:0,flyCd:0,rushCd:0,decoyCd:0,warpT:0,warpKind:"",warpHoverT:0,invuln:0,xDownFall:false,airLag:0,landT:0,dashT:0,fastfall:false,trail:[],inDown:false,inUp:false,inFwd:false,inBack:false,dropT:0,aiT:0.1,aiMove:0.5,onGround:!!f.onGround,groundPlat:f.groundPlat||null,airHop:false}; /* v335: the clone carries a full XENO fighter field set (move state / cooldowns / ammo / warp timers) — decoyUseMove swaps these onto the owner so startXenoAttack itself fires the clone's moves (see the helpers below clearDecoysOf) */
  if(dc.x<40)dc.x=40;if(dc.x>WORLD_W-40)dc.x=WORLD_W-40;
  decoys.push(dc);
  spawnVecBurst("xglitch",dc.x,dc.y+35,42,0.3,0,dc.face,0.95);xenoPortalFx(dc.x,dc.y+35,46);xenoCircuitFx(dc.x,dc.y+35,38);
@@ -9602,6 +9615,51 @@ function hitDecoy(dc){
 }
 function clearDecoysOf(owner,quiet){
  for(var cdi=decoys.length-1;cdi>=0;cdi--){if(decoys[cdi].owner===owner)destroyDecoy(decoys[cdi],quiet)}
+}
+/* ---- XENO デコイ 本体同一技 (v335, owner spec) ----
+   The clone's every move is fired by the REAL move processor:
+   decoyUseMove BODY-SWAPS the clone's fighter fields (position /
+   physics / move state / cooldowns / ammo / warp timers / input
+   intent) onto its owner for one synchronous call, runs the
+   owner's own startXenoAttack, then swaps everything back and
+   stores the resulting fields on the clone. Because the call IS
+   startXenoAttack with the clone's body, every move — the
+   five-stage data-knife chain, every J / K variant (↓+J launch,
+   ↑+J rise, back+J, air J orbit, air ↓+J dive, J+K, rush,
+   backstab warp, air K burst), the U data bits and the ↑+K /
+   air ↓+K warps (charge included, via the clone's own warpT
+   tick in the decoy filter) — comes out with the original's
+   exact processing and numbers: damage, knockback, hitstun,
+   boxes, startup and recovery all match by construction, and
+   hits credit the OWNER (score / combo / meter), exactly as the
+   move list promises. The combo / meter fields are deliberately
+   NOT swapped: gains land on the owner herself. The one move
+   never fired is the GROUND ↓+K — decoyUseMove is never asked
+   for it, and spawnDecoy itself refuses while DECOY_ACT runs,
+   so a clone can never project another clone. The ult (L) is
+   likewise never chosen: it is not in the clone's repertoire. */
+var DECOY_ACT=0;
+var DC_SWAP_FIELDS=["x","y","px","py","vx","vy","face","onGround","groundPlat","fastfall","jumps","airJ","airLag","landT","xDownFall","state","stateT","attackCd","comboWin","comboStep","hitDone","spinHits","spinTick","dashT","ammo","reloadT","flyCd","rushCd","decoyCd","warpT","warpKind","warpHoverT","invuln"];
+function decoySwapIn(dc){
+ var o=dc.owner,s={};
+ for(var i=0;i<DC_SWAP_FIELDS.length;i++){var k=DC_SWAP_FIELDS[i];s[k]=o[k];o[k]=dc[k]}
+ s._isPlayer=o.isPlayer;s._remote=o.remote;s._hDown=o.hDown;s._hUp=o.hUp;s._hFwd=o.hFwd;s._hBack=o.hBack;s._trail=o.trail;
+ o.isPlayer=false;o.remote=true;o.hDown=!!dc.inDown;o.hUp=!!dc.inUp;o.hFwd=!!dc.inFwd;o.hBack=!!dc.inBack;o.trail=dc.trail||(dc.trail=[]);
+ DECOY_ACT++;return s;
+}
+function decoySwapOut(dc,s){
+ var o=dc.owner;
+ for(var i=0;i<DC_SWAP_FIELDS.length;i++){var k=DC_SWAP_FIELDS[i];dc[k]=o[k];o[k]=s[k]}
+ o.isPlayer=s._isPlayer;o.remote=s._remote;o.hDown=s._hDown;o.hUp=s._hUp;o.hFwd=s._hFwd;o.hBack=s._hBack;o.trail=s._trail;
+ DECOY_ACT--;
+}
+function decoyUseMove(dc,type,tgt){
+ var o=dc.owner;if(!o||o.dead||!tgt||type==="ult")return;
+ if((type==="j"||type==="k"||type==="jk")&&xenoCoreActive(o))return; /* the real fighter's J / K / L lockout while her own core flies (startAttackCore) binds the clone's moves the same way */
+ var s=decoySwapIn(dc);
+ startXenoAttack(o,type,tgt);
+ if(o.attackCd>0)o.attackCd+=0.07; /* addRecovery: the same +0.07 tail startAttackCore pays for the real fighter */
+ decoySwapOut(dc,s);
 }
 /* XENO digital-shot colours (reworked — user spec): every U shot
    rolls ONE of red / blue / purple AT RANDOM at the muzzle — the
@@ -9655,13 +9713,13 @@ function startXenoAttack(f,type,foe){
         and a digital explosion pops at her fingertips — one hit
         in front, dressed BIG (see the xpop burst call below), no
         warp, no chain, no follow-up. The blast box is WIDER and
-        the launch STRONGER than before (user spec): 84x64 /
+        the launch STRONGER than before (user spec): 84x76 /
         KB 900 (was 560; the box was 66x54 / KB 400 before that),
         and the burst dressing grew
         with the box so the visible explosion covers the hit */
      f.state="xpop";f.stateT=0.26;f.attackCd=0.34;f.comboWin=0;
      if(f.vy>60)f.vy=60;f.vx+=f.face*110;capVx(f,RUN_MAX*1.15);
-     meleeHit(f,foe,84,64,12,900,f.face,-0.24,0.4);
+     meleeHit(f,foe,84,76,12,900,f.face,-0.24,0.4,false,0,null,false,null,null,null,12); /* 判定の下方向拡大 (owner spec): the centre drops 12px as h grows 64 -> 76 — top edge and width unmoved, the bottom edge reaches ~12px lower (meleeHit yOff) */
      spawnVecBurst("xpop",f.x+f.face*54,f.y+f.h*0.42,118,0.42,0,f.face,0.98);xenoCircuitFx(f.x+f.face*54,f.y+f.h*0.42,70);xenoRingFx(f.x+f.face*54,f.y+f.h*0.42,58);shake=Math.max(shake,3); /* XENO-only dressing (user request): the fingertip digital explosion, blown up until it unmistakably reads as an explosion — a strobing square core, a dozen square fragments, a circuit cross and a snapping target frame at her fingertips; no borrowed burst */
      beep(1180,.06,"square",.045);setTimeout(function(){beep(340,.08,"sawtooth",.04)},50);
    }else if(!f.onGround){
@@ -9669,12 +9727,13 @@ function startXenoAttack(f,type,foe){
         AROUND herself, on the same skeleton as KAIRO's hover spin —
         but with NO hover (user spec): nothing brakes her fall, so
         gravity pulls her down at the normal rate while the move
-        ticks out up to 3 hits of a surrounding box (周囲108x66,
-        10 dmg / KB 290, 被弾硬直 0.38s, one shared hit list per tick so a foe is
+        ticks out up to 3 hits of a surrounding box (周囲108x78,
+        10 dmg / KB 200, 被弾硬直 0.38s, one shared hit list per tick so a foe is
         struck once per tick), capped at 2 uses per airborne stint.
-        A weak vacuum pull runs while the state lasts (user spec):
-        nearby foes are dragged slightly toward her so the box
-        connects more easily (see the xairj block in stepFighter).
+        No vacuum pull (v335, owner spec): the ticks blow foes
+        outward at KB 200, so the old weak pull-in was removed
+        — it would have fought the launch (see the xairj block
+        in stepFighter).
         The ticks live in stepFighter (state "xairj"); the dressing
         is hers alone — stepped block noise and a snapping square
         orbit frame, never KAIRO's ice */
@@ -9698,7 +9757,7 @@ function startXenoAttack(f,type,foe){
         48px minimum rise so a foe already above the apex still
         pops (see applyHit). Sideways stays the house straight-up
         convention (dir 0 — essentially NO drift), and damage 10 /
-        box 78x40 / hitstun 0.44s (0.34 + 0.1, v334 owner balance). CREATIVE: the
+        box 94x40 / hitstun 0.44s (0.34 + 0.1, v334 owner balance; width 78 -> 94 in v335). CREATIVE: the
         move's KB field (base 810) no longer scales a launch
         speed — it scales the REACH HEIGHT above her own feet by
         kb/810 (xlApexY below), so the editor value and the
@@ -9706,7 +9765,7 @@ function startXenoAttack(f,type,foe){
      f.state="xlow";f.stateT=0.2;f.attackCd=0.24;f.comboWin=0;
      f.vx=f.face*430;
      var xlApexY=(f.y+f.h)-(f.h+25)*(crHit(f,"xlow",10,810)[1]/810);
-     meleeHit(f,foe,78,40,10,810,0,-1.0,0.44,false,0,null,false,f.face,null,xlApexY);
+     meleeHit(f,foe,94,40,10,810,0,-1.0,0.44,false,0,null,false,f.face,null,xlApexY);
      xenoGlitchFx(f,6);spawnVecBurst("xcircuit",f.x+f.face*36,f.y+f.h*0.6,40,0.3,0,f.face,0.9);beep(880,.06,"square",.04);
    }else if(upHeld){
      /* ライジングコード (up+J): rising cut — landing it refunds
@@ -9857,7 +9916,7 @@ function startXenoAttack(f,type,foe){
         HARD-CLAMPED inside the stage (see the clamp at the jump
         itself): this warp can NEVER deposit her off stage, no
         matter how close to — or past — the edge the foe stands */
-     f.state="xwarp";f.stateT=0.26;f.attackCd=0.5;f.comboWin=0;
+     f.state="xwarp";f.stateT=0.26;f.attackCd=0.28;f.comboWin=0; /* 後硬直 0.35秒 (v335, owner spec — was attackCd 0.5 = 後硬直 0.57秒): recovery is attackCd + the shared 0.07 tail, so 0.28 + 0.07 = 0.35 */
      xenoGlitchFx(f,12);xenoPortalFx(f.x,f.y+f.h*0.45,58); /* departure: the body dissolves into blocks inside the ring and is gone */
      var xwTx=foe.x-foe.face*90,xwTy=foe.y; /* 90, was 150 (owner spec): she materialises BEHIND the foe much closer than before — near enough that an attack lands right after the warp, but still with a small gap, never overlapping the foe. The stage clamp below is unchanged */
      /* NEVER OFF STAGE (user spec): the old clamp only kept her inside
@@ -9891,7 +9950,7 @@ function startXenoAttack(f,type,foe){
      if((f.rushCd||0)>0)return;
      f.state="xrush";f.stateT=0.34;f.attackCd=0;f.comboWin=0;f.rushCd=0.43;
      f.vx=f.face*300;
-     meleeHit(f,foe,84,60,13,430,f.face,-0.24,0.4);
+     meleeHit(f,foe,84,80,13,430,f.face,-0.24,0.4,false,0,null,false,null,null,null,20); /* 判定の下方向拡大 (v335, owner spec): the centre drops 20px as h grows 60 -> 80, so the top edge is unmoved and the bottom edge reaches ~20px lower (meleeHit yOff) */
      xenoGlitchFx(f,11);xenoCircuitFx(f.x+f.face*40,f.y+f.h*0.45,36);beep(1330,.05,"square",.045);
    }
  }else if(type==="l"){
@@ -10509,6 +10568,29 @@ function xenoCoreActive(f){
  for(var i=0;i<projectiles.length;i++){var p=projectiles[i];if(p.kind==="xdart"&&p.owner===f)return true}
  return false;
 }
+/* XENO グリッチラッシュ recovery bypass (owner spec): decides whether
+   a K press on this fighter, RIGHT NOW, resolves to the plain ground
+   グリッチラッシュ — the one move that ignores OTHER moves' recovery
+   (attackCd). True only when she is grounded with no ↓ / ↑ held (those
+   presses are the デコイ / ワープダウン / ワープアップ — different K
+   moves, no bypass) and a forward-held press would NOT become the
+   バックスタブワープ (a live foe inside the warp's 70..640 / ±280
+   window turns the press into the warp — also a different move); a
+   forward press with nobody in range falls through to the rush in
+   startXenoAttack, so it qualifies. The rush's own rushCd must also
+   be down — K->K still waits the full 0.43s. The direction reads
+   mirror startXenoAttack's own expressions, so the bypass decision
+   and the move resolution can never disagree */
+function xenoRushBypass(f){
+ if(!f||f.char!=="xeno"||!f.onGround||f.state==="xcharge")return false;
+ if((f.rushCd||0)>0)return false;
+ var downHeld=(f.isPlayer&&(!!keys.down||stick.dy>0.55))||(f.remote&&f.hDown);
+ var upHeld=(f.isPlayer&&!!keys.jump)||(f.remote&&f.hUp);
+ if(downHeld||upHeld)return false;
+ var fwdHeld=f.isPlayer?((f.face===1&&(!!keys.right||stick.dx>0.28))||(f.face===-1&&(!!keys.left||stick.dx<-0.28))):(f.remote?f.hFwd:Math.abs(f.vx)>200);
+ if(fwdHeld){var foe=nearestOpponent(f);if(foe&&!foe.dead&&Math.abs(foe.x-f.x)>=70&&Math.abs(foe.x-f.x)<=640&&Math.abs(foe.y-f.y)<=280)return false}
+ return true;
+}
 function startAttackCore(f,type){
  /* XENO core lockout (v331, owner spec): while the fighter's own
     デジタルの核 is in flight, the J / K / L moves ALL refuse —
@@ -10531,7 +10613,19 @@ function startAttackCore(f,type){
     check the timer before dispatching), so this single refusal locks
     them all. 着地硬直 (f.landLagT) refuses moves on the same terms. */
  if((f.recLockT||0)>0||(f.landLagT||0)>0)return;
- if(f.attackCd>0||f.hitstun>0||f.dead||f.guarding||(f.heldT||0)>0)return; /* 掴まれ中もワザ不可 */
+ /* XENO グリッチラッシュ recovery bypass (owner spec): the plain
+    ground K rush ignores OTHER moves' recovery — while attackCd
+    still runs from a J chain / U / L / ↑K / ↓K / 前+K warp / anything
+    that is not the rush itself, a K press that resolves to the plain
+    rush fires anyway (xenoRushBypass decides the resolution; the
+    rush's own rushCd still gates it inside startXenoAttack). Every
+    OTHER inability refuses it exactly as before: hitstun (the
+    glitch bind holds hitstun up for its whole span in stepFighter,
+    so a bound XENO still cannot rush out of it), being held, the
+    full lock and landing lag checked above, guarding, death, and
+    the core-flight J/K/L lockout at the top of this function */
+ var xrushBypass=(type==="k"&&xenoRushBypass(f));
+ if((f.attackCd>0&&!xrushBypass)||f.hitstun>0||f.dead||f.guarding||(f.heldT||0)>0)return; /* 掴まれ中もワザ不可 */
  if(f.ultChargeT>0||f.pushBy)return; /* the ult charge is uncontrollable; a pushed victim cannot act */
  if(f.dashT>0&&type!=="j")return; /* only J can dash-cancel */
  var wasAir=!f.onGround; /* 着地硬直: was this move started in the air? (applyLandLag hook on every exit below) */
@@ -10748,7 +10842,7 @@ function startAttack(f,type){
  if(typeof ov.dur==="number"&&(f.flameT||0)!==pre.flT)f.flameT=ov.dur;
  if(typeof ov.tot==="number"&&(f.flyDur||0)!==pre.flyD)f.flyDur=ov.tot;
 }
-function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxDir,kbXMul,launchY){ /* kbXMul (optional, trailing): forwarded to applyHit as kbX — scales only the horizontal launch component (AXE 震撃 passes 0.05). launchY (optional, trailing): forwarded to applyHit as launchY — a fixed-apex launch whose vertical speed is solved from the victim's position to that world Y, ignoring knockback resistance (XENO ↓+J ローグリッチ) */
+function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxDir,kbXMul,launchY,yOff){ /* kbXMul (optional, trailing): forwarded to applyHit as kbX — scales only the horizontal launch component (AXE 震撃 passes 0.05). launchY (optional, trailing): forwarded to applyHit as launchY — a fixed-apex launch whose vertical speed is solved from the victim's position to that world Y, ignoring knockback resistance (XENO ↓+J ローグリッチ) */
  if(crActive&&att&&att.char){var _mk=crKeyCtx||att.state;if(_mk){var _bw=crXVal(att.char,_mk,"bw"),_bh=crXVal(att.char,_mk,"bh");if(_bw!=null){var _bwd=crXDef(att.char,_mk,"bw");if(_bwd)range*=_bw/_bwd}if(_bh!=null){var _bhd=crXDef(att.char,_mk,"bh");if(_bhd)h*=_bh/_bhd}if(burn>0)burn=crDurV(att.char,_mk,"durB",burn)}}
  /* boxDir (optional): when given, the hit BOX is centred in this
     direction instead of dir — dir keeps driving only the knockback.
@@ -10766,7 +10860,7 @@ function meleeHit(att,def,range,h,dmg,kb,dir,up,hs,pierce,burn,hitList,grab,boxD
     attacker's release-time facing direction (see the grab system
     note above applyGrabHit). The burn / bleed riders below still
     apply on a grab connect, exactly as on a normal hit. */
- var cx=att.x+(boxDir==null?dir:boxDir)*(range*0.55),cy=att.y+att.h*0.45;
+ var cx=att.x+(boxDir==null?dir:boxDir)*(range*0.55),cy=att.y+att.h*0.45+(yOff||0); /* yOff (optional, trailing): drops the box centre by this many px — paired with a matching h increase it grows the box DOWNWARD only, its top edge unmoved (XENO グリッチラッシュ / デジタルポップ, v335) */
  dbgBox(cx,cy,range*1.44,h*2,"255,45,120",16); /* hitbox viewer (おかき only): the exact box this call tests — half-extents range*0.72 across / h up-down from (cx,cy) */
  var hitAny=false;
  /* XENO デコイ: a melee box that reaches a hologram decoy lands
@@ -10805,7 +10899,7 @@ function no66BashHit(f,foe){
    his 1.45 base rate underneath those divisors. KOJIRO tuning (user spec):
    his ult meter gain is multiplied by a further 0.869 on top of all that
    (total ~x0.7, nerfed from ~x0.9). */
-function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?0.6:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.36; /* AXE ult gain (user spec): x0.24 total (1/1.5 x 0.36) — ウルト溜め x0.4倍の下方修正 (was x0.6 total) */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.4 total (base 0.6 / 1.5, user spec — down from x0.7 total / base 1.05). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
+function meterGainFor(att,dmg){var m=(att.char==="kairo"?1/1.6:(att.char==="kojiro"?1.45:(att.char==="sara"?0.6:(att.char==="orchid"?0.735:(att.char==="smiley"?0.75:(att.char==="travis"?0.675:(att.char==="mimi"?0.66:1)))))))/1.5; /* MIMI&SHADE ult gain x0.6 -> x0.44 total (base 0.66 / 1.5, user balance spec): two bodies land hits often, so the gauge fills slower than standard */ /* SMILEY x1.1 -> x0.5 total (base 0.75 / 1.5, user spec); TRAVIS ult gain x0.66 -> x0.45 total (base 0.675 / 1.5, user spec) */if(att.char==="kojiro")m/=1.2;if(att.char==="warden")m*=0.54;if(att.char==="axe")m*=0.36; /* AXE ult gain (user spec): x0.24 total (1/1.5 x 0.36) — ウルト溜め x0.4倍の下方修正 (was x0.6 total) */if(att.char==="kojiro")m*=0.869; /* KOJIRO ult gain (user spec): total ~x0.7 (1.45/1.5/1.2 x 0.869), down from ~x0.9 (was x1.117). WARDEN ult gain (user spec): x0.36 total (1/1.5 x 0.54), down from x0.46 (was 1/1.5 x 0.69) */if(att.char==="xeno")m*=0.7; /* XENO ウルト溜まり x0.7 (owner spec): every meter gain in the game routes through this one function (damage dealt — applyHit full / guarded / glitch-banked branches and applyShadeHit; there is no passive-over-time or damage-taken gain), so this single multiplier covers ALL of her gain paths. The 100 cap and the ult itself are unchanged */return dmg*1.9*m} /* SARA: ult gain from damage dealt is x0.4 total (base 0.6 / 1.5, user spec — down from x0.7 total / base 1.05). ORCHID: x0.49 total (base 0.735 / 1.5, user balance spec — down from x0.59 total / base 0.88) */
 /* v99 damage ledger (bandit.rip-style scoring): every point of HP a
    fighter actually LOSES is credited to whoever dealt it, per life, on
    the VICTIM (def.dmgBy[fighters index] = total). Callers pass the real
@@ -11058,7 +11152,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX,launchY){
  /* GUARD (all characters): while guarding on the ground, a FRONTAL hit
     deals 20% damage (an 80% cut — was 1/10), counted in DECIMALS with
     no integer rounding and no minimum-1 clamp (user spec), pushes
-    only a few millimetres, and causes NO hitstun. Guard direction is
+    only a few millimetres, and causes NO hitstun — guard stun is ZERO for every character and every move (v335, owner spec: the guard branch below also wipes any residual hitstun outright, so a guarded hit can never leave the defender stunned). Guard direction is
     the side the shield faces; the attack is frontal when its source
     is on that side. Guard can be held forever.
     TRAVIS ult exception (user spec): a fighter who has already TAKEN
@@ -11082,7 +11176,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX,launchY){
    if(gSide===(def.guardDir||def.face)){
      var gd=d100(dmg*0.2);
      var hpBeforeG=def.hp;def.hp-=gd;recordDmg(att,def,hpBeforeG-Math.max(0,def.hp));if(att&&att!==def&&att.char==="smiley"&&(att.awakenT||0)>0&&!att.dead)att.hp=Math.min(att.maxHp||att.hp,att.hp+d100((hpBeforeG-Math.max(0,def.hp))*0.20)); /* SMILEY Berserker lifesteal: even through guard, he heals 20% of the HP he actually took (user spec; was 15%) — decimals kept, no integer rounding */def.lastHurt=time;def.lastAttacker=att;def.lastAttackT=time;if(!hitFxMute)def.flash=0.08;
-     def.vx=noKb?0:dir*22;def.vy=def.onGround?0:def.vy; /* a few mm of pushback only, no launch, no hitstun — and damage-only hits (noKb) do not even push */
+     def.hitstun=0;def.vx=noKb?0:dir*22;def.vy=def.onGround?0:def.vy; /* guard stun ZERO (v335, owner spec — ALL characters / ALL moves): a guarded hit never stuns, and any residual stun is wiped on the spot; only a few mm of pushback, no launch — and damage-only hits (noKb) do not even push */
      if(!hitFxMute){hitstop=0.012;shake=Math.min(shake+1.5,4);
      if(!noParts)spawnParticles(def.x+(def.guardDir||def.face)*26,def.y+def.h*0.45,8,"#a5f3fc",150);
      spawnRing(def.x,def.y+def.h*0.45,"#a5f3fc",40);if(!noParts){spawnSparks(def.x,def.y+def.h*0.45,dir,"#a5f3fc",5);spawnFxBurst(FXIMG.hit,def.x+(def.guardDir||def.face)*24,def.y+def.h*0.45,72,0.18,(Math.random()-0.5)*0.8,dir,0.75)}
@@ -11118,6 +11212,7 @@ function applyHit(att,def,dmg,kb,dir,up,isUlt,cx,cy,noKb,hs,pierce,kbX,launchY){
 }
 function killFighter(def,att){
  clearDecoysOf(def,true); /* XENO: her hologram decoys die with her — no orphan clones fighting on after the KO */
+ if(def.char==="xeno"){for(var xcd=projectiles.length-1;xcd>=0;xcd--){if(projectiles[xcd].kind==="xdart"&&projectiles[xcd].owner===def)projectiles.splice(xcd,1)}} /* XENO ウルトの核 (owner spec): a core still in flight when its owner is KO'd is removed with her — and since the J / K / L lockout is derived from the core's existence (xenoCoreActive), it lifts at the same moment. Removal on hit / at the 15s expiry is unchanged */
  def.dead=true;def.respawnT=1.4;def.hp=0;def.ultChain=0;def.guarding=false;def.ultChargeT=0;def.tbT=0;def.tbIdx=-1;def.tbAct=0;def.sgT=0;def.sgIdx=-1;def.sgAct=0;def.warpT=0;def.warpKind="";def.warpHoverT=0;def.ultBoostT=0; /* dying also clears the TRAVIS ult / シング・タイム guard-break marks, any pending XENO warp charge and any ult speed boost */def.pushBy=null;def.pushT=0;def.heldT=0;def.heldBy=null;def.heldKb=0; /* dying ends any grab hold on the victim — no throw fires from beyond the grave */def.chaos=false;def.chaosT=0;def.awakenT=0;def.bleedT=0;def.bleedBy=null;def.burnT=0;def.burnBy=null;def.flameT=0;def.flameDelay=0;def.flameMode=0;def.poisonT=0;def.poisonBy=null;def.slowT=0;def.glitchT=0;def.glitchBank=0;def.glitchBankBy=null;def.buffT=0;def.venom=false;def.flyDur=0; /* dying resets the ult chain count — and ends SARA's chaos mode / burn / flame channels, ORCHID's poison, slow, nutrition buff and flight */
  for(var kf=0;kf<fighters.length;kf++){if(fighters[kf].pushBy===def){fighters[kf].pushBy=null;fighters[kf].pushT=0}if(fighters[kf].heldBy===def){fighters[kf].heldT=0;fighters[kf].heldBy=null;fighters[kf].heldKb=0}} /* a dead grabber releases whoever it was holding, with no throw */
  if(def.isPlayer&&mode!=="online"&&!matchOver)respawnSelectPending=true; /* every death re-opens character select (local modes) */
@@ -11869,28 +11964,20 @@ if(f.char==="axe"&&f.state==="taildrop"&&f.stateT>0.24){f.vy=Math.min(f.vy,0)} /
     (周囲108x66, 10 dmg / KB 290, 被弾硬直 0.28s fixed, tick interval 0.06s inside the
     0.38s state; the two meleeHit calls share one hit list per tick,
     so each foe is struck ONCE per tick, launched outward on their
-    side). A weak VACUUM runs for the whole state (user spec):
-    foes just outside the box are dragged a little toward her
-    each frame, so the orbit connects more easily — see the
-    pull loop at the top of the block below. The dressing is
+    the ticks blow foes OUTWARD at KB 200 with NO pull-in
+    (v335, owner spec — the old weak VACUUM was removed so it
+    cannot fight the launch). The dressing is The dressing is
     XENO's alone (user spec): every tick pops
     stepped block noise around her and every second tick snaps a
     square orbit frame open — digital / glitch, never KAIRO's ice */
  if(f.state==="xairj"&&f.char==="xeno"){
-   /* weak VACUUM (user spec): for the whole orbit, every foe
-      within reach of her centre (185 across / 125 up-down —
-      just outside the tick box's ~160 reach) is dragged a
-      little toward her: 190 u/s horizontally, 110 u/s
-      vertically, clamped so it never overshoots her centre.
-      A plain positional nudge inside the sim step — no
-      velocity is written, so the foe's own physics resumes
-      untouched the frame the pull lets go, and the sim stays
-      deterministic. Dead / invulnerable / glitch-bound /
-      grab-held foes are exempt (the bound and the held are
-      already pinned by their own systems) */
-   for(var xvi=0;xvi<fighters.length;xvi++){var xvt=fighters[xvi];if(xvt===f||xvt.dead||xvt.invuln>0||(xvt.glitchT||0)>0||(xvt.heldT||0)>0)continue;var xvdx=f.x-xvt.x,xvdy=(f.y+f.h*0.45)-(xvt.y+xvt.h/2);if(Math.abs(xvdx)<185&&Math.abs(xvdy)<125){xvt.x+=Math.max(-190*dt,Math.min(190*dt,xvdx));xvt.y+=Math.max(-110*dt,Math.min(110*dt,xvdy))}}
+   /* VACUUM REMOVED (v335, owner spec): the orbit used to drag
+      nearby foes a little toward her — that pull is gone,
+      because each tick now launches foes AWAY at KB 200 and a
+      pull-in would fight the launch. The box grew too: 108x78
+      (was 108x66) */
    f.spinTick+=dt;
-   if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,66,10,290,f.face,-0.3,0.38,false,0,xorbHit);meleeHit(f,foe,108,66,10,290,-f.face,-0.15,0.38,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)} /* 被弾硬直追加 (user spec): each orbit tick now inflicts a fixed 0.38s hitstun (the hs argument) — a little more than the ~0.19s the KB-290 launch derived on its own, so a foe caught in the orbit stays pinned a touch longer between ticks; damage / KB / box unchanged */
+   if(f.spinTick>=0.06&&f.spinHits<3){f.spinTick=0;f.spinHits++;var xorbHit=[];meleeHit(f,foe,108,78,10,200,f.face,-0.3,0.38,false,0,xorbHit);meleeHit(f,foe,108,78,10,200,-f.face,-0.15,0.38,false,0,xorbHit);spawnVecBurst("xglitch",f.x,f.y+f.h*0.45,42,0.22,0,f.face,0.9);if(f.spinHits%2===0)xenoRingFx(f.x,f.y+f.h*0.45,56)} /* 被弾硬直追加 (user spec): each orbit tick now inflicts a fixed 0.38s hitstun (the hs argument) — a little more than the ~0.19s the KB-200 launch derived on its own, so a foe caught in the orbit stays pinned a touch longer between ticks; damage / KB / box unchanged */
  }
  /* FROST SPIN (Kairo air up+K): both-sides spin ticks, up to 5 of
     them (user spec: dmg 6/6, KB 180 both sides) — and he RISES at
@@ -12424,6 +12511,10 @@ function gatherPlayerInput(){
      if(consumeWithin("l",350))startAttack(P1,"l");
      else if(consumeWithin("ult",350))startAttack(P1,"ult");
    }
+ }
+ if(P1.attackCd>0&&P1.hitstun<=0&&(P1.recLockT||0)<=0&&(P1.landLagT||0)<=0&&!pGuardHeld){ /* XENO グリッチラッシュ recovery bypass (owner spec): the offline twin of the rbApplyInput rule — while ANOTHER move's recovery (attackCd) still runs, a buffered K press that resolves to the plain rush fires anyway (the same 55ms lone-press grace / 350ms buffer as the normal dispatch above). A K press that resolves to a different move (デコイ / ワープ) stays buffered and still fires when the recovery ends, exactly as before */
+   var nowK=performance.now(),tkB=buf.k;
+   if(tkB&&nowK-tkB>=55&&xenoRushBypass(P1)){if(consumeWithin("k",350))startAttack(P1,"k")}
  }
  /* HOLD-TO-CONTINUE (owner request): the offline twin of the
     rbApplyInput rule — while J / U / L is physically held (keyboard
@@ -15017,43 +15108,63 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
    darkFields=darkFields.filter(function(df){df.t-=STEP;df.tick-=STEP;if(Math.random()<0.3)pushParticle({x:df.x+(Math.random()-0.5)*170,y:df.y-4,vx:(Math.random()-0.5)*16,vy:-26-Math.random()*22,life:.5,col:Math.random()<0.5?"#7e22ce":"#2e1065",size:3+Math.random()*3.5});if(df.tick<=0){df.tick=0.5;for(var dfi=0;dfi<fighters.length;dfi++){var dff=fighters[dfi];if(dff===df.owner||dff.dead||dff.invuln>0)continue;if(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70){var hpBeforeD=dff.hp;dff.hp-=4;dff.flyCd=0;recordDmg(df.owner,dff,hpBeforeD-Math.max(0,dff.hp));dff.lastHurt=time;dff.lastAttacker=df.owner;dff.lastAttackT=time;dff.flash=Math.max(dff.flash,0.06);if(df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}if(dff.hp<=0)killFighter(dff,df.owner)}if(shadeAlive(dff)&&Math.abs(dff.shX-df.x)<95&&Math.abs(dff.shY-df.y)<70){var shInD=applyShadeDot(df.owner,dff,4);if(shInD&&!(Math.abs(dff.x-df.x)<95&&Math.abs((dff.y+df.h)-df.y)<70)&&df.owner){if(df.owner.comboT<=0){df.owner.comboHits=0;df.owner.comboDmg=0}df.owner.comboHits++;df.owner.comboDmg+=4;df.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the field drains 4 per tick too (combo credited once per pair per tick) */}return df.t>0});
    poisonMists=poisonMists.filter(function(mb){mb.t-=STEP;mb.tick-=STEP;if(Math.random()<0.3)pushParticle({x:mb.x+(Math.random()-0.5)*360,y:mb.y-10-Math.random()*24,vx:(Math.random()-0.5)*18,vy:-12-Math.random()*14,life:.55,col:Math.random()<0.5?"#a3e635":"#c084fc",size:3+Math.random()*4});if(mb.tick<=0){mb.tick=0.1;for(var mi=0;mi<fighters.length;mi++){var mf=fighters[mi];if(mf===mb.owner||mf.dead||mf.invuln>0)continue;if(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80){var hpBeforeM=mf.hp;mf.hp-=crHit(mb.owner,"omist",2,0)[0];mf.flyCd=0;recordDmg(mb.owner,mf,hpBeforeM-Math.max(0,mf.hp));mf.lastHurt=time;mf.lastAttacker=mb.owner;mf.lastAttackT=time;mf.flash=Math.max(mf.flash,0.06);if(mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}if(mf.hp<=0)killFighter(mf,mb.owner)}if(shadeAlive(mf)&&Math.abs(mf.shX-mb.x)<205&&Math.abs(mf.shY-mb.y)<80){var shInM=applyShadeDot(mb.owner,mf,2);if(shInM&&!(Math.abs(mf.x-mb.x)<205&&Math.abs((mf.y+mf.h)-mb.y)<80)&&mb.owner){if(mb.owner.comboT<=0){mb.owner.comboHits=0;mb.owner.comboDmg=0}mb.owner.comboHits++;mb.owner.comboDmg+=2;mb.owner.comboT=0.95}}} /* 【闇ゲージ】 area DoT: SHADE's body standing in the mist drains 2 per tick too (combo credited once per pair per tick) */}return mb.t>0});
    /* XENO ↓+K ホログラムデコイ: each living clone fights like a
-      CPU opponent (user spec) — its brain mirrors aiControl's own
-      decision pattern. A decision beat lands every 0.2–0.45s
-      (dc.aiT / dc.aiMove, the same fields and rhythm the CPU
-      fighters use): on a beat at mid range it may fire her data
-      bits (xbit projectiles owned by its owner), and its per-frame
-      judgement copies the CPU's — close in while the foe is far
-      (with the CPU's small random hop), jump up after a foe
-      fighting a level above, drop through a ledge after a foe
-      below, drift back for spacing on some beats instead of always
-      pressing in, and recover toward the stage when it finds
-      itself over the void. In close it strikes with the data knife
-      (8 dmg / KB 340, one strike every 0.55s) and sometimes lunges
-      with her glitch rush (13 dmg / KB 430) — every hit credited
-      to its OWNER through applyHit / the projectiles, so score,
-      combo and meter treat the clone's hits as hers. It falls and
-      lands on platforms with the fighters' own gravity numbers.
-      At t=0 (3s) it collapses in glitch blocks, the same collapse
-      a shattering hit plays (destroyDecoyFx) */
+      CPU opponent — its brain mirrors aiControl's own decision
+      pattern (a fresh decision every 0.2–0.45s, dc.aiT / dc.aiMove,
+      rolled through rnd() like every aiControl roll, so a rollback
+      re-simulation makes the SAME decisions on every end — the
+      clone is a saved / restored sim entity since v333, see
+      lsBuildSave). Since v335 (owner spec) the clone fights with
+      the REAL XENO's own moves: every strike is chosen by range /
+      height like a CPU's and fired through decoyUseMove — a body
+      swap into startXenoAttack itself — so the five-stage knife
+      chain, ↓+J's fixed-apex launch, ↑+J, フェイズシフト, J+K,
+      グリッチラッシュ, the backstab warp, air J / air K / air ↓+J,
+      the U data bits (the clone's own 3-shot ammo + reload) and
+      the ↑+K / air ↓+K warps (0.3s charge and all) land with the
+      original's exact damage / KB / hitstun / boxes / startup /
+      recovery, credited to its OWNER. The stepped state lives on
+      the clone's own fighter fields: the warp charge counts down
+      here (warpT), the ↑+K arrival hang holds it (warpHoverT),
+      and the air-J orbit ticks fire from here with the move's own
+      numbers. The GROUND ↓+K is never chosen — a clone never
+      projects a clone (spawnDecoy also refuses mid-swap). It falls
+      and lands on platforms with the fighters' own gravity
+      numbers. At t=0 (3s) it collapses in glitch blocks, the same
+      collapse a shattering hit plays (destroyDecoyFx) */
    decoys=decoys.filter(function(dc){
     if(!dc.owner||dc.owner.dead)return false;
     dc.t-=STEP;
     if(dc.t<=0){destroyDecoyFx(dc);return false}
     var tgt=null,tbd=1e18;
     for(var dti=0;dti<fighters.length;dti++){var dto=fighters[dti];if(dto===dc.owner||dto.dead)continue;var dtd=Math.abs(dto.x-dc.x)+Math.abs(dto.y-dc.y)*0.6;if(dtd<tbd){tbd=dtd;tgt=dto}}
-    dc.stateT=Math.max(0,(dc.stateT||0)-STEP);if(dc.stateT<=0)dc.state="idle";
-    dc.atkCd=Math.max(0,(dc.atkCd||0)-STEP);
-    dc.shotCd=Math.max(0,(dc.shotCd||0)-STEP);
+    dc.stateT=Math.max(0,(dc.stateT||0)-STEP);if(dc.stateT<=0&&dc.state!=="xcharge")dc.state="idle";
+    dc.attackCd=Math.max(0,(dc.attackCd||0)-STEP);
+    dc.flyCd=Math.max(0,(dc.flyCd||0)-STEP);
     dc.rushCd=Math.max(0,(dc.rushCd||0)-STEP);
+    dc.decoyCd=Math.max(0,(dc.decoyCd||0)-STEP);
+    dc.comboWin=Math.max(0,(dc.comboWin||0)-STEP);if(dc.comboWin<=0)dc.comboStep=0;
     dc.dropT=Math.max(0,(dc.dropT||0)-STEP);
+    if(dc.reloadT>0){dc.reloadT-=STEP;if(dc.reloadT<=0&&dc.ammo<crMaxAmmo(dc.owner)){dc.ammo++;if(dc.ammo<crMaxAmmo(dc.owner))dc.reloadT=reloadInterval(dc.owner)}} /* the clone's own data-bit ammo: 3 shots, trickle reload — the same pacing as the real U */
     dc.aiT=(dc.aiT||0)-STEP;
     var dBeat=false;
-    if(dc.aiT<=0){dc.aiT=0.2+rnd()*0.25;dc.aiMove=rnd();dBeat=true} /* the CPU decision rhythm: a fresh aiMove every 0.2–0.45s, exactly like aiControl — and rolled through rnd() (the sim-seeded RNG), like every aiControl roll, so a rollback re-simulation makes the SAME decisions on every end (the clone is a saved / restored sim entity since v333, see lsBuildSave) */
+    if(dc.aiT<=0){dc.aiT=0.2+rnd()*0.25;dc.aiMove=rnd();dBeat=true} /* the CPU decision rhythm, rolled through rnd() (the sim-seeded RNG) like every aiControl roll, so a rollback re-simulation makes the SAME decisions on every end */
+    /* warp charge (the real 0.3s xcharge): rooted while warpT runs, then the cut fires through the REAL exec functions via the body swap */
+    if((dc.warpT||0)>0){
+     dc.warpT-=STEP;dc.vx=0;dc.vy=0;
+     if(Math.random()<0.5)spawnVecBurst("xglitch",dc.x,dc.y+30,26,0.2,0,dc.face,0.9);
+     if(dc.warpT<=0){var dwk=dc.warpKind;dc.warpKind="";dc.warpT=0;dc.state="xwarp";dc.stateT=0.26;var dws=decoySwapIn(dc);if(dwk==="down")xenoWarpDownExec(dc.owner);else xenoWarpUpExec(dc.owner);decoySwapOut(dc,dws)}
+     return true;
+    }
+    if((dc.warpHoverT||0)>0){dc.warpHoverT-=STEP;dc.vx=0;dc.vy=0;return true} /* ↑+K arrival hang: rooted while it lasts, exactly like the real fighter */
+    /* air-J orbit ticks: the move's own numbers (108x78 / KB 200, v335), fired through the body swap so the hits are the move's own */
+    if(dc.state==="xairj"&&tgt){
+     dc.spinTick=(dc.spinTick||0)+STEP;
+     if(dc.spinTick>=0.06&&(dc.spinHits||0)<3){dc.spinTick=0;dc.spinHits++;var dxh=[];var dxs=decoySwapIn(dc);meleeHit(dc.owner,tgt,108,78,10,200,dc.owner.face,-0.3,0.38,false,0,dxh);meleeHit(dc.owner,tgt,108,78,10,200,-dc.owner.face,-0.15,0.38,false,0,dxh);decoySwapOut(dc,dxs);spawnVecBurst("xglitch",dc.x,dc.y+30,42,0.22,0,dc.face,0.9);if(dc.spinHits%2===0)xenoRingFx(dc.x,dc.y+30,56)}
+    }
     if(tgt){
      var ddx=tgt.x-dc.x,ddy=(tgt.y+tgt.h/2)-(dc.y+35),dadx=Math.abs(ddx);
      if(Math.abs(ddx)>6)dc.face=ddx>0?1:-1;
-     /* recovery (CPU pattern): over the void or falling past the
-        stage lip, head back to the middle and jump */
+     /* recovery (CPU pattern): over the void or falling past the stage lip, head back to the middle and jump */
      if((dc.x<200||dc.x>2400)&&dc.y>900||dc.y>1080){
       dc.vx=(dc.x<1300?1:-1)*305;
       if(dc.vy>-120&&(dc.onGround||!dc.airHop)){dc.vy=-800;dc.airHop=true} /* one mid-air hop per fall, the clone's stand-in for the CPU's double jump / air dash recovery */
@@ -15062,65 +15173,63 @@ if(pr.kind==="slash"&&Math.random()<0.3)spawnFxBurst(FXIMG.slash,pr.x,pr.y,124,0
       dc.x+=dc.vx*STEP;dc.y+=dc.vy*STEP;
       if(dc.x<40)dc.x=40;if(dc.x>WORLD_W-40)dc.x=WORLD_W-40;
       dc.onGround=false;dc.groundPlat=null;
-      if(dc.vy>=0&&dc.dropT<=0){for(var dri=0;dri<platforms.length;dri++){var drl=platforms[dri];if(dc.x+18>drl.x&&dc.x-18<drl.x+drl.w&&dFeetRec<=drl.y+1&&dc.y+70>=drl.y){dc.y=drl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=drl;dc.airHop=false;break}}}
+      if(dc.vy>=0&&dc.dropT<=0){for(var dri=0;dri<platforms.length;dri++){var drl=platforms[dri];if(dc.x+18>drl.x&&dc.x-18<drl.x+drl.w&&dFeetRec<=drl.y+1&&dc.y+70>=drl.y){dc.y=drl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=drl;dc.airHop=false;dc.airJ=0;dc.jumps=1;dc.xDownFall=false;break}}}
       if(dc.y>WORLD_H+240)return false;
       return true;
      }
-     /* drop-through (CPU pattern): standing on a floating ledge
-        (never the main floor) with the foe clearly on a lower
-        level, the clone drops through and fast-falls after them */
+     /* drop-through (CPU pattern): standing on a floating ledge (never the main floor) with the foe clearly on a lower level, the clone drops through and fast-falls after them */
      if(dc.onGround&&dc.groundPlat&&!dc.groundPlat.main&&tgt.y-dc.y>50)dc.dropT=0.25;
      if(dc.dropT>0&&dc.vy<300)dc.vy=300;
-     /* ranged judgement (CPU pattern): on a decision beat at mid
-        range, shoot her data bits — the same shot the real U
-        fires, owned by the clone's owner */
-     if(dBeat&&dc.shotCd<=0&&dadx>240&&dadx<760&&Math.abs(ddy)<90&&rnd()<0.5){
-      dc.shotCd=0.85;dc.state="xthrow";dc.stateT=0.2;
-      xbitSpawn(dc.x+dc.face*36,dc.y+30,dc.face,dc.owner); /* the clone's bits roll their colour (and its performance) at random too — the same shot the real U fires */
-      spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
-      beep(1720,.05,"sine",.03);
-     }
-     /* close judgement: the data knife on its 0.55s cadence, and
-        on some beats a glitch-rush lunge instead — the CPU's
-        close-range mix of J and K */
-     if(dc.atkCd<=0&&dadx<84&&Math.abs(ddy)<64){
-      if(dc.rushCd<=0&&dc.aiMove>0.62){
-       dc.atkCd=0.6;dc.rushCd=1.1;dc.state="xrush";dc.stateT=0.24;dc.vx=dc.face*430;
-       applyHit(dc.owner,tgt,13,430,dc.face,-0.24,false,dc.x+dc.face*42,dc.y+30);
-       spawnVecBurst("xcircuit",dc.x+dc.face*40,dc.y+30,36,0.26,0,dc.face,0.95);spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,22,0.24,0,dc.face,0.9);
-       beep(1330,.04,"square",.035);
-      }else{
-       dc.atkCd=0.55;dc.state="xknife1";dc.stateT=0.2;
-       var dch=crHit(dc.owner,"xdecoy",8,340);applyHit(dc.owner,tgt,dch[0],dch[1],dc.face,-0.24,false,dc.x+dc.face*38,dc.y+30); /* the clone's knife answers to the CREATIVE xdecoy damage / KB (the entry the cast itself is listed under) — a plain pass-through outside creative matches */
-       spawnVecBurst("xcircuit",dc.x+dc.face*40,dc.y+30,32,0.26,0,dc.face,0.95);spawnVecBurst("xglitch",dc.x+dc.face*30,dc.y+30,20,0.24,0,dc.face,0.9);
-       beep(1420,.04,"square",.035);
+     /* attack judgement (v335): every strike is one of the REAL XENO's own moves, chosen by range / height on the CPU's decision beats and fired through decoyUseMove (the body swap into startXenoAttack) — same processing and numbers as the original, J chain continuations included. The GROUND ↓+K is never chosen: a clone never projects a clone */
+     var dChain=(dc.comboWin||0)>0&&dc.onGround&&dadx<110&&Math.abs(ddy)<70;
+     if((dBeat||dChain)&&dc.attackCd<=0){
+      dc.inDown=false;dc.inUp=false;dc.inFwd=false;dc.inBack=false;
+      if(dChain){decoyUseMove(dc,"j",tgt)} /* J chain: keep pressing J inside the chain window, exactly like a held chain */
+      else if(!dc.onGround){
+       if(ddy>60&&dadx<130&&rnd()<0.55){dc.inDown=true;decoyUseMove(dc,"j",tgt)} /* 空中↓+J ダイブハック */
+       else if(dc.flyCd<=0&&(dc.y<430||dc.x<230||dc.x>2370)&&rnd()<0.3){dc.inDown=true;decoyUseMove(dc,"k",tgt)} /* 空中↓+K ワープダウン (reposition / recovery) */
+       else if(rnd()<0.5){decoyUseMove(dc,"k",tgt)} /* 空中K エアバースト */
+       else{decoyUseMove(dc,"j",tgt)} /* 空中J グリッチオービット */
+      }else if(tgt.y<dc.y-110&&dadx<170){
+       dc.inUp=true;
+       if(dc.flyCd<=0&&rnd()<0.4){decoyUseMove(dc,"k",tgt)} /* ↑+K ワープアップロード */
+       else{decoyUseMove(dc,"j",tgt)} /* ↑+J ライジングコード */
+      }else if(dadx<84&&Math.abs(ddy)<64){
+       var droll=rnd();
+       if(droll<0.18){decoyUseMove(dc,"jk",tgt)} /* J+K バグクラッシュ */
+       else if(droll<0.36){dc.inDown=true;decoyUseMove(dc,"j",tgt)} /* ↓+J ローグリッチ */
+       else{decoyUseMove(dc,"j",tgt)} /* J データナイフ */
+      }else if(dadx<210&&Math.abs(ddy)<110){
+       if(rnd()<0.5){dc.inFwd=true;decoyUseMove(dc,"j",tgt)} /* 前+J フェイズシフト */
+       else{decoyUseMove(dc,"k",tgt)} /* K グリッチラッシュ */
+      }else if(dadx<=640&&Math.abs(ddy)<=280){
+       if(rnd()<0.45){dc.inFwd=true;decoyUseMove(dc,"k",tgt)} /* 前+K バックスタブワープ */
+       else if(dc.ammo>0){decoyUseMove(dc,"l",tgt)} /* U データビット */
+      }else if(dadx<760&&Math.abs(ddy)<90&&dc.ammo>0&&rnd()<0.6){
+       decoyUseMove(dc,"l",tgt) /* U データビット */
       }
      }
-     /* movement judgement (CPU pattern): close in while far; in
-        close, hold position on most beats but drift AWAY for
-        spacing on some (aiMove < 0.28), like a CPU repositioning
-        instead of a homing missile */
+     /* movement judgement (CPU pattern): close in while far; in close, hold position on most beats but drift AWAY for spacing on some (aiMove < 0.28) */
      var dwant=0;
      if(dadx>66)dwant=ddx>0?1:-1;
      else if(dc.aiMove<0.28)dwant=ddx>0?-1:1;
-     if(!(dc.state==="xrush"&&dc.stateT>0))dc.vx=dwant*305; /* hologram pace: a touch under her own run, snapping on and off per step like everything she projects; a rush lunge keeps its burst speed while it lasts */
-     /* jump judgement (CPU pattern): chase a foe fighting a level
-        above, hop in close under a foe overhead, and throw in the
-        CPU's small random hop while closing in */
+     if(!(dc.state==="xrush"&&dc.stateT>0))dc.vx=dwant*305; /* hologram pace: a touch under her own run; a rush lunge keeps its burst speed while it lasts */
+     /* jump judgement (CPU pattern): chase a foe fighting a level above, hop in close under a foe overhead, and throw in the CPU's small random hop while closing in */
      if(dc.onGround&&tgt.y<dc.y-120&&dadx<170&&rnd()<0.5)dc.vy=-800;
      else if(dc.onGround&&tgt.y<dc.y-60&&dadx<=86&&rnd()<0.35)dc.vy=-800;
      else if(dc.onGround&&dadx>86&&rnd()<0.012)dc.vy=-800;
     }else dc.vx=0;
-    dc.vy=Math.min(770,dc.vy+(dc.vy>0?2000:1900)*STEP);
+    dc.vy=Math.min(dc.xDownFall?616:770,dc.vy+(dc.vy>0?2000:1900)*STEP); /* the ↓+K warp-down's 80% fall cap (xDownFall) binds the clone's falls too — the same move, the same numbers */
     var dFeetPrev=dc.y+70;
     dc.x+=dc.vx*STEP;dc.y+=dc.vy*STEP;
     if(dc.x<40)dc.x=40;if(dc.x>WORLD_W-40)dc.x=WORLD_W-40;
     dc.onGround=false;dc.groundPlat=null;
-    if(dc.vy>=0&&dc.dropT<=0){for(var dpi=0;dpi<platforms.length;dpi++){var dpl=platforms[dpi];if(dc.x+18>dpl.x&&dc.x-18<dpl.x+dpl.w&&dFeetPrev<=dpl.y+1&&dc.y+70>=dpl.y){dc.y=dpl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=dpl;dc.airHop=false;break}}}
+    if(dc.vy>=0&&dc.dropT<=0){for(var dpi=0;dpi<platforms.length;dpi++){var dpl=platforms[dpi];if(dc.x+18>dpl.x&&dc.x-18<dpl.x+dpl.w&&dFeetPrev<=dpl.y+1&&dc.y+70>=dpl.y){dc.y=dpl.y-70;dc.vy=0;dc.onGround=true;dc.groundPlat=dpl;dc.airHop=false;dc.airJ=0;dc.jumps=1;dc.xDownFall=false;break}}}
     if(dc.y>WORLD_H+240)return false; /* projected over the void: the signal is simply lost */
     if(Math.random()<0.10)pushParticle({x:dc.x+(Math.random()-0.5)*36,y:dc.y+Math.random()*62,vx:0,vy:0,life:0.14,col:Math.random()<0.5?"#67e8f9":"#f0abfc",size:2+Math.random()*2.4,amb:1}); /* hologram shedding: still data blocks blink off the clone as it moves */
     return true;
    });
+
    floaters=floaters.filter(function(fl){fl.y-=34*STEP;return(fl.life-=STEP)>0});
    shake*=Math.pow(0.001,STEP);if(shake<0.25)shake=0;
 }
